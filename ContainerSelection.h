@@ -136,6 +136,7 @@ private:
   void on_container_move(container_type& from, container_type& to);
   void on_container_delete(container_type& half_dead);
   void on_container_elements_move(element_type* old_begin, element_type* old_end, ptrdiff_t shift);
+  void remove_redundant_observers();
 
   friend class SelectionRange<T>;
   friend class Container<value_type>;
@@ -147,6 +148,7 @@ private:
 
   std::vector<element_type*> elements;
   SelectionState state = SelectionState::OK;
+
 };
 
 
@@ -383,8 +385,16 @@ Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
   elements.erase(it, elements.end());
   assert(std::is_sorted(elements.begin(), elements.end(), comparator));
 
+  remove_redundant_observers();
+
+  return *this;
+}
+
+template<typename T>
+void Selection<T>::remove_redundant_observers()
+{
   std::set<container_type*> new_observers;
-  for (auto el_ptr: this->elements){
+  for (auto el_ptr: elements){
     new_observers.insert(el_ptr->parent());
   }
 
@@ -394,10 +404,7 @@ Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
       container->ObservableBy<Selection<T>>::remove_observer(*this);
     }
   }
-
-  return *this;
 }
-
 
 template<typename T>
 size_t Selection<T>::count(T& value) const {
