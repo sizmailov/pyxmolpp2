@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Observer.h"
 
 
@@ -27,10 +28,28 @@ struct ElementWithFlags{
   T value;
   bool is_deleted = false;
 
+  bool operator<(const ElementWithFlags<T>& rhs) const noexcept ;
+
 private:
   friend class Selection<T>;
   const container_type* parent() const noexcept;
   container_type* parent() noexcept;
+
+
+  struct PtrComparator{
+    bool operator()(const ElementWithFlags<T>* lhs, const ElementWithFlags<T>* rhs){
+
+      if (lhs == nullptr) {
+        return false;
+      }
+
+      if (rhs == nullptr) {
+        return true;
+      }
+
+      return *lhs < *rhs;
+    }
+  };
 };
 
 
@@ -80,7 +99,7 @@ private:
 };
 
 template<typename T>
-class Selection : public ObserverableBy<typename SelectionTraits<T>::container_type> {
+class Selection : public ObservableBy<typename SelectionTraits<T>::container_type> {
 public:
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
@@ -132,7 +151,7 @@ private:
 
 
 template<typename T>
-class Container : public ObserverableBy<Selection<T>>, public ObserverableBy<Selection<const T>>{
+class Container : public ObservableBy<Selection<T>>, public ObservableBy<Selection<const T>>{
 public:
   using value_type = typename SelectionTraits<T>::value_type;
   using element_type = typename SelectionTraits<T>::element_type;
@@ -149,6 +168,9 @@ public:
   bool empty() const;
 
   void insert(T&& value);
+
+  template<typename ...Args>
+  void emplace(Args&& ...args);
 
   size_t erase();
   size_t erase(Selection<T>& selection);
@@ -269,13 +291,13 @@ Selection<T>::~Selection() {
 }
 
 template<typename T>
-Selection<T>::Selection(const Selection<T>& rhs): ObserverableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
+Selection<T>::Selection(const Selection<T>& rhs): ObservableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
   LOG_DEBUG_FUNCTION();
   notify_all(&container_type::on_selection_copy,*this);
 }
 
 template<typename T>
-Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObserverableBy<container_type>(std::move(rhs)), state(rhs.state), elements(std::move(rhs.elements)){
+Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObservableBy<container_type>(std::move(rhs)), state(rhs.state), elements(std::move(rhs.elements)){
   LOG_DEBUG_FUNCTION();
   this->notify_all(&container_type::on_selection_move,rhs,*this);
   rhs.state=SelectionState::OK;
@@ -283,17 +305,17 @@ Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObserverableBy<container_
 template<typename T>
 Selection<T>& Selection<T>::operator=(Selection<T>&& rhs) noexcept {
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<container_type>::operator=(std::move(rhs));
+  ObservableBy<container_type>::operator=(std::move(rhs));
   elements = std::move(rhs.elements);
   state = rhs.state;
   rhs.state=SelectionState::OK;
-  ObserverableBy<container_type>::notify_all(&container_type::on_selection_move,rhs,*this);
+  ObservableBy<container_type>::notify_all(&container_type::on_selection_move,rhs,*this);
 }
 
 template<typename T>
 Selection<T>& Selection<T>::operator=(const Selection<T>& rhs){
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<container_type>::operator=(rhs);
+  ObservableBy<container_type>::operator=(rhs);
   elements =rhs.elements;
   state = rhs.state;
   notify_all(&container_type::on_selection_copy,*this);
@@ -315,16 +337,67 @@ bool Selection<T>::operator!=(const Selection<T>& rhs) const{
 template<typename T>
 Selection<T>& Selection<T>::operator+=(const Selection<T>& rhs) {
   LOG_DEBUG_FUNCTION();
-  assert(std::is_sorted(elements.begin(), elements.end()));
-  assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end()));
+  auto comparator = typename Selection<T>::element_type::PtrComparator{};
+
+  for (auto [container,state]: rhs.observers){
+    this->add_observer(*container);
+    container->ObservableBy<Selection<T>>::add_observer(*this);
+  }
+
+  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
+  assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(),comparator));
   size_t selection_size = elements.size();
   elements.insert(elements.end(), rhs.elements.begin(), rhs.elements.end());
-  std::inplace_merge(elements.begin(), elements.begin() + selection_size, elements.end());
+  std::inplace_merge(elements.begin(), elements.begin() + selection_size, elements.end(),comparator);
   auto end = std::unique(elements.begin(), elements.end());
   elements.erase(end, elements.end());
-  assert(std::is_sorted(elements.begin(), elements.end()));
+  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
   return *this;
 }
+template<typename T>
+Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
+  LOG_DEBUG_FUNCTION();
+  auto comparator = typename Selection<T>::element_type::PtrComparator{};
+  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
+  assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(),comparator));
+  auto it = elements.begin();
+  auto it1 = elements.begin();
+  auto it2 = rhs.elements.begin();
+  while (it1 != elements.end() && it2 != rhs.elements.end()) {
+    if (comparator(*it2,*it1)) { // it2 < it1
+      ++it2;
+    } else if (comparator(*it1, *it2)) { // it1 < it2
+      *it = *it1;
+      ++it;
+      ++it1;
+    } else { // it1 == it2;
+      ++it1;
+      ++it2;
+    }
+  }
+  while (it1 != elements.end()) {
+    *it = *it1;
+    ++it;
+    ++it1;
+  }
+  elements.erase(it, elements.end());
+  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
+
+  std::set<container_type*> new_observers;
+  for (auto el_ptr: this->elements){
+    new_observers.insert(el_ptr->parent());
+  }
+
+  for (auto [container, state]: this->observers){
+    if (!new_observers.count(container)) {
+      this->remove_observer(*container);
+      container->ObservableBy<Selection<T>>::remove_observer(*this);
+    }
+  }
+
+  return *this;
+}
+
 
 template<typename T>
 size_t Selection<T>::count(T& value) const {
@@ -354,7 +427,7 @@ template<typename T>
 void Selection<T>::clear() noexcept {
   LOG_DEBUG_FUNCTION();
   elements.clear();
-  constexpr auto alive_only = ObserverableBy<container_type>::ApplyTo::ALIVE_ONLY;
+  constexpr auto alive_only = ObservableBy<container_type>::ApplyTo::ALIVE_ONLY;
   this-> template notify_all<alive_only>(&container_type::on_selection_delete,*this);
   this->remove_all_observers();
   state = SelectionState::OK;
@@ -401,12 +474,12 @@ Container<T>::Container(){
 template<typename T>
 Container<T>::~Container(){
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
-  ObserverableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
+  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
+  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
 }
 
 template<typename T>
-Container<T>::Container(Container<T>&& rhs) noexcept : ObserverableBy<Selection<const T>>(std::move(rhs)), ObserverableBy<Selection<T>>(std::move(rhs)){
+Container<T>::Container(Container<T>&& rhs) noexcept : ObservableBy<Selection<const T>>(std::move(rhs)), ObservableBy<Selection<T>>(std::move(rhs)){
   LOG_DEBUG_FUNCTION();
   notify_all(&Selection<T>::on_container_move,rhs,*this);
 }
@@ -422,10 +495,10 @@ Container<T>& Container<T>::operator=(Container<T>&& rhs) noexcept {
   elements = std::move(rhs.elements);
   deleted = rhs.deleted;
   rhs.deleted = 0;
-  ObserverableBy<Selection<T>>::operator=(std::move(rhs));
-  ObserverableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
-  ObserverableBy<Selection<const T>>::operator=(std::move(rhs));
-  ObserverableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_move,rhs,*this);
+  ObservableBy<Selection<T>>::operator=(std::move(rhs));
+  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
+  ObservableBy<Selection<const T>>::operator=(std::move(rhs));
+  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_move,rhs,*this);
   return *this;
 }
 
@@ -447,10 +520,26 @@ void Container<T>::insert(T&& value) {
 
   ptrdiff_t shift = new_pos-old_begin;
   if (shift!=0){
-    ObserverableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
-    ObserverableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
   }
   elements.emplace_back(std::move(value));
+}
+
+template<typename T>
+template<typename ...Args>
+void Container<T>::emplace(Args&& ... args) {
+  LOG_DEBUG_FUNCTION();
+  auto old_begin = elements.data();
+  elements.reserve(elements.size()+1);
+  auto new_pos= elements.data();
+
+  ptrdiff_t shift = new_pos-old_begin;
+  if (shift!=0){
+    ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+  }
+  elements.emplace_back(T(std::forward<Args>(args)...));
 }
 
 
@@ -459,7 +548,7 @@ template<typename T>
 Selection<T> Container<T>::all(){
   LOG_DEBUG_FUNCTION();
   Selection<T> s(*this);
-  ObserverableBy<Selection<T>>::add_observer(s);
+  ObservableBy<Selection<T>>::add_observer(s);
   return std::move(s);
 }
 
@@ -467,46 +556,46 @@ template<typename T>
 Selection<const T> Container<T>::all() const{
   LOG_DEBUG_FUNCTION();
   Selection<const T> s(*this);
-  ObserverableBy<Selection<const T>>::add_observer(s);
+  ObservableBy<Selection<const T>>::add_observer(s);
   return std::move(s);
 }
 
 template<typename T>
 void Container<T>::on_selection_move(Selection<T>& from, Selection<T>& to){
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<T>>::move_observer(from,to);
+  ObservableBy<Selection<T>>::move_observer(from,to);
 }
 
 template<typename T>
 void Container<T>::on_selection_move(Selection<const T>& from, Selection<const T>& to) const{
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<const T>>::move_observer(from,to);
+  ObservableBy<Selection<const T>>::move_observer(from,to);
 }
 
 
 template<typename T>
 void Container<T>::on_selection_delete(Selection<T>& half_dead){
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<T>>::remove_observer(half_dead);
+  ObservableBy<Selection<T>>::remove_observer(half_dead);
 }
 
 template<typename T>
 void Container<T>::on_selection_delete(Selection<const T>& half_dead) const{
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<const T>>::remove_observer(half_dead);
+  ObservableBy<Selection<const T>>::remove_observer(half_dead);
 }
 
 
 template<typename T>
 void Container<T>::on_selection_copy(Selection<T>& copy){
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<T>>::add_observer(copy);
+  ObservableBy<Selection<T>>::add_observer(copy);
 }
 
 template<typename T>
 void Container<T>::on_selection_copy(Selection<const T>& copy) const{
   LOG_DEBUG_FUNCTION();
-  ObserverableBy<Selection<const T>>::add_observer(copy);
+  ObservableBy<Selection<const T>>::add_observer(copy);
 }
 
 

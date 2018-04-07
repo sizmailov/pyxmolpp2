@@ -8,7 +8,7 @@
 #include "Logger.h"
 
 template<typename T>
-class ObserverableBy{
+class ObservableBy{
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
 public:
@@ -71,6 +71,7 @@ protected:
   }
 
   void remove_all_observers() const{
+    LOG_DEBUG_FUNCTION();
     observers.clear();
   }
 
@@ -84,12 +85,13 @@ protected:
 
 
   void move_observer(T& from, T& to) const{
+    LOG_DEBUG_FUNCTION();
     remove_observer(from);
     add_observer(to);
   }
 
 
 
-private:
+protected:
   mutable std::map<T*,ObserverState> observers;
 };
