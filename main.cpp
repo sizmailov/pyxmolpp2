@@ -43,13 +43,18 @@ int main() {
     c.insert(2);
     c.insert(3);
     s = c.all();
+    assert(s.size()==3);
+    c.insert(4);
+    s += c.all();
+    assert(s.size()==4);
     for (auto&x :s ){
       std::cout << x << std::endl;
     }
+    s.clear();
   }
 
 
-  for (auto&x :s ){
+  for (auto&x :s ){ // ERROR comes here: use of dangling pointers in s;
     std::cout << x << std::endl;
   }
 

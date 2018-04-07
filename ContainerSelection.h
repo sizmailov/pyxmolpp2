@@ -105,6 +105,7 @@ public:
 
   bool empty() const;
   size_t size() const;
+  void clear() noexcept ;
 
 
   SelectionRange<T> begin();
@@ -264,8 +265,7 @@ Selection<T>::Selection() {
 template<typename T>
 Selection<T>::~Selection() {
   LOG_DEBUG_FUNCTION();
-  constexpr auto alive_only = ObserverableBy<container_type>::ApplyTo::ALIVE_ONLY;
-  this-> template notify_all<alive_only>(&container_type::on_selection_delete,*this);
+  this->clear();
 }
 
 template<typename T>
@@ -313,6 +313,20 @@ bool Selection<T>::operator!=(const Selection<T>& rhs) const{
 }
 
 template<typename T>
+Selection<T>& Selection<T>::operator+=(const Selection<T>& rhs) {
+  LOG_DEBUG_FUNCTION();
+  assert(std::is_sorted(elements.begin(), elements.end()));
+  assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end()));
+  size_t selection_size = elements.size();
+  elements.insert(elements.end(), rhs.elements.begin(), rhs.elements.end());
+  std::inplace_merge(elements.begin(), elements.begin() + selection_size, elements.end());
+  auto end = std::unique(elements.begin(), elements.end());
+  elements.erase(end, elements.end());
+  assert(std::is_sorted(elements.begin(), elements.end()));
+  return *this;
+}
+
+template<typename T>
 size_t Selection<T>::count(T& value) const {
   LOG_DEBUG_FUNCTION();
   assert(state==SelectionState::OK);
@@ -334,6 +348,16 @@ template<typename T>
 size_t Selection<T>::size() const {
   LOG_DEBUG_FUNCTION();
   return elements.size();
+}
+
+template<typename T>
+void Selection<T>::clear() noexcept {
+  LOG_DEBUG_FUNCTION();
+  elements.clear();
+  constexpr auto alive_only = ObserverableBy<container_type>::ApplyTo::ALIVE_ONLY;
+  this-> template notify_all<alive_only>(&container_type::on_selection_delete,*this);
+  this->remove_all_observers();
+  state = SelectionState::OK;
 }
 
 template<typename T>

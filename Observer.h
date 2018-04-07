@@ -64,14 +64,15 @@ protected:
     observers.emplace(&ptr, ObserverState::OK);
   }
 
-
-
   void remove_observer(T& ptr) const{
     LOG_DEBUG_FUNCTION();
     auto count = observers.erase(&ptr);
     assert(count==1);
   }
 
+  void remove_all_observers() const{
+    observers.clear();
+  }
 
 
   void mark_as_deleted(T& ptr) const {
@@ -86,6 +87,8 @@ protected:
     remove_observer(from);
     add_observer(to);
   }
+
+
 
 private:
   mutable std::map<T*,ObserverState> observers;
