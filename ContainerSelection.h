@@ -153,6 +153,8 @@ public:
   SelectionRange<T> begin();
   SelectionRange<T> end();
 
+  T& operator[](int i) const;
+
 private:
   explicit Selection(container_type& container);
 
@@ -298,6 +300,16 @@ template<typename T>
 SelectionRange<T> Selection<T>::end(){
   assert(state==SelectionState::OK);
   return SelectionRange(*this,elements.size(),0,1);
+}
+
+template<typename T>
+T& Selection<T>::operator[](int i) const{
+  assert(state==SelectionState::OK);
+  assert(i>-elements.size() && i < elements.size());
+  if (i<0){
+    i = static_cast<int>(elements.size())-i;
+  }
+  return elements[i];
 }
 
 template<typename T>
