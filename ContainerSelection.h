@@ -21,9 +21,9 @@ struct ElementWithFlags{
 
   using container_type = Container<T>;
 
-  ElementWithFlags(T&& value): value(std::move(value)),is_deleted(false){
+  explicit ElementWithFlags(T&& value): value(std::move(value)),is_deleted(false){
   }
-  ElementWithFlags(const T& value): value(std::move(value)),is_deleted(false){
+  explicit ElementWithFlags(const T& value): value(std::move(value)),is_deleted(false){
   }
   T value;
   bool is_deleted = false;
