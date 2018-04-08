@@ -164,6 +164,14 @@ public:
   template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
+  template<typename Predicate>
+  Selection& remove_if(Predicate&& p);
+
+  template<typename Predicate>
+  Selection filter(Predicate&& p) const;
+
+  template<typename Transform>
+  Selection& apply(Transform&& transform);
 
   int count(const T&) const;
 
@@ -506,6 +514,48 @@ Selection<U>& Selection<T>::operator*=(const Selection<V>& rhs){
 }
 
 template<typename T>
+template<typename Predicate>
+Selection<T>& Selection<T>::remove_if(Predicate&& p){
+  LOG_DEBUG_FUNCTION();
+  if (state!=SelectionState::OK){
+    throw dead_selection_access("SelectionRange<T>::remove_if");
+  }
+  auto end = std::remove_if(
+      elements.begin(),
+      elements.end(),
+      [&p](element_type* ptr){
+        if (ptr->is_deleted){
+          throw dead_selection_range_access("SelectionRange<T>::remove_if");
+        }
+        const value_type& value = ptr->value;
+        return p(value);
+      });
+  elements.erase(end,elements.end());
+  remove_redundant_observers();
+  return *this;
+}
+template<typename T>
+template<typename Predicate>
+Selection<T> Selection<T>::filter(Predicate&& p) const{
+  LOG_DEBUG_FUNCTION();
+  Selection<T> result(*this);
+  result.remove_if([&p](const value_type& val){return !p(val);});
+  return result;
+}
+
+
+template<typename T>
+template<typename Transform>
+Selection<T>& Selection<T>::apply(Transform&& transform){
+  LOG_DEBUG_FUNCTION();
+  for (auto& value: *this ){
+    transform(value);
+  }
+  remove_redundant_observers();
+  return *this;
+}
+
+template<typename T>
 void Selection<T>::remove_redundant_observers()
 {
   std::set<container_type*> new_observers;
@@ -726,7 +776,7 @@ bool Container<T>::empty() const noexcept {
 template<typename T>
 void Container<T>::insert(T&& value) {
   LOG_DEBUG_FUNCTION();
-  assert(value.parent()==this);
+  assert(ElementWithFlags(value).parent()==this);
   auto old_begin = elements.data();
   elements.reserve(elements.size()+1);
   auto new_pos= elements.data();
