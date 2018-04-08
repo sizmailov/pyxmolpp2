@@ -62,10 +62,29 @@ struct SelectionTraits{
   using element_type = std::conditional_t<std::is_const_v<T>,
                                           const ElementWithFlags<value_type>,
                                           ElementWithFlags<value_type>>;
+
+  using on_selection_move_type =std::conditional_t<std::is_const_v<T>,
+      void (container_type::*)(Selection<const value_type>&,Selection<const value_type>&) const,
+      void (container_type::*)(Selection<value_type>&, Selection<value_type>&)
+  >;
+
+  using on_selection_copy_type =std::conditional_t<std::is_const_v<T>,
+                                                   void (container_type::*)(Selection<const value_type>&) const,
+                                                   void (container_type::*)(Selection<value_type>&)
+  >;
+
+
+  using on_selection_delete_type =std::conditional_t<std::is_const_v<T>,
+                                                   void (container_type::*)(Selection<const value_type>&) const,
+                                                   void (container_type::*)(Selection<value_type>&)
+  >;
 };
 
 
-
+enum class SelectionState{
+  OK,
+  HAS_DANGLING_REFERENCES
+};
 
 
 template<typename T>
@@ -108,9 +127,12 @@ public:
   using element_type = typename SelectionTraits<T>::element_type;
 
   Selection();
-  ~Selection();
+  template<typename U=T, typename SFINAE=std::enable_if_t<std::is_const_v<U>>>
+  Selection(const Selection<typename Selection<U>::value_type>& rhs);
   Selection(const Selection& rhs);
   Selection(Selection&& rhs) noexcept;
+  ~Selection();
+
   Selection& operator=(const Selection& rhs);
   Selection& operator=(Selection&& rhs) noexcept;
 
@@ -139,12 +161,8 @@ private:
   void remove_redundant_observers();
 
   friend class SelectionRange<T>;
+  friend class Selection<const T>;
   friend class Container<value_type>;
-
-  enum class SelectionState{
-    OK,
-    HAS_DANGLING_REFERENCES
-  };
 
   std::vector<element_type*> elements;
   SelectionState state = SelectionState::OK;
@@ -181,6 +199,7 @@ public:
   Selection<const T> all() const;
 
   friend class Selection<T>;
+  friend class Selection<const T>;
 
 protected:
 
@@ -295,13 +314,20 @@ Selection<T>::~Selection() {
 template<typename T>
 Selection<T>::Selection(const Selection<T>& rhs): ObservableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
   LOG_DEBUG_FUNCTION();
-  notify_all(&container_type::on_selection_copy,*this);
+  notify_all(static_cast<typename SelectionTraits<T>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
+}
+
+template<typename T>
+template<typename U, typename SFINAE>
+Selection<T>::Selection(const Selection<typename Selection<U>::value_type>& rhs): state(rhs.state), elements(rhs.elements.begin(),rhs.elements.end()) {
+  LOG_DEBUG_FUNCTION();
+  this->notify_all(static_cast<typename SelectionTraits<U>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
 }
 
 template<typename T>
 Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObservableBy<container_type>(std::move(rhs)), state(rhs.state), elements(std::move(rhs.elements)){
   LOG_DEBUG_FUNCTION();
-  this->notify_all(&container_type::on_selection_move,rhs,*this);
+  this->notify_all(static_cast<typename SelectionTraits<T>::on_selection_move_type>(&container_type::on_selection_move),rhs,*this);
   rhs.state=SelectionState::OK;
 }
 template<typename T>
@@ -435,7 +461,7 @@ void Selection<T>::clear() noexcept {
   LOG_DEBUG_FUNCTION();
   elements.clear();
   constexpr auto alive_only = ObservableBy<container_type>::ApplyTo::ALIVE_ONLY;
-  this-> template notify_all<alive_only>(&container_type::on_selection_delete,*this);
+  this-> template notify_all<alive_only>(static_cast<typename SelectionTraits<T>::on_selection_delete_type>(&container_type::on_selection_delete),*this);
   this->remove_all_observers();
   state = SelectionState::OK;
 }
