@@ -11,6 +11,27 @@
   #define __FUNCTION_SIGNATURE__ __PRETTY_FUNCTION__
 #endif
 
+//#define NO_XMOL_LOGGING
+
+#ifdef NO_XMOL_LOGGING
+
+
+#define LOG_VERBOSE(str) (void)(0)
+#define LOG_TRACE(str) (void)(0)
+#define LOG_DEBUG(str) (void)(0)
+#define LOG_ERROR(str) (void)(0)
+#define LOG_WARNING(str) (void)(0)
+
+#define LOG_TRACE_FUNCTION()  (void)(0)
+#define LOG_DEBUG_FUNCTION()  (void)(0)
+#define LOG_VERBOSE_FUNCTION() (void)(0)
+
+#define LOG_TRACE_SCOPE(str)   (void)(0)
+#define LOG_DEBUG_SCOPE(str)   (void)(0)
+#define LOG_VERBOSE_SCOPE(str) (void)(0)
+
+#else
+
 #define LOG_VERBOSE(str) xmol::utils::Logger::Log((str), (xmol::utils::Logger::VERBOSE),0 )
 #define LOG_TRACE(str) xmol::utils::Logger::Log((str), (xmol::utils::Logger::TRACE),0 )
 #define LOG_DEBUG(str) xmol::utils::Logger::Log((str), (xmol::utils::Logger::DEBUG),0 )
@@ -25,7 +46,7 @@
 #define LOG_DEBUG_SCOPE(str)   xmol::utils::Logger::DummyEnterScopeLog DummyEnterScopeLog_((str),__FILE__,__LINE__,xmol::utils::Logger::DEBUG)
 #define LOG_VERBOSE_SCOPE(str) xmol::utils::Logger::DummyEnterScopeLog DummyEnterScopeLog_((str),__FILE__,__LINE__,xmol::utils::Logger::VERBOSE)
 
-
+#endif
 
 namespace xmol::utils {
 
