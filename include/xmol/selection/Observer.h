@@ -8,6 +8,18 @@
 
 #include "xmol/utils/Logger.h"
 
+namespace xmol::selection{
+
+enum class ObserverState{
+  OK,
+  DELETED
+};
+
+enum class ApplyTo{
+  ANY,
+  ALIVE_ONLY
+};
+
 template<typename T>
 class ObservableBy{
   static_assert(!std::is_reference_v<T>);
@@ -20,15 +32,6 @@ public:
   ObservableBy& operator=(const ObservableBy& rhs) = default;
 protected:
 
-  enum class ObserverState{
-    OK,
-    DELETED
-  };
-
-  enum class ApplyTo{
-    ANY,
-    ALIVE_ONLY
-  };
 
   template<ApplyTo apply_to=ApplyTo::ANY, typename ...Args, typename Func = void (T::*)(Args...)>
   void notify_all(Func func, Args&& ...args) const {
@@ -83,3 +86,4 @@ protected:
 protected:
   mutable std::map<T*,ObserverState> observers;
 };
+}

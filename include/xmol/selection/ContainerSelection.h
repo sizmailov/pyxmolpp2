@@ -376,6 +376,7 @@ template<typename T>
 template<typename U, typename SFINAE>
 Selection<T>::Selection(const Selection<typename Selection<U>::value_type>& rhs): state(rhs.state), elements(rhs.elements.begin(),rhs.elements.end()) {
   LOG_DEBUG_FUNCTION();
+  this->observers.insert(rhs.observers.begin(),rhs.observers.end());
   this->notify_all(static_cast<typename SelectionTraits<U>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
 }
 
@@ -550,8 +551,7 @@ template<typename T>
 void Selection<T>::clear() noexcept {
   LOG_DEBUG_FUNCTION();
   elements.clear();
-  constexpr auto alive_only = ObservableBy<container_type>::ApplyTo::ALIVE_ONLY;
-  this-> template notify_all<alive_only>(static_cast<typename SelectionTraits<T>::on_selection_delete_type>(&container_type::on_selection_delete),*this);
+  this-> template notify_all<ApplyTo::ALIVE_ONLY>(static_cast<typename SelectionTraits<T>::on_selection_delete_type>(&container_type::on_selection_delete),*this);
   this->remove_all_observers();
   state = SelectionState::OK;
 }
