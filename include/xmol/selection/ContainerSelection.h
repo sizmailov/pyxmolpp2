@@ -218,8 +218,8 @@ public:
   template<typename ...Args>
   void emplace(Args&& ...args);
 
-  size_t erase();
-  size_t erase(Selection<T>& selection);
+  void clear();
+  int erase(const Selection<T>& to_delete);
 
   Selection<T> all();
   Selection<const T> all() const;
@@ -241,7 +241,7 @@ protected:
 
 
   std::vector<element_type> elements;
-  size_t deleted = 0;
+  int deleted = 0;
 };
 
 
@@ -342,10 +342,13 @@ T& Selection<T>::operator[](int i) const{
     throw dead_selection_access("SelectionRange<T>::operator[]");
   }
   if (i<-size() || i >= size()){
-    throw std::out_of_range("Selection<T>::at");
+    throw std::out_of_range("Selection<T>::[]");
   }
   if (i<0){
-    i = size()-i;
+    i = size()+i;
+  }
+  if (elements[i]->is_deleted){
+    throw dead_selection_range_access("Selection<T>::[]");
   }
   return elements[i]->value;
 }
@@ -583,12 +586,16 @@ template<typename T>
 Selection<T>::Selection(Selection<T>::container_type& container) {
   LOG_DEBUG_FUNCTION();
   state = SelectionState::OK;
-  this->add_observer(container);
   for (element_type& el: container.elements){
-    this->elements.push_back(&el);
+    if (!el.is_deleted){
+      this->elements.push_back(&el);
+    }
   }
-  auto comparator = typename Selection<T>::element_type::PtrComparator{};
-  std::sort(this->elements.begin(),this->elements.end(),comparator);
+  if (!this->empty()){
+    this->add_observer(container);
+    auto comparator = typename Selection<T>::element_type::PtrComparator{};
+    std::sort(this->elements.begin(),this->elements.end(),comparator);
+  }
 }
 
 template<typename T>
@@ -663,18 +670,23 @@ Container<T>::Container(){
 template<typename T>
 Container<T>::~Container(){
   LOG_DEBUG_FUNCTION();
-  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
-  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
+  this->clear();
 }
 
 template<typename T>
-Container<T>::Container(Container<T>&& rhs) noexcept : ObservableBy<Selection<const T>>(std::move(rhs)), ObservableBy<Selection<T>>(std::move(rhs)){
+Container<T>::Container(Container<T>&& rhs) noexcept :
+    ObservableBy<Selection<const T>>(std::move(rhs)),
+    ObservableBy<Selection<T>>(std::move(rhs)),
+    elements(std::move(rhs.elements)),
+    deleted(rhs.deleted)
+{
   LOG_DEBUG_FUNCTION();
-  notify_all(&Selection<T>::on_container_move,rhs,*this);
+  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
+  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_move,rhs,*this);
 }
 
 template<typename T>
-Container<T>::Container(const Container<T>& rhs){
+Container<T>::Container(const Container<T>& rhs) : elements(rhs.elements), deleted(rhs.deleted) {
   LOG_DEBUG_FUNCTION();
 }
 
@@ -701,12 +713,12 @@ Container<T>& Container<T>::operator=(const Container<T>& rhs) {
 
 template<typename T>
 int Container<T>::size() const noexcept {
-  return elements.size();
+  return elements.size()-deleted;
 }
 
 template<typename T>
 bool Container<T>::empty() const noexcept {
-  return elements.empty();
+  return elements.empty() || size()==0;
 }
 
 
@@ -743,21 +755,52 @@ void Container<T>::emplace(Args&& ... args) {
   assert(ref.parent()==this);
 }
 
+template<typename T>
+void Container<T>::clear() {
+  LOG_DEBUG_FUNCTION();
+  int n = elements.size();
+  elements.clear();
+  deleted = 0;
+  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
+  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
+  this->ObservableBy<Selection<T>>::remove_all_observers();
+  this->ObservableBy<Selection<const T>>::remove_all_observers();
+}
+
+
+template<typename T>
+int Container<T>::erase(const Selection<T>& to_delete) {
+  LOG_DEBUG_FUNCTION();
+  int n = 0;
+  for (element_type* el: to_delete.elements){
+    if (el->parent()==this && !el->is_deleted){
+      el->is_deleted = true;
+      ++n;
+    }
+  }
+  this->deleted+=n;
+  return n;
+}
+
 
 
 template<typename T>
 Selection<T> Container<T>::all(){
   LOG_DEBUG_FUNCTION();
   Selection<T> s(*this);
-  ObservableBy<Selection<T>>::add_observer(s);
+  if (!s.empty()){
+    ObservableBy<Selection<T>>::add_observer(s);
+  }
   return std::move(s);
 }
 
 template<typename T>
-Selection<const T> Container<T>::all() const{
+Selection<const T> Container<T>::all() const {
   LOG_DEBUG_FUNCTION();
   Selection<const T> s(*this);
-  ObservableBy<Selection<const T>>::add_observer(s);
+  if (!s.empty()){
+    ObservableBy<Selection<const T>>::add_observer(s);
+  }
   return std::move(s);
 }
 

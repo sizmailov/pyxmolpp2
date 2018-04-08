@@ -222,9 +222,10 @@ TEST_F(ConSelTests, selection_grows){
   for (int i=0;i<limit;i++){
     c.emplace(i,c);
     c2.emplace(i,c2);
-    s = c.all();
-    s2 = c2.all();
   }
+
+  s = c.all();
+  s2 = c2.all();
 
   ASSERT_EQ(c.size(),limit);
   ASSERT_EQ(c2.size(),limit);
@@ -238,8 +239,6 @@ TEST_F(ConSelTests, selection_grows){
 
 
 TEST_F(ConSelTests, selection_copy_move){
-  xmol::utils::Logger::init("log.log",xmol::utils::Logger::VERBOSE);
-  LOG_DEBUG_SCOPE("global");
   using V = int_with_parent;
   using C = Container<int_with_parent>;
   using S = Selection<int_with_parent>;
@@ -253,7 +252,6 @@ TEST_F(ConSelTests, selection_copy_move){
 
   const int limit = 10;
   {
-    LOG_DEBUG_SCOPE("local");
     S s;
     cS s2;
     for (int i=0;i<limit;i++){
@@ -261,13 +259,38 @@ TEST_F(ConSelTests, selection_copy_move){
       c2.emplace(i,c2);
     }
     s = c.all();
-    s2 = c2.all();
+    const C& cc2 = c2;
+    s2 = cc2.all();
+    cS s5 = s2;
     s3 = std::move(s);
-    LOG_TRACE("HERE!");
     s4 = std::move(s2);
   }
   EXPECT_EQ(s3.size(),limit);
   EXPECT_EQ(s4.size(),limit);
 
 }
+
+
+TEST_F(ConSelTests, access_dead_selection_throws){
+  using V = int_with_parent;
+  using C = Container<int_with_parent>;
+  using S = Selection<int_with_parent>;
+  using cS = Selection<const int_with_parent>;
+
+  C c;
+  S s;
+  const int n = 100;
+  for (int i=0;i<n;i++){
+    c.emplace(i,c);
+  }
+
+  s = c.all();
+  c.erase(c.all());
+
+  ASSERT_EQ(c.size(),0);
+  ASSERT_EQ(s.size(),n);
+  EXPECT_THROW(s[0],xmol::selection::dead_selection_range_access);
+  EXPECT_THROW(*s.begin(),xmol::selection::dead_selection_range_access);
+}
+
 
