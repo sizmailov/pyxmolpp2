@@ -141,6 +141,7 @@ public:
 
   Selection& operator+=(const Selection& rhs);
   Selection& operator-=(const Selection& rhs);
+  Selection& operator*=(const Selection& rhs);
 
   size_t count(T&) const;
 
@@ -413,6 +414,24 @@ Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
 
   remove_redundant_observers();
 
+  return *this;
+}
+
+template<typename T>
+Selection<T>& Selection<T>::operator*=(const Selection<T>& rhs){
+  LOG_DEBUG_FUNCTION();
+  auto comparator = typename Selection<T>::element_type::PtrComparator{};
+  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
+  assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(), comparator));
+
+  auto end = std::set_intersection(elements.begin(),
+      elements.end(),
+      rhs.elements.begin(),
+      rhs.elements.end(),
+      elements.begin(),
+      comparator);
+  elements.erase(end, elements.end());
+  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
   return *this;
 }
 
