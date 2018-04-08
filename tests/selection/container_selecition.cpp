@@ -222,6 +222,10 @@ TEST_F(ConSelTests, selection_grows){
   for (int i=0;i<limit;i++){
     c.emplace(i,c);
     c2.emplace(i,c2);
+    if (i%100==0){
+      s = c.all();
+      s2 = c2.all();
+    }
   }
 
   s = c.all();
@@ -285,12 +289,60 @@ TEST_F(ConSelTests, access_dead_selection_throws){
   }
 
   s = c.all();
+
+  EXPECT_NO_THROW(s[0]);
+  EXPECT_NO_THROW(*s.begin());
+  EXPECT_NO_THROW(s.begin()->value);
+
   c.erase(c.all());
 
   ASSERT_EQ(c.size(),0);
   ASSERT_EQ(s.size(),n);
   EXPECT_THROW(s[0],xmol::selection::dead_selection_range_access);
   EXPECT_THROW(*s.begin(),xmol::selection::dead_selection_range_access);
+  EXPECT_THROW(s.begin()->value,xmol::selection::dead_selection_range_access);
 }
 
+TEST_F(ConSelTests, selection_tracks_container_move){
+  using V = int_with_parent;
+  using C = Container<int_with_parent>;
+  using S = Selection<int_with_parent>;
+  using cS = Selection<const int_with_parent>;
+
+  C c;
+  S s;
+  const int n = 100;
+  for (int i=0;i<n;i++){
+    c.emplace(i,c);
+  }
+
+  s = c.all();
+
+  C c2 = std::move(c);
+
+  ASSERT_EQ(c.size(),0);
+  ASSERT_EQ(c2.size(),n);
+  ASSERT_TRUE(s.is_valid());
+
+  EXPECT_NO_THROW(s[0]);
+  EXPECT_NO_THROW(*s.begin());
+  EXPECT_NO_THROW(s.begin()->value);
+
+  c.erase(c.all());
+
+  ASSERT_EQ(c.size(),0);
+  ASSERT_EQ(s.size(),n);
+
+  EXPECT_NO_THROW(s[0]);
+  EXPECT_NO_THROW(*s.begin());
+  EXPECT_NO_THROW(s.begin()->value);
+  int k=0;
+  EXPECT_NO_THROW(
+      for (auto&x: s){
+        x.value+=1;
+        ++k;
+      }
+  );
+  EXPECT_EQ(k,n);
+}
 

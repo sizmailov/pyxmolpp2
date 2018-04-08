@@ -53,14 +53,15 @@ private:
 
   struct PtrComparator{
     bool operator()(const ElementWithFlags<T>* lhs, const ElementWithFlags<T>* rhs){
-
-      if (lhs == nullptr) {
-        return false;
-      }
-
-      if (rhs == nullptr) {
-        return true;
-      }
+      assert(lhs!=nullptr);
+      assert(rhs!=nullptr);
+//      if (lhs == nullptr) {
+//        return false;
+//      }
+//
+//      if (rhs == nullptr) {
+//        return true;
+//      }
 
       return *lhs < *rhs;
     }
@@ -563,7 +564,7 @@ bool Selection<T>::is_valid() noexcept {
 template<typename T>
 void Selection<T>::on_container_move(Selection<T>::container_type& from, Selection<T>::container_type& to) {
   LOG_DEBUG_FUNCTION();
-  move_observer(from,to);
+  this->move_observer(from,to);
 }
 template<typename T>
 void Selection<T>::on_container_elements_move(element_type* old_begin, element_type* old_end, ptrdiff_t shift) {
