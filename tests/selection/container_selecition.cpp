@@ -7,10 +7,6 @@ using ::testing::Test;
 using namespace xmol::selection;
 
 
-class ConSelTests : public Test{
-
-};
-
 namespace {
 struct int_with_parent{
   int_with_parent(int value,Container<int_with_parent>& container): value(value), ptr(&container){}
@@ -18,6 +14,14 @@ struct int_with_parent{
   Container<int_with_parent>* ptr;
 };
 }
+
+class ConSelTests : public Test{
+public:
+  using V = int_with_parent;
+  using C = Container<int_with_parent>;
+  using S = Selection<int_with_parent>;
+  using cS = Selection<const int_with_parent>;
+};
 
 template<>
 Container<int_with_parent>* ElementWithFlags<int_with_parent>::parent() noexcept {
@@ -44,15 +48,15 @@ bool operator==(const int_with_parent& lhs, const int_with_parent& rhs) noexcept
 
 TEST_F(ConSelTests, invalid_selection_throws_on_use){
 
-  Selection<int_with_parent> s;
+  S s;
   {
-    Container<int_with_parent> c;
+    C c;
     c.emplace(1,c);
     s = c.all();
     ASSERT_TRUE(s.is_valid());
   }
   ASSERT_FALSE(s.is_valid());
-  Container<int_with_parent> c2;
+  C c2;
   auto value = int_with_parent(1,c2);
 
 
@@ -65,11 +69,6 @@ TEST_F(ConSelTests, invalid_selection_throws_on_use){
 }
 
 TEST_F(ConSelTests, set_operations_and_comparisons){
-
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
 
   C c;
   c.emplace(1,c);
@@ -122,11 +121,6 @@ TEST_F(ConSelTests, set_operations_and_comparisons){
 
 TEST_F(ConSelTests, selection_indexing){
 
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
-
   C c;
   c.emplace(1,c);
   c.emplace(2,c);
@@ -174,11 +168,6 @@ TEST_F(ConSelTests, selection_indexing){
 
 TEST_F(ConSelTests, selection_count){
 
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
-
   C c;
   c.emplace(1,c);
   c.emplace(2,c);
@@ -209,11 +198,6 @@ TEST_F(ConSelTests, selection_count){
 
 TEST_F(ConSelTests, selection_grows){
 
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
-
   C c;
   C c2;
   S s;
@@ -243,11 +227,6 @@ TEST_F(ConSelTests, selection_grows){
 
 
 TEST_F(ConSelTests, selection_copy_move){
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
-
   C c;
   C c2;
 
@@ -276,10 +255,6 @@ TEST_F(ConSelTests, selection_copy_move){
 
 
 TEST_F(ConSelTests, access_dead_selection_throws){
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
 
   C c;
   S s;
@@ -304,10 +279,6 @@ TEST_F(ConSelTests, access_dead_selection_throws){
 }
 
 TEST_F(ConSelTests, selection_tracks_container_move){
-  using V = int_with_parent;
-  using C = Container<int_with_parent>;
-  using S = Selection<int_with_parent>;
-  using cS = Selection<const int_with_parent>;
 
   C c;
   S s;
@@ -346,3 +317,56 @@ TEST_F(ConSelTests, selection_tracks_container_move){
   EXPECT_EQ(k,n);
 }
 
+TEST_F(ConSelTests, selection_filter){
+  C c;
+
+  const int n = 100;
+  for (int i=0;i<n;i++){
+    c.emplace(i,c);
+  }
+
+  S div_5 = c.all().filter([](const V&val){ return val.value%5==0;});
+  S not_div_5 = c.all().remove_if([](const V&val){ return val.value%5==0;});
+
+  EXPECT_EQ(div_5.size(),20);
+  EXPECT_EQ(not_div_5.size(),80);
+
+}
+
+TEST_F(ConSelTests, selection_composition){
+  C c;
+
+  const int n = 100;
+  for (int i=0;i<n;i++){
+    c.emplace(i,c);
+  }
+
+  S div_10 = c.all().filter([](const V&val){ return val.value%5==0;}).filter([](const V& val){return val.value%2==0;});
+  EXPECT_EQ(div_10.size(),10);
+
+}
+
+
+TEST_F(ConSelTests, selection_range_1){
+  C c;
+
+  const int n = 100;
+  for (int i=0;i<n;i++){
+    c.emplace(i,c);
+  }
+
+
+  cS s = c.all();
+
+  int sum =0;
+  for (auto it=s.begin();it!=s.end() ;++it){
+    sum+=it->value;
+  }
+  EXPECT_EQ(sum,50*99);
+
+  int sum2=0;
+  s.apply([&sum2](const V& val){sum2+=val.value;});
+
+  EXPECT_EQ(sum2,50*99);
+
+}
