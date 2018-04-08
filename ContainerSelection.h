@@ -292,18 +292,21 @@ SelectionRange<T> SelectionRange<T>::operator+(int n) {
 
 template<typename T>
 SelectionRange<T> Selection<T>::begin(){
+  LOG_VERBOSE_FUNCTION();
   assert(state==SelectionState::OK);
   return SelectionRange(*this,0,elements.size(),1);
 }
 
 template<typename T>
 SelectionRange<T> Selection<T>::end(){
+  LOG_VERBOSE_FUNCTION();
   assert(state==SelectionState::OK);
   return SelectionRange(*this,elements.size(),0,1);
 }
 
 template<typename T>
 T& Selection<T>::operator[](int i) const{
+  LOG_VERBOSE_FUNCTION();
   assert(state==SelectionState::OK);
   assert(i>-elements.size() && i < elements.size());
   if (i<0){
@@ -327,7 +330,7 @@ Selection<T>::~Selection() {
 template<typename T>
 Selection<T>::Selection(const Selection<T>& rhs): ObservableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
   LOG_DEBUG_FUNCTION();
-  notify_all(static_cast<typename SelectionTraits<T>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
+  this->notify_all(static_cast<typename SelectionTraits<T>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
 }
 
 template<typename T>
@@ -346,20 +349,28 @@ Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObservableBy<container_ty
 template<typename T>
 Selection<T>& Selection<T>::operator=(Selection<T>&& rhs) noexcept {
   LOG_DEBUG_FUNCTION();
+  if (&rhs==this){
+    return *this;
+  }
+  this->clear();
   ObservableBy<container_type>::operator=(std::move(rhs));
+  ObservableBy<container_type>::notify_all(&container_type::on_selection_move,rhs,*this);
   elements = std::move(rhs.elements);
   state = rhs.state;
   rhs.state=SelectionState::OK;
-  ObservableBy<container_type>::notify_all(&container_type::on_selection_move,rhs,*this);
 }
 
 template<typename T>
 Selection<T>& Selection<T>::operator=(const Selection<T>& rhs){
   LOG_DEBUG_FUNCTION();
+  if (&rhs==this){
+    return *this;
+  }
+  this->clear();
   ObservableBy<container_type>::operator=(rhs);
+  this->notify_all(&container_type::on_selection_copy,*this);
   elements =rhs.elements;
   state = rhs.state;
-  notify_all(&container_type::on_selection_copy,*this);
 }
 
 
@@ -444,6 +455,7 @@ Selection<T>& Selection<T>::operator*=(const Selection<T>& rhs){
       comparator);
   elements.erase(end, elements.end());
   assert(std::is_sorted(elements.begin(), elements.end(), comparator));
+  remove_redundant_observers();
   return *this;
 }
 
@@ -527,6 +539,8 @@ Selection<T>::Selection(Selection<T>::container_type& container) {
   for (element_type& el: container.elements){
     this->elements.push_back(&el);
   }
+  auto comparator = typename Selection<T>::element_type::PtrComparator{};
+  std::sort(this->elements.begin(),this->elements.end(),comparator);
 }
 
 template<typename T>
