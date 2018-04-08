@@ -250,7 +250,7 @@ protected:
 
 
   std::vector<element_type> elements;
-  int deleted = 0;
+  int n_deleted = 0;
 };
 
 
@@ -729,7 +729,7 @@ Container<T>::Container(Container<T>&& rhs) noexcept :
     ObservableBy<Selection<const T>>(std::move(rhs)),
     ObservableBy<Selection<T>>(std::move(rhs)),
     elements(std::move(rhs.elements)),
-    deleted(rhs.deleted)
+    n_deleted(rhs.n_deleted)
 {
   LOG_DEBUG_FUNCTION();
   ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
@@ -737,7 +737,7 @@ Container<T>::Container(Container<T>&& rhs) noexcept :
 }
 
 template<typename T>
-Container<T>::Container(const Container<T>& rhs) : elements(rhs.elements), deleted(rhs.deleted) {
+Container<T>::Container(const Container<T>& rhs) : elements(rhs.elements), n_deleted(rhs.n_deleted) {
   LOG_DEBUG_FUNCTION();
 }
 
@@ -745,8 +745,8 @@ template<typename T>
 Container<T>& Container<T>::operator=(Container<T>&& rhs) noexcept {
   LOG_DEBUG_FUNCTION();
   elements = std::move(rhs.elements);
-  deleted = rhs.deleted;
-  rhs.deleted = 0;
+  n_deleted = rhs.n_deleted;
+  rhs.n_deleted = 0;
   ObservableBy<Selection<T>>::operator=(std::move(rhs));
   ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
   ObservableBy<Selection<const T>>::operator=(std::move(rhs));
@@ -758,13 +758,13 @@ template<typename T>
 Container<T>& Container<T>::operator=(const Container<T>& rhs) {
   LOG_DEBUG_FUNCTION();
   elements = rhs.elements;
-  deleted = rhs.deleted;
+  n_deleted = rhs.n_deleted;
   return *this;
 }
 
 template<typename T>
 int Container<T>::size() const noexcept {
-  return elements.size()-deleted;
+  return elements.size()-n_deleted;
 }
 
 template<typename T>
@@ -811,7 +811,7 @@ void Container<T>::clear() {
   LOG_DEBUG_FUNCTION();
   int n = elements.size();
   elements.clear();
-  deleted = 0;
+  n_deleted = 0;
   ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
   ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
   this->ObservableBy<Selection<T>>::remove_all_observers();
@@ -829,7 +829,7 @@ int Container<T>::erase(const Selection<T>& to_delete) {
       ++n;
     }
   }
-  this->deleted+=n;
+  this->n_deleted+=n;
   return n;
 }
 
