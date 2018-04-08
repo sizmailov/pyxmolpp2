@@ -12,7 +12,11 @@ class ObservableBy{
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
 public:
-
+  ObservableBy() = default;
+  ObservableBy(ObservableBy&& rhs) noexcept = default;
+  ObservableBy(const ObservableBy& rhs) = default;
+  ObservableBy& operator=(ObservableBy&& rhs) noexcept = default;
+  ObservableBy& operator=(const ObservableBy& rhs) = default;
 protected:
 
   enum class ObserverState{
