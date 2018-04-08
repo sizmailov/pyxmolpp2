@@ -517,6 +517,27 @@ Selection<T>::Selection(Selection<T>::container_type& container) {
   }
 }
 
+template<typename T>
+Selection<T> operator+(const Selection<T>& lhs, const Selection<T>& rhs){
+  Selection<T> result(lhs);
+  result+=rhs;
+  return result;
+}
+
+template<typename T>
+Selection<T> operator-(const Selection<T>& lhs, const Selection<T>& rhs){
+  Selection<T> result(lhs);
+  result-=rhs;
+  return result;
+}
+
+template<typename T>
+Selection<T> operator*(const Selection<T>& lhs, const Selection<T>& rhs){
+  Selection<T> result(lhs);
+  result*=rhs;
+  return result;
+}
+
 
 template<typename T>
 Container<T>::Container(){
