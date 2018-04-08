@@ -1,11 +1,12 @@
 #pragma once
 
+#include <type_traits>
 #include <vector>
 #include <functional>
 #include <map>
 #include <cassert>
 
-#include "Logger.h"
+#include "xmol/utils/Logger.h"
 
 template<typename T>
 class ObservableBy{
@@ -28,23 +29,6 @@ protected:
     ANY,
     ALIVE_ONLY
   };
-
-  template<ApplyTo apply_to=ApplyTo::ANY, typename ...Args, typename Func = void (T::*)(Args...)>
-  void notify_all(Func func, Args&& ...args) {
-    LOG_DEBUG_FUNCTION();
-    for (auto [observable, state]: observers){
-      if (state==ObserverState::OK){
-        std::invoke(func, observable, std::forward<Args>(args)...);
-      }else{
-        if (apply_to==ApplyTo::ANY) {
-          throw std::runtime_error("Observer already dead");
-        }else{
-          LOG_WARNING("Observable outlives its observer");
-        }
-      }
-
-    }
-  }
 
   template<ApplyTo apply_to=ApplyTo::ANY, typename ...Args, typename Func = void (T::*)(Args...)>
   void notify_all(Func func, Args&& ...args) const {

@@ -1,9 +1,9 @@
-#include "Logger.h"
+#include "xmol/utils/Logger.h"
 #include <iostream>
 #include <fstream>
 #include <ctime>
 
-void Common::Logger::init(const std::string filename, Common::Logger::LOG_LEVEL log_lvl) {
+void xmol::utils::Logger::init(const std::string filename, xmol::utils::Logger::LOG_LEVEL log_lvl) {
   instance().level_names[VERBOSE] = "[VERBOSE]";
   instance().level_names[DEBUG] = "[ DEBUG ]";
   instance().level_names[TRACE] = "[ TRACE ]";
@@ -32,7 +32,7 @@ void Common::Logger::init(const std::string filename, Common::Logger::LOG_LEVEL 
   << std::endl;
   log.flush();
 }
-void Common::Logger::Log(const std::string& log_info, Common::Logger::LOG_LEVEL log_lvl,
+void xmol::utils::Logger::Log(const std::string& log_info, xmol::utils::Logger::LOG_LEVEL log_lvl,
                               int indent_inc/*=0*/) {
 
   if (log_lvl >= instance().log_level) {
@@ -81,24 +81,24 @@ void Common::Logger::Log(const std::string& log_info, Common::Logger::LOG_LEVEL 
     }
   }
 }
-Common::Logger& Common::Logger::instance() {
+xmol::utils::Logger& xmol::utils::Logger::instance() {
   static Logger logger;
   return logger;
 }
-Common::Logger::DummyEnterFunctionLog::~DummyEnterFunctionLog() {
+xmol::utils::Logger::DummyEnterFunctionLog::~DummyEnterFunctionLog() {
   if (lvl >= Logger::instance().log_level) {
     Logger::Log("} // Leaving function  '" + std::string(sign) + "'", (lvl), -2);
   }
 }
-Common::Logger::DummyEnterFunctionLog::DummyEnterFunctionLog(const char* _sign, const char* file,
-                                                                  Common::Logger::LOG_LEVEL _lvl) : sign(_sign)
+xmol::utils::Logger::DummyEnterFunctionLog::DummyEnterFunctionLog(const char* _sign, const char* file,
+                                                                  xmol::utils::Logger::LOG_LEVEL _lvl) : sign(_sign)
                                                                                                          , lvl(_lvl) {
   if (_lvl >= Logger::instance().log_level) {
     Logger::Log(std::string(sign) + " { // file:" + std::string(file), (lvl), +2);
   }
 }
-Common::Logger::DummyEnterScopeLog::DummyEnterScopeLog(const char* _sign, const char* file, int line,
-                                                            Common::Logger::LOG_LEVEL _lvl) : sign(_sign), lvl(
+xmol::utils::Logger::DummyEnterScopeLog::DummyEnterScopeLog(const char* _sign, const char* file, int line,
+                                                            xmol::utils::Logger::LOG_LEVEL _lvl) : sign(_sign), lvl(
     _lvl) {
   if (_lvl >= Logger::instance().log_level) {
     Logger::Log(
@@ -106,7 +106,7 @@ Common::Logger::DummyEnterScopeLog::DummyEnterScopeLog(const char* _sign, const 
         (lvl), +2);
   }
 }
-Common::Logger::DummyEnterScopeLog::~DummyEnterScopeLog() {
+xmol::utils::Logger::DummyEnterScopeLog::~DummyEnterScopeLog() {
   if (lvl >= Logger::instance().log_level) {
     Logger::Log("} // Leaving  '" + std::string(sign) + "'", (lvl), -2);
   }
