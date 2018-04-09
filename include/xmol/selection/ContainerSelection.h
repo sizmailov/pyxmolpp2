@@ -36,7 +36,7 @@ struct ElementWithFlags{
 
   explicit ElementWithFlags(T&& value): value(std::move(value)),is_deleted(false){
   }
-  explicit ElementWithFlags(const T& value): value(std::move(value)),is_deleted(false){
+  explicit ElementWithFlags(const T& value): value(value),is_deleted(false){
   }
   T value;
   bool is_deleted = false;
@@ -225,7 +225,7 @@ public:
   void insert(T&& value);
 
   template<typename ...Args>
-  void emplace(Args&& ...args);
+  T& emplace(Args&& ...args);
 
   void clear();
   int erase(const Selection<T>& to_delete);
@@ -791,7 +791,7 @@ void Container<T>::insert(T&& value) {
 
 template<typename T>
 template<typename ...Args>
-void Container<T>::emplace(Args&& ... args) {
+T& Container<T>::emplace(Args&& ... args) {
   LOG_DEBUG_FUNCTION();
   auto old_begin = elements.data();
   elements.reserve(elements.size()+1);
@@ -802,8 +802,9 @@ void Container<T>::emplace(Args&& ... args) {
     ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
     ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
   }
-  auto ref = elements.emplace_back(T(std::forward<Args>(args)...));
+  element_type& ref = elements.emplace_back(T(std::forward<Args>(args)...));
   assert(ref.parent()==this);
+  return ref.value;
 }
 
 template<typename T>
