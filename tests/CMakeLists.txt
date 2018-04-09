@@ -11,3 +11,4 @@ endfunction(define_test_suite)
 
 
 define_test_suite(selection observable)
+define_test_suite(polymer observable)
