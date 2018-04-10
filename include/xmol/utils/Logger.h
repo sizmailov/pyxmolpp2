@@ -2,7 +2,6 @@
 
 #include <string>
 #include <map>
-#include <mutex>
 
 
 #ifdef _WIN32
@@ -11,7 +10,7 @@
   #define __FUNCTION_SIGNATURE__ __PRETTY_FUNCTION__
 #endif
 
-//#define NO_XMOL_LOGGING
+#define NO_XMOL_LOGGING
 
 #ifdef NO_XMOL_LOGGING
 
@@ -59,12 +58,13 @@ public:
     DEBUG,
     TRACE,
     WARNING,
-    _ERROR
+    _ERROR,
+    NO_LOG
   };
   Logger(const Logger& root) = delete ;
   Logger& operator=(const Logger&) = delete;
 
-  static void init(const std::string filename, LOG_LEVEL log_lvl);
+  static void init(std::string filename, LOG_LEVEL log_lvl);
   static void Log(const std::string& log_info, LOG_LEVEL log_lvl, int indent_inc=0);
 
   class DummyEnterFunctionLog;
@@ -79,9 +79,9 @@ private:
   std::map<LOG_LEVEL, std::string> level_names;
   LOG_LEVEL log_level;
   std::string logfile;
-  std::mutex mutex;
   static Logger& instance();
-  Logger(){};
+  Logger() : logfile(""),log_level(NO_LOG),indent(2){
+  };
 };
 
 class Logger::DummyEnterFunctionLog

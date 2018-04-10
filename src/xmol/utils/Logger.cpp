@@ -3,7 +3,7 @@
 #include <fstream>
 #include <ctime>
 
-void xmol::utils::Logger::init(const std::string filename, xmol::utils::Logger::LOG_LEVEL log_lvl) {
+void xmol::utils::Logger::init(std::string filename, xmol::utils::Logger::LOG_LEVEL log_lvl) {
   instance().level_names[VERBOSE] = "[VERBOSE]";
   instance().level_names[DEBUG] = "[ DEBUG ]";
   instance().level_names[TRACE] = "[ TRACE ]";
@@ -13,7 +13,6 @@ void xmol::utils::Logger::init(const std::string filename, xmol::utils::Logger::
   instance().logfile = std::move(filename);
   instance().indent = 0;
 
-  std::lock_guard<std::mutex> lock(instance().mutex);
   std::fstream log(instance().logfile, std::ios::out | std::ios::app);
   std::time_t t = std::time(nullptr);
   char mbstr[30];
@@ -36,7 +35,6 @@ void xmol::utils::Logger::Log(const std::string& log_info, xmol::utils::Logger::
                               int indent_inc/*=0*/) {
 
   if (log_lvl >= instance().log_level) {
-    std::lock_guard<std::mutex> lock(instance().mutex);
     std::fstream log(instance().logfile, std::ios::out | std::ios::app);
 
     if (!log.good()) {

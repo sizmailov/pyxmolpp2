@@ -9,6 +9,7 @@ IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
         set(CMAKE_CXX_FLAGS "--coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ${CMAKE_CXX_FLAGS}")
     ENDIF(CMAKE_COMPILER_IS_GNUCC)
     message("USE COVERAGE PROFILE")
+
 else()
     message("DONT USE COVERAGE PROFILE")
 ENDIF()
@@ -20,6 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
 
 add_subdirectory(external/googletest)
 include_directories(external/googletest/googletest/include)
+include_directories(external/range-v3/include)
 
 include_directories(include)
 

@@ -15,7 +15,7 @@ class ShortAsciiString {
 
 public:
 
-  static_assert(MAX_LENGTH<=8,"");
+  static_assert(MAX_LENGTH<=8);
   using uint_type = typename std::conditional< MAX_LENGTH<=4,
                                                typename std::conditional<MAX_LENGTH<=2,
                                                                          typename std::conditional<MAX_LENGTH<=1,
@@ -38,13 +38,13 @@ public:
 
   constexpr ShortAsciiString(const ShortAsciiString& other) : m_value(other.m_value){
   };
-  constexpr ShortAsciiString(ShortAsciiString&& other) : m_value(other.m_value){
+  constexpr ShortAsciiString(ShortAsciiString&& other) noexcept : m_value(other.m_value){
     other.m_value=0;
   };
 
 
   constexpr ShortAsciiString& operator=(const ShortAsciiString& other){ m_value = other.m_value; return *this;}
-  constexpr ShortAsciiString& operator=(ShortAsciiString&& other){ m_value = other.m_value; other.m_value = 0; return *this;}
+  constexpr ShortAsciiString& operator=(ShortAsciiString&& other)noexcept { m_value = other.m_value; other.m_value = 0; return *this;}
 
   ShortAsciiString& operator=(const std::string& aName){
     m_value = to_uint(aName.c_str());

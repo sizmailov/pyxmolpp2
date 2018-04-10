@@ -1,0 +1,36 @@
+#include <gtest/gtest.h>
+
+#include "xmol/pdb/PDBReader.h"
+
+
+using ::testing::Test;
+using namespace xmol::pdb;
+using namespace xmol::polymer;
+
+
+
+class PdbReaderTests : public Test{
+public:
+};
+
+TEST_F(PdbReaderTests, sound){
+  std::stringstream ss("ATOM     32  N  AARG A  -3      11.281  86.699  94.383  0.50 35.88           N  ");
+  PDBReader pdbReader(ss);
+
+  auto frame = pdbReader.read_frame();
+  auto& chain =  frame.all()[0];
+  auto& residue =  chain.all()[0];
+  auto& atom =  residue.all()[0];
+
+  EXPECT_EQ(frame.size(),1);
+  EXPECT_EQ(chain.size(),1);
+  EXPECT_EQ(chain.name(),ChainName("A"));
+  EXPECT_EQ(residue.size(),1);
+  EXPECT_EQ(residue.name(),ResidueName("ARG"));
+  EXPECT_EQ(residue.id(),-3);
+  EXPECT_EQ(atom.id(),32);
+  EXPECT_EQ(atom.name(),AtomName("N"));
+  EXPECT_DOUBLE_EQ(atom.r().x,11.281);
+  EXPECT_DOUBLE_EQ(atom.r().y,86.699);
+  EXPECT_DOUBLE_EQ(atom.r().z,94.383);
+}
