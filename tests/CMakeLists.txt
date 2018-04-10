@@ -5,7 +5,7 @@ function(define_test_suite name dependencies)
     target_link_libraries("${name}Tests" ${dependencies} gtest_main)
     add_test(NAME "${name}Tests"
             COMMAND "${name}Tests"
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/test"
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
             )
 endfunction(define_test_suite)
 

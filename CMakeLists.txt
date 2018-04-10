@@ -16,7 +16,7 @@ ENDIF()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
 
-
+enable_testing()
 
 
 add_subdirectory(external/googletest)
