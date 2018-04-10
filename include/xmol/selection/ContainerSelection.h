@@ -406,6 +406,7 @@ Selection<T>& Selection<T>::operator=(Selection<T>&& rhs) noexcept {
   elements = std::move(rhs.elements);
   state = rhs.state;
   rhs.state=SelectionState::OK;
+  return *this;
 }
 
 template<typename T>
@@ -419,6 +420,7 @@ Selection<T>& Selection<T>::operator=(const Selection<T>& rhs){
   this->notify_all(&container_type::on_selection_copy,*this);
   elements =rhs.elements;
   state = rhs.state;
+  return *this;
 }
 
 

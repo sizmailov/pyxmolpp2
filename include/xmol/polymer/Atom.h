@@ -57,8 +57,7 @@ public:
   Residue& residue() noexcept;
 
 private:
-  Atom(Residue& residue, AtomName name, atomId_t id, XYZ r, atomIndex_t index) :
-      m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue), m_index(index) {}
+  Atom(Residue& residue, AtomName name, atomId_t id, XYZ r, atomIndex_t index);
   friend class xmol::selection::Container<Atom>;
   friend class Residue;
 
@@ -78,7 +77,6 @@ public:
   Residue& operator=(const Residue& rhs);
   Residue& operator=(Residue&& rhs) noexcept ;
 
-
   const residueIndex_t& index() const;
 
   const ResidueName& name() const;
@@ -90,14 +88,13 @@ public:
   const Chain& chain() const noexcept;
   Chain& chain() noexcept;
 
-  Atom& emplace(AtomName name, atomId_t id, XYZ r){
-    return Container<Atom>::emplace(*this,name,id, r, residueIndex_t(size()));
-  }
+  Atom& emplace(AtomName name, atomId_t id, XYZ r);
+
+  Atom& operator[](const AtomName& atomName);
+  const Atom& operator[](const AtomName& atomName) const;
 
 private:
-  Residue(Chain& chain, ResidueName name, residueId_t id, residueIndex_t index, int reserve=0) :
-      Container<Atom>(reserve),
-      m_name(std::move(name)), m_id(id), m_chain(&chain), m_index(index){}
+  Residue(Chain& chain, ResidueName name, residueId_t id, residueIndex_t index, int reserve=0);
   friend class xmol::selection::Container<Residue>;
   friend class Chain;
   ResidueName m_name;
@@ -122,17 +119,18 @@ public:
   const Frame& frame() const noexcept;
   Frame& frame() noexcept;
 
-  Residue& emplace(ResidueName name, residueId_t id, int reserve=0){
-    return Container<Residue>::emplace(*this,name,id, residueIndex_t(size()), reserve);
-  }
+  Residue& emplace(ResidueName name, residueId_t id, int reserve=0);
+
+  Residue& operator[](const residueId_t& residueId);
+  const Residue& operator[](const residueId_t& residueId) const;
 
 private:
-  Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve=0) :
-      Container<Residue>(reserve),
-      m_name(std::move(name)), m_index(id), m_frame(&frame){}
+  Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve=0);
   friend class xmol::selection::Container<Chain>;
   friend class Frame;
+  friend class Residue;
   ChainName m_name;
+  std::map<residueId_t, residueIndex_t> m_lookup_table;
   chainIndex_t m_index;
   Frame* m_frame;
 };
@@ -146,13 +144,12 @@ public:
 
   const frameIndex_t& index() const;
 
-  explicit Frame(frameIndex_t id, int reserve=0) :
-      Container<Chain>(reserve),
-      m_index(id) {};
+  explicit Frame(frameIndex_t id, int reserve=0);
 
-  Chain& emplace(ChainName name, int reserve=0){
-    return Container<Chain>::emplace(*this,name,chainIndex_t(size()),reserve);
-  }
+  Chain& emplace(ChainName name, int reserve=0);
+
+  Chain& operator[](const chainIndex_t& chainIndex);
+  const Chain& operator[](const chainIndex_t& residueId) const;
 
 private:
   frameIndex_t m_index;

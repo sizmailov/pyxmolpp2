@@ -257,8 +257,42 @@ TEST_F(AtomTests, composition){
     EXPECT_EQ(A2.r().y,A.r().y);
     EXPECT_EQ(A2.r().z,A.r().z);
   }
+}
 
+TEST_F(AtomTests, brakets){
+  Frame f(1);
 
+  Chain&c = f.emplace(ChainName(""));
+  Residue&r = c.emplace(ResidueName("GLY"),1);
+  Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
+
+  { // cover const functions
+    const Frame& frame = f;
+    EXPECT_EQ(frame[0],c);
+    EXPECT_EQ(frame[0][1],r);
+    EXPECT_EQ(frame[0][1][AtomName("CA")],a);
+
+    EXPECT_ANY_THROW(frame[1]);
+    EXPECT_ANY_THROW(frame[0][2]);
+    EXPECT_ANY_THROW(frame[0][1][AtomName("CB")]);
+  }
+
+  EXPECT_EQ(f[0],c);
+  EXPECT_EQ(f[0][1],r);
+  EXPECT_EQ(f[0][1][AtomName("CA")],a);
+
+  EXPECT_ANY_THROW(f[1]);
+  EXPECT_ANY_THROW(f[0][2]);
+  EXPECT_ANY_THROW(f[0][1][AtomName("CB")]);
+
+  r.set_id(42);
+  a.set_name(AtomName("XX"));
+
+  EXPECT_EQ(f[0][1],r);
+  EXPECT_EQ(f[0][1][AtomName("XX")],a);
+
+  EXPECT_ANY_THROW(f[0][2]);
+  EXPECT_ANY_THROW(f[0][42][AtomName("YY")]);
 
 }
 
