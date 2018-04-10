@@ -22,6 +22,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
 add_subdirectory(external/googletest)
 include_directories(external/googletest/googletest/include)
 include_directories(external/range-v3/include)
+include_directories(external/GSL/include)
 
 include_directories(include)
 

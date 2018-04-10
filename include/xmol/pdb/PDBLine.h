@@ -29,6 +29,7 @@ public:
 
 private:
   StrPtr getStrPtr(const RecordFieldName& fieldName, size_t idx = 0) const;
+  RecordTypeName recordName;
   const std::string* line;
   const PDBRecordType* pdbRecordType;
 };

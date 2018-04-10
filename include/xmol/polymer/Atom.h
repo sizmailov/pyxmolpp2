@@ -95,7 +95,8 @@ public:
   }
 
 private:
-  Residue(Chain& chain, ResidueName name, residueId_t id, residueIndex_t index) :
+  Residue(Chain& chain, ResidueName name, residueId_t id, residueIndex_t index, int reserve=0) :
+      Container<Atom>(reserve),
       m_name(std::move(name)), m_id(id), m_chain(&chain), m_index(index){}
   friend class xmol::selection::Container<Residue>;
   friend class Chain;
@@ -121,12 +122,13 @@ public:
   const Frame& frame() const noexcept;
   Frame& frame() noexcept;
 
-  Residue& emplace(ResidueName name, residueId_t id){
-    return Container<Residue>::emplace(*this,name,id, residueIndex_t(size()));
+  Residue& emplace(ResidueName name, residueId_t id, int reserve=0){
+    return Container<Residue>::emplace(*this,name,id, residueIndex_t(size()), reserve);
   }
 
 private:
-  Chain(Frame& frame, ChainName name, chainIndex_t id) :
+  Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve=0) :
+      Container<Residue>(reserve),
       m_name(std::move(name)), m_index(id), m_frame(&frame){}
   friend class xmol::selection::Container<Chain>;
   friend class Frame;
@@ -144,10 +146,12 @@ public:
 
   const frameIndex_t& index() const;
 
-  explicit Frame(frameIndex_t id) : m_index(id) {};
+  explicit Frame(frameIndex_t id, int reserve=0) :
+      Container<Chain>(reserve),
+      m_index(id) {};
 
-  Chain& emplace(ChainName name){
-    return Container<Chain>::emplace(*this,name,chainIndex_t(size()));
+  Chain& emplace(ChainName name, int reserve=0){
+    return Container<Chain>::emplace(*this,name,chainIndex_t(size()),reserve);
   }
 
 private:

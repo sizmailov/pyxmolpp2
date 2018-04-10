@@ -211,7 +211,7 @@ public:
   using value_type = typename SelectionTraits<T>::value_type;
   using element_type = typename SelectionTraits<T>::element_type;
 
-  Container();
+  explicit Container(int reserve=0);
   ~Container();
   Container(Container&& rhs) noexcept ;
   Container(const Container& rhs);
@@ -714,8 +714,9 @@ Selection<T> operator*(const Selection<const T>& lhs, const Selection<T>& rhs){
 
 
 template<typename T>
-Container<T>::Container(){
+Container<T>::Container(int reserve){
   LOG_DEBUG_FUNCTION();
+  elements.reserve(reserve);
 }
 
 template<typename T>
