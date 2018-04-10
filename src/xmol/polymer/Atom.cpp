@@ -4,11 +4,6 @@ using namespace xmol::polymer;
 
 // -------------------- Atom  -------------------------
 
-const atomIndex_t& Atom::index() const{
-  return m_index;
-}
-
-
 const atomId_t& Atom::id() const {
   return m_id;
 }
@@ -44,7 +39,6 @@ Residue::Residue(const Residue& rhs) : Container<Atom>(rhs){
   }
   m_name = rhs.m_name;
   m_id = rhs.m_id;
-  m_index = rhs.m_index;
   m_chain = rhs.m_chain;
 }
 
@@ -54,7 +48,6 @@ Residue::Residue(Residue&& rhs) noexcept : Container<Atom>(std::move(rhs)){
   }
   m_name = std::move(rhs.m_name);
   m_id = std::move(rhs.m_id);
-  m_index = std::move(rhs.m_index);
   m_chain = std::move(rhs.m_chain);
 }
 
@@ -65,7 +58,6 @@ Residue& Residue::operator=(const Residue& rhs) {
   }
   m_name = rhs.m_name;
   m_id = rhs.m_id;
-  m_index = rhs.m_index;
   return *this;
 }
 
@@ -76,13 +68,9 @@ Residue& Residue::operator=(Residue&& rhs) noexcept {
   }
   m_name = std::move(rhs.m_name);
   m_id = std::move(rhs.m_id);
-  m_index = std::move(rhs.m_index);
   return *this;
 }
 
-const residueIndex_t& Residue::index() const{
-  return m_index;
-}
 
 const residueId_t& Residue::id() const {
   return m_id;
@@ -114,8 +102,8 @@ Residue& Atom::residue() noexcept {
 }
 
 Atom::Atom(Residue& residue, AtomName name, atomId_t id,
-    XYZ r, atomIndex_t index) :
-    m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue), m_index(index) {}
+    XYZ r) :
+    m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
 
 
 Chain& Residue::chain() noexcept{
@@ -127,7 +115,7 @@ const Chain& Residue::chain() const noexcept {
 }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
-  return Container<Atom>::emplace(*this,name,id, r, residueIndex_t(size()));
+  return Container<Atom>::emplace(*this,name,id, r);
 }
 
 Atom& Residue::operator[](const AtomName& atomName) {
@@ -149,10 +137,9 @@ const Atom& Residue::operator[](const AtomName& atomName) const{
   }
   throw std::runtime_error("Residue has no atom "+atomName.str());
 }
-Residue::Residue(Chain& chain, ResidueName name, residueId_t id,
-    residueIndex_t index, int reserve)  :
+Residue::Residue(Chain& chain, ResidueName name, residueId_t id, int reserve)  :
     Container<Atom>(reserve),
-    m_name(std::move(name)), m_id(id), m_chain(&chain), m_index(index){}
+    m_name(std::move(name)), m_id(id), m_chain(&chain){}
 
 // -------------------- Chain -------------------------
 
@@ -181,7 +168,6 @@ Chain& Chain::operator=(const Chain& rhs) {
     residues.value.m_chain = this;
   }
   m_name = rhs.m_name;
-  m_index = rhs.m_index;
   m_frame = rhs.m_frame;
   return *this;
 }
@@ -216,7 +202,7 @@ Frame& Chain::frame() noexcept{
 
 Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
     m_lookup_table.emplace(id,size());
-    return Container<Residue>::emplace(*this,name,id, residueIndex_t(size()), reserve);
+    return Container<Residue>::emplace(*this, name, id, reserve);
 }
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
@@ -344,9 +330,9 @@ namespace {
     const Frame& frame = chain.frame();
     return std::tuple(
         frame.index(),&frame,
-        chain.index(),&chain,
-        residue.index(),&residue,
-        atom.index(),&atom);
+        &chain,
+        &residue,
+        &atom);
   }
   auto compare_set(const Residue& residue){
 
@@ -354,15 +340,15 @@ namespace {
     const Frame& frame = chain.frame();
     return std::tuple(
         frame.index(),&frame,
-        chain.index(),&chain,
-        residue.index(),&residue);
+        &chain,
+        &residue);
   }
 
   auto compare_set(const Chain& chain){
     const Frame& frame = chain.frame();
     return std::tuple(
         frame.index(),&frame,
-        chain.index(),&chain);
+        &chain);
   }
 }
 template<>

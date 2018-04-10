@@ -38,7 +38,6 @@ TEST_F(AtomTests, composition){
   EXPECT_EQ(C_GLY2_CG.name(),AtomName("CG"));
   EXPECT_EQ(C_GLY2_CG.name().str(),"CG");
 
-  EXPECT_EQ(C_GLY2_CG.index(),2);
   EXPECT_EQ(C_GLY2_CG.id(),3);
 
 
@@ -55,7 +54,6 @@ TEST_F(AtomTests, composition){
   EXPECT_EQ(C_GLY2_CG.name(),AtomName("CGG"));
   EXPECT_EQ(C_GLY2_CG.name().str(),"CGG");
 
-  EXPECT_EQ(C_GLY2_CG.index(),2);
   EXPECT_EQ(C_GLY2_CG.id(),4);
 
   EXPECT_EQ(C_GLY2_CG.residue(),C_GLY2);
@@ -73,8 +71,6 @@ TEST_F(AtomTests, composition){
   EXPECT_EQ(C_GLY2.id(),2);
   C_GLY2.set_id(2);
   EXPECT_EQ(C_GLY2.id(),2);
-
-  EXPECT_EQ(C_GLY2.index(),1);
 
   EXPECT_EQ(C_GLY2.chain(),C);
 
@@ -101,7 +97,6 @@ TEST_F(AtomTests, composition){
     const Residue& R2 = C2.all()[-1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -110,7 +105,6 @@ TEST_F(AtomTests, composition){
     const Atom& A2 = R2.all()[-1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
-    EXPECT_EQ(A2.index(),A.index());
     EXPECT_EQ(A2.id(),A.id());
     EXPECT_EQ(A2.r().x,A.r().x);
     EXPECT_EQ(A2.r().y,A.r().y);
@@ -131,7 +125,6 @@ TEST_F(AtomTests, composition){
     const Residue& R2 = C2.all()[-1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -140,7 +133,6 @@ TEST_F(AtomTests, composition){
     const Atom& A2 = R2.all()[-1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
-    EXPECT_EQ(A2.index(),A.index());
     EXPECT_EQ(A2.id(),A.id());
     EXPECT_EQ(A2.r().x,A.r().x);
     EXPECT_EQ(A2.r().y,A.r().y);
@@ -163,7 +155,6 @@ TEST_F(AtomTests, composition){
     const Residue& R2 = C2.all()[-1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -172,7 +163,6 @@ TEST_F(AtomTests, composition){
     const Atom& A2 = R2.all()[-1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
-    EXPECT_EQ(A2.index(),A.index());
     EXPECT_EQ(A2.id(),A.id());
     EXPECT_EQ(A2.r().x,A.r().x);
     EXPECT_EQ(A2.r().y,A.r().y);
@@ -194,7 +184,6 @@ TEST_F(AtomTests, composition){
     const Residue& R2 = C2.all()[-1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -203,7 +192,6 @@ TEST_F(AtomTests, composition){
     const Atom& A2 = R2.all()[-1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
-    EXPECT_EQ(A2.index(),A.index());
     EXPECT_EQ(A2.id(),A.id());
     EXPECT_EQ(A2.r().x,A.r().x);
     EXPECT_EQ(A2.r().y,A.r().y);
@@ -226,7 +214,6 @@ TEST_F(AtomTests, composition){
     Residue& R2 = C2.all()[-1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -237,7 +224,6 @@ TEST_F(AtomTests, composition){
 
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(),R.name());
-    EXPECT_EQ(R2.index(),R.index());
     EXPECT_EQ(R2.id(),R.id());
     EXPECT_EQ(R2.size(),R.size());
 
@@ -251,7 +237,6 @@ TEST_F(AtomTests, composition){
 
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
-    EXPECT_EQ(A2.index(),A.index());
     EXPECT_EQ(A2.id(),A.id());
     EXPECT_EQ(A2.r().x,A.r().x);
     EXPECT_EQ(A2.r().y,A.r().y);

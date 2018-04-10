@@ -16,7 +16,6 @@ using ResidueName = xmol::utils::ShortAsciiString<3,detail::ResidueNameTag>;
 using ChainName = xmol::utils::ShortAsciiString<1,detail::ChainNameTag>;
 
 
-using atomIndex_t = int32_t;
 using residueIndex_t = int32_t;
 using chainIndex_t = int32_t;
 
@@ -42,8 +41,6 @@ public:
   Atom& operator=(const Atom& rhs) = default;
   Atom& operator=(Atom&& rhs) noexcept= default;
 
-  const atomIndex_t& index() const;
-
   const atomId_t& id() const;
   Atom& set_id(atomId_t&& value);
 
@@ -57,7 +54,7 @@ public:
   Residue& residue() noexcept;
 
 private:
-  Atom(Residue& residue, AtomName name, atomId_t id, XYZ r, atomIndex_t index);
+  Atom(Residue& residue, AtomName name, atomId_t id, XYZ r);
   friend class xmol::selection::Container<Atom>;
   friend class Residue;
 
@@ -65,7 +62,6 @@ private:
   Residue* m_residue;
   AtomName m_name;
   atomId_t m_id;
-  atomIndex_t m_index;
 };
 
 class Residue: public xmol::selection::Container<Atom> {
@@ -76,8 +72,6 @@ public:
   Residue(Residue&& rhs) noexcept;
   Residue& operator=(const Residue& rhs);
   Residue& operator=(Residue&& rhs) noexcept ;
-
-  const residueIndex_t& index() const;
 
   const ResidueName& name() const;
   Residue& set_name(ResidueName&& value);
@@ -94,12 +88,11 @@ public:
   const Atom& operator[](const AtomName& atomName) const;
 
 private:
-  Residue(Chain& chain, ResidueName name, residueId_t id, residueIndex_t index, int reserve=0);
+  Residue(Chain& chain, ResidueName name, residueId_t id, int reserve=0);
   friend class xmol::selection::Container<Residue>;
   friend class Chain;
   ResidueName m_name;
   residueId_t m_id;
-  residueIndex_t m_index;
   Chain* m_chain;
 };
 
