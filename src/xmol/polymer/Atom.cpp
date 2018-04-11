@@ -35,39 +35,43 @@ Atom& Atom::set_r(XYZ&& value) {
 
 Residue::Residue(const Residue& rhs) : Container<Atom>(rhs){
   for (auto& atom: this->elements){
-    atom.value.m_residue = this;
+    atom.m_residue = this;
   }
   m_name = rhs.m_name;
   m_id = rhs.m_id;
   m_chain = rhs.m_chain;
+  m_deleted = rhs.m_deleted;
 }
 
 Residue::Residue(Residue&& rhs) noexcept : Container<Atom>(std::move(rhs)){
   for (auto& atom: this->elements){
-    atom.value.m_residue = this;
+    atom.m_residue = this;
   }
   m_name = std::move(rhs.m_name);
   m_id = std::move(rhs.m_id);
   m_chain = std::move(rhs.m_chain);
+  m_deleted = rhs.m_deleted;
 }
 
 Residue& Residue::operator=(const Residue& rhs) {
   Container<Atom>::operator=(rhs);
   for (auto& atom: this->elements){
-    atom.value.m_residue = this;
+    atom.m_residue = this;
   }
   m_name = rhs.m_name;
   m_id = rhs.m_id;
+  m_deleted = rhs.m_deleted;
   return *this;
 }
 
 Residue& Residue::operator=(Residue&& rhs) noexcept {
   Container<Atom>::operator=(std::move(rhs));
   for (auto& atom: this->elements){
-    atom.value.m_residue = this;
+    atom.m_residue = this;
   }
   m_name = std::move(rhs.m_name);
   m_id = std::move(rhs.m_id);
+  m_deleted = rhs.m_deleted;
   return *this;
 }
 
@@ -105,10 +109,13 @@ Atom::Atom(Residue& residue, AtomName name, atomId_t id,
     XYZ r) :
     m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
 
+const xmol::selection::Container<Atom>* Atom::parent() const {return m_residue;};
+xmol::selection::Container<Atom>* Atom::parent() {return m_residue;};
 
 Chain& Residue::chain() noexcept{
   return *m_chain;
 }
+
 
 const Chain& Residue::chain() const noexcept {
   return *m_chain;
@@ -120,8 +127,8 @@ Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
 
 Atom& Residue::operator[](const AtomName& atomName) {
   for(auto&a: this->elements){
-    if (a.value.name()==atomName){
-      return a.value;
+    if (a.name()==atomName){
+      return a;
     }
   }
   throw std::runtime_error("Residue has no atom "+atomName.str());
@@ -131,8 +138,8 @@ const Atom& Residue::operator[](const AtomName& atomName) const{
   // number of atoms in Residue usually is small
   // linear search outperforms hash tables
   for(auto&a: this->elements){
-    if (a.value.name()==atomName){
-      return a.value;
+    if (a.name()==atomName){
+      return a;
     }
   }
   throw std::runtime_error("Residue has no atom "+atomName.str());
@@ -141,45 +148,53 @@ Residue::Residue(Chain& chain, ResidueName name, residueId_t id, int reserve)  :
     Container<Atom>(reserve),
     m_name(std::move(name)), m_id(id), m_chain(&chain){}
 
+
+const xmol::selection::Container<Residue>* Residue::parent() const {return m_chain;};
+xmol::selection::Container<Residue>* Residue::parent() {return m_chain;};
+
 // -------------------- Chain -------------------------
 
 
 Chain::Chain(const Chain& rhs) : Container<Residue>(rhs){
   for (auto& residues: this->elements){
-    residues.value.m_chain = this;
+    residues.m_chain = this;
   }
   m_name = rhs.m_name;
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
+  m_deleted = rhs.m_deleted;
 }
 
 Chain::Chain(Chain&& rhs) noexcept : Container<Residue>(std::move(rhs)){
   for (auto& residues: this->elements){
-    residues.value.m_chain = this;
+    residues.m_chain = this;
   }
   m_name = rhs.m_name;
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
+  m_deleted = rhs.m_deleted;
 }
 
 Chain& Chain::operator=(const Chain& rhs) {
   Container<Residue>::operator=(rhs);
   for (auto& residues: this->elements){
-    residues.value.m_chain = this;
+    residues.m_chain = this;
   }
   m_name = rhs.m_name;
   m_frame = rhs.m_frame;
+  m_deleted = rhs.m_deleted;
   return *this;
 }
 
 Chain& Chain::operator=(Chain&& rhs) noexcept {
   Container<Residue>::operator=(std::move(rhs));
   for (auto& residues: this->elements){
-    residues.value.m_chain = this;
+    residues.m_chain = this;
   }
   m_name = rhs.m_name;
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
+  m_deleted = rhs.m_deleted;
   return *this;
 }
 
@@ -206,11 +221,11 @@ Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
 }
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
-  return this->elements[m_lookup_table.at(residueId)].value;
+  return this->elements[m_lookup_table.at(residueId)];
 }
 
 Residue& Chain::operator[](const residueId_t& residueId) {
-  return this->elements[m_lookup_table.at(residueId)].value;
+  return this->elements[m_lookup_table.at(residueId)];
 }
 
 const Frame& Chain::frame() const noexcept {
@@ -222,6 +237,9 @@ Chain::Chain(Frame& frame, ChainName name, chainIndex_t id,
     Container<Residue>(reserve),
     m_name(std::move(name)), m_index(id), m_frame(&frame){
 }
+
+const xmol::selection::Container<Chain>* Chain::parent() const {return m_frame;};
+xmol::selection::Container<Chain>* Chain::parent() {return m_frame;};
 
 
 // -------------------- Frame -------------------------
@@ -243,32 +261,32 @@ Chain& Frame::operator[](const chainIndex_t& chainIndex) {
   if (chainIndex<0||chainIndex>=this->elements.size()){
     throw std::out_of_range("out_of_range Frame::opreator[]");
   }
-  if (elements[chainIndex].is_deleted){
+  if (elements[chainIndex].is_deleted()){
     throw std::runtime_error("Chain was deleted");
   }
-  return elements[chainIndex].value;
+  return elements[chainIndex];
 }
 
 const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
   if (chainIndex<0||chainIndex>=this->elements.size()){
     throw std::out_of_range("out_of_range Frame::opreator[]");
   }
-  if (elements[chainIndex].is_deleted){
+  if (elements[chainIndex].is_deleted()){
     throw std::runtime_error("Chain was deleted");
   }
-  return elements[chainIndex].value;
+  return elements[chainIndex];
 }
 
 Frame::Frame(const Frame& rhs) : Container<Chain>(rhs){
   for (auto& chain: this->elements){
-    chain.value.m_frame = this;
+    chain.m_frame = this;
   }
   m_index= rhs.m_index;
 }
 
 Frame::Frame(Frame&& rhs) noexcept : Container<Chain>(std::move(rhs)){
   for (auto& chain: this->elements){
-    chain.value.m_frame = this;
+    chain.m_frame = this;
   }
   m_index= rhs.m_index;
 }
@@ -276,7 +294,7 @@ Frame::Frame(Frame&& rhs) noexcept : Container<Chain>(std::move(rhs)){
 Frame& Frame::operator=(const Frame& rhs) {
   Container<Chain>::operator=(rhs);
   for (auto& chain: this->elements){
-    chain.value.m_frame = this;
+    chain.m_frame = this;
   }
   m_index= rhs.m_index;
   return *this;
@@ -285,42 +303,42 @@ Frame& Frame::operator=(const Frame& rhs) {
 Frame& Frame::operator=(Frame&& rhs) noexcept {
   Container<Chain>::operator=(std::move(rhs));
   for (auto& chain: this->elements){
-    chain.value.m_frame = this;
+    chain.m_frame = this;
   }
   m_index= rhs.m_index;
   return *this;
 }
 // -------------------- Stubs -------------------------
-
-template<>
-xmol::selection::Container<Atom>* xmol::selection::ElementWithFlags<Atom>::parent() noexcept {
-  return &value.residue();
-}
-
-template<>
-const xmol::selection::Container<Atom>* xmol::selection::ElementWithFlags<Atom>::parent() const noexcept {
-  return &value.residue();
-}
-
-template<>
-xmol::selection::Container<Residue>* xmol::selection::ElementWithFlags<Residue>::parent() noexcept {
-  return &value.chain();
-}
-
-template<>
-const xmol::selection::Container<Residue>* xmol::selection::ElementWithFlags<Residue>::parent() const noexcept {
-  return &value.chain();
-}
-
-template<>
-xmol::selection::Container<Chain>* xmol::selection::ElementWithFlags<Chain>::parent() noexcept {
-  return &value.frame();
-}
-
-template<>
-const xmol::selection::Container<Chain>* xmol::selection::ElementWithFlags<Chain>::parent() const noexcept {
-  return &value.frame();
-}
+//
+//template<typename T, >
+//xmol::selection::Container<Atom>* xmol::selection::ElementFlags<Atom>::parent() noexcept {
+//  return &residue();
+//}
+//
+//template<>
+//const xmol::selection::Container<const Atom>* xmol::selection::SelectionTraits<const Atom>::parent(const Atom& a) const noexcept {
+//  return &a.residue();
+//}
+//
+//template<>
+//xmol::selection::Container<Residue>* xmol::selection::ElementFlags<Residue>::parent() noexcept {
+//  return &value.chain();
+//}
+//
+//template<>
+//const xmol::selection::Container<Residue>* xmol::selection::ElementFlags<Residue>::parent() const noexcept {
+//  return &value.chain();
+//}
+//
+//template<>
+//xmol::selection::Container<Chain>* xmol::selection::ElementFlags<Chain>::parent() noexcept {
+//  return &value.frame();
+//}
+//
+//template<>
+//const xmol::selection::Container<Chain>* xmol::selection::ElementFlags<Chain>::parent() const noexcept {
+//  return &value.frame();
+//}
 
 
 namespace {
@@ -351,19 +369,88 @@ namespace {
         &chain);
   }
 }
+
 template<>
-bool xmol::selection::ElementWithFlags<Atom>::operator<(const xmol::selection::ElementWithFlags<Atom>& rhs) const noexcept {
-  return compare_set(this->value) < compare_set(rhs.value);
+bool xmol::selection::SelectionPointerComparator<Atom>::operator()(const Atom* lhs, const Atom* rhs) const  {
+  return compare_set(*lhs) < compare_set(*rhs);
 }
 
 template<>
-bool xmol::selection::ElementWithFlags<Residue>::operator<(const xmol::selection::ElementWithFlags<Residue>& rhs) const noexcept {
-  return compare_set(this->value) < compare_set(rhs.value);
+bool xmol::selection::SelectionPointerComparator<Residue>::operator()(const Residue* lhs, const Residue* rhs) const  {
+  return compare_set(*lhs) < compare_set(*rhs);
 }
-
 template<>
-bool xmol::selection::ElementWithFlags<Chain>::operator<(const xmol::selection::ElementWithFlags<Chain>& rhs) const noexcept {
-  return compare_set(this->value) < compare_set(rhs.value);
+bool xmol::selection::SelectionPointerComparator<Chain>::operator()(const Chain* lhs, const Chain* rhs) const  {
+  return compare_set(*lhs) < compare_set(*rhs);
 }
 
 
+
+namespace xmol::selection {
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_atom<T>>::asResidues() const{
+  using result_type = Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>;
+  std::set<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>*> parents;
+  for (auto&a: this->elements){
+    parents.insert(&a->residue());
+  }
+  return result_type(parents.begin(),parents.end());
+};
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_atom<T>>::asChains() const{
+  return asResidues().asChains();
+};
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_residue<T>>::asChains() const{
+  using result_type = Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>>;
+  std::set<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>*> parents;
+  for (auto&a: this->elements){
+    parents.insert(&a->chain());
+  }
+  return result_type(parents.begin(),parents.end());
+};
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_residue<T>>::asAtoms() const{
+  using result_type = Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>>;
+  result_type result;
+  for (auto& x: *this){
+    result+=x.all();
+  }
+  return result;
+};
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_chain<T>>::asResidues() const{
+  using result_type = Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>;
+  result_type result;
+  for (auto& x: *this){
+    result+=x.all();
+  }
+  return result;
+};
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>>
+SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_chain<T>>::asAtoms() const{
+  return asResidues().asAtoms();
+};
+
+}
+
+template class xmol::selection::SelectionBaseExtension<Atom>;
+template class xmol::selection::SelectionBaseExtension<const Atom>;
+
+template class xmol::selection::SelectionBaseExtension<Residue>;
+template class xmol::selection::SelectionBaseExtension<const Residue>;
+
+template class xmol::selection::SelectionBaseExtension<Chain>;
+template class xmol::selection::SelectionBaseExtension<const Chain>;

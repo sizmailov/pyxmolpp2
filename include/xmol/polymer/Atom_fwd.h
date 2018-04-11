@@ -66,17 +66,35 @@ public:
   Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>> asResidues() const;
   Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>> asChains() const;
 };
-//
-//template<typename T>
-//struct SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_residue<T>> {
-//  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>> asAtoms() const;
-//  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>>  asChains() const;
-//};
-//
-//template<typename T>
-//struct SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_chain<T>> {
-//  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>>  asAtoms() const;
-//  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>> asResidues() const;
-//};
+
+template<typename T>
+class SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_residue<T>>: public SelectionBase<T> {
+public:
+  SelectionBaseExtension() = default;
+  template<typename U=T, typename SFINAE2=std::enable_if_t<std::is_const_v<U>>>
+  SelectionBaseExtension(const SelectionBaseExtension<typename SelectionBaseExtension<U>::value_type>& rhs) : SelectionBase<T>(rhs){};
+  SelectionBaseExtension(const SelectionBaseExtension& rhs) = default;
+  SelectionBaseExtension(SelectionBaseExtension&& rhs) noexcept = default;
+
+  SelectionBaseExtension& operator=(const SelectionBaseExtension& rhs) = default;
+  SelectionBaseExtension& operator=(SelectionBaseExtension&& rhs) = default;
+  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>> asAtoms() const;
+  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Chain>>  asChains() const;
+};
+
+template<typename T>
+class SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_chain<T>>: public SelectionBase<T> {
+public:
+  SelectionBaseExtension() = default;
+  template<typename U=T, typename SFINAE2=std::enable_if_t<std::is_const_v<U>>>
+  SelectionBaseExtension(const SelectionBaseExtension<typename SelectionBaseExtension<U>::value_type>& rhs) : SelectionBase<T>(rhs){};
+  SelectionBaseExtension(const SelectionBaseExtension& rhs) = default;
+  SelectionBaseExtension(SelectionBaseExtension&& rhs) noexcept = default;
+
+  SelectionBaseExtension& operator=(const SelectionBaseExtension& rhs) = default;
+  SelectionBaseExtension& operator=(SelectionBaseExtension&& rhs) = default;
+  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Atom>> asAtoms() const;
+  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>  asResidues() const;
+};
 
 }

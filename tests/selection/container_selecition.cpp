@@ -12,6 +12,15 @@ struct int_with_parent{
   int_with_parent(int value,Container<int_with_parent>& container): value(value), ptr(&container){}
   int value;
   Container<int_with_parent>* ptr;
+  bool is_now_deleted=false;
+  bool is_deleted() const{
+    return is_now_deleted;
+  }
+  void set_deleted() {
+     is_now_deleted = true;
+  }
+  const Container<int_with_parent>* parent() const{return ptr;};
+  Container<int_with_parent>* parent(){return ptr;};
 };
 }
 
@@ -23,19 +32,14 @@ public:
   using cS = Selection<const int_with_parent>;
 };
 
-template<>
-Container<int_with_parent>* ElementWithFlags<int_with_parent>::parent() noexcept {
-  return value.ptr;
-}
+template<typename T>
+using is_int_with_parent = std::enable_if_t<std::is_same_v<std::remove_const_t<T>, int_with_parent>>;
+
 
 template<>
-const Container<int_with_parent>* ElementWithFlags<int_with_parent>::parent() const noexcept {
-  return value.ptr;
-}
-
-template<>
-bool ElementWithFlags<int_with_parent>::operator<(const ElementWithFlags<int_with_parent>& rhs) const noexcept {
-  return std::tuple(this->parent(),this->value.value) < std::tuple(rhs.parent(),rhs.value.value);
+bool SelectionPointerComparator<int_with_parent>::operator()(const int_with_parent* lhs,
+    const int_with_parent* rhs) const {
+  return std::tuple(lhs->parent(),lhs->value) < std::tuple(rhs->parent(),rhs->value);
 }
 
 bool operator==(const int_with_parent& lhs, const int_with_parent& rhs) noexcept {

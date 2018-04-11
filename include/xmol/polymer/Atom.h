@@ -27,8 +27,17 @@ public:
   const Residue& residue() const noexcept;
   Residue& residue() noexcept;
 
+  bool is_deleted() const{
+    return m_deleted;
+  }
+  void set_deleted() {
+    m_deleted = true;
+  }
+  const xmol::selection::Container<Atom>* parent() const;
+  xmol::selection::Container<Atom>* parent();
 private:
   Atom(Residue& residue, AtomName name, atomId_t id, XYZ r);
+
   friend class xmol::selection::Container<Atom>;
   friend class Residue;
 
@@ -36,6 +45,7 @@ private:
   Residue* m_residue;
   AtomName m_name;
   atomId_t m_id;
+  bool m_deleted = false;
 };
 
 class Residue: public xmol::selection::Container<Atom> {
@@ -61,13 +71,29 @@ public:
   Atom& operator[](const AtomName& atomName);
   const Atom& operator[](const AtomName& atomName) const;
 
+  xmol::selection::Selection<const Atom> asAtoms() const {return all();}
+  xmol::selection::Selection<Atom> asAtoms() {return all();}
+
+
+  bool is_deleted() const{
+    return m_deleted;
+  }
+  void set_deleted() {
+    m_deleted = true;
+  }
+
+  const xmol::selection::Container<Residue>* parent() const;
+  xmol::selection::Container<Residue>* parent();
+
 private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve=0);
+
   friend class xmol::selection::Container<Residue>;
   friend class Chain;
   ResidueName m_name;
   residueId_t m_id;
   Chain* m_chain;
+  bool m_deleted=false;
 };
 
 class Chain: public xmol::selection::Container<Residue> {
@@ -91,8 +117,25 @@ public:
   Residue& operator[](const residueId_t& residueId);
   const Residue& operator[](const residueId_t& residueId) const;
 
+
+  xmol::selection::Selection<const Atom> asAtoms() const {return all().asAtoms();}
+  xmol::selection::Selection<Atom> asAtoms() {return all().asAtoms();}
+
+  xmol::selection::Selection<const Residue> asResidues() const {return all();}
+  xmol::selection::Selection<Residue> asResidues() {return all();}
+
+  bool is_deleted() const{
+    return m_deleted;
+  }
+  void set_deleted() {
+    m_deleted = true;
+  }
+  const xmol::selection::Container<Chain>* parent() const;
+  xmol::selection::Container<Chain>* parent();
+
 private:
   Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve=0);
+
   friend class xmol::selection::Container<Chain>;
   friend class Frame;
   friend class Residue;
@@ -100,6 +143,7 @@ private:
   std::map<residueId_t, residueIndex_t> m_lookup_table;
   chainIndex_t m_index;
   Frame* m_frame;
+  bool m_deleted = false;
 };
 
 class Frame: public xmol::selection::Container<Chain> {
@@ -117,6 +161,15 @@ public:
 
   Chain& operator[](const chainIndex_t& chainIndex);
   const Chain& operator[](const chainIndex_t& residueId) const;
+
+  xmol::selection::Selection<const Atom> asAtoms() const {return asResidues().asAtoms();}
+  xmol::selection::Selection<Atom> asAtoms() {return asResidues().asAtoms();}
+
+  xmol::selection::Selection<const Residue> asResidues() const {return asChains().asResidues();}
+  xmol::selection::Selection<Residue> asResidues() {return asChains().asResidues();}
+
+  xmol::selection::Selection<const Chain> asChains() const {return all();}
+  xmol::selection::Selection<Chain> asChains() {return all();}
 
 private:
   frameIndex_t m_index;
@@ -151,17 +204,3 @@ inline bool operator!=(const Frame& lhs, const Frame& rhs) noexcept {
 }
 
 }
-
-
-namespace xmol::selection {
-
-template<typename T>
-Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>
-  SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_atom<T>>::asResidues() const{
-  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>> result;
-  std::cout << "atoms as residues" << std::endl;
-  return result;
-};
-
-}
-

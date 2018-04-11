@@ -30,50 +30,38 @@ public:
   SelectionBaseExtension& operator=(SelectionBaseExtension&& rhs) = default;
 };
 
+template<typename value_type>
+struct SelectionPointerComparator{
+  static_assert(!std::is_const_v<value_type>);
+  bool operator()(const value_type* lhs, const value_type* rhs) const;
+};
 
-template<typename T>
-struct ElementWithFlags {
-  static_assert(!std::is_const_v<T>);
+template<typename T, typename SFINAE=void>
+struct SelectionTraits{
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
+  static const bool is_const = std::is_const_v<T>;
+  using value_type = std::remove_const_t<T>;
+  using container_type = std::conditional_t<is_const,const Container<value_type>,Container<value_type>>;
+  using selection_element_type = std::conditional_t<is_const,
+                                          const value_type*,
+                                          value_type*>;
 
-  using container_type = Container<T>;
+  using on_selection_move_type =std::conditional_t<is_const,
+                                                   void (container_type::*)(SelectionBase<const value_type>&,SelectionBase<const value_type>&) const,
+                                                   void (container_type::*)(SelectionBase<value_type>&, SelectionBase<value_type>&)
+  >;
 
-  explicit ElementWithFlags(T&& value): value(std::move(value)),is_deleted(false){
-  }
-  explicit ElementWithFlags(const T& value): value(value),is_deleted(false){
-  }
-
-  bool operator<(const ElementWithFlags<T>& rhs) const noexcept ;
+  using on_selection_copy_type =std::conditional_t<is_const,
+                                                   void (container_type::*)(SelectionBase<const value_type>&) const,
+                                                   void (container_type::*)(SelectionBase<value_type>&)
+  >;
 
 
-  struct PtrComparator{
-    bool operator()(const ElementWithFlags<T>* lhs, const ElementWithFlags<T>* rhs){
-      assert(lhs!=nullptr);
-      assert(rhs!=nullptr);
-//      if (lhs == nullptr) {
-//        return false;
-//      }
-//
-//      if (rhs == nullptr) {
-//        return true;
-//      }
-
-      return *lhs < *rhs;
-    }
-  };
-
-  T value;
-  bool is_deleted = false;
-
-private:
-  friend class SelectionBase<T>;
-  friend class SelectionBase<const T>;
-  friend class Selection<T>;
-  friend class Selection<const T>;
-  friend class Container<T>;
-  const container_type* parent() const noexcept;
-  container_type* parent() noexcept;
+  using on_selection_delete_type =std::conditional_t<is_const,
+                                                     void (container_type::*)(SelectionBase<const value_type>&) const,
+                                                     void (container_type::*)(SelectionBase<value_type>&)
+  >;
 
 };
 

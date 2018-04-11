@@ -289,4 +289,7 @@ TEST_F(AtomTests, dedicated_selections){
   Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
 
   EXPECT_EQ(r.all().asResidues().size(),1);
+  EXPECT_EQ(r.all().asResidues().size(),1);
+  EXPECT_EQ(c.asResidues().size(),1);
+  EXPECT_EQ(c.all().asAtoms().asResidues().asChains().size(),1);
 }
