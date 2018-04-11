@@ -2,7 +2,7 @@
 
 #include <set>
 #include "Observer.h"
-
+#include "ContainerSelection_fwd.h"
 
 namespace xmol::selection {
 
@@ -20,56 +20,6 @@ public:
 };
 
 template<typename T>
-class Container;
-
-template<typename T>
-class Selection;
-
-
-template<typename T>
-struct ElementWithFlags{
-  static_assert(!std::is_const_v<T>);
-  static_assert(!std::is_reference_v<T>);
-  static_assert(!std::is_pointer_v<T>);
-
-  using container_type = Container<T>;
-
-  explicit ElementWithFlags(T&& value): value(std::move(value)),is_deleted(false){
-  }
-  explicit ElementWithFlags(const T& value): value(value),is_deleted(false){
-  }
-  T value;
-  bool is_deleted = false;
-
-  bool operator<(const ElementWithFlags<T>& rhs) const noexcept ;
-
-private:
-  friend class Selection<T>;
-  friend class Container<T>;
-  friend class Selection<const T>;
-  const container_type* parent() const noexcept;
-  container_type* parent() noexcept;
-
-
-  struct PtrComparator{
-    bool operator()(const ElementWithFlags<T>* lhs, const ElementWithFlags<T>* rhs){
-      assert(lhs!=nullptr);
-      assert(rhs!=nullptr);
-//      if (lhs == nullptr) {
-//        return false;
-//      }
-//
-//      if (rhs == nullptr) {
-//        return true;
-//      }
-
-      return *lhs < *rhs;
-    }
-  };
-};
-
-
-template<typename T>
 struct SelectionTraits{
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
@@ -80,19 +30,19 @@ struct SelectionTraits{
                                           ElementWithFlags<value_type>>;
 
   using on_selection_move_type =std::conditional_t<std::is_const_v<T>,
-      void (container_type::*)(Selection<const value_type>&,Selection<const value_type>&) const,
-      void (container_type::*)(Selection<value_type>&, Selection<value_type>&)
+      void (container_type::*)(SelectionBase<const value_type>&,SelectionBase<const value_type>&) const,
+      void (container_type::*)(SelectionBase<value_type>&, SelectionBase<value_type>&)
   >;
 
   using on_selection_copy_type =std::conditional_t<std::is_const_v<T>,
-                                                   void (container_type::*)(Selection<const value_type>&) const,
-                                                   void (container_type::*)(Selection<value_type>&)
+                                                   void (container_type::*)(SelectionBase<const value_type>&) const,
+                                                   void (container_type::*)(SelectionBase<value_type>&)
   >;
 
 
   using on_selection_delete_type =std::conditional_t<std::is_const_v<T>,
-                                                   void (container_type::*)(Selection<const value_type>&) const,
-                                                   void (container_type::*)(Selection<value_type>&)
+                                                   void (container_type::*)(SelectionBase<const value_type>&) const,
+                                                   void (container_type::*)(SelectionBase<value_type>&)
   >;
 };
 
@@ -125,16 +75,17 @@ public:
   SelectionRange& operator-=(int n);
 
 private:
-  explicit SelectionRange(const Selection<T>& selection, int pos, int end, int step);
-  friend class Selection<T>;
-  const Selection<T>* selection;
+  explicit SelectionRange(const SelectionBase<T>& selection, int pos, int end, int step);
+  friend class SelectionBase<T>;
+  const SelectionBase<T>* selection;
   int pos;
   int end;
   int step;
 };
 
+
 template<typename T>
-class Selection : public ObservableBy<typename SelectionTraits<T>::container_type> {
+class SelectionBase : public ObservableBy<typename SelectionTraits<T>::container_type> {
 public:
   static_assert(!std::is_reference_v<T>);
   static_assert(!std::is_pointer_v<T>);
@@ -142,36 +93,16 @@ public:
   using container_type = typename SelectionTraits<T>::container_type;
   using element_type = typename SelectionTraits<T>::element_type;
 
-  Selection();
+  SelectionBase();
   template<typename U=T, typename SFINAE=std::enable_if_t<std::is_const_v<U>>>
-  Selection(const Selection<typename Selection<U>::value_type>& rhs);
-  Selection(const Selection& rhs);
-  Selection(Selection&& rhs) noexcept;
-  ~Selection();
+  SelectionBase(const SelectionBase<typename SelectionBase<U>::value_type>& rhs);
+  SelectionBase(const SelectionBase& rhs);
+  SelectionBase(SelectionBase&& rhs) noexcept;
+  ~SelectionBase();
 
-  Selection& operator=(const Selection& rhs);
-  Selection& operator=(Selection&& rhs) noexcept;
+  SelectionBase& operator=(const SelectionBase& rhs);
+  SelectionBase& operator=(SelectionBase&& rhs) noexcept;
 
-  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
-  bool operator==(const Selection<V>& rhs) const;
-  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
-  bool operator!=(const Selection<V>& rhs) const;
-
-  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_const_v<U>||!std::is_const_v<V>>>
-  Selection<U>& operator+=(const Selection<V>& rhs);
-  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
-  Selection<U>& operator-=(const Selection<V>& rhs);
-  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
-  Selection<U>& operator*=(const Selection<V>& rhs);
-
-  template<typename Predicate>
-  Selection& remove_if(Predicate&& p);
-
-  template<typename Predicate>
-  Selection filter(Predicate&& p) const;
-
-  template<typename Transform>
-  Selection& apply(Transform&& transform);
 
   int count(const T&) const;
 
@@ -186,8 +117,8 @@ public:
 
   T& operator[](int i) const;
 
-private:
-  explicit Selection(container_type& container);
+protected:
+//  explicit SelectionBase(container_type& container);
 
   void on_container_move(container_type& from, container_type& to);
   void on_container_delete(container_type& half_dead);
@@ -195,8 +126,8 @@ private:
   void remove_redundant_observers();
 
   friend class SelectionRange<T>;
-  friend class Selection<value_type>;
-  friend class Selection<const value_type>;
+  friend class SelectionBase<value_type>;
+  friend class SelectionBase<const value_type>;
   friend class Container<value_type>;
 
   std::vector<element_type*> elements;
@@ -204,9 +135,64 @@ private:
 
 };
 
+template<typename T>
+class Selection: public SelectionBaseExtension<T> {
+  static_assert(std::is_base_of_v<SelectionBase<T>,SelectionBaseExtension<T>>);
+  static_assert(std::is_default_constructible_v<SelectionBaseExtension<T>>);
+  static_assert(std::is_constructible_v<SelectionBaseExtension<T>, const SelectionBaseExtension<std::remove_const_t<T>>&>);
+  static_assert(std::is_copy_constructible_v<SelectionBaseExtension<T>>);
+  static_assert(std::is_move_constructible_v<SelectionBaseExtension<T>>);
+  static_assert(std::is_move_assignable_v<SelectionBaseExtension<T>>);
+  static_assert(std::is_copy_assignable_v<SelectionBaseExtension<T>>);
+public:
+
+  using value_type = typename SelectionTraits<T>::value_type;
+  using container_type = typename SelectionTraits<T>::container_type;
+  using element_type = typename SelectionTraits<T>::element_type;
+
+  Selection() = default;
+  template<typename U=T, typename SFINAE=std::enable_if_t<std::is_const_v<U>>>
+  Selection(const Selection<typename Selection<U>::value_type>& rhs) : SelectionBaseExtension<T>(rhs){};
+  Selection(const Selection& rhs) = default;
+  Selection(Selection&& rhs) noexcept =default;
+
+  Selection& operator=(const Selection& rhs) = default;
+  Selection& operator=(Selection&& rhs) = default;
+
+
+  template<typename Predicate>
+  Selection& remove_if(Predicate&& p);
+
+  template<typename Predicate>
+  Selection filter(Predicate&& p) const;
+
+  template<typename Transform>
+  Selection& apply(Transform&& transform);
+
+  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
+  bool operator==(const Selection<V>& rhs) const;
+  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
+  bool operator!=(const Selection<V>& rhs) const;
+
+  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_const_v<U>||!std::is_const_v<V>>>
+  Selection<U>& operator+=(const Selection<V>& rhs);
+  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
+  Selection<U>& operator-=(const Selection<V>& rhs);
+  template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
+  Selection<U>& operator*=(const Selection<V>& rhs);
+
+protected:
+
+  friend class Selection<value_type>;
+  friend class Selection<const value_type>;
+  friend class Container<value_type>;
+
+  explicit Selection(typename SelectionBase<T>::container_type& container);
+};
+
 
 template<typename T>
-class Container : public ObservableBy<Selection<T>>, public ObservableBy<Selection<const T>>{
+class Container : public ObservableBy<SelectionBase<T>>, public ObservableBy<SelectionBase<const T>>{
 public:
   using value_type = typename SelectionTraits<T>::value_type;
   using element_type = typename SelectionTraits<T>::element_type;
@@ -236,17 +222,20 @@ public:
   friend class Selection<T>;
   friend class Selection<const T>;
 
+  friend class SelectionBase<T>;
+  friend class SelectionBase<const T>;
+
 protected:
 
 
-  void on_selection_move(Selection<T>& from, Selection<T>& to);
-  void on_selection_move(Selection<const T>& from, Selection<const T>& to) const;
+  void on_selection_move(SelectionBase<T>& from, SelectionBase<T>& to);
+  void on_selection_move(SelectionBase<const T>& from, SelectionBase<const T>& to) const;
 
-  void on_selection_copy(Selection<T>& copy);
-  void on_selection_copy(Selection<const T>& copy) const;
+  void on_selection_copy(SelectionBase<T>& copy);
+  void on_selection_copy(SelectionBase<const T>& copy) const;
 
-  void on_selection_delete(Selection<T>& half_dead);
-  void on_selection_delete(Selection<const T>& half_dead) const;
+  void on_selection_delete(SelectionBase<T>& half_dead);
+  void on_selection_delete(SelectionBase<const T>& half_dead) const;
 
 
   std::vector<element_type> elements;
@@ -255,7 +244,7 @@ protected:
 
 
 template<typename  T>
-SelectionRange<T>::SelectionRange(const Selection<T>& selection, int pos, int end, int step) :
+SelectionRange<T>::SelectionRange(const SelectionBase<T>& selection, int pos, int end, int step) :
     selection(&selection),
     pos(pos),
     end(end),
@@ -327,7 +316,7 @@ SelectionRange<T> SelectionRange<T>::operator+(int n) {
 }
 
 template<typename T>
-SelectionRange<T> Selection<T>::begin() const{
+SelectionRange<T> SelectionBase<T>::begin() const{
   LOG_VERBOSE_FUNCTION();
   if (state!=SelectionState::OK){
     throw dead_selection_access("SelectionRange<T>::begin");
@@ -336,7 +325,7 @@ SelectionRange<T> Selection<T>::begin() const{
 }
 
 template<typename T>
-SelectionRange<T> Selection<T>::end() const {
+SelectionRange<T> SelectionBase<T>::end() const {
   LOG_VERBOSE_FUNCTION();
   if (state!=SelectionState::OK){
     throw dead_selection_access("SelectionRange<T>::end");
@@ -345,57 +334,57 @@ SelectionRange<T> Selection<T>::end() const {
 }
 
 template<typename T>
-T& Selection<T>::operator[](int i) const{
+T& SelectionBase<T>::operator[](int i) const{
   LOG_VERBOSE_FUNCTION();
   if (state!=SelectionState::OK){
     throw dead_selection_access("SelectionRange<T>::operator[]");
   }
   if (i<-size() || i >= size()){
-    throw std::out_of_range("Selection<T>::[]");
+    throw std::out_of_range("SelectionBase<T>::[]");
   }
   if (i<0){
     i = size()+i;
   }
   if (elements[i]->is_deleted){
-    throw dead_selection_range_access("Selection<T>::[]");
+    throw dead_selection_range_access("SelectionBase<T>::[]");
   }
   return elements[i]->value;
 }
 
 template<typename T>
-Selection<T>::Selection() {
+SelectionBase<T>::SelectionBase() {
   LOG_DEBUG_FUNCTION();
   state=SelectionState::OK;
 }
 
 template<typename T>
-Selection<T>::~Selection() {
+SelectionBase<T>::~SelectionBase() {
   LOG_DEBUG_FUNCTION();
   this->clear();
 }
 
 template<typename T>
-Selection<T>::Selection(const Selection<T>& rhs): ObservableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
+SelectionBase<T>::SelectionBase(const SelectionBase<T>& rhs): ObservableBy<container_type>(rhs), state(rhs.state), elements(rhs.elements) {
   LOG_DEBUG_FUNCTION();
   this->notify_all(static_cast<typename SelectionTraits<T>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
 }
 
 template<typename T>
 template<typename U, typename SFINAE>
-Selection<T>::Selection(const Selection<typename Selection<U>::value_type>& rhs): state(rhs.state), elements(rhs.elements.begin(),rhs.elements.end()) {
+SelectionBase<T>::SelectionBase(const SelectionBase<typename SelectionBase<U>::value_type>& rhs): state(rhs.state), elements(rhs.elements.begin(),rhs.elements.end()) {
   LOG_DEBUG_FUNCTION();
   this->observers.insert(rhs.observers.begin(),rhs.observers.end());
   this->notify_all(static_cast<typename SelectionTraits<U>::on_selection_copy_type>(&container_type::on_selection_copy),*this);
 }
 
 template<typename T>
-Selection<T>::Selection(Selection<T>&& rhs) noexcept : ObservableBy<container_type>(std::move(rhs)), state(rhs.state), elements(std::move(rhs.elements)){
+SelectionBase<T>::SelectionBase(SelectionBase<T>&& rhs) noexcept : ObservableBy<container_type>(std::move(rhs)), state(rhs.state), elements(std::move(rhs.elements)){
   LOG_DEBUG_FUNCTION();
   this->notify_all(static_cast<typename SelectionTraits<T>::on_selection_move_type>(&container_type::on_selection_move),rhs,*this);
   rhs.state=SelectionState::OK;
 }
 template<typename T>
-Selection<T>& Selection<T>::operator=(Selection<T>&& rhs) noexcept {
+SelectionBase<T>& SelectionBase<T>::operator=(SelectionBase<T>&& rhs) noexcept {
   LOG_DEBUG_FUNCTION();
   if (&rhs==this){
     return *this;
@@ -410,7 +399,7 @@ Selection<T>& Selection<T>::operator=(Selection<T>&& rhs) noexcept {
 }
 
 template<typename T>
-Selection<T>& Selection<T>::operator=(const Selection<T>& rhs){
+SelectionBase<T>& SelectionBase<T>::operator=(const SelectionBase<T>& rhs){
   LOG_DEBUG_FUNCTION();
   if (&rhs==this){
     return *this;
@@ -428,35 +417,35 @@ template<typename T>
 template<typename V, typename U, typename SFINAE>
 bool Selection<T>::operator==(const Selection<V>& rhs) const{
   LOG_DEBUG_FUNCTION();
-  return elements.size()==rhs.size() && std::equal(elements.begin(),elements.end(),rhs.elements.begin());
+  return this->elements.size()==rhs.size() && std::equal(this->elements.begin(),this->elements.end(),rhs.elements.begin());
 }
 
 template<typename T>
 template<typename V, typename U, typename SFINAE>
 bool Selection<T>::operator!=(const Selection<V>& rhs) const{
   LOG_DEBUG_FUNCTION();
-  return elements.size()!=rhs.size() || !std::equal(elements.begin(),elements.end(),rhs.elements.begin());
+  return this->elements.size()!=rhs.size() || !std::equal(this->elements.begin(),this->elements.end(),rhs.elements.begin());
 }
 
 template<typename T>
 template<typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator+=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
-  auto comparator = typename Selection<T>::element_type::PtrComparator{};
+  auto comparator = typename SelectionBase<T>::element_type::PtrComparator{};
 
   for (auto [container,state]: rhs.observers){
     this->add_observer(*container);
-    container->ObservableBy<Selection<T>>::add_observer(*this);
+    container->ObservableBy<SelectionBase<T>>::add_observer(*this);
   }
 
-  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(),comparator));
   assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(),comparator));
-  size_t selection_size = elements.size();
-  elements.insert(elements.end(), rhs.elements.begin(), rhs.elements.end());
-  std::inplace_merge(elements.begin(), elements.begin() + selection_size, elements.end(),comparator);
-  auto end = std::unique(elements.begin(), elements.end());
-  elements.erase(end, elements.end());
-  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
+  size_t selection_size = this->elements.size();
+  this->elements.insert(this->elements.end(), rhs.elements.begin(), rhs.elements.end());
+  std::inplace_merge(this->elements.begin(), this->elements.begin() + selection_size, this->elements.end(),comparator);
+  auto end = std::unique(this->elements.begin(), this->elements.end());
+  this->elements.erase(end, this->elements.end());
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(),comparator));
   return *this;
 }
 
@@ -465,12 +454,12 @@ template<typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator-=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
   auto comparator = typename Selection<T>::element_type::PtrComparator{};
-  assert(std::is_sorted(elements.begin(), elements.end(),comparator));
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(),comparator));
   assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(),comparator));
-  auto it = elements.begin();
-  auto it1 = elements.begin();
+  auto it = this->elements.begin();
+  auto it1 = this->elements.begin();
   auto it2 = rhs.elements.begin();
-  while (it1 != elements.end() && it2 != rhs.elements.end()) {
+  while (it1 != this->elements.end() && it2 != rhs.elements.end()) {
     if (comparator(*it2,*it1)) { // it2 < it1
       ++it2;
     } else if (comparator(*it1, *it2)) { // it1 < it2
@@ -482,15 +471,15 @@ Selection<U>& Selection<T>::operator-=(const Selection<V>& rhs) {
       ++it2;
     }
   }
-  while (it1 != elements.end()) {
+  while (it1 != this->elements.end()) {
     *it = *it1;
     ++it;
     ++it1;
   }
-  elements.erase(it, elements.end());
-  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
+  this->elements.erase(it, this->elements.end());
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
 
-  remove_redundant_observers();
+  this->remove_redundant_observers();
 
   return *this;
 }
@@ -499,19 +488,19 @@ template<typename T>
 template<typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator*=(const Selection<V>& rhs){
   LOG_DEBUG_FUNCTION();
-  auto comparator = typename Selection<T>::element_type::PtrComparator{};
-  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
+  auto comparator = typename SelectionBase<T>::element_type::PtrComparator{};
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
   assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(), comparator));
 
-  auto end = std::set_intersection(elements.begin(),
-      elements.end(),
+  auto end = std::set_intersection(this->elements.begin(),
+      this->elements.end(),
       rhs.elements.begin(),
       rhs.elements.end(),
-      elements.begin(),
+      this->elements.begin(),
       comparator);
-  elements.erase(end, elements.end());
-  assert(std::is_sorted(elements.begin(), elements.end(), comparator));
-  remove_redundant_observers();
+  this->elements.erase(end, this->elements.end());
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
+  this->remove_redundant_observers();
   return *this;
 }
 
@@ -519,12 +508,12 @@ template<typename T>
 template<typename Predicate>
 Selection<T>& Selection<T>::remove_if(Predicate&& p){
   LOG_DEBUG_FUNCTION();
-  if (state!=SelectionState::OK){
+  if (this->state!=SelectionState::OK){
     throw dead_selection_access("SelectionRange<T>::remove_if");
   }
   auto end = std::remove_if(
-      elements.begin(),
-      elements.end(),
+      this->elements.begin(),
+      this->elements.end(),
       [&p](element_type* ptr){
         if (ptr->is_deleted){
           throw dead_selection_range_access("SelectionRange<T>::remove_if");
@@ -532,8 +521,8 @@ Selection<T>& Selection<T>::remove_if(Predicate&& p){
         const value_type& value = ptr->value;
         return p(value);
       });
-  elements.erase(end,elements.end());
-  remove_redundant_observers();
+  this->elements.erase(end,this->elements.end());
+  this->remove_redundant_observers();
   return *this;
 }
 template<typename T>
@@ -553,12 +542,12 @@ Selection<T>& Selection<T>::apply(Transform&& transform){
   for (auto& value: *this ){
     transform(value);
   }
-  remove_redundant_observers();
+  this->remove_redundant_observers();
   return *this;
 }
 
 template<typename T>
-void Selection<T>::remove_redundant_observers()
+void SelectionBase<T>::remove_redundant_observers()
 {
   std::set<container_type*> new_observers;
   for (auto el_ptr: elements){
@@ -568,13 +557,13 @@ void Selection<T>::remove_redundant_observers()
   for (auto [container, state]: this->observers){
     if (!new_observers.count(container)) {
       this->remove_observer(*container);
-      container->ObservableBy<Selection<T>>::remove_observer(*this);
+      container->ObservableBy<SelectionBase<T>>::remove_observer(*this);
     }
   }
 }
 
 template<typename T>
-int Selection<T>::count(const T& value) const {
+int SelectionBase<T>::count(const T& value) const {
   LOG_DEBUG_FUNCTION();
   if (state!=SelectionState::OK){
     throw dead_selection_access("SelectionRange<T>::count");
@@ -587,20 +576,20 @@ int Selection<T>::count(const T& value) const {
 }
 
 template<typename T>
-bool Selection<T>::empty() const noexcept{
+bool SelectionBase<T>::empty() const noexcept{
   LOG_DEBUG_FUNCTION();
   return elements.empty();
 }
 
 
 template<typename T>
-int Selection<T>::size() const noexcept{
+int SelectionBase<T>::size() const noexcept{
   LOG_DEBUG_FUNCTION();
   return elements.size();
 }
 
 template<typename T>
-void Selection<T>::clear() noexcept {
+void SelectionBase<T>::clear() noexcept {
   LOG_DEBUG_FUNCTION();
   elements.clear();
   this-> template notify_all<ApplyTo::ALIVE_ONLY>(static_cast<typename SelectionTraits<T>::on_selection_delete_type>(&container_type::on_selection_delete),*this);
@@ -609,17 +598,17 @@ void Selection<T>::clear() noexcept {
 }
 
 template<typename T>
-bool Selection<T>::is_valid() noexcept {
+bool SelectionBase<T>::is_valid() noexcept {
   return state==SelectionState::OK;
 }
 
 template<typename T>
-void Selection<T>::on_container_move(Selection<T>::container_type& from, Selection<T>::container_type& to) {
+void SelectionBase<T>::on_container_move(SelectionBase<T>::container_type& from, SelectionBase<T>::container_type& to) {
   LOG_DEBUG_FUNCTION();
   this->move_observer(from,to);
 }
 template<typename T>
-void Selection<T>::on_container_elements_move(element_type* old_begin, element_type* old_end, ptrdiff_t shift) {
+void SelectionBase<T>::on_container_elements_move(element_type* old_begin, element_type* old_end, ptrdiff_t shift) {
   LOG_DEBUG_FUNCTION();
   for (auto& ptr: elements){
     if (old_begin<=ptr && ptr<old_end){
@@ -629,16 +618,16 @@ void Selection<T>::on_container_elements_move(element_type* old_begin, element_t
 }
 
 template<typename T>
-void Selection<T>::on_container_delete(Selection<T>::container_type& half_dead) {
+void SelectionBase<T>::on_container_delete(SelectionBase<T>::container_type& half_dead) {
   LOG_DEBUG_FUNCTION();
   this->mark_as_deleted(half_dead);
   state=SelectionState::HAS_DANGLING_REFERENCES;
 }
 
 template<typename T>
-Selection<T>::Selection(Selection<T>::container_type& container) {
+Selection<T>::Selection(typename SelectionBase<T>::container_type& container) {
   LOG_DEBUG_FUNCTION();
-  state = SelectionState::OK;
+  this->state = SelectionState::OK;
   for (element_type& el: container.elements){
     if (!el.is_deleted){
       this->elements.push_back(&el);
@@ -646,7 +635,7 @@ Selection<T>::Selection(Selection<T>::container_type& container) {
   }
   if (!this->empty()){
     this->add_observer(container);
-    auto comparator = typename Selection<T>::element_type::PtrComparator{};
+    auto comparator = typename SelectionBase<T>::element_type::PtrComparator{};
     std::sort(this->elements.begin(),this->elements.end(),comparator);
   }
 }
@@ -729,14 +718,14 @@ Container<T>::~Container(){
 
 template<typename T>
 Container<T>::Container(Container<T>&& rhs) noexcept :
-    ObservableBy<Selection<const T>>(std::move(rhs)),
-    ObservableBy<Selection<T>>(std::move(rhs)),
+    ObservableBy<SelectionBase<const T>>(std::move(rhs)),
+    ObservableBy<SelectionBase<T>>(std::move(rhs)),
     elements(std::move(rhs.elements)),
     n_deleted(rhs.n_deleted)
 {
   LOG_DEBUG_FUNCTION();
-  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
-  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_move,rhs,*this);
+  ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_move,rhs,*this);
+  ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_move,rhs,*this);
 }
 
 template<typename T>
@@ -750,10 +739,10 @@ Container<T>& Container<T>::operator=(Container<T>&& rhs) noexcept {
   elements = std::move(rhs.elements);
   n_deleted = rhs.n_deleted;
   rhs.n_deleted = 0;
-  ObservableBy<Selection<T>>::operator=(std::move(rhs));
-  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_move,rhs,*this);
-  ObservableBy<Selection<const T>>::operator=(std::move(rhs));
-  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_move,rhs,*this);
+  ObservableBy<SelectionBase<T>>::operator=(std::move(rhs));
+  ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_move,rhs,*this);
+  ObservableBy<SelectionBase<const T>>::operator=(std::move(rhs));
+  ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_move,rhs,*this);
   return *this;
 }
 
@@ -786,8 +775,8 @@ void Container<T>::insert(T&& value) {
 
   ptrdiff_t shift = new_pos-old_begin;
   if (shift!=0){
-    ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
-    ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
   }
   elements.emplace_back(std::move(value));
 }
@@ -802,8 +791,8 @@ T& Container<T>::emplace(Args&& ... args) {
 
   ptrdiff_t shift = new_pos-old_begin;
   if (shift!=0){
-    ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
-    ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
+    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move,old_begin,old_begin+elements.size(),shift);
   }
   element_type& ref = elements.emplace_back(T(std::forward<Args>(args)...));
   assert(ref.parent()==this);
@@ -816,10 +805,10 @@ void Container<T>::clear() {
   int n = elements.size();
   elements.clear();
   n_deleted = 0;
-  ObservableBy<Selection<T>>::notify_all(&Selection<T>::on_container_delete,*this);
-  ObservableBy<Selection<const T>>::notify_all(&Selection<const T>::on_container_delete,*this);
-  this->ObservableBy<Selection<T>>::remove_all_observers();
-  this->ObservableBy<Selection<const T>>::remove_all_observers();
+  ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_delete,*this);
+  ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_delete,*this);
+  this->ObservableBy<SelectionBase<T>>::remove_all_observers();
+  this->ObservableBy<SelectionBase<const T>>::remove_all_observers();
 }
 
 
@@ -844,7 +833,7 @@ Selection<T> Container<T>::all(){
   LOG_DEBUG_FUNCTION();
   Selection<T> s(*this);
   if (!s.empty()){
-    ObservableBy<Selection<T>>::add_observer(s);
+    ObservableBy<SelectionBase<T>>::add_observer(s);
   }
   return std::move(s);
 }
@@ -854,53 +843,53 @@ Selection<const T> Container<T>::all() const {
   LOG_DEBUG_FUNCTION();
   Selection<const T> s(*this);
   if (!s.empty()){
-    ObservableBy<Selection<const T>>::add_observer(s);
+    ObservableBy<SelectionBase<const T>>::add_observer(s);
   }
   return std::move(s);
 }
 
 template<typename T>
-void Container<T>::on_selection_move(Selection<T>& from, Selection<T>& to){
+void Container<T>::on_selection_move(SelectionBase<T>& from, SelectionBase<T>& to){
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("on_selection_move");
-  ObservableBy<Selection<T>>::move_observer(from,to);
+  ObservableBy<SelectionBase<T>>::move_observer(from,to);
 }
 
 template<typename T>
-void Container<T>::on_selection_move(Selection<const T>& from, Selection<const T>& to) const{
+void Container<T>::on_selection_move(SelectionBase<const T>& from, SelectionBase<const T>& to) const{
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("const on_selection_move");
-  ObservableBy<Selection<const T>>::move_observer(from,to);
+  ObservableBy<SelectionBase<const T>>::move_observer(from,to);
 }
 
 
 template<typename T>
-void Container<T>::on_selection_delete(Selection<T>& half_dead){
+void Container<T>::on_selection_delete(SelectionBase<T>& half_dead){
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("on_selection_delete");
-  ObservableBy<Selection<T>>::remove_observer(half_dead);
+  ObservableBy<SelectionBase<T>>::remove_observer(half_dead);
 }
 
 template<typename T>
-void Container<T>::on_selection_delete(Selection<const T>& half_dead) const{
+void Container<T>::on_selection_delete(SelectionBase<const T>& half_dead) const{
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("const on_selection_delete");
-  ObservableBy<Selection<const T>>::remove_observer(half_dead);
+  ObservableBy<SelectionBase<const T>>::remove_observer(half_dead);
 }
 
 
 template<typename T>
-void Container<T>::on_selection_copy(Selection<T>& copy){
+void Container<T>::on_selection_copy(SelectionBase<T>& copy){
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("on_selection_copy");
-  ObservableBy<Selection<T>>::add_observer(copy);
+  ObservableBy<SelectionBase<T>>::add_observer(copy);
 }
 
 template<typename T>
-void Container<T>::on_selection_copy(Selection<const T>& copy) const{
+void Container<T>::on_selection_copy(SelectionBase<const T>& copy) const{
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("const on_selection_copy");
-  ObservableBy<Selection<const T>>::add_observer(copy);
+  ObservableBy<SelectionBase<const T>>::add_observer(copy);
 }
 
 

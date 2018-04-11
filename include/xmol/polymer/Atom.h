@@ -1,37 +1,11 @@
 #pragma once
 
-#include "xmol/utils/ShortAsciiString.h"
+#include "Atom_fwd.h"
 #include "xmol/selection/ContainerSelection.h"
 
+#include <iostream>
+
 namespace xmol::polymer {
-
-namespace detail{
-  struct AtomNameTag{};
-  struct ResidueNameTag{};
-  struct ChainNameTag{};
-}
-
-using AtomName = xmol::utils::ShortAsciiString<4,detail::AtomNameTag>;
-using ResidueName = xmol::utils::ShortAsciiString<3,detail::ResidueNameTag>;
-using ChainName = xmol::utils::ShortAsciiString<1,detail::ChainNameTag>;
-
-
-using residueIndex_t = int32_t;
-using chainIndex_t = int32_t;
-
-using atomId_t = int32_t;
-using residueId_t = int32_t;
-using frameIndex_t = int32_t;
-
-
-struct XYZ {
-  double x,y,z;
-};
-
-class Atom;
-class Residue;
-class Chain;
-class Frame;
 
 class Atom {
 public:
@@ -177,3 +151,17 @@ inline bool operator!=(const Frame& lhs, const Frame& rhs) noexcept {
 }
 
 }
+
+
+namespace xmol::selection {
+
+template<typename T>
+Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>>
+  SelectionBaseExtension<T,xmol::polymer::detail::enabled_if_atom<T>>::asResidues() const{
+  Selection<xmol::polymer::detail::add_constness_as<T,xmol::polymer::Residue>> result;
+  std::cout << "atoms as residues" << std::endl;
+  return result;
+};
+
+}
+

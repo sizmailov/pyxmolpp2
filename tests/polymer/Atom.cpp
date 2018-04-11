@@ -281,3 +281,12 @@ TEST_F(AtomTests, brakets){
 
 }
 
+TEST_F(AtomTests, dedicated_selections){
+  Frame f(1);
+
+  Chain&c = f.emplace(ChainName(""));
+  Residue&r = c.emplace(ResidueName("GLY"),1);
+  Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
+
+  EXPECT_EQ(r.all().asResidues().size(),1);
+}

@@ -240,7 +240,7 @@ Chain& Frame::emplace(ChainName name, int reserve) {
 }
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
-  if (chainIndex<0||chainIndex>size()){
+  if (chainIndex<0||chainIndex>=this->elements.size()){
     throw std::out_of_range("out_of_range Frame::opreator[]");
   }
   if (elements[chainIndex].is_deleted){
@@ -250,7 +250,7 @@ Chain& Frame::operator[](const chainIndex_t& chainIndex) {
 }
 
 const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
-  if (chainIndex<0||chainIndex>size()){
+  if (chainIndex<0||chainIndex>=this->elements.size()){
     throw std::out_of_range("out_of_range Frame::opreator[]");
   }
   if (elements[chainIndex].is_deleted){
