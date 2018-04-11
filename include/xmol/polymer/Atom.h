@@ -203,4 +203,13 @@ inline bool operator!=(const Frame& lhs, const Frame& rhs) noexcept {
   return &lhs != &rhs;
 }
 
+using ConstAtomSelection = xmol::selection::Selection<const Atom>;
+using AtomSelection = xmol::selection::Selection<Atom>;
+
+using ConstResidueSelection = xmol::selection::Selection<const Residue>;
+using ResidueSelection = xmol::selection::Selection<Residue>;
+
+using ConstChainSelection = xmol::selection::Selection<const Chain>;
+using ChainSelection = xmol::selection::Selection<Chain>;
+
 }
