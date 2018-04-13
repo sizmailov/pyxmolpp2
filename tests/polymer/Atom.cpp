@@ -10,6 +10,25 @@ using namespace xmol::polymer;
 
 class AtomTests : public Test{
 public:
+  Frame make_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes) const {
+    Frame frame(0);
+    int aid=1;
+    int rid=1;
+    for (auto& [chainName,size]: chain_sizes ){
+      Chain& c = frame.emplace(ChainName(chainName));
+      for (int i=0;i<size;i++){
+        Residue &r = c.emplace(ResidueName("GLY"),residueId_t(rid++));
+        r.emplace(AtomName("N"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("H"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("CA"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("HA2"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("HA3"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("C"),atomId_t(aid++),XYZ{1,2,3});
+        r.emplace(AtomName("O"),atomId_t(aid++),XYZ{1,2,3});
+      }
+    }
+    return frame;
+  }
 };
 
 TEST_F(AtomTests, composition){
@@ -292,4 +311,14 @@ TEST_F(AtomTests, dedicated_selections){
   EXPECT_EQ(r.all().asResidues().size(),1);
   EXPECT_EQ(c.asResidues().size(),1);
   EXPECT_EQ(c.all().asAtoms().asResidues().asChains().size(),1);
+}
+
+TEST_F(AtomTests, deletion_invalidates_selections_1){
+  Frame frame = make_polyglycines({{"A",10},{"B",20}});
+
+  auto atoms = frame.asAtoms();
+  auto atoms_to_delete = frame.asAtoms().filter([](const Atom&a){return a.id()%2==0;});
+  atoms_to_delete.for_each([](Atom& a) { a.set_deleted(); });
+  EXPECT_ANY_THROW(for (auto&a: atoms){});
+  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
 }
