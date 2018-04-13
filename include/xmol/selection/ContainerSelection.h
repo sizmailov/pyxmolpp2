@@ -141,7 +141,10 @@ public:
   Selection filter(Predicate&& p) const;
 
   template<typename Transform>
-  Selection& apply(Transform&& transform);
+  Selection& for_each(Transform&& transform);
+
+  template<typename Transform>
+  const Selection& for_each(Transform&& transform) const;
 
   template<typename V, typename U=T, typename SFINAE=std::enable_if_t<std::is_same_v<std::remove_const_t<U>,std::remove_const_t<V>>>>
   bool operator==(const Selection<V>& rhs) const;
@@ -512,12 +515,22 @@ Selection<T> Selection<T>::filter(Predicate&& p) const{
 
 template<typename T>
 template<typename Transform>
-Selection<T>& Selection<T>::apply(Transform&& transform){
+Selection<T>& Selection<T>::for_each(Transform&& transform){
   LOG_DEBUG_FUNCTION();
   for (auto& value: *this ){
     transform(value);
   }
   this->remove_redundant_observers();
+  return *this;
+}
+
+template<typename T>
+template<typename Transform>
+const Selection<T>& Selection<T>::for_each(Transform&& transform) const{
+  LOG_DEBUG_FUNCTION();
+  for (auto& value: *this ){
+    transform(value);
+  }
   return *this;
 }
 
