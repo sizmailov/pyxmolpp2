@@ -369,7 +369,7 @@ TEST_F(ConSelTests, selection_range_1){
   EXPECT_EQ(sum,50*99);
 
   int sum2=0;
-  s.apply([&sum2](const V& val){sum2+=val.value;});
+  s.for_each([&sum2](const V& val) { sum2 += val.value; });
 
   EXPECT_EQ(sum2,50*99);
 
