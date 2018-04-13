@@ -29,8 +29,8 @@ include_directories(include)
 add_subdirectory(tests)
 
 
-file(GLOB_RECURSE XMOL_HEADERS include/*.h)
-file(GLOB_RECURSE XMOL_SOURCES src/*.cpp)
+file(GLOB_RECURSE XMOL_HEADERS include/**.h)
+file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 
 add_library(observable ${XMOL_SOURCES} ${XMOL_HEADERS})
