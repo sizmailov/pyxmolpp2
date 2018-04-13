@@ -32,7 +32,7 @@ int PDBLine::getInt(const RecordFieldName& fieldName, size_t idx) const {
   auto first = v[idx*2]-1;
   auto last = v[idx*2+1]-1;
   auto n = last+1-first;
-  auto [success, value] = parse_int<SpaceStrip::LEFT>(*line,first,n);
+  auto [success, value] = parse_int<SpaceStrip::LEFT_AND_RIGHT>(*line,first,n);
   if (!success){
     throw std::runtime_error("PDB line: can't read int");
   }
