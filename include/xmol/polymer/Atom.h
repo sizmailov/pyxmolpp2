@@ -142,6 +142,7 @@ public:
   Frame& operator=(Frame&& rhs) noexcept ;
 
   const frameIndex_t& index() const;
+  Frame& set_index(frameIndex_t index);
 
   explicit Frame(frameIndex_t id, int reserve=0);
 

@@ -275,6 +275,12 @@ xmol::selection::Container<Chain>* Chain::parent() {return m_frame;};
 const frameIndex_t& Frame::index() const{
   return m_index;
 }
+
+Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
+  m_index = index;
+  return *this;
+}
+
 Frame::Frame(frameIndex_t id, int reserve)  :
     Container<Chain>(reserve),
     m_index(id) {
