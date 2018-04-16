@@ -7,6 +7,7 @@
 
 namespace xmol::polymer {
 
+using atomIndex_t = int32_t;
 using residueIndex_t = int32_t;
 using chainIndex_t = int32_t;
 
