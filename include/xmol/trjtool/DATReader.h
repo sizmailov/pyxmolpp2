@@ -8,6 +8,7 @@
 #include <cassert>
 #include <sstream>
 #include <utility>
+#include "xmol/trajectory/Trajectory.h"
 
 namespace xmol::trjtool{
 
@@ -128,6 +129,10 @@ public:
       m_in->read(xyzf.bytes,sizeof(xyzf));
       sel[i].set_r(xmol::polymer::XYZ{std::get<0>(xyzf.value),std::get<1>(xyzf.value),std::get<2>(xyzf.value)});
     }
+  }
+
+  xmol::polymer::atomIndex_t n_atoms_per_frame() const{
+    return info().size();
   }
 
 private:
