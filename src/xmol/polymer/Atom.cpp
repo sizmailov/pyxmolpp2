@@ -105,6 +105,14 @@ Residue& Atom::residue() noexcept {
   return *m_residue;
 }
 
+bool Atom::is_deleted() const {
+  return m_deleted;
+}
+
+void Atom::set_deleted() {
+  m_deleted = true;
+}
+
 Atom::Atom(Residue& residue, AtomName name, atomId_t id,
     XYZ r) :
     m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
@@ -144,6 +152,16 @@ const Atom& Residue::operator[](const AtomName& atomName) const{
   }
   throw std::runtime_error("Residue has no atom "+atomName.str());
 }
+
+bool Residue::is_deleted() const{
+  return m_deleted;
+}
+
+void Residue::set_deleted() {
+  asAtoms().for_each([](Atom&a){a.set_deleted();});
+  m_deleted = true;
+}
+
 Residue::Residue(Chain& chain, ResidueName name, residueId_t id, int reserve)  :
     Container<Atom>(reserve),
     m_name(std::move(name)), m_id(id), m_chain(&chain){}
@@ -226,6 +244,15 @@ const Residue& Chain::operator[](const residueId_t& residueId) const {
 
 Residue& Chain::operator[](const residueId_t& residueId) {
   return this->elements[m_lookup_table.at(residueId)];
+}
+
+bool Chain::is_deleted() const {
+  return m_deleted;
+}
+
+void Chain::set_deleted() {
+  asResidues().for_each([](Residue&r){r.set_deleted();});
+  m_deleted=true;
 }
 
 const Frame& Chain::frame() const noexcept {

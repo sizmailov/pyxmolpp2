@@ -27,12 +27,8 @@ public:
   const Residue& residue() const noexcept;
   Residue& residue() noexcept;
 
-  bool is_deleted() const{
-    return m_deleted;
-  }
-  void set_deleted() {
-    m_deleted = true;
-  }
+  bool is_deleted() const;
+  void set_deleted();
   const xmol::selection::Container<Atom>* parent() const;
   xmol::selection::Container<Atom>* parent();
 private:
@@ -74,13 +70,8 @@ public:
   xmol::selection::Selection<const Atom> asAtoms() const {return all();}
   xmol::selection::Selection<Atom> asAtoms() {return all();}
 
-
-  bool is_deleted() const{
-    return m_deleted;
-  }
-  void set_deleted() {
-    m_deleted = true;
-  }
+  bool is_deleted() const;
+  void set_deleted();
 
   const xmol::selection::Container<Residue>* parent() const;
   xmol::selection::Container<Residue>* parent();
@@ -124,12 +115,9 @@ public:
   xmol::selection::Selection<const Residue> asResidues() const {return all();}
   xmol::selection::Selection<Residue> asResidues() {return all();}
 
-  bool is_deleted() const{
-    return m_deleted;
-  }
-  void set_deleted() {
-    m_deleted = true;
-  }
+  bool is_deleted() const;
+  void set_deleted();
+
   const xmol::selection::Container<Chain>* parent() const;
   xmol::selection::Container<Chain>* parent();
 

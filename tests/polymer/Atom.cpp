@@ -322,3 +322,14 @@ TEST_F(AtomTests, deletion_invalidates_selections_1){
   EXPECT_ANY_THROW(for (auto&a: atoms){});
   EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
 }
+
+TEST_F(AtomTests, deletion_invalidates_selections_2){
+  Frame frame = make_polyglycines({{"A",10},{"B",20}});
+
+  auto atoms = frame.asAtoms();
+  auto residues_to_delete = frame.asResidues().filter([](const Residue&r){return r.id()%2==0;});
+  auto atoms_to_delete = residues_to_delete.asAtoms();
+  residues_to_delete.for_each([](Residue& r) { r.set_deleted(); });
+  EXPECT_ANY_THROW(for (auto&a: atoms){});
+  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
+}
