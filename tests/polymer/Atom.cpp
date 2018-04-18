@@ -49,9 +49,9 @@ TEST_F(AtomTests, composition){
   EXPECT_EQ(2,C.size());
   EXPECT_EQ(3,C_GLY2.size());
 
-  EXPECT_EQ(C_GLY2_CG.r().x,1);
-  EXPECT_EQ(C_GLY2_CG.r().y,2);
-  EXPECT_EQ(C_GLY2_CG.r().z,3);
+  EXPECT_EQ(C_GLY2_CG.r().x(),1);
+  EXPECT_EQ(C_GLY2_CG.r().y(),2);
+  EXPECT_EQ(C_GLY2_CG.r().z(),3);
 
 
   EXPECT_EQ(C_GLY2_CG.name(),AtomName("CG"));
@@ -66,9 +66,9 @@ TEST_F(AtomTests, composition){
 
   C_GLY2_CG.set_r(XYZ{4,5,6});
 
-  EXPECT_EQ(C_GLY2_CG.r().x,4);
-  EXPECT_EQ(C_GLY2_CG.r().y,5);
-  EXPECT_EQ(C_GLY2_CG.r().z,6);
+  EXPECT_EQ(C_GLY2_CG.r().x(),4);
+  EXPECT_EQ(C_GLY2_CG.r().y(),5);
+  EXPECT_EQ(C_GLY2_CG.r().z(),6);
 
   EXPECT_EQ(C_GLY2_CG.name(),AtomName("CGG"));
   EXPECT_EQ(C_GLY2_CG.name().str(),"CGG");
@@ -125,9 +125,9 @@ TEST_F(AtomTests, composition){
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
     EXPECT_EQ(A2.id(),A.id());
-    EXPECT_EQ(A2.r().x,A.r().x);
-    EXPECT_EQ(A2.r().y,A.r().y);
-    EXPECT_EQ(A2.r().z,A.r().z);
+    EXPECT_EQ(A2.r().x(),A.r().x());
+    EXPECT_EQ(A2.r().y(),A.r().y());
+    EXPECT_EQ(A2.r().z(),A.r().z());
   }
   {
     Frame tmp = frame;
@@ -153,9 +153,9 @@ TEST_F(AtomTests, composition){
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
     EXPECT_EQ(A2.id(),A.id());
-    EXPECT_EQ(A2.r().x,A.r().x);
-    EXPECT_EQ(A2.r().y,A.r().y);
-    EXPECT_EQ(A2.r().z,A.r().z);
+    EXPECT_EQ(A2.r().x(),A.r().x());
+    EXPECT_EQ(A2.r().y(),A.r().y());
+    EXPECT_EQ(A2.r().z(),A.r().z());
   }
 
   {
@@ -183,9 +183,9 @@ TEST_F(AtomTests, composition){
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
     EXPECT_EQ(A2.id(),A.id());
-    EXPECT_EQ(A2.r().x,A.r().x);
-    EXPECT_EQ(A2.r().y,A.r().y);
-    EXPECT_EQ(A2.r().z,A.r().z);
+    EXPECT_EQ(A2.r().x(),A.r().x());
+    EXPECT_EQ(A2.r().y(),A.r().y());
+    EXPECT_EQ(A2.r().z(),A.r().z());
   }
 
   {
@@ -212,9 +212,9 @@ TEST_F(AtomTests, composition){
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
     EXPECT_EQ(A2.id(),A.id());
-    EXPECT_EQ(A2.r().x,A.r().x);
-    EXPECT_EQ(A2.r().y,A.r().y);
-    EXPECT_EQ(A2.r().z,A.r().z);
+    EXPECT_EQ(A2.r().x(),A.r().x());
+    EXPECT_EQ(A2.r().y(),A.r().y());
+    EXPECT_EQ(A2.r().z(),A.r().z());
   }
 
 
@@ -257,9 +257,9 @@ TEST_F(AtomTests, composition){
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(),A.name());
     EXPECT_EQ(A2.id(),A.id());
-    EXPECT_EQ(A2.r().x,A.r().x);
-    EXPECT_EQ(A2.r().y,A.r().y);
-    EXPECT_EQ(A2.r().z,A.r().z);
+    EXPECT_EQ(A2.r().x(),A.r().x());
+    EXPECT_EQ(A2.r().y(),A.r().y());
+    EXPECT_EQ(A2.r().z(),A.r().z());
   }
 }
 

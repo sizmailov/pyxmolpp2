@@ -30,7 +30,7 @@ TEST_F(PdbReaderTests, sound){
   EXPECT_EQ(residue.id(),-3);
   EXPECT_EQ(atom.id(),32);
   EXPECT_EQ(atom.name(),AtomName("N"));
-  EXPECT_DOUBLE_EQ(atom.r().x,11.281);
-  EXPECT_DOUBLE_EQ(atom.r().y,86.699);
-  EXPECT_DOUBLE_EQ(atom.r().z,94.383);
+  EXPECT_DOUBLE_EQ(atom.r().x(),11.281);
+  EXPECT_DOUBLE_EQ(atom.r().y(),86.699);
+  EXPECT_DOUBLE_EQ(atom.r().z(),94.383);
 }

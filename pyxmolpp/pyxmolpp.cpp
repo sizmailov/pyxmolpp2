@@ -19,9 +19,9 @@ PYBIND11_MODULE(pyxmolpp2, m) {
     using namespace xmol::polymer;
     py::class_<XYZ>(polymer, "XYZ")
         .def(py::init<double, double, double>())
-        .def_readwrite("x", &XYZ::x, &XYZ::set_x)
-        .def_readwrite("y", &XYZ::y, &XYZ::set_y)
-        .def_readwrite("z", &XYZ::z, &XYZ::set_z)
+        .def_property("x", &XYZ::x, py::cpp_function(&XYZ::set_x,py::return_value_policy::reference))
+        .def_property("y", &XYZ::y, py::cpp_function(&XYZ::set_y,py::return_value_policy::reference))
+        .def_property("z", &XYZ::z, py::cpp_function(&XYZ::set_z,py::return_value_policy::reference))
         .def("__str__",
              [](const XYZ& r) {
                return "[" + std::to_string(r.x()) + ", " + std::to_string(r.y()) +

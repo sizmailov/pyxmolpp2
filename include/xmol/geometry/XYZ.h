@@ -5,79 +5,79 @@ namespace xmol::geometry {
 
 class XYZ {
 public:
-  constexpr XYZ(double x, double y, double z) : m_v(x, y, z) {}
-  constexpr XYZ() = default;
-  constexpr XYZ(const XYZ& other) = default;
-  constexpr XYZ(XYZ&& other) = default;
-  constexpr XYZ& operator=(const XYZ& other) = default;
-  constexpr XYZ& operator=(XYZ&& other) = default;
+  inline XYZ(double x, double y, double z) : m_v(x, y, z) {}
+  inline XYZ() = default;
+  inline XYZ(const XYZ& other) = default;
+  inline XYZ(XYZ&& other) = default;
+  inline XYZ& operator=(const XYZ& other) = default;
+  inline XYZ& operator=(XYZ&& other) = default;
 
-  constexpr XYZ& operator+=(const XYZ& other) {
+  inline XYZ& operator+=(const XYZ& other) {
     m_v += other.m_v;
     return *this;
   }
-  constexpr XYZ& operator-=(const XYZ& other) {
+  inline XYZ& operator-=(const XYZ& other) {
     m_v -= other.m_v;
     return *this;
   }
 
-  constexpr XYZ& operator*=(double t) {
+  inline XYZ& operator*=(double t) {
     m_v *= t;
     return *this;
   }
-  constexpr XYZ& operator/=(double t) {
+  inline XYZ& operator/=(double t) {
     m_v /= t;
     return *this;
   }
 
-  constexpr double len2() const { return m_v.squaredNorm(); }
-  constexpr double len() const { return m_v.norm(); }
+  inline double len2() const { return m_v.squaredNorm(); }
+  inline double len() const { return m_v.norm(); }
 
-  constexpr double dot(const XYZ& b) const { return m_v.dot(b.m_v); }
-  constexpr XYZ cross(const XYZ& b) const { return XYZ(m_v.cross(b.m_v)); }
-  constexpr XYZ operator-() const { return XYZ(-m_v); }
-  const double& x() const { return m_v[0]; }
-  const double& y() const { return m_v[1]; }
-  const double& z() const { return m_v[2]; }
-  XYZ& set_x(double value) const {
+  inline double dot(const XYZ& b) const { return m_v.dot(b.m_v); }
+  inline XYZ cross(const XYZ& b) const { return XYZ(m_v.cross(b.m_v)); }
+  inline XYZ operator-() const { return XYZ(-m_v); }
+  inline double x() const { return m_v[0]; }
+  inline double y() const { return m_v[1]; }
+  inline double z() const { return m_v[2]; }
+  inline XYZ& set_x(double value) {
     m_v[0] = value;
     return *this;
   }
-  XYZ& set_y(double value) const {
+  inline XYZ& set_y(double value) {
     m_v[1] = value;
     return *this;
   }
-  XYZ& set_z(double value) const {
+  inline XYZ& set_z(double value) {
     m_v[2] = value;
     return *this;
   }
 
 private:
-  explicit XYZ(const Eigen::Vector3d& v) : m_v(v) {}
+  explicit inline XYZ(const Eigen::Vector3d& v) : m_v(v) {}
   Eigen::Vector3d m_v;
 };
 
-constexpr XYZ operator-(const XYZ& a, const XYZ& b) {
+inline XYZ operator-(const XYZ& a, const XYZ& b) {
   XYZ c(a);
   c -= b;
   return c;
 };
-constexpr XYZ operator+(const XYZ& a, const XYZ& b) {
+inline XYZ operator+(const XYZ& a, const XYZ& b) {
   XYZ c(a);
   c += b;
   return c;
 };
-constexpr XYZ operator*(const XYZ& a, double t) {
+inline XYZ operator*(const XYZ& a, double t) {
   XYZ result(a);
   result *= t;
   return result;
 }
-constexpr XYZ operator/(const XYZ& a, double t) {
+inline XYZ operator/(const XYZ& a, double t) {
   XYZ result(a);
   result /= t;
   return result;
 }
-constexpr XYZ operator*(double t, const XYZ& a) {
+inline XYZ operator*(double t, const XYZ& a) {
   XYZ result(a);
   result *= t;
   return result;

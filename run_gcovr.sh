@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e 
 make -C cmake-build-coverage all 
 make -C cmake-build-coverage test 
 
