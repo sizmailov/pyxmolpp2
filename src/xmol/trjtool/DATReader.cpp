@@ -2,7 +2,7 @@
 
 using namespace xmol::trjtool;
 
-DATReader::DATReader(std::istream &in) : m_in(&in) {
+DATReader::DATReader(std::istream& in) : m_in(&in) {
   in.seekg(0, std::ios::beg);
 
   if (!in.read(m_header.bytes, sizeof(m_header.bytes))) {
@@ -65,11 +65,11 @@ DATReader::DATReader(std::istream &in) : m_in(&in) {
   }
 }
 
-const std::vector<std::string> &DATReader::info() const { return m_info; }
+const std::vector<std::string>& DATReader::info() const { return m_info; }
 
 const int DATReader::n_frames() const { return m_n_frames; }
 
-bool DATReader::match(const xmol::polymer::ConstAtomSelection &sel) const {
+bool DATReader::match(const xmol::polymer::ConstAtomSelection& sel) const {
   if (m_data_type != DataType::float32 ||
       sel.size() != m_header.fields.nitems || m_header.fields.ndim != 3) {
     return false;
@@ -89,7 +89,7 @@ bool DATReader::match(const xmol::polymer::ConstAtomSelection &sel) const {
   return true;
 }
 
-void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection &sel) {
+void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel) {
   const size_t float_size = sizeof(float);
   const std::streamoff frame_begin =
       float_size * m_header.fields.nitems * m_header.fields.ndim * n;
