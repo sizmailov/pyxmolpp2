@@ -5,6 +5,8 @@ namespace xmol::geometry {
 
 class XYZ {
 public:
+
+  explicit inline XYZ(const Eigen::Vector3d& v) : m_v(v) {}
   inline XYZ(double x, double y, double z) : m_v(x, y, z) {}
   inline XYZ() = default;
   inline XYZ(const XYZ& other) = default;
@@ -52,8 +54,10 @@ public:
     return *this;
   }
 
+  inline const Eigen::Vector3d& get_underlying_vector() const { return m_v;}
+  inline Eigen::Vector3d& get_underlying_vector(){ return m_v;}
+
 private:
-  explicit inline XYZ(const Eigen::Vector3d& v) : m_v(v) {}
   Eigen::Vector3d m_v;
 };
 
