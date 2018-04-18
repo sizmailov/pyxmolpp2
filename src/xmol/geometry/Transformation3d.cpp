@@ -1,6 +1,6 @@
 #include "xmol/geometry/Transformation3d.h"
 #include "gsl/gsl_assert"
-
+#include <iostream>
 using namespace xmol::geometry;
 
 Rotation3d::Rotation3d() { m << 1, 0, 0, 0, 1, 0, 0, 0, 1; }
@@ -97,7 +97,7 @@ XYZ Rotation3d::axis() const {
 
 Rotation3d& Rotation3d::operator*=(const Rotation3d& rhs) {
   Expects(std::fabs(rhs.m.determinant() - 1.0) < 1e-10);
-  m = rhs.m;
+  m *= rhs.m;
   Ensures(std::fabs(m.determinant() - 1.0) < 1e-10);
   return *this;
 }
@@ -133,7 +133,6 @@ operator*=(const xmol::geometry::Translation3d& rhs) {
 Transformation3d& Transformation3d::
 operator*=(const xmol::geometry::UniformScale3d& rhs) {
   m *= rhs.scale();
-  dr *= rhs.scale();
   return *this;
 }
 Transformation3d& Transformation3d::
@@ -143,15 +142,29 @@ operator*=(const xmol::geometry::Rotation3d& rhs) {
   return *this;
 }
 
-Transformation3d& Transformation3d::operator*=(const xmol::geometry::Transformation3d& rhs) {
-  auto& m2 = rhs.m;
-  this->m *= m2;
-  this->dr = dr + XYZ(m*rhs.dr.get_underlying_vector());
+Transformation3d& Transformation3d::
+operator*=(const xmol::geometry::Transformation3d& M1) {
+  auto& m1 = M1.m;
+  dr = dr + XYZ(m * M1.dr.get_underlying_vector());
+  m *= m1;
   return *this;
 }
 
 XYZ Transformation3d::transform(const xmol::geometry::XYZ& r) const {
-  return XYZ(m*r.get_underlying_vector())+dr;
+  return XYZ(m * r.get_underlying_vector()) + dr;
+}
+
+Transformation3d Transformation3d::inverted() const {
+  Transformation3d r(*this);
+  std::swap(r.m(0, 1), r.m(1, 0));
+  std::swap(r.m(0, 2), r.m(2, 0));
+  std::swap(r.m(1, 2), r.m(2, 1));
+  double scale2 = (r.m(0, 1) * r.m(0, 1) + r.m(0, 2) * r.m(0, 2) +
+      r.m(0, 0) * r.m(0, 0));
+  r.m /= scale2;
+  Eigen::Vector3d vvv = r.m * dr.get_underlying_vector();
+  r.dr = -XYZ(vvv);
+  return r;
 }
 
 Transformation3d::Transformation3d(

@@ -19,6 +19,8 @@ struct EulerAngles {
 
 class Translation3d {
 public:
+  Translation3d() : m_dr(0,0,0) {};
+  explicit Translation3d(const XYZ& dr): m_dr(dr){};
   XYZ transform(const XYZ& r) {
     return r+m_dr;
   };
@@ -28,6 +30,7 @@ public:
   }
 
   const XYZ& dr() const{ return m_dr;}
+  Translation3d inverted() const { return Translation3d(-m_dr);}
 
 private:
   XYZ m_dr;
@@ -49,6 +52,7 @@ public:
   }
 
   double scale() const{ return m_scale; }
+  UniformScale3d inverted() const{ return UniformScale3d(1/m_scale);}
 
 private:
   double m_scale;
@@ -95,9 +99,10 @@ public:
   Transformation3d& operator*=(const Translation3d& rhs);
   Transformation3d& operator*=(const UniformScale3d& rhs);
   Transformation3d& operator*=(const Rotation3d& rhs);
-  Transformation3d& operator*=(const Transformation3d& rhs);
+  Transformation3d& operator*=(const Transformation3d& M1);
 
   XYZ transform(const XYZ& r) const;
+  Transformation3d inverted() const;
 private:
   Eigen::Matrix3d m;
   XYZ dr;
