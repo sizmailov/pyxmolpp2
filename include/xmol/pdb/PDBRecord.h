@@ -23,27 +23,42 @@ public:
       : fieldColons(std::move(field_colons)){};
   const std::vector<int>&
   getFieldColons(const RecordFieldName& fieldName) const;
-
+  void set_field(const RecordFieldName& fieldName, const std::vector<int>& colons);
 private:
   std::map<RecordFieldName, std::vector<int>> fieldColons;
 };
 
-class PDBRecordTypesBase {
+class basic_PdbRecords {
 public:
   virtual const PDBRecordType&
   get_record(const RecordTypeName& string) const = 0;
 };
 
-class DefaultPDBRecordTypesBase : public PDBRecordTypesBase {
+class StandardPdbRecords : public basic_PdbRecords {
 public:
   virtual const PDBRecordType&
   get_record(const RecordTypeName& recordTypeName) const override;
-  static const PDBRecordTypesBase& instance();
+  static const basic_PdbRecords& instance();
 
 private:
-  DefaultPDBRecordTypesBase();
+  StandardPdbRecords();
   std::map<RecordTypeName, PDBRecordType> recordTypes;
 };
+
+class AlteredPdbRecords : public basic_PdbRecords {
+public:
+  explicit AlteredPdbRecords(const basic_PdbRecords& basic):basic(&basic){};
+
+  virtual const PDBRecordType&
+  get_record(const RecordTypeName& recordTypeName) const override;
+
+  void alter_record(RecordTypeName, RecordFieldName, std::vector<int> colons);
+
+private:
+  const basic_PdbRecords* basic;
+  std::map<RecordTypeName, PDBRecordType> recordTypes;
+};
+
 
 namespace detail {
 std::map<RecordTypeName, PDBRecordType> get_bundled_records();

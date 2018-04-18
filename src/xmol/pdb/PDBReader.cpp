@@ -157,7 +157,7 @@ private:
   std::istream* sin_;
   std::string str_;
   PDBLine pdbLine;
-  const PDBRecordTypesBase& db;
+  const basic_PdbRecords& db;
   struct cursor {
   private:
     getPDBLines_range* rng_;
@@ -182,7 +182,7 @@ private:
 
 public:
   getPDBLines_range() = default;
-  getPDBLines_range(std::istream& sin, const PDBRecordTypesBase& db)
+  getPDBLines_range(std::istream& sin, const basic_PdbRecords& db)
       : sin_(&sin), str_{}, db(db) {
     this->next(); // prime the pump
   }
@@ -193,10 +193,9 @@ public:
 };
 
 struct getPDBLines_fn {
-  getPDBLines_range
-  operator()(std::istream& sin,
-             const PDBRecordTypesBase& db =
-                 DefaultPDBRecordTypesBase::instance()) const {
+  getPDBLines_range operator()(
+      std::istream& sin,
+      const basic_PdbRecords& db = StandardPdbRecords::instance()) const {
     return getPDBLines_range{sin, db};
   }
 };
@@ -206,9 +205,13 @@ inline constexpr getPDBLines_fn getPDBLines{};
 }
 
 Frame PDBReader::read_frame() {
+  return read_frame(StandardPdbRecords::instance());
+}
+
+Frame PDBReader::read_frame(const basic_PdbRecords& db) {
   Frame result(0);
 
-  auto pdbLines = getPDBLines(*is);
+  auto pdbLines = getPDBLines(*is, db);
 
   std::vector<Frame> frames;
 

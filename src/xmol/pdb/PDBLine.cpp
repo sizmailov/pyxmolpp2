@@ -11,7 +11,7 @@ using namespace xmol::utils::parsing;
 
 PDBLine::PDBLine() : line(nullptr), pdbRecordType(nullptr) {}
 
-PDBLine::PDBLine(const std::string& pdb_line, const PDBRecordTypesBase& db)
+PDBLine::PDBLine(const std::string& pdb_line, const basic_PdbRecords& db)
     : recordName(rtrim(pdb_line.substr(0, 6))), line(&pdb_line),
       pdbRecordType(&db.get_record(this->recordName)) {}
 double PDBLine::getDouble(const RecordFieldName& fieldName, size_t idx) const {

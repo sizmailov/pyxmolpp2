@@ -14,7 +14,7 @@ class PDBLine {
 
 public:
   PDBLine();
-  explicit PDBLine(const std::string& pdb_line, const PDBRecordTypesBase& db);
+  explicit PDBLine(const std::string& pdb_line, const basic_PdbRecords& db);
   PDBLine(PDBLine&& other) = default;
   PDBLine(const PDBLine& other) = default;
   PDBLine& operator=(const PDBLine& other) = default;
