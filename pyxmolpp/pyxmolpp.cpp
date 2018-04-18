@@ -19,17 +19,17 @@ PYBIND11_MODULE(pyxmolpp2, m) {
     using namespace xmol::polymer;
     py::class_<XYZ>(polymer, "XYZ")
         .def(py::init<double, double, double>())
-        .def_readwrite("x", &XYZ::x)
-        .def_readwrite("y", &XYZ::y)
-        .def_readwrite("z", &XYZ::z)
+        .def_readwrite("x", &XYZ::x, &XYZ::set_x)
+        .def_readwrite("y", &XYZ::y, &XYZ::set_y)
+        .def_readwrite("z", &XYZ::z, &XYZ::set_z)
         .def("__str__",
              [](const XYZ& r) {
-               return "[" + std::to_string(r.x) + ", " + std::to_string(r.y) +
-                      ", " + std::to_string(r.z) + "]";
+               return "[" + std::to_string(r.x()) + ", " + std::to_string(r.y()) +
+                      ", " + std::to_string(r.z()) + "]";
              })
         .def("__repr__", [](const XYZ& r) {
-          return "<pyxmolpp2.polymer.XYZ \" [" + std::to_string(r.x) + ", " +
-                 std::to_string(r.y) + ", " + std::to_string(r.z) +
+          return "<pyxmolpp2.polymer.XYZ \" [" + std::to_string(r.x()) + ", " +
+                 std::to_string(r.y()) + ", " + std::to_string(r.z()) +
                  "] \" at 0x" +
                  xmol::utils::string::int2hex((uint64_t)(std::addressof(r))) +
                  ">";

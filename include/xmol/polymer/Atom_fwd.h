@@ -2,6 +2,7 @@
 
 #include "xmol/selection/ContainerSelection_fwd.h"
 #include "xmol/utils/ShortAsciiString.h"
+#include "xmol/geometry/XYZ.h"
 
 #include <memory>
 
@@ -15,9 +16,7 @@ using atomId_t = int32_t;
 using residueId_t = int32_t;
 using frameIndex_t = int32_t;
 
-struct XYZ {
-  double x, y, z;
-};
+using XYZ = xmol::geometry::XYZ;
 
 class Atom;
 class Residue;

@@ -33,7 +33,7 @@ add_subdirectory(external/googletest)
 include_directories(external/googletest/googletest/include)
 include_directories(external/range-v3/include)
 include_directories(external/GSL/include)
-
+include_directories(external/eigen-git-mirror/)
 add_subdirectory(external/pybind11)
 
 
