@@ -20,7 +20,7 @@ Atom& Atom::set_name(AtomName&& value) {
 
 const XYZ& Atom::r() const { return m_r; }
 
-Atom& Atom::set_r(XYZ&& value) {
+Atom& Atom::set_r(const XYZ& value) {
   m_r = std::move(value);
   return *this;
 }
@@ -235,15 +235,15 @@ xmol::selection::Container<Chain>* Chain::parent() { return m_frame; };
 
 // -------------------- Frame -------------------------
 
+Frame::Frame(frameIndex_t id, int reserve)
+    : Container<Chain>(reserve), m_index(id) {}
+
 const frameIndex_t& Frame::index() const { return m_index; }
 
 Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
   m_index = index;
   return *this;
 }
-
-Frame::Frame(frameIndex_t id, int reserve)
-    : Container<Chain>(reserve), m_index(id) {}
 
 Chain& Frame::emplace(ChainName name, int reserve) {
   return Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);

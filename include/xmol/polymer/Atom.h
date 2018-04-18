@@ -21,7 +21,7 @@ public:
   Atom& set_name(AtomName&& value);
 
   const XYZ& r() const;
-  Atom& set_r(XYZ&& value);
+  Atom& set_r(const XYZ& value);
 
   const Residue& residue() const noexcept;
   Residue& residue() noexcept;
@@ -134,6 +134,8 @@ private:
 
 class Frame : public xmol::selection::Container<Chain> {
 public:
+  explicit Frame(frameIndex_t id, int reserve = 0);
+
   Frame(const Frame& rhs);
   Frame(Frame&& rhs) noexcept;
   Frame& operator=(const Frame& rhs);
@@ -141,8 +143,6 @@ public:
 
   const frameIndex_t& index() const;
   Frame& set_index(frameIndex_t index);
-
-  explicit Frame(frameIndex_t id, int reserve = 0);
 
   Chain& emplace(ChainName name, int reserve = 0);
 
