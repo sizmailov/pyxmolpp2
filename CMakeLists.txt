@@ -3,6 +3,14 @@ project(observable)
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(PythonInterp)
+find_package(PythonLibs REQUIRED)
+
+if (PYTHONLIBS_FOUND)
+    include_directories(${PYTHON_INCLUDE_DIRS})
+    message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
+endif()
+
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
     IF(CMAKE_COMPILER_IS_GNUCC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
@@ -15,6 +23,8 @@ else()
 ENDIF()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has depricated `register` keyword
+
 
 enable_testing()
 
@@ -24,6 +34,9 @@ include_directories(external/googletest/googletest/include)
 include_directories(external/range-v3/include)
 include_directories(external/GSL/include)
 
+add_subdirectory(external/pybind11)
+
+
 include_directories(include)
 
 add_subdirectory(tests)
@@ -32,7 +45,15 @@ add_subdirectory(tests)
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
+add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
+add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
-add_library(observable ${XMOL_SOURCES} ${XMOL_HEADERS})
+IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
+    target_link_libraries(observable_static gcov)
+    target_link_libraries(observable gcov)
+ENDIF()
 
-target_link_libraries(observable gcov)
+file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
+
+pybind11_add_module(pyxmolpp2 ${PYXMOL_SOURCES} )
+target_link_libraries(pyxmolpp2 PRIVATE observable)

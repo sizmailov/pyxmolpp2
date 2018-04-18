@@ -7,3 +7,6 @@
 [submodule "external/GSL"]
 	path = external/GSL
 	url = git@github.com:Microsoft/GSL.git
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = git@github.com:pybind/pybind11.git

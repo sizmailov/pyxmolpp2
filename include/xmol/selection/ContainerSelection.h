@@ -33,7 +33,9 @@ public:
 
   T& operator*() const;
   T* operator->() const;
+
   template <typename Sentinel> bool operator!=(const Sentinel&) const;
+  template <typename Sentinel> bool operator==(const Sentinel&) const;
 
   SelectionRange& operator++();
   SelectionRange& operator--();
@@ -251,6 +253,12 @@ bool SelectionRange<T>::operator!=(const Sentinel&) const {
   } else {
     return pos > end;
   }
+}
+
+template <typename T>
+template <typename Sentinel>
+bool SelectionRange<T>::operator==(const Sentinel& end) const {
+  return !(*this != end);
 }
 
 template <typename T> SelectionRange<T>& SelectionRange<T>::operator++() {
