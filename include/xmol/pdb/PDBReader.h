@@ -1,16 +1,16 @@
 #pragma once
-#include <iostream>
 #include "xmol/polymer/Atom.h"
+#include <iostream>
 
-namespace xmol::pdb{
+namespace xmol::pdb {
 
-class PDBReader{
+class PDBReader {
 public:
-  PDBReader(std::istream& is): is(&is){}
+  PDBReader(std::istream& is) : is(&is) {}
   xmol::polymer::Frame read_frame();
   std::vector<xmol::polymer::Frame> read_frames();
+
 private:
   std::istream* is;
 };
-
 }

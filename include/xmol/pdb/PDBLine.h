@@ -1,17 +1,17 @@
 #pragma once
 
-#include <string>
 #include "PDBRecord.h"
+#include <string>
 
-namespace xmol{
+namespace xmol {
 namespace pdb {
 
-
 class PDBLine {
-  struct StrPtr{
+  struct StrPtr {
     const char* data;
     const int n;
   };
+
 public:
   PDBLine();
   explicit PDBLine(const std::string& pdb_line, const PDBRecordTypesBase& db);
