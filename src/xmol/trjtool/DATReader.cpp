@@ -6,7 +6,7 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
   in.seekg(0, std::ios::beg);
 
   if (!in.read(m_header.bytes, sizeof(m_header.bytes))) {
-    throw std::runtime_error("trajtool::DATReader::EOF");
+    throw std::runtime_error("trjtool::DATReader::EOF");
   }
   switch (m_header.fields.dtype) {
   case 2: {
@@ -18,18 +18,18 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
     break;
   }
   default: {
-    throw std::runtime_error("trajtool::DATReader::Unknown datatype");
+    throw std::runtime_error("trjtool::DATReader::Unknown datatype");
   }
   }
 
   for (int i = 0; i < m_header.fields.nitems; i++) {
     FromRawBytes<int> info_len;
     if (!in.read(info_len.bytes, sizeof(info_len.bytes))) {
-      throw std::runtime_error("trajtool::DATReader::EOF");
+      throw std::runtime_error("trjtool::DATReader::EOF");
     }
     char buffer[info_len.value];
     if (!in.read(buffer, info_len.value)) {
-      throw std::runtime_error("trajtool::DATReader::EOF");
+      throw std::runtime_error("trjtool::DATReader::EOF");
     }
     m_info.emplace_back(std::string(buffer, info_len.value));
   }
@@ -60,7 +60,7 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
     break;
   }
   default: {
-    throw std::runtime_error("trajtool::DATReader::Unknown datatype");
+    throw std::runtime_error("trjtool::DATReader::Unknown datatype");
   }
   }
 }

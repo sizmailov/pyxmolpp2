@@ -5,7 +5,7 @@ function(define_test_suite name dependencies)
     target_link_libraries("${name}Tests" ${dependencies} gtest_main)
     add_test(NAME "${name}Tests"
             COMMAND "${name}Tests"
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests"
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/tests_dataset"
             )
 endfunction(define_test_suite)
 
@@ -13,4 +13,4 @@ endfunction(define_test_suite)
 define_test_suite(selection observable)
 define_test_suite(polymer observable)
 define_test_suite(pdb observable)
-define_test_suite(trajtool observable)
+define_test_suite(trjtool observable)
