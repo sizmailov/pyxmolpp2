@@ -23,23 +23,23 @@ PYBIND11_MODULE(pyxmolpp2, m) {
     pybind11::module polymer =
         m.def_submodule("polymer", "pyxmolpp2.polymer module");
     using namespace xmol::polymer;
-    py::class_<XYZ>(polymer, "XYZ")
-        .def(py::init<double, double, double>())
-        .def_property("x", &XYZ::x, py::cpp_function(&XYZ::set_x,py::return_value_policy::reference))
-        .def_property("y", &XYZ::y, py::cpp_function(&XYZ::set_y,py::return_value_policy::reference))
-        .def_property("z", &XYZ::z, py::cpp_function(&XYZ::set_z,py::return_value_policy::reference))
-        .def("__str__",
-             [](const XYZ& r) {
-               return "[" + std::to_string(r.x()) + ", " + std::to_string(r.y()) +
-                      ", " + std::to_string(r.z()) + "]";
-             })
-        .def("__repr__", [](const XYZ& r) {
-          return "<pyxmolpp2.polymer.XYZ \" [" + std::to_string(r.x()) + ", " +
-                 std::to_string(r.y()) + ", " + std::to_string(r.z()) +
-                 "] \" at 0x" +
-                 xmol::utils::string::int2hex((uint64_t)(std::addressof(r))) +
-                 ">";
-        });
+//    py::class_<XYZ>(polymer, "XYZ")
+//        .def(py::init<double, double, double>())
+//        .def_property("x", &XYZ::x, py::cpp_function(&XYZ::set_x,py::return_value_policy::reference))
+//        .def_property("y", &XYZ::y, py::cpp_function(&XYZ::set_y,py::return_value_policy::reference))
+//        .def_property("z", &XYZ::z, py::cpp_function(&XYZ::set_z,py::return_value_policy::reference))
+//        .def("__str__",
+//             [](const XYZ& r) {
+//               return "[" + std::to_string(r.x()) + ", " + std::to_string(r.y()) +
+//                      ", " + std::to_string(r.z()) + "]";
+//             })
+//        .def("__repr__", [](const XYZ& r) {
+//          return "<pyxmolpp2.polymer.XYZ \" [" + std::to_string(r.x()) + ", " +
+//                 std::to_string(r.y()) + ", " + std::to_string(r.z()) +
+//                 "] \" at 0x" +
+//                 xmol::utils::string::int2hex((uint64_t)(std::addressof(r))) +
+//                 ">";
+//        });
     py::class_<AtomName>(polymer, "AtomName")
         .def(py::init<const std::string&>())
         .def_property_readonly("str", &AtomName::str)
