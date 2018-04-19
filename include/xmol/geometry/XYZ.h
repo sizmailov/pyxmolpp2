@@ -8,7 +8,7 @@ public:
 
   explicit inline XYZ(const Eigen::Vector3d& v) : m_v(v) {}
   inline XYZ(double x, double y, double z) : m_v(x, y, z) {}
-  inline XYZ() = default;
+  inline XYZ() : XYZ(0,0,0) {};
   inline XYZ(const XYZ& other) = default;
   inline XYZ(XYZ&& other) = default;
   inline XYZ& operator=(const XYZ& other) = default;
