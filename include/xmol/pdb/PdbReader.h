@@ -6,9 +6,9 @@ namespace xmol::pdb {
 
 class basic_PdbRecords;
 
-class PDBReader {
+class PdbReader {
 public:
-  explicit PDBReader(std::istream& is) : is(&is) {}
+  explicit PdbReader(std::istream& is) : is(&is) {}
   xmol::polymer::Frame read_frame();
   xmol::polymer::Frame read_frame(const basic_PdbRecords& db);
   std::vector<xmol::polymer::Frame> read_frames();

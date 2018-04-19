@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "xmol/pdb/PDBReader.h"
+#include "xmol/pdb/PdbReader.h"
 
 
 using ::testing::Test;
@@ -15,7 +15,7 @@ public:
 
 TEST_F(PdbReaderTests, sound){
   std::stringstream ss("ATOM     32  N  AARG A  -3      11.281  86.699  94.383  0.50 35.88           N  ");
-  PDBReader pdbReader(ss);
+  PdbReader pdbReader(ss);
 
   auto frame = pdbReader.read_frame();
   auto& chain =  frame.all()[0];

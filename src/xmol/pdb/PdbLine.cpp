@@ -1,5 +1,5 @@
-#include "xmol/pdb/PDBLine.h"
-#include "xmol/pdb/PDBRecord.h"
+#include "xmol/pdb/PdbLine.h"
+#include "xmol/pdb/PdbRecord.h"
 #include "xmol/utils/parsing.h"
 #include "xmol/utils/string.h"
 #include <algorithm>
@@ -9,12 +9,12 @@ using namespace xmol::pdb;
 using xmol::utils::string::rtrim;
 using namespace xmol::utils::parsing;
 
-PDBLine::PDBLine() : line(nullptr), pdbRecordType(nullptr) {}
+PdbLine::PdbLine() : line(nullptr), pdbRecordType(nullptr) {}
 
-PDBLine::PDBLine(const std::string& pdb_line, const basic_PdbRecords& db)
+PdbLine::PdbLine(const std::string& pdb_line, const basic_PdbRecords& db)
     : recordName(rtrim(pdb_line.substr(0, 6))), line(&pdb_line),
       pdbRecordType(&db.get_record(this->recordName)) {}
-double PDBLine::getDouble(const RecordFieldName& fieldName, size_t idx) const {
+double PdbLine::getDouble(const FieldName& fieldName, size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   auto first = v[idx * 2] - 1;
   auto last = v[idx * 2 + 1] - 1;
@@ -26,7 +26,7 @@ double PDBLine::getDouble(const RecordFieldName& fieldName, size_t idx) const {
   return value;
 }
 
-int PDBLine::getInt(const RecordFieldName& fieldName, size_t idx) const {
+int PdbLine::getInt(const FieldName& fieldName, size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   auto first = v[idx * 2] - 1;
   auto last = v[idx * 2 + 1] - 1;
@@ -38,7 +38,7 @@ int PDBLine::getInt(const RecordFieldName& fieldName, size_t idx) const {
   return value;
 }
 
-std::string PDBLine::getString(const RecordFieldName& fieldName,
+std::string PdbLine::getString(const FieldName& fieldName,
                                size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   if (line->length() < v[idx * 2 + 1]) {
@@ -47,7 +47,7 @@ std::string PDBLine::getString(const RecordFieldName& fieldName,
   return line->substr(v[idx * 2] - 1, v[idx * 2 + 1] - v[idx * 2] + 1);
 }
 
-PDBLine::StrPtr PDBLine::getStrPtr(const RecordFieldName& fieldName,
+PdbLine::StrPtr PdbLine::getStrPtr(const FieldName& fieldName,
                                    size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   if (line->length() < v[idx * 2 + 1]) {
@@ -56,8 +56,8 @@ PDBLine::StrPtr PDBLine::getStrPtr(const RecordFieldName& fieldName,
   return StrPtr{line->data() + v[idx * 2] - 1, v[idx * 2 + 1] - v[idx * 2] + 1};
 }
 
-const std::string& PDBLine::getLine() const { return *line; }
-RecordTypeName PDBLine::getRecordName() const { return recordName; }
-char PDBLine::getChar(const RecordFieldName& fieldName, size_t idx) const {
+const std::string& PdbLine::getLine() const { return *line; }
+RecordName PdbLine::getRecordName() const { return recordName; }
+char PdbLine::getChar(const FieldName& fieldName, size_t idx) const {
   return getStrPtr(fieldName, idx).data[0];
 }

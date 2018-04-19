@@ -1,10 +1,10 @@
 import pytest
 import math
 
-from pyxmolpp2.geometry import *
+
 
 def test_conversions():
-
+    from pyxmolpp2.geometry import Degrees, Radians,radians_to_degrees,degrees_to_radians
     deg = Degrees(10)
     rad = Radians(100)
 
@@ -15,7 +15,7 @@ def test_conversions():
     assert deg.radians == pytest.approx(degrees_to_radians(10))
 
 def test_operations():
-
+    from pyxmolpp2.geometry import Degrees, Radians, sin,cos,tan,fabs
     l = Radians(10)
     r = Radians(20)
 

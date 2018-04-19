@@ -1,6 +1,6 @@
-#include "xmol/pdb/PDBReader.h"
-#include "xmol/pdb/PDBLine.h"
-#include "xmol/pdb/PDBRecord.h"
+#include "xmol/pdb/PdbReader.h"
+#include "xmol/pdb/PdbLine.h"
+#include "xmol/pdb/PdbRecord.h"
 #include "xmol/utils/string.h"
 
 #include "range/v3/all.hpp"
@@ -40,23 +40,23 @@ struct FrameStub {
 template <typename Iterator>
 AtomStub& readAtom(ResidueStub& res, Iterator& it) {
   assert(it != ranges::default_sentinel{});
-  assert(it->getRecordName() == RecordTypeName("ATOM") ||
-         it->getRecordName() == RecordTypeName("HETATM") ||
-         it->getRecordName() == RecordTypeName("ANISOU"));
+  assert(it->getRecordName() == RecordName("ATOM") ||
+         it->getRecordName() == RecordName("HETATM") ||
+         it->getRecordName() == RecordName("ANISOU"));
   using xmol::utils::string::trim;
   AtomStub& atom = res.atoms.emplace_back(
-      AtomName(trim(it->getString(RecordFieldName("name")))),
-      it->getInt(RecordFieldName("serial")),
-      XYZ{it->getDouble(RecordFieldName("x")),
-          it->getDouble(RecordFieldName("y")),
-          it->getDouble(RecordFieldName("z"))});
+      AtomName(trim(it->getString(FieldName("name")))),
+      it->getInt(FieldName("serial")),
+      XYZ{it->getDouble(FieldName("x")),
+          it->getDouble(FieldName("y")),
+          it->getDouble(FieldName("z"))});
   ++it;
 
   // skip "ANISOU" records
   while (it != ranges::default_sentinel{} &&
-         (it->getRecordName() == RecordTypeName("ANISOU") ||
-          it->getRecordName() == RecordTypeName("SIGATM") ||
-          it->getRecordName() == RecordTypeName("SIGUIJ"))) {
+         (it->getRecordName() == RecordName("ANISOU") ||
+          it->getRecordName() == RecordName("SIGATM") ||
+          it->getRecordName() == RecordName("SIGUIJ"))) {
     ++it;
   }
 
@@ -66,24 +66,24 @@ AtomStub& readAtom(ResidueStub& res, Iterator& it) {
 template <typename Iterator>
 ResidueStub& readResidue(ChainStub& c, Iterator& it) {
   assert(it != ranges::default_sentinel{});
-  assert(it->getRecordName() == RecordTypeName("ATOM") ||
-         it->getRecordName() == RecordTypeName("HETATM") ||
-         it->getRecordName() == RecordTypeName("ANISOU"));
+  assert(it->getRecordName() == RecordName("ATOM") ||
+         it->getRecordName() == RecordName("HETATM") ||
+         it->getRecordName() == RecordName("ANISOU"));
 
   using xmol::utils::string::trim;
 
-  residueId_t residueId = it->getInt(RecordFieldName("resSeq"));
-  chainIndex_t chainName = it->getChar(RecordFieldName("chainID"));
+  residueId_t residueId = it->getInt(FieldName("resSeq"));
+  chainIndex_t chainName = it->getChar(FieldName("chainID"));
 
   ResidueStub& r = c.residues.emplace_back(
-      ResidueName(trim(it->getString(RecordFieldName("resName")))), residueId);
+      ResidueName(trim(it->getString(FieldName("resName")))), residueId);
 
   while (it != ranges::default_sentinel{} &&
-         (it->getRecordName() == RecordTypeName("ATOM") ||
-          it->getRecordName() == RecordTypeName("HETATM") ||
-          it->getRecordName() == RecordTypeName("ANISOU")) &&
-         it->getChar(RecordFieldName("chainID")) == chainName &&
-         it->getInt(RecordFieldName("resSeq")) == residueId) {
+         (it->getRecordName() == RecordName("ATOM") ||
+          it->getRecordName() == RecordName("HETATM") ||
+          it->getRecordName() == RecordName("ANISOU")) &&
+         it->getChar(FieldName("chainID")) == chainName &&
+         it->getInt(FieldName("resSeq")) == residueId) {
     readAtom(r, it);
   }
 
@@ -92,17 +92,17 @@ ResidueStub& readResidue(ChainStub& c, Iterator& it) {
 
 template <typename Iterator>
 ChainStub& readChain(FrameStub& frame, Iterator& it) {
-  assert(it->getRecordName() == RecordTypeName("ATOM") ||
-         it->getRecordName() == RecordTypeName("HETATM"));
-  std::string stringChainId = it->getString(RecordFieldName("chainID"));
+  assert(it->getRecordName() == RecordName("ATOM") ||
+         it->getRecordName() == RecordName("HETATM"));
+  std::string stringChainId = it->getString(FieldName("chainID"));
 
   ChainStub& c = frame.chains.emplace_back(ChainName(stringChainId));
 
   while (it != ranges::default_sentinel{} &&
-         it->getRecordName() != RecordTypeName("TER") &&
-         (it->getRecordName() == RecordTypeName("ATOM") ||
-          it->getRecordName() == RecordTypeName("HETATM")) &&
-         it->getChar(RecordFieldName("chainID")) == stringChainId[0]) {
+         it->getRecordName() != RecordName("TER") &&
+         (it->getRecordName() == RecordName("ATOM") ||
+          it->getRecordName() == RecordName("HETATM")) &&
+         it->getChar(FieldName("chainID")) == stringChainId[0]) {
     readResidue(c, it);
   }
 
@@ -115,19 +115,19 @@ ChainStub& readChain(FrameStub& frame, Iterator& it) {
 template <typename Iterator> Frame readFrame(Iterator& it) {
   frameIndex_t id{0};
   bool has_model = false;
-  if (it->getRecordName() == RecordTypeName("MODEL")) {
-    id = it->getInt(RecordFieldName("serial"));
+  if (it->getRecordName() == RecordName("MODEL")) {
+    id = it->getInt(FieldName("serial"));
     has_model = true;
     ++it;
   }
   FrameStub frame{id};
-  assert(it->getRecordName() == RecordTypeName("ATOM") ||
-         it->getRecordName() == RecordTypeName("HETATM"));
+  assert(it->getRecordName() == RecordName("ATOM") ||
+         it->getRecordName() == RecordName("HETATM"));
   chainIndex_t chainIndex = 0;
   while (it != ranges::default_sentinel{} &&
-         ((has_model && it->getRecordName() != RecordTypeName("ENDMDL")) ||
-          it->getRecordName() == RecordTypeName("ATOM") ||
-          it->getRecordName() == RecordTypeName("HETATM"))) {
+         ((has_model && it->getRecordName() != RecordName("ENDMDL")) ||
+          it->getRecordName() == RecordName("ATOM") ||
+          it->getRecordName() == RecordName("HETATM"))) {
     readChain(frame, it);
   }
 
@@ -156,7 +156,7 @@ private:
   friend range_access;
   std::istream* sin_;
   std::string str_;
-  PDBLine pdbLine;
+  PdbLine pdbLine;
   const basic_PdbRecords& db;
   struct cursor {
   private:
@@ -166,16 +166,16 @@ private:
     cursor() = default;
     explicit cursor(getPDBLines_range& rng) : rng_(&rng) {}
     void next() { rng_->next(); }
-    const PDBLine& read() const noexcept { return rng_->pdbLine; }
+    const PdbLine& read() const noexcept { return rng_->pdbLine; }
 
     bool equal(default_sentinel) const { return !*rng_->sin_; }
   };
   void next() {
     std::getline(*sin_, str_, '\n');
     if (str_.size() > 0) {
-      pdbLine = PDBLine(str_, db);
+      pdbLine = PdbLine(str_, db);
     } else {
-      pdbLine = PDBLine();
+      pdbLine = PdbLine();
     }
   }
   cursor begin_cursor() { return cursor{*this}; }
@@ -204,11 +204,11 @@ inline constexpr getPDBLines_fn getPDBLines{};
 }
 }
 
-Frame PDBReader::read_frame() {
+Frame PdbReader::read_frame() {
   return read_frame(StandardPdbRecords::instance());
 }
 
-Frame PDBReader::read_frame(const basic_PdbRecords& db) {
+Frame PdbReader::read_frame(const basic_PdbRecords& db) {
   Frame result(0);
 
   auto pdbLines = getPDBLines(*is, db);
@@ -218,9 +218,9 @@ Frame PDBReader::read_frame(const basic_PdbRecords& db) {
   auto it = ranges::begin(pdbLines);
 
   while (it != ranges::default_sentinel{}) {
-    if (it->getRecordName() == RecordTypeName("MODEL") ||
-        it->getRecordName() == RecordTypeName("ATOM") ||
-        it->getRecordName() == RecordTypeName("HETATM")) {
+    if (it->getRecordName() == RecordName("MODEL") ||
+        it->getRecordName() == RecordName("ATOM") ||
+        it->getRecordName() == RecordName("HETATM")) {
       return readFrame(it);
     } else {
       ++it;
@@ -229,7 +229,7 @@ Frame PDBReader::read_frame(const basic_PdbRecords& db) {
   return result;
 }
 
-std::vector<Frame> PDBReader::read_frames() {
+std::vector<Frame> PdbReader::read_frames() {
 
   auto pdbLines = getPDBLines(*is);
   std::vector<Frame> frames;
@@ -237,9 +237,9 @@ std::vector<Frame> PDBReader::read_frames() {
   auto it = ranges::begin(pdbLines);
 
   while (it != ranges::default_sentinel{}) {
-    if (it->getRecordName() == RecordTypeName("MODEL") ||
-        it->getRecordName() == RecordTypeName("ATOM") ||
-        it->getRecordName() == RecordTypeName("HETATM")) {
+    if (it->getRecordName() == RecordName("MODEL") ||
+        it->getRecordName() == RecordName("ATOM") ||
+        it->getRecordName() == RecordName("HETATM")) {
       frames.push_back(readFrame(it));
     } else {
       ++it;

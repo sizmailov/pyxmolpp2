@@ -14,7 +14,12 @@ PYBIND11_MODULE(pyxmolpp2, m) {
     pyxmolpp::init_geometry(geometry);
   }
   {
+    pybind11::module pdb = m.def_submodule("pdb", "pyxmolpp2.pdb module");
+    pyxmolpp::init_pdb(pdb);
+  }
+  {
     pybind11::module polymer = m.def_submodule("polymer", "pyxmolpp2.polymer module");
     pyxmolpp::init_polymer(polymer);
   }
+
 }

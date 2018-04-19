@@ -40,6 +40,8 @@ private:
 
 class TrajectoryPortion {
 public:
+  virtual ~TrajectoryPortion() = default;
+
   virtual void set_coordinates(
       xmol::polymer::frameIndex_t frameIndex,
       const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) = 0;

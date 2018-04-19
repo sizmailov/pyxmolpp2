@@ -3,9 +3,10 @@
 
 namespace xmol::trjtool {
 
-class DatTrajectoryPortion : public xmol::trajectory::TrajectoryPortion {
+class DatFile : public xmol::trajectory::TrajectoryPortion {
 public:
-  DatTrajectoryPortion(const std::string& filename);
+  explicit DatFile(const std::string& filename);
+  virtual ~DatFile() = default;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
                        const std::vector<std::pair<int, xmol::polymer::Atom*>>&
                            index_atoms) override;

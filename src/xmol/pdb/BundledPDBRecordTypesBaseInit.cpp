@@ -1,17 +1,17 @@
-#include "xmol/pdb/PDBRecord.h"
+#include "xmol/pdb/PdbRecord.h"
 
 using namespace xmol::pdb;
 
-std::map<RecordTypeName,PDBRecordType> detail::get_bundled_records() {
+std::map<RecordName,PdbRecordType> detail::get_bundled_records() {
 
   auto as_field = [](const std::string& fieldName, std::vector<int> colons){
-    auto shortend = fieldName.substr(0,std::min(size_t(RecordFieldName::max_length),fieldName.size()));
-    return std::make_pair(RecordFieldName(shortend),std::move(colons));
+    auto shortend = fieldName.substr(0,std::min(size_t(FieldName::max_length),fieldName.size()));
+    return std::make_pair(FieldName(shortend),std::move(colons));
   };
-  auto as_record = [](const char* recordName, std::map<RecordFieldName,std::vector<int>> fields){
-    return std::pair<RecordTypeName,PDBRecordType>(RecordTypeName(recordName),PDBRecordType(std::move(fields)));
+  auto as_record = [](const char* recordName, std::map<FieldName,std::vector<int>> fields){
+    return std::pair<RecordName,PdbRecordType>(RecordName(recordName),PdbRecordType(std::move(fields)));
   };
-  std::map<RecordTypeName,PDBRecordType> result {
+  std::map<RecordName,PdbRecordType> result {
       as_record("ANISOU",{
           as_field("serial",{7,11}),
           as_field("name",{13,16}),
