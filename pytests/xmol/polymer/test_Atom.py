@@ -45,7 +45,7 @@ def make_polyglycine( chain_lengths ):
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
     from pyxmolpp2.polymer import ResidueName
-    from pyxmolpp2.polymer import XYZ
+    from pyxmolpp2.geometry import XYZ
     from tqdm import tqdm
 
     aid=1
