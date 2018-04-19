@@ -5,7 +5,7 @@ using namespace xmol::geometry;
 
 Rotation3d::Rotation3d() { m << 1, 0, 0, 0, 1, 0, 0, 0, 1; }
 
-Rotation3d::Rotation3d(XYZ u, Angle theta) {
+Rotation3d::Rotation3d(XYZ u, AngleValue theta) {
   u /= u.len();
 
   double cos_theta = cos(theta);
@@ -79,7 +79,7 @@ EulerAngles Rotation3d::euler_angles() const {
           Radians(atan2(m(2, 0), m(2, 1)))};
 }
 
-Angle Rotation3d::theta() const {
+AngleValue Rotation3d::theta() const {
   return Radians(acos((m(0, 0) + m(1, 1) + m(2, 2) - 1) / 2.0));
 }
 XYZ Rotation3d::axis() const {

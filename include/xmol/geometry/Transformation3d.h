@@ -1,20 +1,20 @@
 #pragma once
 
-#include "Angle.h"
+#include "AngleValue.h"
 #include "XYZ.h"
 
 namespace xmol::geometry {
 
 struct YawPitchRoll {
-  Angle yaw;
-  Angle pitch;
-  Angle roll;
+  AngleValue yaw;
+  AngleValue pitch;
+  AngleValue roll;
 };
 
 struct EulerAngles {
-  Angle alpha;
-  Angle beta;
-  Angle gamma;
+  AngleValue alpha;
+  AngleValue beta;
+  AngleValue gamma;
 };
 
 class Translation3d {
@@ -61,7 +61,7 @@ private:
 class Rotation3d {
 public:
   Rotation3d();
-  Rotation3d(XYZ axis, Angle theta);
+  Rotation3d(XYZ axis, AngleValue theta);
   explicit Rotation3d(YawPitchRoll rollPitchYaw);
   explicit Rotation3d(EulerAngles ea);
   explicit Rotation3d(const Eigen::Matrix3d& m);
@@ -69,7 +69,7 @@ public:
   YawPitchRoll yaw_pitch_roll() const;
   EulerAngles euler_angles() const;
 
-  Angle theta() const;
+  AngleValue theta() const;
   XYZ axis() const;
 
   XYZ transform(const XYZ& r) const;

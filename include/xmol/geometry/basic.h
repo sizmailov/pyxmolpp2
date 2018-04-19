@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Angle.h"
+#include "AngleValue.h"
 #include "XYZ.h"
 #include "gsl/gsl_assert"
 
@@ -10,13 +10,13 @@ inline double distance(const XYZ& a, const XYZ& b) { return (a - b).len(); }
 
 inline double distance2(const XYZ& a, const XYZ& b) { return (a - b).len2(); }
 
-inline Angle angle(const XYZ& a, const XYZ& b, const XYZ& c) {
+inline AngleValue angle(const XYZ& a, const XYZ& b, const XYZ& c) {
   XYZ ba = a - b;
   XYZ bc = c - b;
   return Radians(std::acos(ba.dot(bc) / (ba.len() * bc.len())));
 }
 
-inline Angle dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c,
+inline AngleValue dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c,
                             const XYZ& d) {
   XYZ ba = a - b;
   XYZ bc = c - b;
