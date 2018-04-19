@@ -6,7 +6,7 @@ def test_Frame():
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
     from pyxmolpp2.polymer import ResidueName
-    from pyxmolpp2.polymer import XYZ
+    from pyxmolpp2.geometry import XYZ
 
     f = Frame(5)
     c = f.emplace(ChainName("A"),1)
