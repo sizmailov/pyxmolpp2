@@ -1,7 +1,8 @@
 #pragma once
 #include "DATReader.h"
 
-namespace xmol::trjtool {
+namespace xmol {
+namespace trjtool {
 
 class DatFile : public xmol::trajectory::TrajectoryPortion {
 public:
@@ -22,4 +23,5 @@ private:
   std::unique_ptr<std::ifstream> m_stream;
   std::unique_ptr<DATReader> m_reader;
 };
+}
 }

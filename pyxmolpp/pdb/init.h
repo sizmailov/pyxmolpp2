@@ -1,8 +1,9 @@
 #pragma once
 #include "../pyxmolpp.h"
 
-namespace pyxmolpp::pdb {
+namespace pyxmolpp{ namespace pdb {
 
 void init_PDBFile(py::module& pdb);
 
+}
 }

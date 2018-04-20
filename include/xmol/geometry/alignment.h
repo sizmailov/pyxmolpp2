@@ -3,7 +3,8 @@
 #include "Transformation3d.h"
 #include <vector>
 
-namespace xmol::geometry {
+namespace xmol {
+namespace geometry {
 
 Transformation3d calc_alignment(const std::vector<XYZ>& reference,
                                 const std::vector<XYZ>& variable);
@@ -16,5 +17,5 @@ double calc_rmsd(const std::vector<XYZ>& reference,
 
 double calc_rmsd(const std::vector<XYZ>& reference,
                  const std::vector<XYZ>& variable);
-
+}
 }

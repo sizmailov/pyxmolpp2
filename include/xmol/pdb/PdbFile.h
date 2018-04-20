@@ -5,7 +5,8 @@
 #include <fstream>
 #include <memory>
 
-namespace xmol::pdb {
+namespace xmol {
+namespace pdb {
 
 class PdbReader;
 
@@ -31,4 +32,5 @@ private:
   std::unique_ptr<std::ifstream> m_stream;
   std::unique_ptr<PdbReader> m_reader;
 };
+}
 }

@@ -62,7 +62,8 @@
 
 #endif
 
-namespace xmol::utils {
+namespace xmol {
+namespace utils {
 
 class Logger {
 public:
@@ -75,10 +76,12 @@ public:
                   int indent_inc = 0);
 
   class DummyEnterFunctionLog;
+
   class DummyEnterScopeLog;
 
   /* to complain C++-.2003 */
   friend class DummyEnterFunctionLog;
+
   friend class DummyEnterScopeLog;
 
 private:
@@ -87,6 +90,7 @@ private:
   LOG_LEVEL log_level;
   std::string logfile;
   static Logger& instance();
+
   Logger() : logfile(""), log_level(NO_LOG), indent(2){};
 };
 
@@ -108,4 +112,5 @@ public:
                      LOG_LEVEL _lvl);
   ~DummyEnterScopeLog();
 };
+}
 }

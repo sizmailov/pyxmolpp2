@@ -1,12 +1,13 @@
 #pragma once
 
+#include "xmol/geometry/XYZ.h"
 #include "xmol/selection/ContainerSelection_fwd.h"
 #include "xmol/utils/ShortAsciiString.h"
-#include "xmol/geometry/XYZ.h"
 
 #include <memory>
 
-namespace xmol::polymer {
+namespace xmol {
+namespace polymer {
 
 using atomIndex_t = int32_t;
 using residueIndex_t = int32_t;
@@ -19,8 +20,11 @@ using frameIndex_t = int32_t;
 using XYZ = xmol::geometry::XYZ;
 
 class Atom;
+
 class Residue;
+
 class Chain;
+
 class Frame;
 
 namespace detail {
@@ -30,34 +34,38 @@ struct ResidueNameTag {};
 struct ChainNameTag {};
 
 template <typename T>
-using enabled_if_atom =
-    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Atom>::value>;
+using enabled_if_atom = std::enable_if_t<
+    std::is_same<typename std::remove_const<T>::type, Atom>::value>;
 
 template <typename T>
-using enabled_if_residue =
-    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Residue>::value>;
+using enabled_if_residue = std::enable_if_t<
+    std::is_same<typename std::remove_const<T>::type, Residue>::value>;
 
 template <typename T>
-using enabled_if_chain =
-    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Chain>::value>;
+using enabled_if_chain = std::enable_if_t<
+    std::is_same<typename std::remove_const<T>::type, Chain>::value>;
 
 template <typename T, typename U>
 using add_constness_as =
-    std::conditional_t<std::is_const<T>::value, const U, typename std::remove_const<U>::type>;
+    std::conditional_t<std::is_const<T>::value, const U,
+                       typename std::remove_const<U>::type>;
 }
 
 using AtomName = xmol::utils::ShortAsciiString<4, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, detail::ResidueNameTag>;
 using ChainName = xmol::utils::ShortAsciiString<1, detail::ChainNameTag>;
 }
+}
 
-namespace xmol::selection {
+namespace xmol {
+namespace selection {
 
 template <typename T>
 class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_atom<T>>
     : public SelectionBase<T> {
 public:
   SelectionBaseExtension() = default;
+
   template <typename U = T,
             typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
@@ -80,6 +88,7 @@ class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_residue<T>>
     : public SelectionBase<T> {
 public:
   SelectionBaseExtension() = default;
+
   template <typename U = T,
             typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
@@ -102,6 +111,7 @@ class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_chain<T>>
     : public SelectionBase<T> {
 public:
   SelectionBaseExtension() = default;
+
   template <typename U = T,
             typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
@@ -118,4 +128,5 @@ public:
   Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>
   asResidues() const;
 };
+}
 }
