@@ -70,14 +70,6 @@ before_install:
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
-    - mkdir cmake-build-coverage
-    - cd cmake-build-coverage
-    - cmake ../ -DCMAKE_BUILD_TYPE=Coverage
-    - make -j 2 all
-    - cd ..
-    - make -C cmake-build-coverage test
-    - export PYTHONPATH=cmake-build-coverage
-    - python -m pytest pytests
 
     - mkdir cmake-build-release
     - cd cmake-build-release
@@ -88,8 +80,18 @@ script:
     - export PYTHONPATH=cmake-build-release
     - python -m pytest pytests
 
+    - mkdir cmake-build-coverage
+    - cd cmake-build-coverage
+    - cmake ../ -DCMAKE_BUILD_TYPE=Coverage
+    - make -j 2 all
+    - cd ..
+    - make -C cmake-build-coverage test
+    - export PYTHONPATH=cmake-build-coverage
+    - python -m pytest pytests
+
+
 after_success:
-    - python -m pip install gcovr
+    - python -m pip install gcovr --user
     - gcovr cmake-build-coverage --root=./ --delete --exclude='external/.*' --exclude='tests/.*' --xml -o coverage.xml
     - bash <(curl -s https://codecov.io/bash)
 
