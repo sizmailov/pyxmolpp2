@@ -25,7 +25,7 @@ inline std::pair<bool, int> parse_uint_fixed_length(const std::string& line,
     success &= digit <= 9;
     number += digit * powers_of_10[LEN - i - 1];
   }
-  return std::pair(success, number);
+  return std::make_pair(success, number);
 };
 
 inline std::pair<bool, int> parse_uint(const std::string& line, int pos,
@@ -80,7 +80,8 @@ std::pair<bool, int> parse_int(const std::string& line, int pos,
   }
 
   if (line[pos] == '-') {
-    auto[success, value] = parse_uint(line, pos + 1, LEN - 1);
+    bool success; int value;
+    std::tie(success,value) = parse_uint(line, pos + 1, LEN - 1);
     return {success, -value};
   } else {
     return parse_uint(line, pos, LEN);
@@ -94,7 +95,7 @@ struct parse_fixed_precision_fn {
   static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2);
 
   inline std::pair<bool, double> operator()(const std::string& line,
-                                            int pos) noexcept {
+                                            int pos) const noexcept {
 
     if (GSL_UNLIKELY(
             line.size() < pos + WIDTH ||
@@ -128,8 +129,8 @@ struct parse_fixed_precision_fn {
       ++pos;
       --whole;
     }
-
-    auto[success, whole_part] = parse_uint(line, pos, whole);
+    bool success; int whole_part;
+    std::tie(success,whole_part) = parse_uint(line, pos, whole);
 
     if (GSL_UNLIKELY(!success)) {
       return {false, 0};
@@ -137,7 +138,8 @@ struct parse_fixed_precision_fn {
     if (PRECISION == 0) {
       return {true, sign * whole_part};
     }
-    auto[success2, fraction_part] =
+    bool success2; int fraction_part;
+    std::tie(success2,fraction_part) =
         parse_uint(line, pos + whole + 1, precision);
     if (GSL_UNLIKELY(!success2)) {
       return {false, 0};
@@ -151,7 +153,7 @@ struct parse_fixed_precision_fn {
 inline namespace functional_objects {
 template <int WIDTH, int PRECISION,
           SpaceStrip STRIP = SpaceStrip::LEFT_AND_RIGHT>
-constexpr parse_fixed_precision_fn parse_fixed_precision =
+constexpr parse_fixed_precision_fn<WIDTH, PRECISION, STRIP> parse_fixed_precision =
     parse_fixed_precision_fn<WIDTH, PRECISION, STRIP>{};
 }
 

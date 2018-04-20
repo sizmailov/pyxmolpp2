@@ -59,8 +59,8 @@ template <typename T>
 class SelectionBase
     : public ObservableBy<typename SelectionTraits<T>::container_type> {
 public:
-  static_assert(!std::is_reference_v<T>);
-  static_assert(!std::is_pointer_v<T>);
+  static_assert(!std::is_reference<T>::value);
+  static_assert(!std::is_pointer<T>::value);
   using value_type = typename SelectionTraits<T>::value_type;
   using container_type = typename SelectionTraits<T>::container_type;
   using selection_element_type =
@@ -68,7 +68,7 @@ public:
 
   SelectionBase();
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const_v<U>>>
+            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
   SelectionBase(
       const SelectionBase<typename SelectionBase<U>::value_type>& rhs);
   SelectionBase(const SelectionBase& rhs);
@@ -110,15 +110,15 @@ protected:
 };
 
 template <typename T> class Selection : public SelectionBaseExtension<T> {
-  static_assert(std::is_base_of_v<SelectionBase<T>, SelectionBaseExtension<T>>);
-  static_assert(std::is_default_constructible_v<SelectionBaseExtension<T>>);
-  static_assert(std::is_constructible_v<
+  static_assert(std::is_base_of<SelectionBase<T>, SelectionBaseExtension<T>>::value);
+  static_assert(std::is_default_constructible<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_constructible<
                 SelectionBaseExtension<T>,
-                const SelectionBaseExtension<std::remove_const_t<T>>&>);
-  static_assert(std::is_copy_constructible_v<SelectionBaseExtension<T>>);
-  static_assert(std::is_move_constructible_v<SelectionBaseExtension<T>>);
-  static_assert(std::is_move_assignable_v<SelectionBaseExtension<T>>);
-  static_assert(std::is_copy_assignable_v<SelectionBaseExtension<T>>);
+                const SelectionBaseExtension<typename std::remove_const<T>::type>&>::value);
+  static_assert(std::is_copy_constructible<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_move_constructible<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_move_assignable<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_copy_assignable<SelectionBaseExtension<T>>::value);
 
 public:
   using value_type = typename SelectionTraits<T>::value_type;
@@ -128,7 +128,7 @@ public:
 
   Selection() = default;
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const_v<U>>>
+            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
   Selection(const Selection<typename Selection<U>::value_type>& rhs)
       : SelectionBaseExtension<T>(rhs){};
   Selection(const Selection& rhs) = default;
@@ -148,24 +148,24 @@ public:
 
   template <typename V, typename U = T,
             typename SFINAE = std::enable_if_t<
-                std::is_same_v<std::remove_const_t<U>, std::remove_const_t<V>>>>
+                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   bool operator==(const Selection<V>& rhs) const;
   template <typename V, typename U = T,
             typename SFINAE = std::enable_if_t<
-                std::is_same_v<std::remove_const_t<U>, std::remove_const_t<V>>>>
+                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   bool operator!=(const Selection<V>& rhs) const;
 
   template <typename V, typename U = T,
             typename SFINAE =
-                std::enable_if_t<std::is_const_v<U> || !std::is_const_v<V>>>
+                std::enable_if_t<std::is_const<U>::value || !std::is_const<V>::value>>
   Selection<U>& operator+=(const Selection<V>& rhs);
   template <typename V, typename U = T,
             typename SFINAE = std::enable_if_t<
-                std::is_same_v<std::remove_const_t<U>, std::remove_const_t<V>>>>
+                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   Selection<U>& operator-=(const Selection<V>& rhs);
   template <typename V, typename U = T,
             typename SFINAE = std::enable_if_t<
-                std::is_same_v<std::remove_const_t<U>, std::remove_const_t<V>>>>
+                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
   template <typename Iterator>
@@ -298,7 +298,7 @@ template <typename T> SelectionRange<T> SelectionBase<T>::begin() const {
   if (state != SelectionState::OK) {
     throw dead_selection_access("SelectionRange<T>::begin");
   }
-  return SelectionRange(*this, 0, elements.size(), 1);
+  return SelectionRange<T>(*this, 0, elements.size(), 1);
 }
 
 template <typename T> SelectionRange<T> SelectionBase<T>::end() const {
@@ -306,7 +306,7 @@ template <typename T> SelectionRange<T> SelectionBase<T>::end() const {
   if (state != SelectionState::OK) {
     throw dead_selection_access("SelectionRange<T>::end");
   }
-  return SelectionRange(*this, elements.size(), 0, 1);
+  return SelectionRange<T>(*this, elements.size(), 0, 1);
 }
 
 template <typename T> T& SelectionBase<T>::operator[](int i) const {
@@ -428,9 +428,9 @@ Selection<U>& Selection<T>::operator+=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
   auto comparator = SelectionPointerComparator<value_type>{};
 
-  for (auto[container, state] : rhs.observers) {
-    this->add_observer(*container);
-    container->ObservableBy<SelectionBase<T>>::add_observer(*this);
+  for (auto cs : rhs.observers) {
+    this->add_observer(*cs.first);
+    cs.first->ObservableBy<SelectionBase<T>>::add_observer(*this);
   }
 
   assert(
@@ -561,10 +561,10 @@ template <typename T> void SelectionBase<T>::remove_redundant_observers() {
     new_observers.insert(el_ptr->parent());
   }
 
-  for (auto[container, state] : this->observers) {
-    if (!new_observers.count(container)) {
-      this->remove_observer(*container);
-      container->ObservableBy<SelectionBase<T>>::remove_observer(*this);
+  for (auto cs : this->observers) {
+    if (!new_observers.count(cs.first)) {
+      this->remove_observer(*cs.first);
+      cs.first->ObservableBy<SelectionBase<T>>::remove_observer(*this);
     }
   }
 }
@@ -831,7 +831,8 @@ T& Container<T>::emplace(Args&&... args) {
         &SelectionBase<T>::on_container_elements_move, old_begin,
         old_begin + elements.size(), shift);
   }
-  T& ref = elements.emplace_back(T(std::forward<Args>(args)...));
+  elements.emplace_back(T(std::forward<Args>(args)...));
+  T& ref = elements.back();
   assert(ref.parent() == this);
   return ref;
 }

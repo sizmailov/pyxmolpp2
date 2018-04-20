@@ -1,6 +1,7 @@
 #pragma once
 
 #include "xmol/polymer/Atom.h"
+#include "xmol/utils/optional.h"
 
 namespace xmol::trajectory {
 
@@ -77,9 +78,9 @@ public:
 
   xmol::polymer::frameIndex_t n_frames() const;
 
-  TrajectorySlice slice(std::optional<int> first = {},
-                        std::optional<int> last = {},
-                        std::optional<int> stride = {});
+  TrajectorySlice slice(xmol::utils::optional<int> first = {},
+                        xmol::utils::optional<int> last = {},
+                        xmol::utils::optional<int> stride = {});
   TrajectoryRange begin();
   TrajectoryRange end();
 
@@ -107,8 +108,8 @@ bool TrajectoryRange::operator!=(const Sentinel&) const {
 
 template <typename T, typename... Args>
 void Trajectory::add_trajectory_portion(Args&&... args) {
-  auto& ref =
-      portions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+  portions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+  auto& ref = portions.back();
   cumulative_n_frames.push_back(n_frames() + ref->n_frames());
   if (check_portions_to_match_reference) {
     if (!ref->match(reference_atoms)) {

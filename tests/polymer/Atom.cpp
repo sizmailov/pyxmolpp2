@@ -14,9 +14,9 @@ public:
     Frame frame(0);
     int aid=1;
     int rid=1;
-    for (auto& [chainName,size]: chain_sizes ){
-      Chain& c = frame.emplace(ChainName(chainName));
-      for (int i=0;i<size;i++){
+    for (auto& chN_S: chain_sizes ){
+      Chain& c = frame.emplace(ChainName(chN_S.first));
+      for (int i=0;i<chN_S.second;i++){
         Residue &r = c.emplace(ResidueName("GLY"),residueId_t(rid++));
         r.emplace(AtomName("N"),atomId_t(aid++),XYZ{1,2,3});
         r.emplace(AtomName("H"),atomId_t(aid++),XYZ{1,2,3});

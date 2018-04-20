@@ -31,19 +31,19 @@ struct ChainNameTag {};
 
 template <typename T>
 using enabled_if_atom =
-    std::enable_if_t<std::is_same_v<std::remove_const_t<T>, Atom>>;
+    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Atom>::value>;
 
 template <typename T>
 using enabled_if_residue =
-    std::enable_if_t<std::is_same_v<std::remove_const_t<T>, Residue>>;
+    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Residue>::value>;
 
 template <typename T>
 using enabled_if_chain =
-    std::enable_if_t<std::is_same_v<std::remove_const_t<T>, Chain>>;
+    std::enable_if_t<std::is_same<typename std::remove_const<T>::type, Chain>::value>;
 
 template <typename T, typename U>
 using add_constness_as =
-    std::conditional_t<std::is_const_v<T>, const U, std::remove_const_t<U>>;
+    std::conditional_t<std::is_const<T>::value, const U, typename std::remove_const<U>::type>;
 }
 
 using AtomName = xmol::utils::ShortAsciiString<4, detail::AtomNameTag>;
@@ -59,7 +59,7 @@ class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_atom<T>>
 public:
   SelectionBaseExtension() = default;
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const_v<U>>>
+            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};
@@ -81,7 +81,7 @@ class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_residue<T>>
 public:
   SelectionBaseExtension() = default;
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const_v<U>>>
+            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};
@@ -103,7 +103,7 @@ class SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_chain<T>>
 public:
   SelectionBaseExtension() = default;
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const_v<U>>>
+            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};

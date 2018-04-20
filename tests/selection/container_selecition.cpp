@@ -33,13 +33,13 @@ public:
 };
 
 template<typename T>
-using is_int_with_parent = std::enable_if_t<std::is_same_v<std::remove_const_t<T>, int_with_parent>>;
+using is_int_with_parent = std::enable_if_t<std::is_same<std::remove_const_t<T>, int_with_parent>::value>;
 
 
 template<>
 bool SelectionPointerComparator<int_with_parent>::operator()(const int_with_parent* lhs,
     const int_with_parent* rhs) const {
-  return std::tuple(lhs->parent(),lhs->value) < std::tuple(rhs->parent(),rhs->value);
+  return std::make_tuple(lhs->parent(),lhs->value) < std::make_tuple(rhs->parent(),rhs->value);
 }
 
 bool operator==(const int_with_parent& lhs, const int_with_parent& rhs) noexcept {

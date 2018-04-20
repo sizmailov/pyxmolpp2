@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 project(observable)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(PythonInterp)
 find_package(PythonLibs REQUIRED)
@@ -14,10 +14,9 @@ endif()
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
     IF(CMAKE_COMPILER_IS_GNUCC)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-        set(CMAKE_CXX_FLAGS "--coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ")
     ENDIF(CMAKE_COMPILER_IS_GNUCC)
     message("USE COVERAGE PROFILE")
-
 else()
     message("DONT USE COVERAGE PROFILE")
 ENDIF()

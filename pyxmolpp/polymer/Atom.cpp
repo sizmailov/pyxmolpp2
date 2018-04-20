@@ -178,7 +178,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
   py::class_<ResidueSelection>(polymer, "ResidueSelection")
       .def("__len__", &ResidueSelection::size)
-      .def_property_readonly("size", &AtomSelection::size)
+      .def_property_readonly("size", &ResidueSelection::size)
       .def_property_readonly(
           "asChains", [](ResidueSelection& rSel) { return rSel.asChains(); })
       .def_property_readonly(
@@ -201,7 +201,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
   py::class_<ChainSelection>(polymer, "ChainSelection")
       .def("__len__", &ChainSelection::size)
-      .def_property_readonly("size", &AtomSelection::size)
+      .def_property_readonly("size", &ChainSelection::size)
       .def_property_readonly(
           "asResidues", [](ChainSelection& cSel) { return cSel.asResidues(); })
       .def_property_readonly(

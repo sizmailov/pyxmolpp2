@@ -88,9 +88,9 @@ TrajectoryRange Trajectory::end() {
   return TrajectoryRange(*this, n_frames(), n_frames(), 1);
 }
 
-TrajectorySlice Trajectory::slice(std::optional<int> first,
-                                  std::optional<int> last,
-                                  std::optional<int> stride) {
+TrajectorySlice Trajectory::slice(xmol::utils::optional<int> first,
+                                  xmol::utils::optional<int> last,
+                                  xmol::utils::optional<int> stride) {
   if (!stride) {
     stride = 1;
   }

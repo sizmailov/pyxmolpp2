@@ -1,5 +1,5 @@
-#include "xmol/pdb/PdbReader.h"
 #include "xmol/pdb/PdbLine.h"
+#include "xmol/pdb/PdbReader.h"
 #include "xmol/pdb/PdbRecord.h"
 #include "xmol/utils/string.h"
 
@@ -44,12 +44,12 @@ AtomStub& readAtom(ResidueStub& res, Iterator& it) {
          it->getRecordName() == RecordName("HETATM") ||
          it->getRecordName() == RecordName("ANISOU"));
   using xmol::utils::string::trim;
-  AtomStub& atom = res.atoms.emplace_back(
-      AtomName(trim(it->getString(FieldName("name")))),
-      it->getInt(FieldName("serial")),
-      XYZ{it->getDouble(FieldName("x")),
-          it->getDouble(FieldName("y")),
-          it->getDouble(FieldName("z"))});
+  res.atoms.emplace_back(AtomName(trim(it->getString(FieldName("name")))),
+                         it->getInt(FieldName("serial")),
+                         XYZ{it->getDouble(FieldName("x")),
+                             it->getDouble(FieldName("y")),
+                             it->getDouble(FieldName("z"))});
+  AtomStub& atom = res.atoms.back();
   ++it;
 
   // skip "ANISOU" records
@@ -75,8 +75,9 @@ ResidueStub& readResidue(ChainStub& c, Iterator& it) {
   residueId_t residueId = it->getInt(FieldName("resSeq"));
   chainIndex_t chainName = it->getChar(FieldName("chainID"));
 
-  ResidueStub& r = c.residues.emplace_back(
+  c.residues.emplace_back(
       ResidueName(trim(it->getString(FieldName("resName")))), residueId);
+  ResidueStub& r = c.residues.back();
 
   while (it != ranges::default_sentinel{} &&
          (it->getRecordName() == RecordName("ATOM") ||
@@ -96,7 +97,8 @@ ChainStub& readChain(FrameStub& frame, Iterator& it) {
          it->getRecordName() == RecordName("HETATM"));
   std::string stringChainId = it->getString(FieldName("chainID"));
 
-  ChainStub& c = frame.chains.emplace_back(ChainName(stringChainId));
+  frame.chains.emplace_back(ChainName(stringChainId));
+  ChainStub& c = frame.chains.back();
 
   while (it != ranges::default_sentinel{} &&
          it->getRecordName() != RecordName("TER") &&
@@ -156,6 +158,7 @@ private:
   friend range_access;
   std::istream* sin_;
   std::string str_;
+  int m_line_number = 0;
   PdbLine pdbLine;
   const basic_PdbRecords& db;
   struct cursor {
@@ -172,6 +175,7 @@ private:
   };
   void next() {
     std::getline(*sin_, str_, '\n');
+    m_line_number++;
     if (str_.size() > 0) {
       pdbLine = PdbLine(str_, db);
     } else {
@@ -186,10 +190,8 @@ public:
       : sin_(&sin), str_{}, db(db) {
     this->next(); // prime the pump
   }
-  //  std::string & cached() noexcept
-  //  {
-  //    return str_;
-  //  }
+  std::string& cached() noexcept { return str_; }
+  int line_number() noexcept { return m_line_number; }
 };
 
 struct getPDBLines_fn {
@@ -199,9 +201,7 @@ struct getPDBLines_fn {
     return getPDBLines_range{sin, db};
   }
 };
-inline namespace function_objects {
-inline constexpr getPDBLines_fn getPDBLines{};
-}
+inline namespace function_objects { constexpr getPDBLines_fn getPDBLines{}; }
 }
 
 Frame PdbReader::read_frame() {
@@ -216,15 +216,21 @@ Frame PdbReader::read_frame(const basic_PdbRecords& db) {
   std::vector<Frame> frames;
 
   auto it = ranges::begin(pdbLines);
-
-  while (it != ranges::default_sentinel{}) {
-    if (it->getRecordName() == RecordName("MODEL") ||
-        it->getRecordName() == RecordName("ATOM") ||
-        it->getRecordName() == RecordName("HETATM")) {
-      return readFrame(it);
-    } else {
-      ++it;
+  try {
+    while (it != ranges::default_sentinel{}) {
+      if (it->getRecordName() == RecordName("MODEL") ||
+          it->getRecordName() == RecordName("ATOM") ||
+          it->getRecordName() == RecordName("HETATM")) {
+        return readFrame(it);
+      } else {
+        ++it;
+      }
     }
+  } catch (PdbFieldReadError& e) {
+    std::string filler(std::min(std::max(e.colon_l, 0), 80), '~');
+    std::string underline(std::min(e.colon_r - e.colon_l + 1, 80), '^');
+    throw std::runtime_error(std::string(e.what()) + "\n" + "at line "+std::to_string(pdbLines.line_number())+":"+std::to_string(e.colon_l)+"-"+std::to_string(e.colon_r)+"\n" +
+                             pdbLines.cached() + "\n" + filler + underline);
   }
   return result;
 }

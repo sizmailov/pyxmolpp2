@@ -19,9 +19,10 @@ double PdbLine::getDouble(const FieldName& fieldName, size_t idx) const {
   auto first = v[idx * 2] - 1;
   auto last = v[idx * 2 + 1] - 1;
   auto n = last + 1 - first;
-  auto[success, value] = parse_fixed_precision_rt(*line, first, n);
+  bool success; double value;
+  std::tie(success,value) = parse_fixed_precision_rt(*line, first, n);
   if (!success) {
-    throw std::runtime_error("PDB line: can't read double");
+    throw PdbFieldReadError("PDB line: can't read double",first,last);
   }
   return value;
 }
@@ -31,9 +32,10 @@ int PdbLine::getInt(const FieldName& fieldName, size_t idx) const {
   auto first = v[idx * 2] - 1;
   auto last = v[idx * 2 + 1] - 1;
   auto n = last + 1 - first;
-  auto[success, value] = parse_int<SpaceStrip::LEFT_AND_RIGHT>(*line, first, n);
+  bool success; int value;
+  std::tie(success,value) = parse_int<SpaceStrip::LEFT_AND_RIGHT>(*line, first, n);
   if (!success) {
-    throw std::runtime_error("PDB line: can't read int");
+    throw PdbFieldReadError("PDB line: can't read int",first,last);
   }
   return value;
 }
@@ -42,7 +44,7 @@ std::string PdbLine::getString(const FieldName& fieldName,
                                size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   if (line->length() < v[idx * 2 + 1]) {
-    throw std::runtime_error("PDB line is too short");
+    throw PdbFieldReadError("PDB line is too short",v[idx * 2] - 1, v[idx * 2 + 1]-1);
   }
   return line->substr(v[idx * 2] - 1, v[idx * 2 + 1] - v[idx * 2] + 1);
 }
@@ -51,7 +53,7 @@ PdbLine::StrPtr PdbLine::getStrPtr(const FieldName& fieldName,
                                    size_t idx) const {
   auto& v = pdbRecordType->getFieldColons(fieldName);
   if (line->length() < v[idx * 2 + 1]) {
-    throw std::runtime_error("PDB line is too short");
+    throw PdbFieldReadError("PDB line is too short",v[idx * 2] - 1, v[idx * 2 + 1]-1);
   }
   return StrPtr{line->data() + v[idx * 2] - 1, v[idx * 2 + 1] - v[idx * 2] + 1};
 }

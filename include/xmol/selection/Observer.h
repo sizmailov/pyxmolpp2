@@ -15,8 +15,8 @@ enum class ObserverState { OK, DELETED };
 enum class ApplyTo { ANY, ALIVE_ONLY };
 
 template <typename T> class ObservableBy {
-  static_assert(!std::is_reference_v<T>);
-  static_assert(!std::is_pointer_v<T>);
+  static_assert(!std::is_reference<T>::value);
+  static_assert(!std::is_pointer<T>::value);
 
 public:
   ObservableBy() = default;
@@ -30,9 +30,10 @@ protected:
             typename Func = void (T::*)(Args...)>
   void notify_all(Func func, Args&&... args) const {
     LOG_DEBUG_FUNCTION();
-    for (auto[observable, state] : observers) {
-      if (state == ObserverState::OK) {
-        std::invoke(func, observable, std::forward<Args>(args)...);
+    for (auto& pair : observers) {
+      if (pair.second == ObserverState::OK) {
+//        std::invoke(func, observable, std::forward<Args>(args)...);
+        ((*std::forward<T* const>(pair.first)).*func)(std::forward<Args>(args)...);
       } else {
         if (apply_to == ApplyTo::ANY) {
           throw std::runtime_error("Observer already dead");

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transformation3d.h"
+#include <vector>
 
 namespace xmol::geometry {
 

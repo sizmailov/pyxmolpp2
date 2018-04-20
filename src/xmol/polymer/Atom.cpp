@@ -344,18 +344,18 @@ auto compare_set(const Atom& atom) {
   const Residue& residue = atom.residue();
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
-  return std::tuple(frame.index(), &frame, &chain, &residue, &atom);
+  return std::make_tuple(frame.index(), &frame, &chain, &residue, &atom);
 }
 auto compare_set(const Residue& residue) {
 
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
-  return std::tuple(frame.index(), &frame, &chain, &residue);
+  return std::make_tuple(frame.index(), &frame, &chain, &residue);
 }
 
 auto compare_set(const Chain& chain) {
   const Frame& frame = chain.frame();
-  return std::tuple(frame.index(), &frame, &chain);
+  return std::make_tuple(frame.index(), &frame, &chain);
 }
 }
 
