@@ -11,7 +11,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   py::class_<AtomName>(polymer, "AtomName")
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &AtomName::str)
-      .def_property_readonly("value", &AtomName::value)
+      .def("__hash__", &AtomName::value)
       .def("__str__",
            [](const AtomName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const AtomName& name) {
@@ -23,7 +23,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   py::class_<ResidueName>(polymer, "ResidueName")
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &ResidueName::str)
-      .def_property_readonly("value", &ResidueName::value)
+      .def("__hash__", &ResidueName::value)
       .def("__str__",
            [](const ResidueName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ResidueName& name) {
@@ -35,7 +35,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   py::class_<ChainName>(polymer, "ChainName")
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &ChainName::str)
-      .def_property_readonly("value", &ChainName::value)
+      .def("__hash__", &ChainName::value)
       .def("__str__",
            [](const ChainName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ChainName& name) {
