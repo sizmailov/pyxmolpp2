@@ -68,6 +68,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 script:
+    - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
     - mkdir cmake-build-debug
     - cd cmake-build-debug
     - cmake ../ -DCMAKE_BUILD_TYPE=Debug
