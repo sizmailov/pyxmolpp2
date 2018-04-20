@@ -76,3 +76,74 @@ def test_big_construction():
         assert frame.asAtoms.size == n*7
         print "%5d  %.5f"%(n,end-start)
 
+def test_filters():
+    n = 100
+    frame = make_polyglycine([("A", n)])
+
+    # atom filters
+    assert frame.asAtoms.filter(lambda a: a.chain.name.str == "A" ).size == n*7
+    assert frame.asAtoms.filter(lambda a: a.name.str == "CA" ).size == n
+    assert frame.asAtoms.filter(lambda a: a.name.str == "N" ).size == n
+    assert frame.asAtoms.filter(lambda a: a.name.str == "XXXX" ).size == 0
+
+    # residue filters
+
+    assert frame.asResidues.filter(lambda r: r.name.str == "GLY").size == n
+    assert frame.asResidues.filter(lambda r: r.name.str == "LYS").size == 0
+    assert frame.asResidues.filter(lambda r: r.id == 1).size == 1
+    assert frame.asResidues.filter(lambda r: r.size == 1).size == 0
+
+    # chain filters
+    assert frame.asChains.filter(lambda c: c.name.str == "1" ).size == 0
+    assert frame.asChains.filter(lambda c: c.name.str == "A" ).size == 1
+    assert frame.asChains.filter(lambda c: c.size > 2).size == 1
+
+def test_iterable():
+
+    frame = make_polyglycine([("A",10)])
+
+    assert len(list(frame.asChains)) == frame.asChains.size
+    assert len(list(frame.asResidues)) == frame.asResidues.size
+    assert len(list(frame.asAtoms)) == frame.asAtoms.size
+
+def test_repr():
+
+    frame = make_polyglycine([("A",10)])
+
+    print(frame)
+    print(frame.asChains[0].name)
+    print(frame.asResidues[0].name)
+    print(frame.asAtoms[0].name)
+    print([frame.asChains[0].name,
+            frame.asResidues[0].name,
+            frame.asAtoms[0].name]
+    )
+
+    print(frame.asChains[0])
+    print(frame.asResidues[0])
+    print(frame.asAtoms[0])
+
+    print(frame.asChains)
+    print(frame.asResidues)
+    print(frame.asAtoms)
+
+
+def test_for_each():
+
+    frame = make_polyglycine([("A",10)])
+
+    count = [0]
+    def inc_count(_):
+        count[0] += 1
+
+    count[0] = 0; frame.asChains.for_each(inc_count)
+    assert frame.asChains.size == count[0];
+
+    count[0] = 0; frame.asResidues.for_each(inc_count)
+    assert frame.asResidues.size == count[0];
+
+    count[0] = 0; frame.asAtoms.for_each(inc_count)
+    assert frame.asAtoms.size == count[0];
+
+
+
