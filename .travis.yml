@@ -9,6 +9,15 @@ branches:
     - travis_ci
     - dev
 
+# Found here https://stackoverflow.com/a/24600210/1741477
+# Handle git submodules yourself
+git:
+    submodules: false
+# Use sed to replace the SSH URL with the public URL, then initialize submodules
+before_install:
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    - git submodule update --init --recursive
+
 matrix:
   include:
 #    # works on Precise and Trusty
