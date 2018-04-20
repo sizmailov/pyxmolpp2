@@ -3,7 +3,8 @@
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/optional.h"
 
-namespace xmol::trajectory {
+namespace xmol {
+namespace trajectory {
 
 class Trajectory;
 
@@ -29,6 +30,7 @@ public:
 
 private:
   friend class Trajectory;
+
   friend class TrajectorySlice;
 
   explicit TrajectoryRange(Trajectory& trajectory, int pos, int end, int step);
@@ -61,6 +63,7 @@ public:
 
 private:
   friend class Trajectory;
+
   TrajectorySlice(Trajectory& trj, int first, int last, int stride);
   Trajectory& trj;
   int first;
@@ -86,6 +89,7 @@ public:
 
 private:
   friend class TrajectoryRange;
+
   xmol::polymer::Frame* reference;
   xmol::polymer::AtomSelection reference_atoms;
   TrajectoryPortion* m_prev_portion = nullptr;
@@ -117,5 +121,6 @@ void Trajectory::add_trajectory_portion(Args&&... args) {
           "Trajectory portion does not match reference atoms");
     }
   }
+}
 }
 }

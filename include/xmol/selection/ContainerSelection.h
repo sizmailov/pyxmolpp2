@@ -4,7 +4,8 @@
 #include "Observer.h"
 #include <set>
 
-namespace xmol::selection {
+namespace xmol {
+namespace selection {
 
 class dead_selection_access : public std::logic_error {
 public:
@@ -59,8 +60,8 @@ template <typename T>
 class SelectionBase
     : public ObservableBy<typename SelectionTraits<T>::container_type> {
 public:
-  static_assert(!std::is_reference<T>::value);
-  static_assert(!std::is_pointer<T>::value);
+  static_assert(!std::is_reference<T>::value, "");
+  static_assert(!std::is_pointer<T>::value, "");
   using value_type = typename SelectionTraits<T>::value_type;
   using container_type = typename SelectionTraits<T>::container_type;
   using selection_element_type =
@@ -110,15 +111,21 @@ protected:
 };
 
 template <typename T> class Selection : public SelectionBaseExtension<T> {
-  static_assert(std::is_base_of<SelectionBase<T>, SelectionBaseExtension<T>>::value);
-  static_assert(std::is_default_constructible<SelectionBaseExtension<T>>::value);
-  static_assert(std::is_constructible<
-                SelectionBaseExtension<T>,
-                const SelectionBaseExtension<typename std::remove_const<T>::type>&>::value);
-  static_assert(std::is_copy_constructible<SelectionBaseExtension<T>>::value);
-  static_assert(std::is_move_constructible<SelectionBaseExtension<T>>::value);
-  static_assert(std::is_move_assignable<SelectionBaseExtension<T>>::value);
-  static_assert(std::is_copy_assignable<SelectionBaseExtension<T>>::value);
+  static_assert(
+      std::is_base_of<SelectionBase<T>, SelectionBaseExtension<T>>::value, "");
+  static_assert(std::is_default_constructible<SelectionBaseExtension<T>>::value,
+                "");
+  static_assert(
+      std::is_constructible<SelectionBaseExtension<T>,
+                            const SelectionBaseExtension<
+                                typename std::remove_const<T>::type>&>::value,
+      "");
+  static_assert(std::is_copy_constructible<SelectionBaseExtension<T>>::value,
+                "");
+  static_assert(std::is_move_constructible<SelectionBaseExtension<T>>::value,
+                "");
+  static_assert(std::is_move_assignable<SelectionBaseExtension<T>>::value, "");
+  static_assert(std::is_copy_assignable<SelectionBaseExtension<T>>::value, "");
 
 public:
   using value_type = typename SelectionTraits<T>::value_type;
@@ -147,25 +154,25 @@ public:
   const Selection& for_each(Transform&& transform) const;
 
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<
-                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = std::enable_if_t<std::is_same<
+                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   bool operator==(const Selection<V>& rhs) const;
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<
-                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = std::enable_if_t<std::is_same<
+                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   bool operator!=(const Selection<V>& rhs) const;
 
   template <typename V, typename U = T,
-            typename SFINAE =
-                std::enable_if_t<std::is_const<U>::value || !std::is_const<V>::value>>
+            typename SFINAE = std::enable_if_t<std::is_const<U>::value ||
+                                               !std::is_const<V>::value>>
   Selection<U>& operator+=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<
-                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = std::enable_if_t<std::is_same<
+                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   Selection<U>& operator-=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<
-                std::is_same<std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = std::enable_if_t<std::is_same<
+                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
   template <typename Iterator>
@@ -924,5 +931,6 @@ void Container<T>::on_selection_copy(SelectionBase<const T>& copy) const {
   LOG_DEBUG_FUNCTION();
   LOG_TRACE("const on_selection_copy");
   ObservableBy<SelectionBase<const T>>::add_observer(copy);
+}
 }
 }
