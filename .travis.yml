@@ -2,6 +2,13 @@ language: cpp
 
 dist: trusty
 
+# whitelist
+branches:
+  only:
+    - master
+    - travis_ci
+    - dev
+
 matrix:
   include:
 #    # works on Precise and Trusty
