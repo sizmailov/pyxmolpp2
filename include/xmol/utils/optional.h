@@ -1,6 +1,7 @@
 #pragma once
 
-namespace xmol::utils {
+namespace xmol {
+namespace utils {
 
 template <typename T> struct optional {
   optional() : is_set(false) {}
@@ -42,4 +43,5 @@ private:
   T m_value;
   bool is_set;
 };
-};
+}
+}

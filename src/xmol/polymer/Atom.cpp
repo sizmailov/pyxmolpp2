@@ -359,6 +359,8 @@ auto compare_set(const Chain& chain) {
 }
 }
 
+namespace xmol{ namespace selection {
+
 template <>
 bool xmol::selection::SelectionPointerComparator<Atom>::
 operator()(const Atom* lhs, const Atom* rhs) const {
@@ -376,7 +378,6 @@ operator()(const Chain* lhs, const Chain* rhs) const {
   return compare_set(*lhs) < compare_set(*rhs);
 }
 
-namespace xmol::selection {
 
 template <typename T>
 Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>
@@ -445,6 +446,7 @@ SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_chain<T>>::asAtoms()
     const {
   return asResidues().asAtoms();
 };
+}
 }
 
 template class xmol::selection::SelectionBaseExtension<Atom>;

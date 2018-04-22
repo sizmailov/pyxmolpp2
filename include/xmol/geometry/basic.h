@@ -4,7 +4,8 @@
 #include "XYZ.h"
 #include "gsl/gsl_assert"
 
-namespace xmol::geometry {
+namespace xmol {
+namespace geometry {
 
 inline double distance(const XYZ& a, const XYZ& b) { return (a - b).len(); }
 
@@ -17,12 +18,13 @@ inline AngleValue angle(const XYZ& a, const XYZ& b, const XYZ& c) {
 }
 
 inline AngleValue dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c,
-                            const XYZ& d) {
+                                 const XYZ& d) {
   XYZ ba = a - b;
   XYZ bc = c - b;
   XYZ cd = d - c;
   XYZ abc = -ba.cross(bc);
   XYZ bcd = bc.cross(cd);
   return Radians(std::atan2(abc.cross(bcd).dot(bc) / bc.len(), abc.dot(bcd)));
+}
 }
 }

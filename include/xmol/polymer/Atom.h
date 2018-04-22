@@ -5,7 +5,8 @@
 
 #include <iostream>
 
-namespace xmol::polymer {
+namespace xmol {
+namespace polymer {
 
 class Atom {
 public:
@@ -35,6 +36,7 @@ private:
   Atom(Residue& residue, AtomName name, atomId_t id, XYZ r);
 
   friend class xmol::selection::Container<Atom>;
+
   friend class Residue;
 
   XYZ m_r;
@@ -65,8 +67,13 @@ public:
   Atom& operator[](const AtomName& atomName);
   const Atom& operator[](const AtomName& atomName) const;
 
-  xmol::selection::Selection<const Atom> asAtoms() const { return all(); }
-  xmol::selection::Selection<Atom> asAtoms() { return all(); }
+  xmol::selection::Selection<const Atom> asAtoms() const {
+    return all();
+  }
+
+  xmol::selection::Selection<Atom> asAtoms() {
+    return all();
+  }
 
   bool is_deleted() const;
   void set_deleted();
@@ -78,7 +85,9 @@ private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Residue>;
+
   friend class Chain;
+
   ResidueName m_name;
   residueId_t m_id;
   Chain* m_chain;
@@ -108,10 +117,18 @@ public:
   xmol::selection::Selection<const Atom> asAtoms() const {
     return all().asAtoms();
   }
-  xmol::selection::Selection<Atom> asAtoms() { return all().asAtoms(); }
 
-  xmol::selection::Selection<const Residue> asResidues() const { return all(); }
-  xmol::selection::Selection<Residue> asResidues() { return all(); }
+  xmol::selection::Selection<Atom> asAtoms() {
+    return all().asAtoms();
+  }
+
+  xmol::selection::Selection<const Residue> asResidues() const {
+    return all();
+  }
+
+  xmol::selection::Selection<Residue> asResidues() {
+    return all();
+  }
 
   bool is_deleted() const;
   void set_deleted();
@@ -123,8 +140,11 @@ private:
   Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Chain>;
+
   friend class Frame;
+
   friend class Residue;
+
   ChainName m_name;
   std::map<residueId_t, residueIndex_t> m_lookup_table;
   chainIndex_t m_index;
@@ -152,17 +172,26 @@ public:
   xmol::selection::Selection<const Atom> asAtoms() const {
     return asResidues().asAtoms();
   }
-  xmol::selection::Selection<Atom> asAtoms() { return asResidues().asAtoms(); }
+
+  xmol::selection::Selection<Atom> asAtoms() {
+    return asResidues().asAtoms();
+  }
 
   xmol::selection::Selection<const Residue> asResidues() const {
     return asChains().asResidues();
   }
+
   xmol::selection::Selection<Residue> asResidues() {
     return asChains().asResidues();
   }
 
-  xmol::selection::Selection<const Chain> asChains() const { return all(); }
-  xmol::selection::Selection<Chain> asChains() { return all(); }
+  xmol::selection::Selection<const Chain> asChains() const {
+    return all();
+  }
+
+  xmol::selection::Selection<Chain> asChains() {
+    return all();
+  }
 
 private:
   frameIndex_t m_index;
@@ -171,12 +200,15 @@ private:
 inline bool operator==(const Atom& lhs, const Atom& rhs) noexcept {
   return &lhs == &rhs;
 }
+
 inline bool operator==(const Residue& lhs, const Residue& rhs) noexcept {
   return &lhs == &rhs;
 }
+
 inline bool operator==(const Chain& lhs, const Chain& rhs) noexcept {
   return &lhs == &rhs;
 }
+
 inline bool operator==(const Frame& lhs, const Frame& rhs) noexcept {
   return &lhs == &rhs;
 }
@@ -184,12 +216,15 @@ inline bool operator==(const Frame& lhs, const Frame& rhs) noexcept {
 inline bool operator!=(const Atom& lhs, const Atom& rhs) noexcept {
   return &lhs != &rhs;
 }
+
 inline bool operator!=(const Residue& lhs, const Residue& rhs) noexcept {
   return &lhs != &rhs;
 }
+
 inline bool operator!=(const Chain& lhs, const Chain& rhs) noexcept {
   return &lhs != &rhs;
 }
+
 inline bool operator!=(const Frame& lhs, const Frame& rhs) noexcept {
   return &lhs != &rhs;
 }
@@ -202,4 +237,5 @@ using ResidueSelection = xmol::selection::Selection<Residue>;
 
 using ConstChainSelection = xmol::selection::Selection<const Chain>;
 using ChainSelection = xmol::selection::Selection<Chain>;
+}
 }

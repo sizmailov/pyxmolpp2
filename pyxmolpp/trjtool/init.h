@@ -2,8 +2,8 @@
 #include "../pyxmolpp.h"
 
 namespace pyxmolpp {
-namespace polymer {
+namespace trjtool {
 
-void init_Atom(py::module& polymer);
+void init_DatFile(py::module& trjtool);
 }
 }

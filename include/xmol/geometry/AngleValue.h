@@ -1,10 +1,15 @@
 #pragma once
 #include <cmath>
 
-namespace xmol::geometry {
+namespace xmol {
+namespace geometry {
 
-constexpr double degrees_to_radians(double degrees) { return degrees * (M_PI / 180.0); }
-constexpr double radians_to_degrees(double radians) { return radians * (180.0 / M_PI); }
+constexpr double degrees_to_radians(double degrees) {
+  return degrees * (M_PI / 180.0);
+}
+constexpr double radians_to_degrees(double radians) {
+  return radians * (180.0 / M_PI);
+}
 
 struct Degrees {
   explicit constexpr Degrees(double value) : value(value){};
@@ -92,8 +97,8 @@ private:
   double m_radians;
 };
 
-inline AngleValue operator*(double lhs, const AngleValue& rhs){
-  return rhs*lhs;
+inline AngleValue operator*(double lhs, const AngleValue& rhs) {
+  return rhs * lhs;
 }
 
 double sin(const AngleValue& angle);
@@ -104,5 +109,6 @@ AngleValue fabs(const AngleValue& angle);
 inline namespace literals {
 Degrees operator"" _deg(long double value);
 Radians operator"" _rad(long double value);
+}
 }
 }

@@ -10,7 +10,8 @@
 #include <utility>
 #include <vector>
 
-namespace xmol::trjtool {
+namespace xmol {
+namespace trjtool {
 
 class DATReader {
 public:
@@ -48,4 +49,5 @@ private:
   std::streampos m_offset;
   DataType m_data_type = DataType::undefined;
 };
+}
 }
