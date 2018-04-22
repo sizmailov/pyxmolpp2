@@ -37,3 +37,7 @@ xmol::polymer::frameIndex_t DatFile::n_frames() const {
 xmol::polymer::atomIndex_t DatFile::n_atoms_per_frame() const {
   return m_reader->n_atoms_per_frame();
 }
+std::unique_ptr<xmol::trajectory::TrajectoryPortion> DatFile::get_copy() const
+{
+  return std::make_unique<DatFile>(*this);
+}

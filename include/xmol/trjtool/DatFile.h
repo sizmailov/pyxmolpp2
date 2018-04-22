@@ -14,6 +14,7 @@ public:
                            index_atoms) override;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
                        const xmol::polymer::AtomSelection& atoms) override;
+  std::unique_ptr<TrajectoryPortion> get_copy() const override;
   xmol::polymer::frameIndex_t n_frames() const override;
   xmol::polymer::atomIndex_t n_atoms_per_frame() const override;
   bool match(const xmol::polymer::AtomSelection& atoms) const override;

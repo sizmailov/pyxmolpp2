@@ -46,6 +46,7 @@ private:
 class TrajectoryPortion {
 public:
   virtual ~TrajectoryPortion() = default;
+  virtual std::unique_ptr<TrajectoryPortion> get_copy() const = 0;
 
   virtual void set_coordinates(
       xmol::polymer::frameIndex_t frameIndex,
@@ -80,6 +81,19 @@ public:
 
   template <typename T, typename... Args>
   void add_trajectory_portion(Args&&... args);
+
+  void push_trajectory_portion(const TrajectoryPortion& trajectoryPortion){
+    portions.emplace_back(trajectoryPortion.get_copy());
+    auto& ref = portions.back();
+    cumulative_n_frames.push_back(n_frames() + ref->n_frames());
+    if (check_portions_to_match_reference) {
+      if (!ref->match(reference.asAtoms())) {
+        throw std::runtime_error(
+            "Trajectory portion does not match reference atoms");
+      }
+    }
+  }
+
 
   xmol::polymer::frameIndex_t n_frames() const;
 

@@ -53,3 +53,7 @@ xmol::polymer::Frame PdbFile::get_frame(int n) {
   }
   return m_reader->read_frames()[n];
 }
+std::unique_ptr<xmol::trajectory::TrajectoryPortion> PdbFile::get_copy() const
+{
+  return std::make_unique<PdbFile>(*this);
+}

@@ -16,6 +16,7 @@ public:
   PdbFile(const PdbFile& rhs) : PdbFile(rhs.m_filename){};
   explicit PdbFile(const std::string& filename);
   ~PdbFile() override = default;
+  std::unique_ptr<TrajectoryPortion> get_copy() const override;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
                        const std::vector<std::pair<int, xmol::polymer::Atom*>>&
                            index_atoms) override;

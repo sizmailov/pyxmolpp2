@@ -15,10 +15,12 @@ def test_read_trjtool():
 
     datfile = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
 
-    assert datfile.n_frames() == 1000
+    assert datfile.n_frames == 1000
     assert datfile.match(frame.asAtoms)
-    assert datfile.n_atoms_per_frame() == frame.asAtoms.size
+    assert datfile.n_atoms_per_frame == frame.asAtoms.size
 
     datfile.set_coordinates(0, frame.asAtoms)
+
+
 
 
