@@ -2,10 +2,14 @@ import pytest
 
 def test_read_trjtool():
 
-    from pyxmolpp2.pdb import PdbFile
+    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
     from pyxmolpp2.trjtool import DatFile
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001-mod.pdb").get_frame()
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
 
     assert frame.asAtoms > 0
 
@@ -14,5 +18,7 @@ def test_read_trjtool():
     assert datfile.n_frames() == 1000
     assert datfile.match(frame.asAtoms)
     assert datfile.n_atoms_per_frame() == frame.asAtoms.size
+
+    datfile.set_coordinates(0, frame.asAtoms)
 
 

@@ -9,9 +9,11 @@ namespace xmol {
 namespace pdb {
 
 class PdbReader;
+class basic_PdbRecords;
 
 class PdbFile : public xmol::trajectory::TrajectoryPortion {
 public:
+  PdbFile(const PdbFile& rhs) : PdbFile(rhs.m_filename){};
   explicit PdbFile(const std::string& filename);
   ~PdbFile() override = default;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
@@ -24,6 +26,7 @@ public:
   bool match(const xmol::polymer::AtomSelection& atoms) const override;
   void close() override;
 
+  xmol::polymer::Frame get_frame(const basic_PdbRecords& pdbRecords);
   xmol::polymer::Frame get_frame();
   xmol::polymer::Frame get_frame(int n);
 

@@ -33,6 +33,13 @@ void PdbFile::close() {
   m_stream->close();
 }
 
+xmol::polymer::Frame PdbFile::get_frame(const basic_PdbRecords& pdbRecords) {
+  if (!m_stream->is_open()) {
+    m_stream->open(m_filename, std::ios::binary);
+  }
+  return m_reader->read_frame(pdbRecords);
+}
+
 xmol::polymer::Frame PdbFile::get_frame() {
   if (!m_stream->is_open()) {
     m_stream->open(m_filename, std::ios::binary);

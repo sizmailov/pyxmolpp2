@@ -6,6 +6,7 @@ namespace trjtool {
 
 class DatFile : public xmol::trajectory::TrajectoryPortion {
 public:
+  DatFile(const DatFile& rhs) : DatFile(rhs.m_filename){};
   explicit DatFile(const std::string& filename);
   virtual ~DatFile() = default;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
