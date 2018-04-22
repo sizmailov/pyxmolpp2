@@ -25,7 +25,7 @@ void DatFile::set_coordinates(
 }
 void DatFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,
-    xmol::polymer::AtomSelection& atoms) {
+    const xmol::polymer::AtomSelection& atoms) {
   if (!m_stream->is_open()) {
     m_stream->open(m_filename, std::ios::binary);
   }

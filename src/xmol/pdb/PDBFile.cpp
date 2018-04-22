@@ -11,7 +11,7 @@ PdbFile::PdbFile(const std::string& filename)
 }
 
 void PdbFile::set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                              xmol::polymer::AtomSelection& atoms) {}
+                              const xmol::polymer::AtomSelection& atoms) {}
 
 void PdbFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,

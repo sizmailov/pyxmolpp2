@@ -10,9 +10,9 @@ class Trajectory;
 
 class TrajectoryRange {
 public:
-  TrajectoryRange(const TrajectoryRange& other) noexcept = default;
+  TrajectoryRange(const TrajectoryRange& other) noexcept = delete;
   TrajectoryRange(TrajectoryRange&& other) noexcept = default;
-  TrajectoryRange& operator=(const TrajectoryRange& other) noexcept = default;
+  TrajectoryRange& operator=(const TrajectoryRange& other) noexcept = delete;
   TrajectoryRange& operator=(TrajectoryRange&& other) noexcept = default;
 
   xmol::polymer::Frame& operator*();
@@ -35,6 +35,8 @@ private:
 
   explicit TrajectoryRange(Trajectory& trajectory, int pos, int end, int step);
   Trajectory* trajectory;
+  xmol::polymer::Frame frame;
+  std::unique_ptr<const xmol::polymer::AtomSelection> atoms;
   int pos;
   int end;
   int step;
@@ -49,7 +51,7 @@ public:
       xmol::polymer::frameIndex_t frameIndex,
       const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) = 0;
   virtual void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                               xmol::polymer::AtomSelection& atoms) = 0;
+                               const xmol::polymer::AtomSelection& atoms) = 0;
   virtual bool match(const xmol::polymer::AtomSelection& atoms) const = 0;
   virtual xmol::polymer::frameIndex_t n_frames() const = 0;
   virtual xmol::polymer::atomIndex_t n_atoms_per_frame() const = 0;
@@ -58,8 +60,8 @@ public:
 
 class TrajectorySlice {
 public:
-  TrajectoryRange begin();
-  TrajectoryRange end();
+  TrajectoryRange begin() const;
+  TrajectoryRange end() const;
 
 private:
   friend class Trajectory;
@@ -73,7 +75,7 @@ private:
 
 class Trajectory {
 public:
-  explicit Trajectory(xmol::polymer::Frame& reference,
+  explicit Trajectory(const xmol::polymer::Frame& reference,
                       bool check_portions_to_match_reference = true);
 
   template <typename T, typename... Args>
@@ -90,15 +92,15 @@ public:
 private:
   friend class TrajectoryRange;
 
-  xmol::polymer::Frame* reference;
-  xmol::polymer::AtomSelection reference_atoms;
+  xmol::polymer::Frame reference;
+//  xmol::polymer::AtomSelection reference_atoms;
   TrajectoryPortion* m_prev_portion = nullptr;
 
   std::vector<std::unique_ptr<TrajectoryPortion>> portions;
   std::vector<xmol::polymer::frameIndex_t> cumulative_n_frames;
   bool check_portions_to_match_reference;
 
-  void update_frame(xmol::polymer::frameIndex_t position);
+  void update_frame(xmol::polymer::frameIndex_t position, const xmol::polymer::AtomSelection& atoms);
 };
 
 template <typename Sentinel>
@@ -116,7 +118,7 @@ void Trajectory::add_trajectory_portion(Args&&... args) {
   auto& ref = portions.back();
   cumulative_n_frames.push_back(n_frames() + ref->n_frames());
   if (check_portions_to_match_reference) {
-    if (!ref->match(reference_atoms)) {
+    if (!ref->match(reference.asAtoms())) {
       throw std::runtime_error(
           "Trajectory portion does not match reference atoms");
     }

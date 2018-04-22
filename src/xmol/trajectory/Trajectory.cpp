@@ -5,18 +5,18 @@ using namespace xmol::trajectory;
 
 xmol::polymer::Frame& TrajectoryRange::operator*() {
   if (!is_updated) {
-    trajectory->update_frame(pos);
+    trajectory->update_frame(pos, *atoms);
     is_updated = true;
   }
-  return *trajectory->reference;
+  return frame;
 }
 
 xmol::polymer::Frame* TrajectoryRange::operator->() {
   if (!is_updated) {
-    trajectory->update_frame(pos);
+    trajectory->update_frame(pos, *atoms);
     is_updated = true;
   }
-  return trajectory->reference;
+  return &frame;
 }
 
 TrajectoryRange& TrajectoryRange::operator++() {
@@ -52,14 +52,15 @@ TrajectoryRange& TrajectoryRange::operator-=(int n) {
 }
 TrajectoryRange::TrajectoryRange(xmol::trajectory::Trajectory& trajectory,
                                  int pos, int end, int step)
-    : trajectory(&trajectory), pos(pos), end(end), step(step),
+    : trajectory(&trajectory), frame(trajectory.reference),
+      atoms(std::make_unique<AtomSelection>(frame.asAtoms())), pos(pos), end(end), step(step),
       is_updated(false) {}
 
-TrajectoryRange TrajectorySlice::begin() {
+TrajectoryRange TrajectorySlice::begin() const {
   return TrajectoryRange(trj, first, last, stride);
 }
 
-TrajectoryRange TrajectorySlice::end() {
+TrajectoryRange TrajectorySlice::end() const {
   return TrajectoryRange(trj, last, last, stride);
 }
 
@@ -67,9 +68,10 @@ TrajectorySlice::TrajectorySlice(xmol::trajectory::Trajectory& trj, int first,
                                  int last, int stride)
     : trj(trj), first(first), last(last), stride(stride) {}
 
-Trajectory::Trajectory(xmol::polymer::Frame& reference,
+Trajectory::Trajectory(const xmol::polymer::Frame& reference,
                        bool check_portions_to_match_reference)
-    : reference(&reference), reference_atoms(reference.asAtoms()),
+    : reference(reference),
+      //      reference_atoms(this->reference.asAtoms()),
       check_portions_to_match_reference(check_portions_to_match_reference) {}
 
 int Trajectory::n_frames() const {
@@ -117,7 +119,8 @@ TrajectorySlice Trajectory::slice(xmol::utils::optional<int> first,
   return TrajectorySlice(*this, first.value(), last.value(), stride.value());
 }
 
-void Trajectory::update_frame(xmol::polymer::frameIndex_t position) {
+void Trajectory::update_frame(xmol::polymer::frameIndex_t position,
+                              const xmol::polymer::AtomSelection& atoms) {
   assert(position >= 0);
   auto it = std::lower_bound(cumulative_n_frames.begin(),
                              cumulative_n_frames.end(), position - 1);
@@ -130,9 +133,9 @@ void Trajectory::update_frame(xmol::polymer::frameIndex_t position) {
       m_prev_portion->close();
     }
 
-    portion.set_coordinates(*it, reference_atoms);
+    portion.set_coordinates(*it, atoms);
     m_prev_portion = &portion;
-    reference->set_index(position);
+    reference.set_index(position);
   } else {
     throw std::out_of_range("Trajectory out of range");
   }

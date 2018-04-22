@@ -18,7 +18,7 @@ public:
                        const std::vector<std::pair<int, xmol::polymer::Atom*>>&
                            index_atoms) override;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                       xmol::polymer::AtomSelection& atoms) override;
+                       const xmol::polymer::AtomSelection& atoms) override;
   xmol::polymer::frameIndex_t n_frames() const override;
   xmol::polymer::atomIndex_t n_atoms_per_frame() const override;
   bool match(const xmol::polymer::AtomSelection& atoms) const override;
