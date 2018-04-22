@@ -9,7 +9,12 @@ using namespace xmol::geometry;
 
 void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
-  py::class_<Translation3d>(geometry,"Translation3d")
+  auto&& pyTranslation3d = py::class_<Translation3d>(geometry,"Translation3d");
+  auto&& pyUniformScale3d = py::class_<UniformScale3d>(geometry,"UniformScale3d");
+  auto&& pyRotation3d = py::class_<Rotation3d>(geometry,"Rotation3d");
+  auto&& pyTransformation3d = py::class_<Transformation3d>(geometry,"Transformation3d");
+
+  pyTranslation3d
       .def(py::init<>())
       .def(py::init<XYZ>())
       .def("transform",&Translation3d::transform)
@@ -18,7 +23,7 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
       .def(py::self * py::self)
       ;
 
-  py::class_<UniformScale3d>(geometry,"UniformScale3d")
+  pyUniformScale3d
       .def(py::init<>())
       .def(py::init<double>())
       .def("transform",&UniformScale3d::transform)
@@ -29,7 +34,7 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
       .def(Translation3d() * py::self)
   ;
 
-  py::class_<Rotation3d>(geometry,"Rotation3d")
+  pyRotation3d
       .def(py::init<>())
       .def(py::init<XYZ,AngleValue>())
       .def("transform",&Rotation3d::transform)
@@ -43,7 +48,7 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
       .def(UniformScale3d() * py::self)
       ;
 
-  py::class_<Transformation3d>(geometry,"Transformation3d")
+  pyTransformation3d
       .def(py::init<>())
       .def(py::init<Rotation3d,Translation3d>())
       .def("transform",&Transformation3d::transform)
