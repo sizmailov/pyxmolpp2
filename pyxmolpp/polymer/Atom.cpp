@@ -1,5 +1,7 @@
 #include "init.h"
 
+#include "pybind11/functional.h"
+
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
 
@@ -30,7 +32,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   pyAtomName
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &AtomName::str)
-      .def_property_readonly("value", &AtomName::value)
+      .def("__hash__", &AtomName::value)
       .def("__str__",
           [](const AtomName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const AtomName& name) {
@@ -42,7 +44,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   pyResidueName
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &ResidueName::str)
-      .def_property_readonly("value", &ResidueName::value)
+      .def("__hash__", &ResidueName::value)
       .def("__str__",
           [](const ResidueName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ResidueName& name) {
@@ -54,7 +56,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   pyChainName
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &ChainName::str)
-      .def_property_readonly("value", &ChainName::value)
+      .def("__hash__", &ChainName::value)
       .def("__str__",
           [](const ChainName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ChainName& name) {
@@ -102,8 +104,13 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       .def_property_readonly(
           "chain", static_cast<Chain& (Residue::*)()>(&Residue::chain),
           py::return_value_policy::reference)
+      .def("__len__", [](Residue& residue) { return residue.size(); })
+      .def_property_readonly("size", [](Residue& residue) { return residue.size(); })
       .def_property_readonly(
           "frame", [](Residue& r) -> Frame& { return r.chain().frame(); },
+          py::return_value_policy::reference)
+      .def(
+          "__getitem__", [](Residue& r, AtomName& name) -> Atom& { return r[name]; },
           py::return_value_policy::reference)
       .def_property_readonly("id", &Residue::id)
       .def_property_readonly("rId", &Residue::id)
@@ -130,8 +137,10 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
   pyChain
       .def_property_readonly("frame",
-          static_cast<Frame& (Chain::*)()>(&Chain::frame),
-          py::return_value_policy::reference)
+                             static_cast<Frame& (Chain::*)()>(&Chain::frame),
+                             py::return_value_policy::reference)
+      .def("__len__", [](Chain& chain) { return chain.size(); })
+      .def_property_readonly("size", [](Chain& chain) { return chain.size(); })
       .def_property_readonly("index", &Chain::index)
       .def_property_readonly("cIndex", &Chain::index)
       .def_property_readonly("name", &Chain::name)
@@ -155,6 +164,8 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
   pyFrame
       .def(py::init<frameIndex_t>())
+      .def("__len__", &Frame::size)
+      .def_property_readonly("size", &Frame::size)
       .def_property_readonly("index", &Frame::index)
       .def_property_readonly("asChains",
           [](Frame& frame) { return frame.asChains(); })
@@ -210,9 +221,20 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       ;
 
   pyAtomSelection
+      .def("filter",
+           [](AtomSelection& sel, std::function<bool(const Atom&)>& predicate) {
+             return sel.filter(predicate);
+           })
+      .def("for_each",
+           [](AtomSelection& sel,
+               std::function<void(Atom&)>& func) {
+             return sel.for_each(func);
+           })
       .def("__len__", [](AtomSelection& asel) { return asel.size(); })
       .def_property_readonly("size",
           [](AtomSelection& asel) { return asel.size(); })
+      .def_property_readonly(
+          "toCoords", [](AtomSelection& aSel) { return aSel.toCoords(); })
       .def_property_readonly(
           "asChains", [](AtomSelection& aSel) { return aSel.asChains(); })
       .def_property_readonly(
@@ -233,7 +255,18 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
             ">";
       });
 
+
   pyResidueSelection
+      .def("filter",
+           [](ResidueSelection& sel,
+              std::function<bool(const Residue&)>& predicate) {
+             return sel.filter(predicate);
+           })
+      .def("for_each",
+           [](ResidueSelection& sel,
+               std::function<void(Residue&)>& func) {
+             return sel.for_each(func);
+           })
       .def("__len__", &ResidueSelection::size)
       .def_property_readonly("size", &ResidueSelection::size)
       .def_property_readonly(
@@ -255,8 +288,20 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
                 (uint64_t)(std::addressof(selection))) +
             ">";
       });
-
+  
+  
   pyChainSelection
+      .def("filter",
+           [](ChainSelection& sel,
+              std::function<bool(const Chain&)>& predicate) {
+             return sel.filter(predicate);
+           })
+
+      .def("for_each",
+           [](ChainSelection& sel,
+               std::function<void(Chain&)>& func) {
+             return sel.for_each(func);
+           })
       .def("__len__", &ChainSelection::size)
       .def_property_readonly("size", &ChainSelection::size)
       .def_property_readonly(

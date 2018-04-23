@@ -26,4 +26,6 @@ private:
   std::unique_ptr<DATReader> m_reader;
 };
 }
+
 }
+
