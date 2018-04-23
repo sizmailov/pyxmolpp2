@@ -36,6 +36,7 @@ def get_function_signature(func, strip_module_name=True, module_name=None, klass
     try:
         signature_regex = r"(\s*(?P<overload>\d+).)?\s*{name}\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name=name)
         doc_lines = func.__doc__
+        signatures = []
         for line in doc_lines.split("\n"):
             if strip_module_name and hasattr(func, "__module__") and func.__module__ is not None:
                     line = line.replace(func.__module__+".", "")
@@ -44,15 +45,12 @@ def get_function_signature(func, strip_module_name=True, module_name=None, klass
                 args = m.group("args")
                 rtype = m.group("rtype")
                 overload = m.group("overload")
-                if overload:
-                    full_name = func.__name__
-                    print("WARNING:", "Using first found overload for", full_name)
+                signatures.append((name, args, rtype))
                 # print(args, rtype)
-                return name, args.replace("::","."), rtype.replace("::",".")
-        # print("Can't find pybind11 signature string in __doc__", func.__name__, func.__doc__)
-        return None
+
+        return signatures
     except AttributeError:
-        return name, "*args, **kwargs", None
+        return [name, "*args, **kwargs", None]
 
 
 def get_property_type(prop, module_name):
@@ -86,18 +84,27 @@ def get_property_type(prop, module_name):
 
 def write_free_function(func, out):
 
-    name, args, rtype = get_function_signature(func)
-    print('''
+    overload="@overload\n"
 
-def {name}({args}) -> {rtype}:
+    signs = get_function_signature(func)
+
+    if len(signs)<=1: overload=""
+
+    docstring = remove_signature(func.__doc__)
+
+    for name, args, rtype in signs:
+        print('''
+
+{overload}def {name}({args}) -> {rtype}:
     """
     {docstring}
     """
     pass
 
-'''.format(name=name,args=args,rtype=rtype,docstring=remove_signature(func.__doc__)),
+'''.format(name=name,args=args,rtype=rtype,docstring=docstring,overload=overload),
         file=out, end="",
     )
+        docstring=""
 
 
 def write_class(klass, out):
@@ -171,16 +178,19 @@ class {class_name}({base_class}):
 
     # write bound methods
     for method in methods:
-        signature = get_function_signature(method)
-        if signature:
-            name, args, rtype = signature
-            static_method_kw = ""
-            if args.strip()=="":
-                static_method_kw = "\n    @staticmethod"
-            print("""{static_method_kw}
-    def {name}({args}) -> {rtype}:
+        signs = get_function_signature(method)
+        overload="@overload\n    "
+        if len(signs)<=1: overload = ""
+        for signature in signs:
+            if signature:
+                name, args, rtype = signature
+                static_method_kw = ""
+                if args.strip()=="":
+                    static_method_kw = "\n    @staticmethod"
+                print("""{static_method_kw}
+    {overload}def {name}({args}) -> {rtype}:
         pass
-""".format(name=name, args=args, rtype=rtype, static_method_kw=static_method_kw),
+""".format(name=name, args=args, rtype=rtype, static_method_kw=static_method_kw,overload=overload),
       file=out, end=""
       )
 
@@ -213,7 +223,7 @@ def write_stubs_for_module(module, main_module=None):
             elif name in ["__file__", "__loader__", "__name__", "__package__", "__spec__"]:
                 pass
             else:
-                print("Unknown type", name,"::",member)
+                print("Unknown type in module", name,"::",member)
 
         with open("__init__.pyi", "w") as init:
             # write docstring if exists
@@ -224,6 +234,10 @@ def write_stubs_for_module(module, main_module=None):
 
 
             if main_module is not module:
+                init.write("""
+from typing import overload, \
+                   Callable
+""")
                 init.write("import %s\n"%main_module.__name__)
                 init.write("\n\n")
 
