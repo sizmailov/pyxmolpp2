@@ -89,6 +89,9 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       .def_property_readonly(
           "frame", [](Residue& r) -> Frame& { return r.chain().frame(); },
           py::return_value_policy::reference)
+      .def(
+          "__getitem__", [](Residue& r, AtomName& name) -> Atom& { return r[name]; },
+          py::return_value_policy::reference)
       .def_property_readonly("id", &Residue::id)
       .def_property_readonly("rId", &Residue::id)
       .def_property_readonly("name", &Residue::name)
@@ -173,6 +176,8 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       .def("__len__", [](AtomSelection& asel) { return asel.size(); })
       .def_property_readonly("size",
                              [](AtomSelection& asel) { return asel.size(); })
+      .def_property_readonly(
+          "toCoords", [](AtomSelection& aSel) { return aSel.toCoords(); })
       .def_property_readonly(
           "asChains", [](AtomSelection& aSel) { return aSel.asChains(); })
       .def_property_readonly(
