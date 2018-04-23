@@ -141,9 +141,14 @@ def write_class(klass, out):
         else:
             print("Unknown type", name, "::", member)
 
+
+    def get_base_classes(klass):
+        bases = inspect.getmro(klass)[1:]
+        return ",".join([ B.__name__  for B in bases if B.__name__  not in [klass.__name__,"pybind11_object"] ])
+
     out.write("""
 class {class_name}({base_class}):    
-""".format(class_name=klass.__name__, base_class="object"))
+""".format(class_name=klass.__name__, base_class=get_base_classes(klass)))
 
     # write properties
     for doc in docstrings:
