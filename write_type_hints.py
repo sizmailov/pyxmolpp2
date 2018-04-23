@@ -5,6 +5,13 @@ import os
 import re
 import pyxmolpp2
 
+def escape_docstring(docstring, indent=1):
+    if re.sub("\s+","",docstring)=="":
+        return ""
+    return '''"""
+{indention}{docstring}
+{indention}"""
+{indention}'''.format(docstring=docstring,indention=" "*indent*4)
 
 class DirectoryWalkerGuard(object):
 
@@ -96,12 +103,9 @@ def write_free_function(func, out):
         print('''
 
 {overload}def {name}({args}) -> {rtype}:
-    """
-    {docstring}
-    """
-    pass
+    {docstring}pass
 
-'''.format(name=name,args=args,rtype=rtype,docstring=docstring,overload=overload),
+'''.format(name=name,args=args,rtype=rtype,docstring=escape_docstring(docstring),overload=overload),
         file=out, end="",
     )
         docstring=""
@@ -155,25 +159,20 @@ class {class_name}({base_class}):
     for prop_name, prop in properties:
 
         T1, T2 = get_property_type(prop, module_name=klass.__module__)
-
+        docstring = remove_signature(prop.fget.__doc__)
         out.write('''
     @property
     def {field_name}(self) -> {T1}:
-        """
-        {docstring}
-        """
-        pass
-'''.format(field_name=prop_name, T1=T1,docstring=remove_signature(prop.fget.__doc__)))
+        {docstring}pass
+'''.format(field_name=prop_name, T1=T1,docstring=escape_docstring(docstring,indent=2)))
 
         if T2 != "None":
+            docstring = remove_signature(prop.fset.__doc__)
             out.write('''
     @{field_name}.setter
     def {field_name}({T2}) -> None:
-        """
-        {docstring}
-        """
-        pass
-'''.format(field_name=prop_name, T2=T2, docstring=remove_signature(prop.fset.__doc__)))
+        {docstring}pass
+'''.format(field_name=prop_name, T2=T2, docstring=escape_docstring(docstring,indent=2)))
 
 
     # write bound methods
@@ -181,6 +180,7 @@ class {class_name}({base_class}):
         signs = get_function_signature(method)
         overload="@overload\n    "
         if len(signs)<=1: overload = ""
+        docstring=remove_signature(method.__doc__)
         for signature in signs:
             if signature:
                 name, args, rtype = signature
@@ -189,10 +189,11 @@ class {class_name}({base_class}):
                     static_method_kw = "\n    @staticmethod"
                 print("""{static_method_kw}
     {overload}def {name}({args}) -> {rtype}:
-        pass
-""".format(name=name, args=args, rtype=rtype, static_method_kw=static_method_kw,overload=overload),
+        {docstring}pass
+""".format(name=name, args=args, rtype=rtype, static_method_kw=static_method_kw,overload=overload,docstring=escape_docstring(docstring,indent=2)),
       file=out, end=""
       )
+                docstring=""
 
     if len(methods)+len(fields)+len(properties)==0:
         out.write("""
