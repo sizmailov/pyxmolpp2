@@ -11,7 +11,7 @@ PdbFile::PdbFile(const std::string& filename)
 }
 
 void PdbFile::set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                              xmol::polymer::AtomSelection& atoms) {}
+                              const xmol::polymer::AtomSelection& atoms) {}
 
 void PdbFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,
@@ -33,6 +33,13 @@ void PdbFile::close() {
   m_stream->close();
 }
 
+xmol::polymer::Frame PdbFile::get_frame(const basic_PdbRecords& pdbRecords) {
+  if (!m_stream->is_open()) {
+    m_stream->open(m_filename, std::ios::binary);
+  }
+  return m_reader->read_frame(pdbRecords);
+}
+
 xmol::polymer::Frame PdbFile::get_frame() {
   if (!m_stream->is_open()) {
     m_stream->open(m_filename, std::ios::binary);
@@ -45,4 +52,8 @@ xmol::polymer::Frame PdbFile::get_frame(int n) {
     m_stream->open(m_filename, std::ios::binary);
   }
   return m_reader->read_frames()[n];
+}
+std::unique_ptr<xmol::trajectory::TrajectoryPortion> PdbFile::get_copy() const
+{
+  return std::make_unique<PdbFile>(*this);
 }

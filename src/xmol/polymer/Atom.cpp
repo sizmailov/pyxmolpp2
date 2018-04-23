@@ -378,7 +378,6 @@ operator()(const Chain* lhs, const Chain* rhs) const {
   return compare_set(*lhs) < compare_set(*rhs);
 }
 
-
 template <typename T>
 std::vector<XYZ>
 SelectionBaseExtension<
