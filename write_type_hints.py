@@ -136,7 +136,7 @@ def write_class(klass, out):
         elif name == "__doc__":
             if member is not None:
                 docstrings.append(member)
-        elif name in ["__class__","__module__"]:
+        elif name in ["__class__","__module__","__qualname__"]:
             pass
         else:
             print("Unknown type", name, "::", member)
