@@ -70,7 +70,6 @@ before_install:
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
-
     - mkdir cmake-build-release
     - cd cmake-build-release
     - cmake ../ -DCMAKE_BUILD_TYPE=Release

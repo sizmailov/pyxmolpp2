@@ -107,7 +107,6 @@ private:
   friend class TrajectoryRange;
 
   xmol::polymer::Frame reference;
-//  xmol::polymer::AtomSelection reference_atoms;
   TrajectoryPortion* m_prev_portion = nullptr;
 
   std::vector<std::unique_ptr<TrajectoryPortion>> portions;
@@ -140,3 +139,4 @@ void Trajectory::add_trajectory_portion(Args&&... args) {
 }
 }
 }
+

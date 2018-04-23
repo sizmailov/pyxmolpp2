@@ -378,6 +378,18 @@ operator()(const Chain* lhs, const Chain* rhs) const {
   return compare_set(*lhs) < compare_set(*rhs);
 }
 
+template <typename T>
+std::vector<XYZ>
+SelectionBaseExtension<
+    T, xmol::polymer::detail::enabled_if_atom<T>>::toCoords() const {
+  std::vector<XYZ> result;
+  result.reserve(this->size());
+
+  for (auto& a : this->elements) {
+    result.push_back(a->r());
+  }
+  return result;
+};
 
 template <typename T>
 Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>

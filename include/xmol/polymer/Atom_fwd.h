@@ -5,6 +5,7 @@
 #include "xmol/utils/ShortAsciiString.h"
 
 #include <memory>
+#include <vector>
 
 namespace xmol {
 namespace polymer {
@@ -77,6 +78,9 @@ public:
   SelectionBaseExtension&
   operator=(const SelectionBaseExtension& rhs) = default;
   SelectionBaseExtension& operator=(SelectionBaseExtension&& rhs) = default;
+
+  std::vector<xmol::geometry::XYZ> toCoords() const;
+
   Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>
   asResidues() const;
   Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Chain>>
