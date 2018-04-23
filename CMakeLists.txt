@@ -11,18 +11,22 @@ if (PYTHONLIBS_FOUND)
     message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
 endif()
 
-IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-    IF(CMAKE_COMPILER_IS_GNUCC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ")
-    ENDIF(CMAKE_COMPILER_IS_GNUCC)
-    message("USE COVERAGE PROFILE")
-else()
-    message("DONT USE COVERAGE PROFILE")
-ENDIF()
+IF(CMAKE_COMPILER_IS_GNUCC)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has depricated `register` keyword
+    IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ")
+        message("USE COVERAGE PROFILE")
+    else()
+        message("DONT USE COVERAGE PROFILE")
+    ENDIF()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
+
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has depricated `register` keyword (not needed with -std=c++-14)
+
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
 
 
 enable_testing()
@@ -47,11 +51,12 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
-IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-    target_link_libraries(observable_static gcov)
-    target_link_libraries(observable gcov)
+IF(CMAKE_COMPILER_IS_GNUCC)
+    IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
+        target_link_libraries(observable_static gcov)
+        target_link_libraries(observable gcov)
+    ENDIF()
 ENDIF()
-
 file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
 
 pybind11_add_module(pyxmolpp2 ${PYXMOL_SOURCES} )
