@@ -113,7 +113,9 @@ Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
 }
 
 Atom& Residue::emplace(const Atom& atom) {
-  return Container<Atom>::emplace(atom);
+  auto& a = Container<Atom>::emplace(atom);
+  a.m_residue = this;
+  return a;
 }
 
 Atom& Residue::operator[](const AtomName& atomName) {
@@ -215,7 +217,9 @@ Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
 
 Residue& Chain::emplace(const Residue& residue) {
   m_lookup_table.emplace(residue.id(), size());
-  return Container<Residue>::emplace(residue);
+  auto& res = Container<Residue>::emplace(residue);
+  res.m_chain = this;
+  return res;
 }
 
 
@@ -271,7 +275,9 @@ Chain& Frame::emplace(ChainName name, int reserve) {
 }
 
 Chain& Frame::emplace(const Chain& chain) {
-  return Container<Chain>::emplace(chain);
+  auto& c = Container<Chain>::emplace(chain);
+  c.m_frame = this;
+  return c;
 }
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
