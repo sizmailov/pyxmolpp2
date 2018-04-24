@@ -27,7 +27,26 @@ TEST_F(TrjtoolDatPortionTests, init) {
   auto frame = xmol::pdb::PdbReader(ifs2).read_frame(permissibleRecords);
 
   DatFile portion("trjtool/GB1/run00001.dat");
-  std::cout << portion.n_frames() << std::endl;
+}
+
+
+TEST_F(TrjtoolDatPortionTests, basic_read_copy) {
+  std::ifstream ifs2("trjtool/GB1/run00001.pdb", std::ios::binary);
+  auto ref = xmol::pdb::PdbReader(ifs2).read_frame(permissibleRecords);
+
+  Trajectory traj(ref);
+  traj.push_trajectory_portion(DatFile("trjtool/GB1/run00001.dat"));
+
+
+  auto atoms = ref.asAtoms();
+  EXPECT_EQ(traj.n_frames(), 1000);
+
+
+  xmol::geometry::XYZ first_atom_coords (-3.2724499702453613, -9.4666690826416016, 8.9505224227905273 );
+  EXPECT_GE((first_atom_coords-ref.asAtoms()[0].r()).len(), 1e-1);
+  auto frame = *traj.begin();
+  EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);
+
 }
 
 TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
@@ -42,6 +61,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice(0, 100)) {
+      ASSERT_EQ(k,x.index());
       k++;
     }
     EXPECT_EQ(k, 100);
@@ -56,6 +76,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice(100, 0, -1)) {
+      ASSERT_EQ(100-k,x.index());
       k++;
     }
     EXPECT_EQ(k, 100);
@@ -63,6 +84,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice(-100, -1, 1)) {
+      ASSERT_EQ(1900+k,x.index());
       k++;
     }
     EXPECT_EQ(k, 99);
@@ -71,6 +93,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice({}, -1)) {
+      ASSERT_EQ(k,x.index());
       k++;
     }
     EXPECT_EQ(k, 1999);
@@ -78,6 +101,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice({}, {}, -1)) {
+      ASSERT_EQ(1999-k,x.index());
       k++;
     }
     EXPECT_EQ(k, 2000);
@@ -85,6 +109,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   {
     int k = 0;
     for (auto& x : traj.slice({}, {}, {})) {
+      ASSERT_EQ(k,x.index());
       k++;
     }
     EXPECT_EQ(k, 2000);
