@@ -1,5 +1,6 @@
 #pragma once
 #include "DATReader.h"
+#include <fstream>
 
 namespace xmol {
 namespace trjtool {
