@@ -2,9 +2,9 @@
 
 #include "pybind11/functional.h"
 
+#include "xmol/pdb/PdbRecord.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
-#include "xmol/pdb/PdbRecord.h"
 
 void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
@@ -248,12 +248,12 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       py::return_value_policy::reference);
 
   pyAtomSelection
-      .def("filter",
-           [](AtomSelection& sel, std::function<bool(const Atom&)>& predicate) {
-             return sel.filter(predicate);
-           })
+      .def("filter", [](AtomSelection& sel,
+                        std::function<bool(std::reference_wrapper<const Atom>)>&
+                            predicate) { return sel.filter(predicate); })
       .def("for_each",
-           [](AtomSelection& sel, std::function<void(Atom&)>& func) {
+           [](AtomSelection& sel,
+              std::function<void(std::reference_wrapper<Atom>)>& func) {
              return sel.for_each(func);
            })
       .def("__len__", [](AtomSelection& asel) { return asel.size(); })
@@ -281,11 +281,11 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   pyResidueSelection
       .def("filter",
            [](ResidueSelection& sel,
-              std::function<bool(const Residue&)>& predicate) {
-             return sel.filter(predicate);
-           })
+              std::function<bool(std::reference_wrapper<const Residue>)>&
+                  predicate) { return sel.filter(predicate); })
       .def("for_each",
-           [](ResidueSelection& sel, std::function<void(Residue&)>& func) {
+           [](ResidueSelection& sel,
+              std::function<void(std::reference_wrapper<Residue>)>& func) {
              return sel.for_each(func);
            })
       .def("__len__", &ResidueSelection::size)
@@ -310,12 +310,12 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   pyChainSelection
       .def("filter",
            [](ChainSelection& sel,
-              std::function<bool(const Chain&)>& predicate) {
-             return sel.filter(predicate);
-           })
+              std::function<bool(std::reference_wrapper<const Chain>)>&
+                  predicate) { return sel.filter(predicate); })
 
       .def("for_each",
-           [](ChainSelection& sel, std::function<void(Chain&)>& func) {
+           [](ChainSelection& sel,
+              std::function<void(std::reference_wrapper<Chain>)>& func) {
              return sel.for_each(func);
            })
       .def("__len__", &ChainSelection::size)
