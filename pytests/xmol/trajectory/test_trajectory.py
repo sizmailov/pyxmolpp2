@@ -26,6 +26,8 @@ def test_traj_iteration():
 
     n = 0
     for frame in trj:
+        r = frame.asAtoms[0].r
+        print(r.x,r.y,r.z)
         n +=1
 
     assert trj.size == n

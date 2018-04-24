@@ -166,6 +166,8 @@ public:
   const frameIndex_t& index() const;
   Frame& set_index(frameIndex_t index);
 
+  void to_pdb(const std::string& filename) const;
+
   Chain& emplace(ChainName name, int reserve = 0);
   Chain& emplace(const Chain& chain);
 
