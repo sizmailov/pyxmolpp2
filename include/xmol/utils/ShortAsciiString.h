@@ -10,7 +10,7 @@
 namespace xmol {
 namespace utils {
 
-template <int MAX_LENGTH, typename = void> class ShortAsciiString {
+template <int MAX_LENGTH, bool ALLOW_CONSTRUCT_TRUNCATION=false, typename = void> class ShortAsciiString {
 
 public:
   static_assert(MAX_LENGTH <= 8,"");
@@ -109,7 +109,7 @@ private:
     for (int i = 0; *aName != '\0' && i < MAX_LENGTH; ++i, ++aName) {
       m_value = m_value * 256 + uint_type(*aName);
     }
-    return (*aName == '\0') ? m_value
+    return (ALLOW_CONSTRUCT_TRUNCATION || *aName == '\0') ? m_value
                             : throw std::runtime_error(
                                   "ShortName::too_long: len(`" +
                                   std::string(origin, MAX_LENGTH) + "`...) > " +
@@ -130,8 +130,8 @@ private:
 }
 
 namespace std {
-template <int N, typename T> struct hash<xmol::utils::ShortAsciiString<N, T>> {
-  using argument_type = xmol::utils::ShortAsciiString<N, T>;
+template <int N, bool ALLOW_TRUNC, typename T> struct hash<xmol::utils::ShortAsciiString<N, ALLOW_TRUNC, T>> {
+  using argument_type = xmol::utils::ShortAsciiString<N, ALLOW_TRUNC, T>;
   using result_type = size_t;
 
   result_type operator()(argument_type const& s) const { return s.value(); }

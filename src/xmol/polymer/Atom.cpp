@@ -1,4 +1,6 @@
 #include "xmol/polymer/Atom.h"
+#include "xmol/pdb/PdbWriter.h"
+#include <fstream>
 
 using namespace xmol::polymer;
 
@@ -243,6 +245,15 @@ const frameIndex_t& Frame::index() const { return m_index; }
 Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
   m_index = index;
   return *this;
+}
+
+void Frame::to_pdb(const std::string& filename) const {
+  std::ofstream out(filename);
+  if (out.fail()){
+    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  }
+  pdb::PdbWriter writer(out);
+  writer.write(*this);
 }
 
 Chain& Frame::emplace(ChainName name, int reserve) {
