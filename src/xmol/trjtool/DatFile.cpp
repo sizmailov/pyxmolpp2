@@ -1,6 +1,7 @@
 
 #include "xmol/trjtool/DatFile.h"
 #include <fstream>
+#include <gsl/gsl_assert>
 
 using namespace xmol::trjtool;
 
@@ -11,7 +12,11 @@ DatFile::DatFile(const std::string& filename)
   close();
 }
 
-void DatFile::close() { m_stream->close(); }
+void DatFile::close() {
+  if (m_stream->is_open()){
+    m_stream->close();
+  }
+}
 
 bool DatFile::match(
     const xmol::polymer::AtomSelection& atoms) const {
@@ -26,9 +31,19 @@ void DatFile::set_coordinates(
 void DatFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,
     const xmol::polymer::AtomSelection& atoms) {
+    Expects(frameIndex<n_frames());
+    Expects(frameIndex>=0);
+
   if (!m_stream->is_open()) {
+    m_stream->clear();
+    assert(m_stream->good());
     m_stream->open(m_filename, std::ios::binary);
+    if (m_stream->fail()){
+      throw std::runtime_error("Can't open `"+m_filename+"`");
+    }
   }
+  assert(m_stream->is_open());
+  assert(m_stream->good());
   return m_reader->set_frame(frameIndex, atoms);
 }
 xmol::polymer::frameIndex_t DatFile::n_frames() const {

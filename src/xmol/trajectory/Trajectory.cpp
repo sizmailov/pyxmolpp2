@@ -1,3 +1,4 @@
+#include <gsl/gsl_assert>
 #include "xmol/trajectory/Trajectory.h"
 
 using namespace xmol::polymer;
@@ -96,34 +97,38 @@ TrajectorySlice Trajectory::slice(xmol::utils::optional<int> first,
   if (!stride) {
     stride = 1;
   }
+
+  if (last && last < 0) {
+    last = n_frames() + last.value();
+  }
+  if (first && first < 0) {
+    first = n_frames() + first.value();
+  }
+
   if (!first) {
     if (stride > 0) {
       first = 0;
     } else {
-      first = n_frames();
+      first = n_frames()-1;
     }
   }
   if (!last) {
     if (stride > 0) {
       last = n_frames();
     } else {
-      last = 0;
+      last = -1;
     }
-  }
-  if (last < 0) {
-    last = n_frames() + last.value();
-  }
-  if (first < 0) {
-    first = n_frames() + first.value();
   }
   return TrajectorySlice(*this, first.value(), last.value(), stride.value());
 }
 
 void Trajectory::update_frame(xmol::polymer::frameIndex_t position,
                               const xmol::polymer::AtomSelection& atoms) {
-  assert(position >= 0);
+  Expects(position >= 0);
+  Expects(position < n_frames());
+
   auto it = std::lower_bound(cumulative_n_frames.begin(),
-                             cumulative_n_frames.end(), position - 1);
+                             cumulative_n_frames.end(), position+1);
   if (it != cumulative_n_frames.end()) {
     auto portion_pos = std::distance(cumulative_n_frames.begin(), it);
     TrajectoryPortion& portion =
@@ -132,10 +137,14 @@ void Trajectory::update_frame(xmol::polymer::frameIndex_t position,
     if (m_prev_portion && m_prev_portion != &portion) {
       m_prev_portion->close();
     }
-
-    portion.set_coordinates(*it, atoms);
+    frameIndex_t index = position;
+    if (it!=cumulative_n_frames.begin()){
+      --it;
+      index-=*it;
+    }
+    portion.set_coordinates(index, atoms);
     m_prev_portion = &portion;
-    reference.set_index(position);
+    atoms[0].residue().chain().frame().set_index(position);
   } else {
     throw std::out_of_range("Trajectory out of range");
   }
