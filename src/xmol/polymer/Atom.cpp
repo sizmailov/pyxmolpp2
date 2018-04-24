@@ -13,7 +13,7 @@ Atom& Atom::set_id(atomId_t&& value) {
 
 const AtomName& Atom::name() const { return m_name; }
 
-Atom& Atom::set_name(AtomName&& value) {
+Atom& Atom::set_name(const AtomName& value) {
   m_name = std::move(value);
   return *this;
 }
@@ -81,7 +81,7 @@ Residue& Residue::set_id(residueId_t&& value) {
 
 const ResidueName& Residue::name() const { return m_name; }
 
-Residue& Residue::set_name(ResidueName&& value) {
+Residue& Residue::set_name(const ResidueName& value) {
   m_name = std::move(value);
   return *this;
 }
@@ -108,6 +108,10 @@ const Chain& Residue::chain() const noexcept { return *m_chain; }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
   return Container<Atom>::emplace(*this, name, id, r);
+}
+
+Atom& Residue::emplace(const Atom& atom) {
+  return Container<Atom>::emplace(atom);
 }
 
 Atom& Residue::operator[](const AtomName& atomName) {
@@ -195,7 +199,7 @@ const chainIndex_t& Chain::index() const { return m_index; }
 
 const ChainName& Chain::name() const { return m_name; }
 
-Chain& Chain::set_name(ChainName&& value) {
+Chain& Chain::set_name(const ChainName& value) {
   m_name = std::move(value);
   return *this;
 }
@@ -206,6 +210,12 @@ Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
   m_lookup_table.emplace(id, size());
   return Container<Residue>::emplace(*this, name, id, reserve);
 }
+
+Residue& Chain::emplace(const Residue& residue) {
+  m_lookup_table.emplace(residue.id(), size());
+  return Container<Residue>::emplace(residue);
+}
+
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
   return this->elements[m_lookup_table.at(residueId)];
@@ -247,6 +257,10 @@ Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
 
 Chain& Frame::emplace(ChainName name, int reserve) {
   return Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
+}
+
+Chain& Frame::emplace(const Chain& chain) {
+  return Container<Chain>::emplace(chain);
 }
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
