@@ -270,6 +270,15 @@ void Frame::to_pdb(const std::string& filename) const {
   writer.write(*this);
 }
 
+void Frame::to_pdb(const std::string& filename, const xmol::pdb::basic_PdbRecords& db) const {
+  std::ofstream out(filename);
+  if (out.fail()){
+    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  }
+  pdb::PdbWriter writer(out);
+  writer.write(*this, db);
+}
+
 Chain& Frame::emplace(ChainName name, int reserve) {
   return Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
 }

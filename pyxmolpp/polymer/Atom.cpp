@@ -4,6 +4,7 @@
 
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
+#include "xmol/pdb/PdbRecord.h"
 
 void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
@@ -194,6 +195,12 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
       .def("emplace",
            static_cast<Chain& (Frame::*)(const Chain&)>(&Frame::emplace),
            py::return_value_policy::reference, py::arg("chain"))
+      .def("to_pdb", static_cast<void (Frame::*)(const std::string&) const>(
+                         &Frame::to_pdb))
+      .def("to_pdb",
+           static_cast<void (Frame::*)(
+               const std::string&, const xmol::pdb::basic_PdbRecords&) const>(
+               &Frame::to_pdb))
       .def("__repr__", [](const Frame& frame) {
         return "<pyxmolpp2.polymer.Frame index=" +
                std::to_string(frame.index()) + " at 0x" +

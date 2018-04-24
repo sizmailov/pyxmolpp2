@@ -1,13 +1,13 @@
 #pragma once
 
 #include "xmol/polymer/Atom.h"
+
+#include "PdbRecord_fwd.h"
+
 #include <iostream>
 
 namespace xmol {
 namespace pdb {
-
-
-class basic_PdbRecords;
 
 class PdbWriter{
 public:

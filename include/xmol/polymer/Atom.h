@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Atom_fwd.h"
+
 #include "xmol/selection/ContainerSelection.h"
+#include "xmol/pdb/PdbRecord_fwd.h"
 
 #include <iostream>
 
@@ -167,6 +169,7 @@ public:
   Frame& set_index(frameIndex_t index);
 
   void to_pdb(const std::string& filename) const;
+  void to_pdb(const std::string& filename, const xmol::pdb::basic_PdbRecords& db) const;
 
   Chain& emplace(ChainName name, int reserve = 0);
   Chain& emplace(const Chain& chain);
