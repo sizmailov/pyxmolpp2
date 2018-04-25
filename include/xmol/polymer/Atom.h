@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Atom_fwd.h"
+
 #include "xmol/selection/ContainerSelection.h"
+#include "xmol/pdb/PdbRecord_fwd.h"
 
 #include <iostream>
 
@@ -19,7 +21,7 @@ public:
   Atom& set_id(atomId_t&& value);
 
   const AtomName& name() const;
-  Atom& set_name(AtomName&& value);
+  Atom& set_name(const AtomName& value);
 
   const XYZ& r() const;
   Atom& set_r(const XYZ& value);
@@ -54,7 +56,7 @@ public:
   Residue& operator=(Residue&& rhs) noexcept;
 
   const ResidueName& name() const;
-  Residue& set_name(ResidueName&& value);
+  Residue& set_name(const ResidueName& value);
 
   const residueId_t& id() const;
   Residue& set_id(residueId_t&& value);
@@ -63,6 +65,7 @@ public:
   Chain& chain() noexcept;
 
   Atom& emplace(AtomName name, atomId_t id, XYZ r);
+  Atom& emplace(const Atom& atom);
 
   Atom& operator[](const AtomName& atomName);
   const Atom& operator[](const AtomName& atomName) const;
@@ -104,12 +107,13 @@ public:
   const chainIndex_t& index() const;
 
   const ChainName& name() const;
-  Chain& set_name(ChainName&& value);
+  Chain& set_name(const ChainName& value);
 
   const Frame& frame() const noexcept;
   Frame& frame() noexcept;
 
   Residue& emplace(ResidueName name, residueId_t id, int reserve = 0);
+  Residue& emplace(const Residue& residue);
 
   Residue& operator[](const residueId_t& residueId);
   const Residue& operator[](const residueId_t& residueId) const;
@@ -164,7 +168,11 @@ public:
   const frameIndex_t& index() const;
   Frame& set_index(frameIndex_t index);
 
+  void to_pdb(const std::string& filename) const;
+  void to_pdb(const std::string& filename, const xmol::pdb::basic_PdbRecords& db) const;
+
   Chain& emplace(ChainName name, int reserve = 0);
+  Chain& emplace(const Chain& chain);
 
   Chain& operator[](const chainIndex_t& chainIndex);
   const Chain& operator[](const chainIndex_t& residueId) const;

@@ -840,7 +840,6 @@ T& Container<T>::emplace(Args&&... args) {
   }
   elements.emplace_back(T(std::forward<Args>(args)...));
   T& ref = elements.back();
-  assert(ref.parent() == this);
   return ref;
 }
 

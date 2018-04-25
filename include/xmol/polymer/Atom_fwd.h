@@ -52,9 +52,9 @@ using add_constness_as =
                        typename std::remove_const<U>::type>;
 }
 
-using AtomName = xmol::utils::ShortAsciiString<4, detail::AtomNameTag>;
-using ResidueName = xmol::utils::ShortAsciiString<3, detail::ResidueNameTag>;
-using ChainName = xmol::utils::ShortAsciiString<1, detail::ChainNameTag>;
+using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
+using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
+using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 }
 }
 

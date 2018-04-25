@@ -2,6 +2,13 @@
 
 using namespace xmol::trjtool;
 
+
+namespace {
+struct XYZf{
+  float x,y,z;
+};
+}
+
 DATReader::DATReader(std::istream& in) : m_in(&in) {
   in.seekg(0, std::ios::beg);
 
@@ -95,11 +102,11 @@ void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel) {
       float_size * m_header.fields.nitems * m_header.fields.ndim * n;
   m_in->seekg(m_offset + frame_begin, std::ios::beg);
   for (int i = 0; i < info().size(); i++) {
-    FromRawBytes<std::tuple<float, float, float>> xyzf{};
+    FromRawBytes<XYZf> xyzf{};
     m_in->read(xyzf.bytes, sizeof(xyzf));
-    sel[i].set_r(xmol::polymer::XYZ{std::get<0>(xyzf.value),
-                                    std::get<1>(xyzf.value),
-                                    std::get<2>(xyzf.value)});
+    sel[i].set_r(xmol::polymer::XYZ{xyzf.value.x,
+                                    xyzf.value.y,
+                                    xyzf.value.z});
   }
 }
 xmol::polymer::atomIndex_t DATReader::n_atoms_per_frame() const {

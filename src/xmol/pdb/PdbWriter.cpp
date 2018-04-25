@@ -1,0 +1,86 @@
+#include "xmol/pdb/PdbWriter.h"
+#include "xmol/pdb/PdbRecord.h"
+
+using namespace xmol::pdb;
+using namespace xmol::polymer;
+
+void PdbWriter::write(const xmol::polymer::Atom& atom) {
+  this->write(atom,StandardPdbRecords::instance());
+}
+
+void PdbWriter::write(const xmol::polymer::Residue& residue) {
+  this->write(residue,StandardPdbRecords::instance());
+}
+
+void PdbWriter::write(const xmol::polymer::Chain& chain) {
+  this->write(chain,StandardPdbRecords::instance());
+}
+
+void PdbWriter::write(const xmol::polymer::Frame& frame) {
+  this->write(frame,StandardPdbRecords::instance());
+}
+
+void PdbWriter::write(const xmol::polymer::Atom& atom, const xmol::pdb::basic_PdbRecords& db) {
+  const int pdb_line_width = 80;
+
+  std::string line(pdb_line_width,' ');
+
+
+  auto& atom_record = db.get_record(RecordName("ATOM"));
+
+  auto write_field = [&atom_record, &line](const char* const fmt, const auto& value, const FieldName& field){
+    const std::vector<int>& colons = atom_record.getFieldColons(field);
+    const int first = colons[0]-1;
+    const int last = colons[1]-1;
+    assert(first<=last);
+    assert(last<pdb_line_width);
+    int bytes_to_write = last+1-first;
+    char buff[bytes_to_write+2];
+    int w = std::snprintf(buff,bytes_to_write+1,fmt, value);
+    line.replace(last-w+1,w, buff);
+  };
+
+  auto format_atom_name  = [](const AtomName& aname){
+    auto s = aname.str();
+    if (s.size()<4){
+      return " "+s;
+    }
+    return s;
+  };
+
+  line.replace(0,6,"ATOM");
+  write_field("%d", atom.id(), FieldName("serial"));
+  write_field("%-4s", format_atom_name(atom.name()).c_str(), FieldName("name"));
+//  write_field("%s", , FieldName("altLoc"));
+  write_field("%-s", atom.residue().name().str().c_str(), FieldName("resName"));
+  write_field("%-s", atom.residue().chain().name().str().c_str(), FieldName("chainID"));
+  write_field("%-d", atom.residue().id(), FieldName("resSeq"));
+////  write_field("%s", , FieldName("iCode"));
+  write_field("%8.3f", atom.r().x(), FieldName("x"));
+  write_field("%8.3f", atom.r().y(), FieldName("y"));
+  write_field("%8.3f", atom.r().z(), FieldName("z"));
+//  write_field("%s", , FieldName("occupancy"));
+//  write_field("%s", , FieldName("tempFactor"));
+//  write_field("%s", , FieldName("element"));
+
+
+  (*m_ostream) << line <<"\n";
+}
+
+void PdbWriter::write(const xmol::polymer::Residue& residue, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&a: residue.asAtoms()){
+    this->write(a,db);
+  }
+}
+void PdbWriter::write(const xmol::polymer::Chain& chain, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&r: chain.asResidues()){
+    this->write(r,db);
+  }
+  (*m_ostream) << ("TER\n");
+}
+
+void PdbWriter::write(const xmol::polymer::Frame& frame, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&c: frame.asChains()){
+    this->write(c,db);
+  }
+}

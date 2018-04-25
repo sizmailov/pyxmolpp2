@@ -146,3 +146,20 @@ def test_for_each():
 
 
 
+def test_assignment():
+    from pyxmolpp2.geometry import XYZ
+    frame = make_polyglycine([("A",1)])
+    for a in frame.asAtoms:
+        print(a,a.r)
+
+    def translate_by_dr(a):
+        print(a,a.r)
+        a.r = a.r+XYZ(1,2,3)
+
+    frame.asAtoms.for_each(translate_by_dr)
+
+    assert frame.asAtoms[0].r.x == 1*2
+    assert frame.asAtoms[0].r.y == 2*2
+    assert frame.asAtoms[0].r.z == 3*2
+
+

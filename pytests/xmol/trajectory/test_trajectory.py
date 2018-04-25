@@ -25,9 +25,12 @@ def test_traj_iteration():
     assert trj.size == datfile1.n_frames+ datfile2.n_frames
 
     n = 0
-    for frame in trj:
+    stride = 50
+    for frame in trj[::stride]:
+        r = frame.asAtoms[0].r
+        print(r.x,r.y,r.z)
         n +=1
 
-    assert trj.size == n
+    assert trj.size//stride == n
 
 

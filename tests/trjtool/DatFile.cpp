@@ -23,6 +23,7 @@ public:
 TEST_F(TrjtoolDatFileTests, basic_read) {
   std::ifstream ifs2("trjtool/GB1/run00001.pdb", std::ios::binary);
   auto frame = xmol::pdb::PdbReader(ifs2).read_frame(permissibleRecords);
+  const auto frame999 = frame;
 
   DatFile datfile("trjtool/GB1/run00001.dat");
 
@@ -32,10 +33,17 @@ TEST_F(TrjtoolDatFileTests, basic_read) {
   EXPECT_EQ(datfile.n_frames(), 1000);
 
 
-  xmol::geometry::XYZ first_atom_coords (-3.2724499702453613, -9.4666690826416016, 8.9505224227905273 );
+  xmol::geometry::XYZ first_atom_coords (8.9505224227905273, -9.4666690826416016, -3.2724499702453613);
   EXPECT_GE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-1);
   datfile.set_coordinates(0,frame.asAtoms());
   EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);
+
+  datfile.set_coordinates(999,frame.asAtoms());
+  first_atom_coords = frame999.asAtoms()[0].r();
+  auto frame_r = frame.asAtoms()[0].r();
+  EXPECT_LE(std::fabs(frame_r.x()-first_atom_coords.x()),1e-3);
+  EXPECT_LE(std::fabs(frame_r.y()-first_atom_coords.y()),1e-3);
+  EXPECT_LE(std::fabs(frame_r.z()-first_atom_coords.z()),1e-3);
 
 }
 
@@ -52,7 +60,7 @@ TEST_F(TrjtoolDatFileTests, basic_read_copy) {
   EXPECT_EQ(datfile.n_frames(), 1000);
 
 
-  xmol::geometry::XYZ first_atom_coords (-3.2724499702453613, -9.4666690826416016, 8.9505224227905273 );
+  xmol::geometry::XYZ first_atom_coords (8.9505224227905273, -9.4666690826416016, -3.2724499702453613);
   EXPECT_GE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-1);
   datfile.set_coordinates(0,frame.asAtoms());
   EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);
