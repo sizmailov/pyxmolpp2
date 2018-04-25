@@ -32,7 +32,7 @@ TEST_F(TrjtoolTests, basic_read) {
   EXPECT_EQ(reader.n_atoms_per_frame(), frame.asAtoms().size());
   EXPECT_EQ(reader.n_frames(), 1000);
 
-  xmol::geometry::XYZ first_atom_coords (-3.2724499702453613, -9.4666690826416016, 8.9505224227905273 );
+  xmol::geometry::XYZ first_atom_coords (8.9505224227905273, -9.4666690826416016, -3.2724499702453613);
   EXPECT_GE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-1);
   reader.set_frame(0,frame.asAtoms());
   EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);

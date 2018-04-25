@@ -1,6 +1,8 @@
 #include "xmol/geometry/alignment.h"
 #include "gsl/gsl_assert"
 
+#include <iostream>
+
 using namespace xmol::geometry;
 
 Transformation3d xmol::geometry::calc_alignment(
@@ -33,7 +35,7 @@ Transformation3d xmol::geometry::calc_alignment(
 
   Eigen::JacobiSVD<Eigen::Matrix3d> svd(C, Eigen::ComputeFullU |
                                                Eigen::ComputeFullV);
-
+  std::cout << svd.singularValues() << std::endl;
   double d = (C.determinant() > 0) ? 1.0 : -1.0;
 
   Eigen::Matrix3d P;

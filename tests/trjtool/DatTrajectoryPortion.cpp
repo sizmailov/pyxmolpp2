@@ -42,7 +42,7 @@ TEST_F(TrjtoolDatPortionTests, basic_read_copy) {
   EXPECT_EQ(traj.n_frames(), 1000);
 
 
-  xmol::geometry::XYZ first_atom_coords (-3.2724499702453613, -9.4666690826416016, 8.9505224227905273 );
+  xmol::geometry::XYZ first_atom_coords (8.9505224227905273, -9.4666690826416016, -3.2724499702453613);
   EXPECT_GE((first_atom_coords-ref.asAtoms()[0].r()).len(), 1e-1);
   auto frame = *traj.begin();
   EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);
