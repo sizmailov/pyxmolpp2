@@ -164,7 +164,7 @@ class {class_name}({base_class}):
     for prop_name, prop in properties:
 
         T1, T2 = get_property_type(prop, module_name=klass.__module__)
-        docstring = remove_signature(prop.fget.__doc__)
+        docstring = remove_signature(prop.__doc__)
         out.write('''
     @property
     def {field_name}(self) -> {T1}:

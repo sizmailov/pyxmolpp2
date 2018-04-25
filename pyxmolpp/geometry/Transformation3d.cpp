@@ -17,7 +17,7 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
   pyTranslation3d
       .def(py::init<>())
       .def(py::init<XYZ>())
-      .def("transform",&Translation3d::transform)
+      .def("transform",&Translation3d::transform, py::arg("r"),"Returns translated point")
       .def("inverted",&Translation3d::inverted)
       .def("dr",&Translation3d::dr)
       .def(py::self * py::self)
@@ -25,10 +25,10 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
   pyUniformScale3d
       .def(py::init<>())
-      .def(py::init<double>())
-      .def("transform",&UniformScale3d::transform)
-      .def("inverted",&UniformScale3d::inverted)
-      .def_property_readonly("scale",&UniformScale3d::scale)
+      .def(py::init<double>(),py::arg("scale_factor"))
+      .def("transform",&UniformScale3d::transform, py::arg("r"), "Returns scaled point")
+      .def("inverted",&UniformScale3d::inverted, "Returns inverted scale transformation")
+      .def_property_readonly("scale",&UniformScale3d::scale,"Scale factor")
       .def(py::self * py::self)
       .def(py::self * Translation3d())
       .def(Translation3d() * py::self)
@@ -36,11 +36,11 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
   pyRotation3d
       .def(py::init<>())
-      .def(py::init<XYZ,AngleValue>())
-      .def("transform",&Rotation3d::transform)
-      .def("inverted",&Rotation3d::inverted)
-      .def("axis",&Rotation3d::axis)
-      .def("theta",&Rotation3d::theta)
+      .def(py::init<XYZ,AngleValue>(),py::arg("rotation_axis"),py::arg("rotation_angle"))
+      .def("transform",&Rotation3d::transform, py::arg("r"),"Returns rotated point")
+      .def("inverted",&Rotation3d::inverted, "Returns inverted rotation")
+      .def("axis",&Rotation3d::axis, "Returns axis of rotation")
+      .def("theta",&Rotation3d::theta, "Returns angle of rotation")
       .def(py::self * py::self)
       .def(py::self * Translation3d())
       .def(py::self * UniformScale3d())
@@ -50,9 +50,9 @@ void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
   pyTransformation3d
       .def(py::init<>())
-      .def(py::init<Rotation3d,Translation3d>())
-      .def("transform",&Transformation3d::transform)
-      .def("inverted",&Transformation3d::inverted)
+      .def(py::init<Rotation3d,Translation3d>(),py::arg("rotation_followed_by"),py::arg("translation"))
+      .def("transform",&Transformation3d::transform, "Returns transformed point")
+      .def("inverted",&Transformation3d::inverted, "Returns inverted transformation")
       .def(py::self * py::self)
       .def(py::self * Translation3d())
       .def(py::self * Rotation3d())
