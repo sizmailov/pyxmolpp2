@@ -12,11 +12,12 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
 
 
   py::class_<TrajectoryPortion,PyTrajectoryPortion>(trajectory, "TrajectoryPortion")
-      .def("close",&TrajectoryPortion::close)
-      .def("match",&TrajectoryPortion::match)
-      .def("n_frames",&TrajectoryPortion::n_frames)
-      .def("n_atoms_per_frame",&TrajectoryPortion::n_atoms_per_frame)
-      .def("set_coordinates",(void (TrajectoryPortion::*)(frameIndex_t, const AtomSelection&))(&TrajectoryPortion::set_coordinates))
+      .def("close",&TrajectoryPortion::close, "Release file handle")
+      .def("match",&TrajectoryPortion::match,"Checks atom names, residue names and residue ids to match reference_atoms")
+      .def("n_frames",&TrajectoryPortion::n_frames,"Number of frames")
+      .def("n_atoms_per_frame",&TrajectoryPortion::n_atoms_per_frame,"Number of atoms per frame")
+      .def("set_coordinates",(void (TrajectoryPortion::*)(frameIndex_t, const AtomSelection&))(&TrajectoryPortion::set_coordinates),
+           "Set atoms coordinates from frame #frame_index")
       ;
 
   py::class_<TrajectoryRange>(trajectory,"TrajectoryRange")
@@ -33,11 +34,11 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
       .def("__iter__", &TrajectorySlice::begin);
 
   py::class_<Trajectory>(trajectory, "Trajectory")
-      .def(py::init<const xmol::polymer::Frame&, bool>())
-      .def("push_trajectory_portion", &Trajectory::push_trajectory_portion)
-      .def("__len__", &Trajectory::n_frames)
-      .def_property_readonly("size", &Trajectory::n_frames)
-      .def_property_readonly("n_frames", &Trajectory::n_frames)
+      .def(py::init<const xmol::polymer::Frame&, bool>(),py::arg("reference"),py::arg("check_portions_to_match_reference")=true)
+      .def("push_trajectory_portion", &Trajectory::push_trajectory_portion, "Add a trajectory portion")
+      .def("__len__", &Trajectory::n_frames, "Returns number of frames in trajectory")
+      .def_property_readonly("size", &Trajectory::n_frames, "Returns number of frames in trajectory")
+      .def_property_readonly("n_frames", &Trajectory::n_frames, "Returns number of frames in trajectory")
       .def("__iter__", &Trajectory::begin)
       .def("__getitem__",[](Trajectory& trj, py::slice& slice){
         size_t start, stop, step, slicelength;
