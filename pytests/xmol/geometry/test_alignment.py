@@ -14,6 +14,49 @@ def test_calc_rmsd():
 
     assert calc_rmsd(a,b) == pytest.approx( math.sqrt(2**2*3*0.5) )
 
+def test_calc_rmsd_exception():
+    from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd, GeometryException, Transformation3d
+
+    a = VectorXYZ([])
+    with pytest.raises(GeometryException):
+        calc_rmsd(a, a)
+
+    with pytest.raises(GeometryException):
+        calc_rmsd(a, a, Transformation3d())
+
+    a = [XYZ(1, 2, 3)] * 10
+
+    with pytest.raises(GeometryException):
+        calc_rmsd(VectorXYZ(a[:4]), VectorXYZ(a))
+
+    with pytest.raises(GeometryException):
+        calc_rmsd(VectorXYZ(a[:4]), VectorXYZ(a), Transformation3d())
+
+
+def test_calc_geom_center_exception():
+    from pyxmolpp2.geometry import calc_geom_center, XYZ, VectorXYZ, calc_rmsd, GeometryException, Transformation3d
+
+    with pytest.raises(GeometryException):
+        calc_geom_center(VectorXYZ([]))
+
+    calc_geom_center(VectorXYZ([XYZ(1,2,3)]))
+
+
+
+def test_alignment_exception():
+    from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd, AlignmentError
+
+    a = [XYZ(1, 2, 3)] * 10
+
+    with pytest.raises(AlignmentError):
+        calc_alignment(VectorXYZ(a[:2]), VectorXYZ(a[:2]))
+
+    calc_alignment(VectorXYZ(a[:3]), VectorXYZ(a[:3]))
+
+    with pytest.raises(AlignmentError):
+        calc_alignment(VectorXYZ(a[:4]), VectorXYZ(a))
+
+
 
 def test_calc_alignment():
     from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees
