@@ -1,4 +1,5 @@
 #include "xmol/pdb/PdbRecord.h"
+#include "xmol/pdb/exceptions.h"
 
 #include <fstream>
 
@@ -10,10 +11,7 @@ PdbRecordType::getFieldColons(const FieldName& fieldName) const {
   if (col != fieldColons.end()) {
     return col->second;
   }
-  throw std::out_of_range("Error: "
-                          "xmol::pdb::entry::PdbRecordType::getFieldColons(..."
-                          "): no field name `" +
-                          fieldName.str() + "`");
+  throw PdbUknownRecordField("Unknown field" +fieldName.str() + "`");
 }
 
 void PdbRecordType::set_field(const xmol::pdb::FieldName& fieldName,
@@ -57,10 +55,7 @@ StandardPdbRecords::get_record(const RecordName& recordTypeName) const {
   if (col != recordTypes.end()) {
     return col->second;
   }
-  throw std::out_of_range("Error: "
-                          "xmol::pdb::entry::PDBDefaultRecordTypesBase::get_"
-                          "record(...): no record `" +
-                          recordTypeName.str() + "`");
+  throw PdbUknownRecord("Unknown record `" + recordTypeName.str() + "`");
 }
 
 const basic_PdbRecords& StandardPdbRecords::instance() {

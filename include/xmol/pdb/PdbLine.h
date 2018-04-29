@@ -34,12 +34,5 @@ private:
   const PdbRecordType* pdbRecordType;
 };
 
-class PdbFieldReadError : public std::runtime_error {
-public:
-  PdbFieldReadError(const std::string& what, int colon_l, int colon_r)
-      : std::runtime_error(what), colon_l(colon_l), colon_r(colon_r) {}
-  const int colon_l, colon_r;
-};
-
 } //::xmol::pdb
 } //::xmol
