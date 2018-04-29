@@ -10,7 +10,7 @@ xmol::utils::parsing::parse_fixed_precision_rt(const std::string& line, int pos,
   int whole, precision;
 
   if (punct_pos == nullptr) {
-    return {width, 0};
+    return {false, 0};
   } else {
     whole = punct_pos - &line.c_str()[pos];
     precision = width - 1 - whole;

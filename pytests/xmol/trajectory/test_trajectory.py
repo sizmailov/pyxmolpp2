@@ -34,3 +34,28 @@ def test_traj_iteration():
     assert trj.size//stride == n
 
 
+def test_traj_exceptions():
+
+    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+    from pyxmolpp2.polymer import AtomName
+    from pyxmolpp2.trjtool import DatFile
+    from pyxmolpp2.trajectory import Trajectory, TrajectoryException
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+
+    datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
+
+    with pytest.raises(TrajectoryException):
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+        frame.asAtoms[0].name=AtomName("XX")
+        trj = Trajectory(frame, True)
+        trj.push_trajectory_portion(datfile1)
+
+    with pytest.raises(TrajectoryException):
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+        frame.asAtoms[0].delete()
+        trj = Trajectory(frame, True)
+        trj.push_trajectory_portion(datfile1)
+
+

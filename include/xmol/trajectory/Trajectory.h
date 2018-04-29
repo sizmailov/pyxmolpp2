@@ -93,6 +93,7 @@ public:
             "Trajectory portion does not match reference atoms");
       }
     }
+    ref->close();
   }
 
   xmol::polymer::frameIndex_t n_frames() const;
@@ -137,6 +138,7 @@ void Trajectory::add_trajectory_portion(Args&&... args) {
           "Trajectory portion does not match reference atoms");
     }
   }
+  ref->close();
 }
 }
 }

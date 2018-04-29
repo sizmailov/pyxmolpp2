@@ -2,19 +2,23 @@
 #include "xmol/trjtool/DatFile.h"
 #include <fstream>
 #include <gsl/gsl_assert>
-
+#include "xmol/trjtool/exceptions.h"
 using namespace xmol::trjtool;
 
 DatFile::DatFile(const std::string& filename)
     : m_filename(filename),
-      m_stream(std::make_unique<std::ifstream>(filename, std::ios::binary)),
-      m_reader(std::make_unique<DATReader>(*m_stream)) {
-  close();
+      m_stream(std::make_unique<std::ifstream>(filename, std::ios::binary)) {
+  if (m_stream->fail()){
+    throw TrjtoolException("Can't open `"+m_filename+"`");
+  }
+  m_reader = std::make_unique<DATReader>(*m_stream);
+  m_stream->close();
 }
 
 void DatFile::close() {
   if (m_stream->is_open()){
     m_stream->close();
+    m_reader->clear_info();
   }
 }
 
