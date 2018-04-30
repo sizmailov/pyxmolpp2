@@ -30,7 +30,7 @@ void DatFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,
     const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) {
   //  return m_reader->set_frame(frameIndex,)
-  throw std::runtime_error("Not implemented");
+  throw TrjtoolException("Not implemented");
 }
 void DatFile::set_coordinates(
     xmol::polymer::frameIndex_t frameIndex,
@@ -43,7 +43,7 @@ void DatFile::set_coordinates(
     assert(m_stream->good());
     m_stream->open(m_filename, std::ios::binary);
     if (m_stream->fail()){
-      throw std::runtime_error("Can't open `"+m_filename+"`");
+      throw TrjtoolException("Can't open `"+m_filename+"`");
     }
   }
   assert(m_stream->is_open());
