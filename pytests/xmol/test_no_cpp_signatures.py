@@ -10,16 +10,19 @@ def get_full_class_name(klass):
 
 
 def has_no_cpp_type_in_signature(docstring):
+    if docstring is None: return True
     signature_regex = r"(\s*\d+\.)?(\s*{name})?\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name="\w+")
     signatures = "\n".join(filter(lambda line: re.match(signature_regex,line),docstring.split("\n")))
     result = signatures.find("::") == -1
     return result
+
 
 def get_function_signature(func, strip_module_name=True, module_name=None, klass_name=None):
     name = func.__name__
     try:
         signature_regex = r"(\s*(?P<overload>\d+).)?\s*{name}\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name=name)
         doc_lines = func.__doc__
+        signatures = []
         for line in doc_lines.split("\n"):
             if strip_module_name and hasattr(func, "__module__") and func.__module__ is not None:
                 line = line.replace(func.__module__+".", "")
@@ -28,15 +31,12 @@ def get_function_signature(func, strip_module_name=True, module_name=None, klass
                 args = m.group("args")
                 rtype = m.group("rtype")
                 overload = m.group("overload")
-                if overload:
-                    full_name = func.__name__
-                    print("WARNING:", "Using first found overload for", full_name)
+                signatures.append((name, args, rtype))
                 # print(args, rtype)
-                return name, args, rtype
-        # print("Can't find pybind11 signature string in __doc__", func.__name__, func.__doc__)
-        return None
+
+        return signatures
     except AttributeError:
-        return name, "*args, **kwargs", None
+        return [(name, "*args, **kwargs", None)]
 
 
 def get_property_type(prop, module_name):
@@ -118,8 +118,8 @@ def check_class(klass):
 
 
     for method in methods:
-        signature = get_function_signature(method)
-        if signature:
+        signatures = get_function_signature(method)
+        for sign in signatures:
             assert has_no_cpp_type_in_signature(method.__doc__)
 
 

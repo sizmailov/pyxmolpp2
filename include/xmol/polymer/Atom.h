@@ -245,5 +245,18 @@ using ResidueSelection = xmol::selection::Selection<Residue>;
 
 using ConstChainSelection = xmol::selection::Selection<const Chain>;
 using ChainSelection = xmol::selection::Selection<Chain>;
+
+using DeadAtomSelectionAccess = xmol::selection::dead_selection_access<Atom>;
+using DeadResidueSelectionAccess = xmol::selection::dead_selection_access<Residue>;
+using DeadChainSelectionAccess = xmol::selection::dead_selection_access<Chain>;
+
+using DeletedAtomAccess = xmol::selection::deleted_element_access<Atom>;
+using DeletedResidueAccess = xmol::selection::deleted_element_access<Residue>;
+using DeletedChainAccess = xmol::selection::deleted_element_access<Chain>;
+
+using OutOfRangeAtomSelection = xmol::selection::selection_out_of_range<Atom>;
+using OutOfRangeResidueSelection = xmol::selection::selection_out_of_range<Residue>;
+using OutOfRangeChainSelection= xmol::selection::selection_out_of_range<Chain>;
+
 }
 }

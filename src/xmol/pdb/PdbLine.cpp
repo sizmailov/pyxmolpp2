@@ -1,5 +1,6 @@
 #include "xmol/pdb/PdbLine.h"
 #include "xmol/pdb/PdbRecord.h"
+#include "xmol/pdb/exceptions.h"
 #include "xmol/utils/parsing.h"
 #include "xmol/utils/string.h"
 #include <algorithm>

@@ -35,6 +35,7 @@ def get_full_class_name(klass):
 
 
 def remove_signature(docstring):
+    if docstring is None: return ""
     signature_regex = r"(\s*{name})?\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name="\w+")
     return "\n".join(filter(lambda line: not re.match(signature_regex,line),docstring.split("\n")))
 
@@ -57,7 +58,7 @@ def get_function_signature(func, strip_module_name=True, module_name=None, klass
 
         return signatures
     except AttributeError:
-        return [name, "*args, **kwargs", None]
+        return [(name, "*args, **kwargs", None)]
 
 
 def get_property_type(prop, module_name):
