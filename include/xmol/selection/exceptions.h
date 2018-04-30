@@ -23,7 +23,7 @@ public:
 };
 
 template<typename T>
-class dead_selection_range_access : public SelectionException<T> {
+class deleted_element_access : public SelectionException<T> {
   static_assert(!std::is_const<T>::value,"");
 public:
   using SelectionException<T>::SelectionException;
@@ -50,8 +50,8 @@ dead_selection_access<typename std::remove_const<T>::type> make_dead_selection_a
 
 
 template<typename T, typename ...Args>
-dead_selection_range_access<typename std::remove_const<T>::type> make_dead_selection_range_access(Args&& ...args){
-  return dead_selection_range_access<typename std::remove_const<T>::type>(std::forward<Args>(args)...);
+deleted_element_access<typename std::remove_const<T>::type> make_deleted_element_access(Args&& ...args){
+  return deleted_element_access<typename std::remove_const<T>::type>(std::forward<Args>(args)...);
 }
 
 template<typename T, typename ...Args>

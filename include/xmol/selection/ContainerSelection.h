@@ -227,13 +227,13 @@ SelectionRange<T>::SelectionRange(const SelectionBase<T>& selection, int pos,
 
 template <typename T> T& SelectionRange<T>::operator*() const {
   if (this->selection->elements[pos]->is_deleted()) {
-    throw make_dead_selection_range_access<T>("Invalid access to deleted element");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return *this->selection->elements[pos];
 }
 template <typename T> T* SelectionRange<T>::operator->() const {
   if (this->selection->elements[pos]->is_deleted()) {
-    throw make_dead_selection_range_access<T>("Invalid access to deleted element");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return this->selection->elements[pos];
 }
@@ -314,7 +314,7 @@ template <typename T> T& SelectionBase<T>::operator[](int i) const {
     i = size() + i;
   }
   if (elements[i]->is_deleted()) {
-    throw make_dead_selection_range_access<T>("Invalid access to deleted element");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return *elements[i];
 }
@@ -508,7 +508,7 @@ Selection<T>& Selection<T>::remove_if(Predicate&& p) {
   auto end = std::remove_if(this->elements.begin(), this->elements.end(),
                             [&p](selection_element_type ptr) {
                               if (GSL_UNLIKELY(ptr->is_deleted())) {
-                                throw make_dead_selection_range_access<T>(
+                                throw make_deleted_element_access<T>(
                                     "Invalid access to deleted element in ::remove_if");
                               }
                               const value_type& value = *ptr;

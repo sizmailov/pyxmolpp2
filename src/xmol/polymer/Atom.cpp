@@ -1,5 +1,6 @@
 #include "xmol/polymer/Atom.h"
 #include "xmol/pdb/PdbWriter.h"
+#include "xmol/polymer/exceptions.h"
 #include <fstream>
 
 using namespace xmol::polymer;
@@ -124,7 +125,7 @@ Atom& Residue::operator[](const AtomName& atomName) {
       return a;
     }
   }
-  throw std::runtime_error("Residue has no atom " + atomName.str());
+  throw OutOfRangeResidue("No atom with name `" + atomName.str()+"`");
 }
 
 const Atom& Residue::operator[](const AtomName& atomName) const {
@@ -135,7 +136,7 @@ const Atom& Residue::operator[](const AtomName& atomName) const {
       return a;
     }
   }
-  throw std::runtime_error("Residue has no atom " + atomName.str());
+  throw OutOfRangeResidue("No atom with name `" + atomName.str()+"`");
 }
 
 bool Residue::is_deleted() const { return m_deleted; }
@@ -222,7 +223,6 @@ Residue& Chain::emplace(const Residue& residue) {
   return res;
 }
 
-
 const Residue& Chain::operator[](const residueId_t& residueId) const {
   return this->elements[m_lookup_table.at(residueId)];
 }
@@ -263,17 +263,18 @@ Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
 
 void Frame::to_pdb(const std::string& filename) const {
   std::ofstream out(filename);
-  if (out.fail()){
-    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  if (out.fail()) {
+    throw IOError("Can't open file `" + filename + "` for writing");
   }
   pdb::PdbWriter writer(out);
   writer.write(*this);
 }
 
-void Frame::to_pdb(const std::string& filename, const xmol::pdb::basic_PdbRecords& db) const {
+void Frame::to_pdb(const std::string& filename,
+                   const xmol::pdb::basic_PdbRecords& db) const {
   std::ofstream out(filename);
-  if (out.fail()){
-    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  if (out.fail()) {
+    throw IOError("Can't open file `" + filename + "` for writing");
   }
   pdb::PdbWriter writer(out);
   writer.write(*this, db);
@@ -291,20 +292,20 @@ Chain& Frame::emplace(const Chain& chain) {
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw std::out_of_range("out_of_range Frame::opreator[]");
+    throw OutOfRangeFrame("Chain index (="+std::to_string(chainIndex)+") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw std::runtime_error("Chain was deleted");
+    throw DeletedChainAccess("Chain (index="+std::to_string(chainIndex)+") was deleted");
   }
   return elements[chainIndex];
 }
 
 const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw std::out_of_range("out_of_range Frame::opreator[]");
+    throw OutOfRangeFrame("Chain index (="+std::to_string(chainIndex)+") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw std::runtime_error("Chain was deleted");
+    throw DeletedChainAccess("Chain (index="+std::to_string(chainIndex)+") was deleted");
   }
   return elements[chainIndex];
 }
@@ -399,7 +400,8 @@ auto compare_set(const Chain& chain) {
 }
 }
 
-namespace xmol{ namespace selection {
+namespace xmol {
+namespace selection {
 
 template <>
 bool xmol::selection::SelectionPointerComparator<Atom>::
@@ -420,8 +422,8 @@ operator()(const Chain* lhs, const Chain* rhs) const {
 
 template <typename T>
 std::vector<XYZ>
-SelectionBaseExtension<
-    T, xmol::polymer::detail::enabled_if_atom<T>>::toCoords() const {
+SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_atom<T>>::toCoords()
+    const {
   std::vector<XYZ> result;
   result.reserve(this->size());
 

@@ -252,9 +252,9 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
 
   ASSERT_EQ(c.size(), 0);
   ASSERT_EQ(s.size(), n);
-  EXPECT_THROW(s[0], xmol::selection::dead_selection_range_access<int_with_parent>);
-  EXPECT_THROW(*s.begin(), xmol::selection::dead_selection_range_access<int_with_parent>);
-  EXPECT_THROW(s.begin()->value, xmol::selection::dead_selection_range_access<int_with_parent>);
+  EXPECT_THROW(s[0], xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW(*s.begin(), xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW(s.begin()->value, xmol::selection::deleted_element_access<int_with_parent>);
 }
 
 TEST_F(ConSelTests, selection_tracks_container_move) {
