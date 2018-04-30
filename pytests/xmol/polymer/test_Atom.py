@@ -257,3 +257,11 @@ def test_range_exceptions():
     with pytest.raises(OutOfRangeChainSelection):
         x = frame.asChains[-nchains-1]
 
+
+def test_tracking_refernces():
+
+    frame = make_polyglycine([("A",1)])
+    last_atom = frame.asAtoms[-1]  # store reference to Atom in python variable
+    frame = None                   # release the reference to Frame and cause cascade deletion of everything
+    with pytest.raises(Exception):
+        last_atom.name             # access to destroyed elements is prohibited, exception raised

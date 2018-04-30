@@ -333,3 +333,17 @@ TEST_F(AtomTests, deletion_invalidates_selections_2){
   EXPECT_ANY_THROW(for (auto&a: atoms){});
   EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
 }
+
+TEST_F(AtomTests, access_after_resize){
+  Frame frame = make_polyglycines({{"A",1}});
+
+  auto chain_a = ElementReference<Atom>(frame.asAtoms()[0]);
+  auto& res = chain_a->residue();
+  chain_a->residue().emplace(*chain_a.get());
+  auto chain_b = ElementReference<Atom>(frame.asAtoms()[0]);
+
+  EXPECT_EQ(chain_a.get(),chain_b.get());
+//  EXPECT_NO_THROW(std::cout << chain_b.size());
+//  EXPECT_EQ(chain_b.size(),chain_2.size());
+
+}

@@ -15,7 +15,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   auto&& pyResidueName = py::class_<ResidueName>(polymer, "ResidueName");
   auto&& pyChainName = py::class_<ChainName>(polymer, "ChainName");
 
-  auto&& pyAtom = py::class_<Atom>(polymer, "Atom");
+  auto&& pyAtom = py::class_<ElementReference<Atom>>(polymer, "Atom");
   auto&& pyResidue = py::class_<Residue>(polymer, "Residue");
   auto&& pyChain = py::class_<Chain>(polymer, "Chain");
   auto&& pyFrame = py::class_<Frame>(polymer, "Frame");
@@ -99,42 +99,80 @@ Order is preserved across manipulations with ChainSelection
 
   pyAtom
       .def_property_readonly("residue",
-                             static_cast<Residue& (Atom::*)()>(&Atom::residue),
+                             [](ElementReference<Atom>& ref) -> Residue& {
+                               return ref->residue();
+                             },
                              py::return_value_policy::reference,
                              "Parent residue, guarantied to be not None")
-      .def_property("r", &Atom::r, &Atom::set_r,
-                    py::return_value_policy::reference_internal,
+      .def_property("r", [](ElementReference<Atom>& ref) { return ref->r(); },
+                    [](ElementReference<Atom>& ref, XYZ value) {
+                      ref->set_r(value);
+                      return ref;
+                    },
                     "Atom coordinates")
-      .def_property_readonly("id", &Atom::id, "Atom id")
-      .def_property_readonly("aId", &Atom::id, "Atom id")
-      .def_property("name", &Atom::name, &Atom::set_name, "Atom name")
-      .def_property_readonly("aName", &Atom::name, "Atom name")
-      .def_property_readonly("rId", [](Atom& a) { return a.residue().id(); },
-                             "Residue id")
       .def_property_readonly(
-          "rName", [](Atom& a) { return a.residue().name(); }, "Residue name")
+          "id", [](ElementReference<Atom>& ref) { return ref->id(); },
+          "Atom id")
+      .def("__eq__",
+           [](const ElementReference<Atom>& a, const ElementReference<Atom>& b)
+               -> bool { return a.get() == b.get(); })
       .def_property_readonly(
-          "cIndex", [](Atom& a) { return a.residue().chain().index(); },
-          "Chain index")
+          "aId", [](ElementReference<Atom>& ref) { return ref->id(); },
+          "Atom id")
+      .def_property("name",
+                    [](ElementReference<Atom>& ref) { return ref->name(); },
+                    [](ElementReference<Atom>& ref, AtomName value) {
+                      ref->set_name(value);
+                      return ref;
+                    },
+                    "Atom name")
+      .def_property_readonly(
+          "aName", [](ElementReference<Atom>& ref) { return ref->name(); },
+          "Atom name")
+      .def_property_readonly(
+          "rId",
+          [](ElementReference<Atom>& ref) { return ref->residue().id(); },
+          "Residue id")
+      .def_property_readonly(
+          "rName",
+          [](ElementReference<Atom>& ref) { return ref->residue().name(); },
+          "Residue name")
+      .def_property_readonly("cIndex",
+                             [](ElementReference<Atom>& ref) {
+                               return ref->residue().chain().index();
+                             },
+                             "Chain index")
       .def_property_readonly("cName",
-                             [](Atom& a) { return a.residue().chain().name(); },
+                             [](ElementReference<Atom>& ref) {
+                               return ref->residue().chain().name();
+                             },
                              "Chain name (chainID in PDB nomenclature)")
-      .def_property_readonly(
-          "fIndex", [](Atom& a) { return a.residue().chain().frame().index(); },
-          "Frame index")
-      .def_property_readonly(
-          "chain", [](Atom& a) -> Chain& { return a.residue().chain(); },
-          py::return_value_policy::reference, "Parent chain")
-      .def_property_readonly(
-          "frame",
-          [](Atom& a) -> Frame& { return a.residue().chain().frame(); },
-          py::return_value_policy::reference, "Parent frame")
-      .def("delete", &Atom::set_deleted,
-           "Mark atom as deleted. Further access to deleted atom is illegal.")
-      .def("__repr__", [](const Atom& atom) {
-        return "<pyxmolpp2.polymer.Atom id=" + std::to_string(atom.id()) +
-               " name=\"" + atom.name().str() + "\" at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(atom))) +
+      .def_property_readonly("fIndex",
+                             [](ElementReference<Atom>& ref) {
+                               return ref->residue().chain().frame().index();
+                             },
+                             "Frame index")
+      .def_property_readonly("chain",
+                             [](ElementReference<Atom>& ref) -> Chain& {
+                               return ref->residue().chain();
+                             },
+                             py::return_value_policy::reference_internal,
+                             "Parent chain")
+      .def_property_readonly("frame",
+                             [](ElementReference<Atom>& ref) -> Frame& {
+                               return ref->residue().chain().frame();
+                             },
+                             py::return_value_policy::reference_internal,
+                             "Parent frame")
+      .def("delete",
+           [](ElementReference<Atom>& ref) { return ref->set_deleted(); },
+           "Mark atom as deleted. Further access to deleted atom is "
+           "illegal.")
+      .def("__repr__", [](ElementReference<Atom>& atom) {
+        return "<pyxmolpp2.polymer.Atom id=" + std::to_string(atom->id()) +
+               " name=\"" + atom->name().str() + "\" at 0x" +
+               xmol::utils::string::int2hex(
+                   (uint64_t)(std::addressof(*atom.get()))) +
                ">";
       });
   ;
@@ -142,7 +180,7 @@ Order is preserved across manipulations with ChainSelection
   pyResidue
       .def_property_readonly(
           "chain", static_cast<Chain& (Residue::*)()>(&Residue::chain),
-          py::return_value_policy::reference)
+          py::return_value_policy::reference_internal)
       .def("__len__", [](Residue& residue) { return residue.size(); },
            "Returns number of atoms in residues")
       .def_property_readonly("size",
@@ -150,10 +188,11 @@ Order is preserved across manipulations with ChainSelection
                              "Returns number of atoms in residues")
       .def_property_readonly(
           "frame", [](Residue& r) -> Frame& { return r.chain().frame(); },
-          py::return_value_policy::reference, "Parent frame")
+          py::return_value_policy::reference_internal, "Parent frame")
       .def("__getitem__",
-           [](Residue& r, AtomName& name) -> Atom& { return r[name]; },
-           py::return_value_policy::reference,
+           [](Residue& r, AtomName& name) {
+             return ElementReference<Atom>(r[name]);
+           },
            "Returns first atom in residue with given name. If no atoms with "
            "such name exception raised.")
       .def_property_readonly("id", &Residue::id, "Residue id")
@@ -171,14 +210,19 @@ Order is preserved across manipulations with ChainSelection
       .def_property_readonly("asAtoms",
                              [](Residue& residue) { return residue.asAtoms(); },
                              "Returns selection of child atoms")
-      .def("emplace", static_cast<Atom& (Residue::*)(AtomName, atomId_t, XYZ)>(
-                          &Residue::emplace),
-           py::return_value_policy::reference, py::arg("name"), py::arg("id"),
-           py::arg("r"), "Adds new Atom to the end of residue")
       .def("emplace",
-           static_cast<Atom& (Residue::*)(const Atom&)>(&Residue::emplace),
-           py::return_value_policy::reference, py::arg("atom"),
-           "Adds a copy of given Atom to the end of residue")
+           [](Residue& r, AtomName name, atomId_t id, XYZ xyz) {
+             auto ref = ElementReference<Atom>(r.emplace(name, id, xyz));
+             return ref;
+           },
+           py::arg("name"), py::arg("id"), py::arg("r"),
+           "Adds new Atom to the end of residue")
+      .def("emplace",
+           [](Residue& r, const ElementReference<Atom>& atom) {
+             auto ref = ElementReference<Atom>(r.emplace(*atom.get()));
+             return ref;
+           },
+           py::arg("atom"), "Adds a copy of given Atom to the end of residue")
       .def("delete", &Residue::set_deleted, "Marks residue as deleted. Further "
                                             "access to deleted residue is "
                                             "illegal")
@@ -192,9 +236,9 @@ Order is preserved across manipulations with ChainSelection
   ;
 
   pyChain
-      .def_property_readonly("frame",
-                             static_cast<Frame& (Chain::*)()>(&Chain::frame),
-                             py::return_value_policy::reference, "Parent frame")
+      .def_property_readonly(
+          "frame", static_cast<Frame& (Chain::*)()>(&Chain::frame),
+          py::return_value_policy::reference_internal, "Parent frame")
       .def("__len__", [](Chain& chain) { return chain.size(); },
            "Returns number of residues in chain")
       .def_property_readonly("size", [](Chain& chain) { return chain.size(); },
@@ -217,10 +261,11 @@ Order is preserved across manipulations with ChainSelection
                              "Returns selection of child atoms")
       .def("emplace", (Residue & (Chain::*)(ResidueName, residueId_t, int)) &
                           Chain::emplace,
-           py::return_value_policy::reference, py::arg("name"), py::arg("id"),
-           py::arg("reserve") = 0, "Adds an empty Residue to the end of chain")
+           py::return_value_policy::reference_internal, py::arg("name"),
+           py::arg("id"), py::arg("reserve") = 0,
+           "Adds an empty Residue to the end of chain")
       .def("emplace", (Residue & (Chain::*)(const Residue&)) & Chain::emplace,
-           py::return_value_policy::reference, py::arg("residue"),
+           py::return_value_policy::reference_internal, py::arg("residue"),
            "Adds a copy of given Residue to the end of chain")
       .def("delete", &Chain::set_deleted,
            "Marks chain as deleted. Further access to deleted chain is illegal")
@@ -274,17 +319,16 @@ Order is preserved across manipulations with ChainSelection
 
   //   .def("__iter__", [](xmol::selection::SelectionRange<Atom>& rng) -> sel& {
   //   return rng; })
-  pyAtomSelectionRange.def(
-      "__next__",
-      [](xmol::selection::SelectionRange<Atom>& rng) -> Atom& {
-        if (rng != rng) {
-          Atom& a = *rng;
-          ++rng;
-          return a;
-        }
-        throw py::stop_iteration();
-      },
-      py::return_value_policy::reference);
+  pyAtomSelectionRange.def("__next__",
+                           [](xmol::selection::SelectionRange<Atom>& rng) {
+                             if (rng != rng) {
+                               Atom& a = *rng;
+                               ++rng;
+                               return ElementReference<Atom>(a);
+                             }
+                             throw py::stop_iteration();
+                           },
+                           py::keep_alive<0, 1>());
 
   pyResidueSelectionRange.def(
       "__next__",
@@ -296,7 +340,7 @@ Order is preserved across manipulations with ChainSelection
         }
         throw py::stop_iteration();
       },
-      py::return_value_policy::reference);
+      py::keep_alive<0, 1>(), py::return_value_policy::reference);
 
   pyChainSelectionRange.def(
       "__next__",
@@ -308,18 +352,23 @@ Order is preserved across manipulations with ChainSelection
         }
         throw py::stop_iteration();
       },
-      py::return_value_policy::reference);
+      py::keep_alive<0, 1>(), py::return_value_policy::reference);
 
   pyAtomSelection
-      .def("filter", [](AtomSelection& sel,
-                        std::function<bool(std::reference_wrapper<const Atom>)>&
-                            predicate) { return sel.filter(predicate); },
+      .def("filter",
+           [](AtomSelection& sel,
+              std::function<bool(const ElementReference<Atom>&)>& predicate) {
+             return sel.filter([&](const Atom& a) {
+               return predicate(ElementReference<Atom>(const_cast<Atom&>(a)));
+             });
+           },
            py::arg("predicate"),
            "Keeps in selection only elements that match predicate")
       .def("for_each",
            [](AtomSelection& sel,
-              std::function<void(std::reference_wrapper<Atom>)>& func) {
-             return sel.for_each(func);
+              std::function<void(const ElementReference<Atom>)>& func) {
+             return sel.for_each(
+                 [&](Atom& a) { func(ElementReference<Atom>(a)); });
            },
            py::arg("transformation"),
            "Applies (mutating) transformation to atoms")
@@ -340,8 +389,10 @@ Order is preserved across manipulations with ChainSelection
       .def("__iter__", [](AtomSelection& sel) { return sel.begin(); },
            py::keep_alive<0, 1>())
       .def("__getitem__",
-           [](AtomSelection& sel, int index) -> Atom& { return sel[index]; },
-           py::return_value_policy::reference, py::arg("n"), "Get n'th element")
+           [](AtomSelection& sel, int index) {
+             return ElementReference<Atom>(sel[index]);
+           },
+           py::arg("n"), "Get n'th element")
       .def("__repr__", [](const AtomSelection& selection) {
         return "<pyxmolpp2.polymer.AtomSelection size=" +
                std::to_string(selection.size()) + " at 0x" +

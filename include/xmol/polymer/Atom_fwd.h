@@ -55,6 +55,84 @@ using add_constness_as =
 using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
 using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
+
+template<typename T>
+class ElementReference{
+public:
+  explicit ElementReference(T& t): ptr(&t){
+    ptr->parent()->add_reference(*this);
+  }
+  ElementReference(const ElementReference& other) : ptr(other.ptr){
+    if (is_valid()){
+      ptr->parent()->add_reference(*this);
+    }
+  }
+  ElementReference(ElementReference&& other) {
+    if (other.is_valid()){
+      other.ptr->parent()->remove_reference(other);
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr=other.ptr;
+    other.ptr = nullptr;
+  }
+
+  ElementReference& operator=(const ElementReference& other) {
+    if (this==&other){return *this;}
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+    if (other.is_valid()){
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr = other.ptr;
+    return *this;
+  }
+  ElementReference& operator=(ElementReference&& other) {
+    if (this==&other){return *this;}
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+    if (other.is_valid()){
+      other.ptr->parent()->remove_reference(other);
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr=other.ptr;
+    other.ptr = nullptr;
+    return *this;
+  }
+  ~ElementReference(){
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+  }
+  bool is_valid() const{
+    return ptr!=nullptr;
+  }
+  T* get() const{
+    if (ptr==nullptr){
+      throw std::runtime_error("Deleted element access through reference");
+    }
+    return ptr;
+  }
+
+  T* operator->() const{
+    if (ptr==nullptr){
+      throw std::runtime_error("Deleted element access through reference");
+    }
+    return ptr;
+  }
+
+
+  void on_container_move(ptrdiff_t shift){
+    ptr+=shift;
+  }
+  void on_container_delete(){
+    ptr = nullptr;
+  }
+public:
+  T* ptr;
+};
+
 }
 }
 

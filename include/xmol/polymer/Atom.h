@@ -31,8 +31,8 @@ public:
 
   bool is_deleted() const;
   void set_deleted();
-  const xmol::selection::Container<Atom>* parent() const;
-  xmol::selection::Container<Atom>* parent();
+  const Residue* parent() const;
+  Residue* parent();
 
 private:
   Atom(Residue& residue, AtomName name, atomId_t id, XYZ r);
@@ -48,12 +48,15 @@ private:
   bool m_deleted = false;
 };
 
-class Residue : public xmol::selection::Container<Atom> {
+class Residue : public xmol::selection::Container<Atom>, public xmol::selection::ObservableBy<ElementReference<Atom>> {
 public:
   Residue(const Residue& rhs);
   Residue(Residue&& rhs) noexcept;
   Residue& operator=(const Residue& rhs);
   Residue& operator=(Residue&& rhs) noexcept;
+  ~Residue(){
+    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_delete);
+  }
 
   const ResidueName& name() const;
   Residue& set_name(const ResidueName& value);
@@ -88,8 +91,15 @@ private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Residue>;
-
   friend class Chain;
+  friend class ElementReference<Atom>;
+
+  void add_reference(ElementReference<Atom>& aref){
+    ObservableBy<ElementReference<Atom>>::add_observer(aref);
+  }
+  void remove_reference(ElementReference<Atom>& aref){
+    ObservableBy<ElementReference<Atom>>::remove_observer(aref);
+  }
 
   ResidueName m_name;
   residueId_t m_id;

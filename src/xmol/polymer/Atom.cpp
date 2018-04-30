@@ -100,21 +100,35 @@ void Atom::set_deleted() { m_deleted = true; }
 Atom::Atom(Residue& residue, AtomName name, atomId_t id, XYZ r)
     : m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
 
-const xmol::selection::Container<Atom>* Atom::parent() const {
+const Residue* Atom::parent() const {
   return m_residue;
 };
-xmol::selection::Container<Atom>* Atom::parent() { return m_residue; };
+Residue* Atom::parent() { return m_residue; };
 
 Chain& Residue::chain() noexcept { return *m_chain; }
 
 const Chain& Residue::chain() const noexcept { return *m_chain; }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
-  return Container<Atom>::emplace(*this, name, id, r);
+  Atom* before = this->elements.data();
+  auto& ref = Container<Atom>::emplace(*this, name, id, r);
+  Atom* after = this->elements.data();
+  ptrdiff_t shift = after-before;
+  if (shift!=0){
+    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, shift);
+  }
+  return ref;
+
 }
 
 Atom& Residue::emplace(const Atom& atom) {
+  Atom* before = this->elements.data();
   auto& a = Container<Atom>::emplace(Atom(atom));
+  Atom* after = this->elements.data();
+  ptrdiff_t shift = after-before;
+  if (shift!=0){
+    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, shift);
+  }
   a.m_residue = this;
   return a;
 }
