@@ -108,23 +108,15 @@ public:
   bool is_valid() const{
     return ptr!=nullptr;
   }
-  T* get() const{
+  explicit operator T& () const{
     if (ptr==nullptr){
       throw std::runtime_error("Deleted element access through reference");
     }
-    return ptr;
+    return *ptr;
   }
 
-  T* operator->() const{
-    if (ptr==nullptr){
-      throw std::runtime_error("Deleted element access through reference");
-    }
-    return ptr;
-  }
-
-
-  void on_container_move(ptrdiff_t shift){
-    ptr+=shift;
+  void on_container_move(T* old_begin, T* new_begin){
+    ptr = new_begin + (ptr-old_begin);
   }
   void on_container_delete(){
     ptr = nullptr;

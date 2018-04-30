@@ -100,9 +100,7 @@ void Atom::set_deleted() { m_deleted = true; }
 Atom::Atom(Residue& residue, AtomName name, atomId_t id, XYZ r)
     : m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
 
-const Residue* Atom::parent() const {
-  return m_residue;
-};
+const Residue* Atom::parent() const { return m_residue; };
 Residue* Atom::parent() { return m_residue; };
 
 Chain& Residue::chain() noexcept { return *m_chain; }
@@ -113,21 +111,20 @@ Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
   Atom* before = this->elements.data();
   auto& ref = Container<Atom>::emplace(*this, name, id, r);
   Atom* after = this->elements.data();
-  ptrdiff_t shift = after-before;
-  if (shift!=0){
-    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, shift);
+  if (before != after) {
+    ObservableBy<ElementReference<Atom>>::notify_all(
+        &ElementReference<Atom>::on_container_move, before, after);
   }
   return ref;
-
 }
 
 Atom& Residue::emplace(const Atom& atom) {
   Atom* before = this->elements.data();
   auto& a = Container<Atom>::emplace(Atom(atom));
   Atom* after = this->elements.data();
-  ptrdiff_t shift = after-before;
-  if (shift!=0){
-    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, shift);
+  if (before != after) {
+    ObservableBy<ElementReference<Atom>>::notify_all(
+        &ElementReference<Atom>::on_container_move, before, after);
   }
   a.m_residue = this;
   return a;
@@ -139,7 +136,7 @@ Atom& Residue::operator[](const AtomName& atomName) {
       return a;
     }
   }
-  throw OutOfRangeResidue("No atom with name `" + atomName.str()+"`");
+  throw OutOfRangeResidue("No atom with name `" + atomName.str() + "`");
 }
 
 const Atom& Residue::operator[](const AtomName& atomName) const {
@@ -150,7 +147,7 @@ const Atom& Residue::operator[](const AtomName& atomName) const {
       return a;
     }
   }
-  throw OutOfRangeResidue("No atom with name `" + atomName.str()+"`");
+  throw OutOfRangeResidue("No atom with name `" + atomName.str() + "`");
 }
 
 bool Residue::is_deleted() const { return m_deleted; }
@@ -164,10 +161,10 @@ Residue::Residue(Chain& chain, ResidueName name, residueId_t id, int reserve)
     : Container<Atom>(reserve), m_name(std::move(name)), m_id(id),
       m_chain(&chain) {}
 
-const xmol::selection::Container<Residue>* Residue::parent() const {
+const Chain* Residue::parent() const {
   return m_chain;
 };
-xmol::selection::Container<Residue>* Residue::parent() { return m_chain; };
+Chain* Residue::parent() { return m_chain; };
 
 // -------------------- Chain -------------------------
 
@@ -227,14 +224,27 @@ Frame& Chain::frame() noexcept { return *m_frame; }
 
 Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
   m_lookup_table.emplace(id, size());
-  return Container<Residue>::emplace(*this, name, id, reserve);
+  Residue* before = this->elements.data();
+  auto& ref = Container<Residue>::emplace(*this, name, id, reserve);
+  Residue* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Residue>>::notify_all(
+        &ElementReference<Residue>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Residue& Chain::emplace(const Residue& residue) {
   m_lookup_table.emplace(residue.id(), size());
-  auto& res = Container<Residue>::emplace(Residue(residue));
-  res.m_chain = this;
-  return res;
+  Residue* before = this->elements.data();
+  auto& ref = Container<Residue>::emplace(Residue(residue));
+  ref.m_chain = this;
+  Residue* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Residue>>::notify_all(
+        &ElementReference<Residue>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
@@ -258,10 +268,8 @@ Chain::Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve)
     : Container<Residue>(reserve), m_name(std::move(name)), m_index(id),
       m_frame(&frame) {}
 
-const xmol::selection::Container<Chain>* Chain::parent() const {
-  return m_frame;
-};
-xmol::selection::Container<Chain>* Chain::parent() { return m_frame; };
+const Frame* Chain::parent() const { return m_frame; };
+Frame* Chain::parent() { return m_frame; };
 
 // -------------------- Frame -------------------------
 
@@ -295,31 +303,49 @@ void Frame::to_pdb(const std::string& filename,
 }
 
 Chain& Frame::emplace(ChainName name, int reserve) {
-  return Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
+  Chain* before = this->elements.data();
+  auto& ref =
+      Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
+  Chain* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Chain>>::notify_all(
+        &ElementReference<Chain>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Chain& Frame::emplace(const Chain& chain) {
-  auto& c = Container<Chain>::emplace(Chain(chain));
-  c.m_frame = this;
-  return c;
+  Chain* before = this->elements.data();
+  auto& ref = Container<Chain>::emplace(Chain(chain));
+  ref.m_frame = this;
+  Chain* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Chain>>::notify_all(
+        &ElementReference<Chain>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw OutOfRangeFrame("Chain index (="+std::to_string(chainIndex)+") is out of range");
+    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
+                          ") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw DeletedChainAccess("Chain (index="+std::to_string(chainIndex)+") was deleted");
+    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
+                             ") was deleted");
   }
   return elements[chainIndex];
 }
 
 const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw OutOfRangeFrame("Chain index (="+std::to_string(chainIndex)+") is out of range");
+    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
+                          ") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw DeletedChainAccess("Chain (index="+std::to_string(chainIndex)+") was deleted");
+    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
+                             ") was deleted");
   }
   return elements[chainIndex];
 }

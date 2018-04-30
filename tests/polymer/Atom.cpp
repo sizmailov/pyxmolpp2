@@ -338,12 +338,24 @@ TEST_F(AtomTests, access_after_resize){
   Frame frame = make_polyglycines({{"A",1}});
 
   auto chain_a = ElementReference<Atom>(frame.asAtoms()[0]);
-  auto& res = chain_a->residue();
-  chain_a->residue().emplace(*chain_a.get());
+  auto& res = ((Atom&)(chain_a)).residue();
+  ((Atom&)(chain_a)).residue().emplace((Atom&)(chain_a));
   auto chain_b = ElementReference<Atom>(frame.asAtoms()[0]);
 
-  EXPECT_EQ(chain_a.get(),chain_b.get());
+  EXPECT_EQ(((Atom&) chain_a),((Atom&) chain_b));
 //  EXPECT_NO_THROW(std::cout << chain_b.size());
 //  EXPECT_EQ(chain_b.size(),chain_2.size());
+
+}
+
+
+TEST_F(AtomTests, refcount_2){
+  Frame frame (0);
+  auto c = ElementReference<Chain>(frame.emplace(ChainName("A")));
+  c = ElementReference<Chain>(frame.emplace(ChainName("A")));
+  c = ElementReference<Chain>(frame.emplace(ChainName("A")));
+  c = ElementReference<Chain>(frame.emplace(ChainName("A")));
+  c = ElementReference<Chain>(frame.emplace(ChainName("A")));
+  c = ElementReference<Chain>(frame.emplace(ChainName("A")));
 
 }
