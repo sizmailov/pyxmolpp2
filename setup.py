@@ -38,6 +38,10 @@ class CMakeBuild(build_ext):
         build_type = 'Release'  # 'Debug' if self.debug else 'Release'
         build_args = ['--config', build_type]
 
+        # Pile all .so in one place and use $ORIGIN as RPATH
+        cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE"]
+        cmake_args += ["-DCMAKE_INSTALL_RPATH={}".format("$ORIGIN")]
+
         if platform.system() == "Windows":
             cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(build_type.upper(), extdir)]
             if sys.maxsize > 2**32:
@@ -61,13 +65,14 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyxmolpp2',
-    version='0.0.0.dev',
+    version='0.0.0.dev9',
     author='Sergei Izmailov',
     author_email='sergei.a.izmailov@gmail.com',
     description='Utils for processing MD',
-    long_description='',
+    long_description=open("README.rst").read(),
     ext_modules=[CMakeExtension('pyxmolpp2')],
     packages=find_packages('pyxmolpp2'),
     cmdclass=dict(build_ext=CMakeBuild),
+    url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
 )
