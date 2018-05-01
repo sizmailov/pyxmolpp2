@@ -216,6 +216,7 @@ def write_stubs_for_module(module, main_module=None):
         free_functions = []
         classes = []
         submodules = []
+        attributes = []
 
         for name, member in inspect.getmembers(module):
             # print(name, "::", member)
@@ -229,6 +230,8 @@ def write_stubs_for_module(module, main_module=None):
                 docstrings.append(member)
             elif name in ["__file__", "__loader__", "__name__", "__package__", "__spec__"]:
                 pass
+            elif isinstance(member, (int, float, bool, str, unicode)):
+                attributes.append((name,member))
             else:
                 print("Unknown type in module", name,"::",member)
 
@@ -253,6 +256,7 @@ from typing import overload, \
             init.write(",\n    ".join(list(map(lambda submodule: "\"%s\""%submodule.__name__.split('.')[-1],submodules))
                                     + list(map(lambda klass: "\"%s\""%klass.__name__,classes))
                                     + list(map(lambda func: "\"%s\""%func.__name__,free_functions))
+                                    + list(map(lambda name_value: "\"%s\""%name_value[0],attributes))
                                       ))
             init.write("\n    ]\n")
 
@@ -266,6 +270,10 @@ from typing import overload, \
             # write free functions
             for func in free_functions:
                 write_free_function(func, init)
+
+            # write attribute
+            for name, value in attributes:
+                init.write("{} = {} \n".format(name,repr(value)))
 
             # declare variables
 
