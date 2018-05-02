@@ -63,8 +63,12 @@ Translate all atoms by (1,2,3):
 .. code-block:: python
 
     from pyxmolpp2.pdb import PdbFile
-    from pyxmolpp2.geometry.functional import translate_by
+    from pyxmolpp2.geometry import XYZ
 
+    def translate_by(dr):
+        def translate(a):
+            a.r = a.r+dr
+        return translate
 
     frame = PdbFile("test.pdb").get_frame()
 
@@ -79,6 +83,22 @@ Translate all atoms by (1,2,3):
 Install
 -------
 
+from PyPi package
+^^^^^^^^^^^^^^^^^
+
+PyPi package contains all C++ dependencies, total size is about ~4 mb.
+Install command:
+
+.. code-block:: bash
+
+    python -m pip install pyxmolpp2
+
+
+
+from git repository
+^^^^^^^^^^^^^^^^^^^
+.. caution:: Total size of repository with sub-repositories exceeds 100mb
+
 To install from master branch run command
 
 .. code-block:: bash
@@ -88,7 +108,7 @@ To install from master branch run command
 
 
 ---------
-Reference
+API Reference
 ---------
 
 To be written

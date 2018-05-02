@@ -48,6 +48,8 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
+set_target_properties(observable_static PROPERTIES SUFFIX "-${XMOL_VERSION}.a")
+set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
 add_dependencies(observable_static write_version_info)
 add_dependencies(observable write_version_info)

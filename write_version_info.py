@@ -28,6 +28,9 @@ def get_version_info():
 
     return git_revision, git_branch, build_datetime, version_number, hostname
 
+def print_version_number():
+    sys.stdout.write(get_version_info()[3])
+
 if __name__ =="__main__":
 
     output_file = sys.argv[1]

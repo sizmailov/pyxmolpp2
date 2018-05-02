@@ -7,3 +7,9 @@ add_custom_target (
 )
 
 include_directories(${CMAKE_BINARY_DIR})
+
+execute_process(COMMAND python -c "from write_version_info import print_version_number; print_version_number()"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE XMOL_VERSION)
+
+message(${XMOL_VERSION})
