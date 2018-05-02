@@ -1,5 +1,6 @@
 #include "xmol/geometry/alignment.h"
 #include "gsl/gsl_assert"
+#include "xmol/geometry/exceptions.h"
 
 #include <iostream>
 
@@ -8,8 +9,15 @@ using namespace xmol::geometry;
 Transformation3d xmol::geometry::calc_alignment(
     const std::vector<xmol::geometry::XYZ>& reference,
     const std::vector<xmol::geometry::XYZ>& variable) {
-  Expects(reference.size() == variable.size());
-  Expects(reference.size() > 3);
+  if (GSL_UNLIKELY(reference.size() != variable.size())) {
+    throw AlignmentError("reference.size(" + std::to_string(reference.size()) +
+                         ") != variable.size (=" +
+                         std::to_string(variable.size()) + ")");
+  }
+  if (GSL_UNLIKELY(reference.size() < 3)) {
+    throw AlignmentError("reference.size(" + std::to_string(reference.size()) +
+                         ") < 3");
+  }
 
   size_t N = reference.size();
 
@@ -50,7 +58,10 @@ Transformation3d xmol::geometry::calc_alignment(
 
 XYZ xmol::geometry::calc_geom_center(
     const std::vector<xmol::geometry::XYZ>& coordinates) {
-  Expects(coordinates.size() > 0);
+  if (GSL_UNLIKELY(coordinates.empty())) {
+    throw GeometryException("reference.size(" +
+                            std::to_string(coordinates.size()) + ") == 0");
+  }
   XYZ c;
   for (auto& x : coordinates) {
     c += x;
@@ -61,7 +72,15 @@ XYZ xmol::geometry::calc_geom_center(
 double
 xmol::geometry::calc_rmsd(const std::vector<xmol::geometry::XYZ>& reference,
                           const std::vector<xmol::geometry::XYZ>& variable) {
-  Expects(reference.size() == variable.size());
+  if (GSL_UNLIKELY(reference.size() != variable.size())) {
+    throw GeometryException(
+        "reference.size(" + std::to_string(reference.size()) +
+        ") != variable.size (=" + std::to_string(variable.size()) + ")");
+  }
+  if (GSL_UNLIKELY(reference.empty())) {
+    throw GeometryException("reference.size(" +
+                            std::to_string(reference.size()) + ") == 0");
+  }
   double sum = 0;
   for (size_t i = 0; i < reference.size(); i++) {
     sum += (reference[i] - variable[i]).len2();
@@ -73,7 +92,15 @@ double
 xmol::geometry::calc_rmsd(const std::vector<xmol::geometry::XYZ>& reference,
                           const std::vector<xmol::geometry::XYZ>& variable,
                           const xmol::geometry::Transformation3d& alignment) {
-  Expects(reference.size() == variable.size());
+  if (GSL_UNLIKELY(reference.size() != variable.size())) {
+    throw GeometryException(
+        "reference.size(" + std::to_string(reference.size()) +
+        ") != variable.size (=" + std::to_string(variable.size()) + ")");
+  }
+  if (GSL_UNLIKELY(reference.empty())) {
+    throw GeometryException("reference.size(" +
+                            std::to_string(reference.size()) + ") == 0");
+  }
   double sum = 0;
   for (size_t i = 0; i < reference.size(); i++) {
     sum += (reference[i] - alignment.transform(variable[i])).len2();

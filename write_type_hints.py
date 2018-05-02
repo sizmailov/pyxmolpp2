@@ -35,6 +35,7 @@ def get_full_class_name(klass):
 
 
 def remove_signature(docstring):
+    if docstring is None: return ""
     signature_regex = r"(\s*{name})?\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name="\w+")
     return "\n".join(filter(lambda line: not re.match(signature_regex,line),docstring.split("\n")))
 
@@ -57,7 +58,7 @@ def get_function_signature(func, strip_module_name=True, module_name=None, klass
 
         return signatures
     except AttributeError:
-        return [name, "*args, **kwargs", None]
+        return [(name, "*args, **kwargs", None)]
 
 
 def get_property_type(prop, module_name):
@@ -164,7 +165,7 @@ class {class_name}({base_class}):
     for prop_name, prop in properties:
 
         T1, T2 = get_property_type(prop, module_name=klass.__module__)
-        docstring = remove_signature(prop.fget.__doc__)
+        docstring = remove_signature(prop.__doc__)
         out.write('''
     @property
     def {field_name}(self) -> {T1}:
@@ -215,6 +216,7 @@ def write_stubs_for_module(module, main_module=None):
         free_functions = []
         classes = []
         submodules = []
+        attributes = []
 
         for name, member in inspect.getmembers(module):
             # print(name, "::", member)
@@ -228,6 +230,8 @@ def write_stubs_for_module(module, main_module=None):
                 docstrings.append(member)
             elif name in ["__file__", "__loader__", "__name__", "__package__", "__spec__"]:
                 pass
+            elif isinstance(member, (int, float, bool, str, unicode)):
+                attributes.append((name,member))
             else:
                 print("Unknown type in module", name,"::",member)
 
@@ -252,6 +256,7 @@ from typing import overload, \
             init.write(",\n    ".join(list(map(lambda submodule: "\"%s\""%submodule.__name__.split('.')[-1],submodules))
                                     + list(map(lambda klass: "\"%s\""%klass.__name__,classes))
                                     + list(map(lambda func: "\"%s\""%func.__name__,free_functions))
+                                    + list(map(lambda name_value: "\"%s\""%name_value[0],attributes))
                                       ))
             init.write("\n    ]\n")
 
@@ -265,6 +270,10 @@ from typing import overload, \
             # write free functions
             for func in free_functions:
                 write_free_function(func, init)
+
+            # write attribute
+            for name, value in attributes:
+                init.write("{} = {} \n".format(name,repr(value)))
 
             # declare variables
 

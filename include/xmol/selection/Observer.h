@@ -1,12 +1,14 @@
 #pragma once
 
+#include "exceptions.h"
+#include "xmol/utils/Logger.h"
+
 #include <cassert>
 #include <functional>
+#include <gsl/gsl_assert>
 #include <map>
 #include <type_traits>
 #include <vector>
-
-#include "xmol/utils/Logger.h"
 
 namespace xmol {
 namespace selection {
@@ -16,8 +18,8 @@ enum class ObserverState { OK, DELETED };
 enum class ApplyTo { ANY, ALIVE_ONLY };
 
 template <typename T> class ObservableBy {
-  static_assert(!std::is_reference<T>::value,"");
-  static_assert(!std::is_pointer<T>::value,"");
+  static_assert(!std::is_reference<T>::value, "");
+  static_assert(!std::is_pointer<T>::value, "");
 
 public:
   ObservableBy() = default;
@@ -37,8 +39,8 @@ protected:
         ((*std::forward<T* const>(pair.first)).*
          func)(std::forward<Args>(args)...);
       } else {
-        if (apply_to == ApplyTo::ANY) {
-          throw std::runtime_error("Observer already dead");
+        if (GSL_UNLIKELY(apply_to == ApplyTo::ANY)) {
+          throw make_SelectionException<T>("Observer already dead");
         } else {
           LOG_WARNING("Observable outlives its observer");
         }

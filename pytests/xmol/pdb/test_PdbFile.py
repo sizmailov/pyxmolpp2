@@ -14,6 +14,56 @@ def test_read_frame():
         assert frame.asAtoms > 0
         # print (frame.asAtoms)
 
+def test_read_field_error():
+    from pyxmolpp2.pdb import PdbFile, StandardPdbRecords, AlteredPdbRecords, RecordName, FieldName, PdbException
+    import glob
+
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [4,6])
+    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
+        print(filename)
+        with pytest.raises(PdbException):
+            PdbFile(filename).get_frame(records)
+
+
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("x"), [4,4])
+    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
+        print(filename)
+        with pytest.raises(PdbException):
+            frame = PdbFile(filename).get_frame(records)
+            print(frame)
+
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("resName"), [1, 85])
+    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
+        print(filename)
+        with pytest.raises(PdbException):
+            frame = PdbFile(filename).get_frame(records)
+            print(frame)
+
+
+def test_read_non_existent_file():
+    from pyxmolpp2.pdb import PdbFile, PdbException
+
+    with pytest.raises(PdbException):
+        PdbFile("does_not_exists.pdb")
+
+
+def test_read_empty_file():
+    from pyxmolpp2.pdb import PdbFile
+    import os
+
+    assert PdbFile(os.devnull).get_frame().asChains.size == 0
+
+
+
 def test_rmsd():
     from pyxmolpp2.polymer import AtomName
     from pyxmolpp2.pdb import PdbFile

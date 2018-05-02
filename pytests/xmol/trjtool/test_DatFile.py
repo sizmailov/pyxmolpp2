@@ -22,5 +22,15 @@ def test_read_trjtool():
     datfile.set_coordinates(0, frame.asAtoms)
 
 
+def test_raise_file_does_not_exists():
+    from pyxmolpp2.trjtool import DatFile, TrjtoolException
+
+    with pytest.raises(TrjtoolException):
+        DatFile("does_not_exists.dat")
 
 
+def test_raise_file_is_empty():
+    from pyxmolpp2.trjtool import DatFile, unexpected_eof
+    import os
+    with pytest.raises(unexpected_eof):
+        DatFile(os.devnull)

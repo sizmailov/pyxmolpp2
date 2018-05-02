@@ -31,8 +31,8 @@ public:
 
   bool is_deleted() const;
   void set_deleted();
-  const xmol::selection::Container<Atom>* parent() const;
-  xmol::selection::Container<Atom>* parent();
+  const Residue* parent() const;
+  Residue* parent();
 
 private:
   Atom(Residue& residue, AtomName name, atomId_t id, XYZ r);
@@ -48,12 +48,16 @@ private:
   bool m_deleted = false;
 };
 
-class Residue : public xmol::selection::Container<Atom> {
+class Residue : public xmol::selection::Container<Atom>, public xmol::selection::ObservableBy<ElementReference<Atom>> {
 public:
   Residue(const Residue& rhs);
   Residue(Residue&& rhs) noexcept;
   Residue& operator=(const Residue& rhs);
   Residue& operator=(Residue&& rhs) noexcept;
+  ~Residue(){
+    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_delete);
+    ObservableBy<ElementReference<Atom>>::remove_all_observers();
+  }
 
   const ResidueName& name() const;
   Residue& set_name(const ResidueName& value);
@@ -81,15 +85,22 @@ public:
   bool is_deleted() const;
   void set_deleted();
 
-  const xmol::selection::Container<Residue>* parent() const;
-  xmol::selection::Container<Residue>* parent();
+  const Chain* parent() const;
+  Chain* parent();
 
 private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Residue>;
-
   friend class Chain;
+  friend class ElementReference<Atom>;
+
+  void add_reference(ElementReference<Atom>& aref){
+    ObservableBy<ElementReference<Atom>>::add_observer(aref);
+  }
+  void remove_reference(ElementReference<Atom>& aref){
+    ObservableBy<ElementReference<Atom>>::remove_observer(aref);
+  }
 
   ResidueName m_name;
   residueId_t m_id;
@@ -97,13 +108,16 @@ private:
   bool m_deleted = false;
 };
 
-class Chain : public xmol::selection::Container<Residue> {
+class Chain : public xmol::selection::Container<Residue>, public xmol::selection::ObservableBy<ElementReference<Residue>> {
 public:
   Chain(const Chain& rhs);
   Chain(Chain&& rhs) noexcept;
   Chain& operator=(const Chain& rhs);
   Chain& operator=(Chain&& rhs) noexcept;
-
+  ~Chain(){
+    ObservableBy<ElementReference<Residue>>::notify_all(&ElementReference<Residue>::on_container_delete);
+    ObservableBy<ElementReference<Residue>>::remove_all_observers();
+  }
   const chainIndex_t& index() const;
 
   const ChainName& name() const;
@@ -137,8 +151,8 @@ public:
   bool is_deleted() const;
   void set_deleted();
 
-  const xmol::selection::Container<Chain>* parent() const;
-  xmol::selection::Container<Chain>* parent();
+  const Frame* parent() const;
+  Frame* parent();
 
 private:
   Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve = 0);
@@ -149,6 +163,16 @@ private:
 
   friend class Residue;
 
+  friend class ElementReference<Residue>;
+
+
+  void add_reference(ElementReference<Residue>& aref){
+    ObservableBy<ElementReference<Residue>>::add_observer(aref);
+  }
+  void remove_reference(ElementReference<Residue>& aref){
+    ObservableBy<ElementReference<Residue>>::remove_observer(aref);
+  }
+
   ChainName m_name;
   std::map<residueId_t, residueIndex_t> m_lookup_table;
   chainIndex_t m_index;
@@ -156,7 +180,7 @@ private:
   bool m_deleted = false;
 };
 
-class Frame : public xmol::selection::Container<Chain> {
+class Frame : public xmol::selection::Container<Chain> , public xmol::selection::ObservableBy<ElementReference<Chain>>{
 public:
   explicit Frame(frameIndex_t id, int reserve = 0);
 
@@ -164,7 +188,10 @@ public:
   Frame(Frame&& rhs) noexcept;
   Frame& operator=(const Frame& rhs);
   Frame& operator=(Frame&& rhs) noexcept;
-
+  ~Frame(){
+    ObservableBy<ElementReference<Chain>>::notify_all(&ElementReference<Chain>::on_container_delete);
+    ObservableBy<ElementReference<Chain>>::remove_all_observers();
+  }
   const frameIndex_t& index() const;
   Frame& set_index(frameIndex_t index);
 
@@ -202,6 +229,13 @@ public:
   }
 
 private:
+  friend class ElementReference<Chain>;
+  void add_reference(ElementReference<Chain>& aref){
+    ObservableBy<ElementReference<Chain>>::add_observer(aref);
+  }
+  void remove_reference(ElementReference<Chain>& aref){
+    ObservableBy<ElementReference<Chain>>::remove_observer(aref);
+  }
   frameIndex_t m_index;
 };
 
@@ -245,5 +279,18 @@ using ResidueSelection = xmol::selection::Selection<Residue>;
 
 using ConstChainSelection = xmol::selection::Selection<const Chain>;
 using ChainSelection = xmol::selection::Selection<Chain>;
+
+using DeadAtomSelectionAccess = xmol::selection::dead_selection_access<Atom>;
+using DeadResidueSelectionAccess = xmol::selection::dead_selection_access<Residue>;
+using DeadChainSelectionAccess = xmol::selection::dead_selection_access<Chain>;
+
+using DeletedAtomAccess = xmol::selection::deleted_element_access<Atom>;
+using DeletedResidueAccess = xmol::selection::deleted_element_access<Residue>;
+using DeletedChainAccess = xmol::selection::deleted_element_access<Chain>;
+
+using OutOfRangeAtomSelection = xmol::selection::selection_out_of_range<Atom>;
+using OutOfRangeResidueSelection = xmol::selection::selection_out_of_range<Residue>;
+using OutOfRangeChainSelection= xmol::selection::selection_out_of_range<Chain>;
+
 }
 }

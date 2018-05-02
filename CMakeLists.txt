@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(observable)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(PythonInterp)
 find_package(PythonLibs REQUIRED)
@@ -22,7 +22,7 @@ else()
 ENDIF()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has depricated `register` keyword
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has `register` keyword, depricated in c++17
 
 
 enable_testing()
@@ -40,12 +40,20 @@ include_directories(include)
 
 add_subdirectory(tests)
 
+include(WriteVersionInfo.cmake)
 
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+
+set_target_properties(observable_static PROPERTIES SUFFIX "-${XMOL_VERSION}.a")
+set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
+
+add_dependencies(observable_static write_version_info)
+add_dependencies(observable write_version_info)
+
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
     target_link_libraries(observable_static gcov)

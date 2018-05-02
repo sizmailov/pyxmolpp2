@@ -19,26 +19,34 @@ void PdbWriter::write(const xmol::polymer::Chain& chain) {
 void PdbWriter::write(const xmol::polymer::Frame& frame) {
   this->write(frame,StandardPdbRecords::instance());
 }
-
-void PdbWriter::write(const xmol::polymer::Atom& atom, const xmol::pdb::basic_PdbRecords& db) {
+namespace {
   const int pdb_line_width = 80;
+
+  struct write_field_t{
+    write_field_t(const PdbRecordType& record,std::string& line):record(record),line(line){};
+    template<typename T>
+    void operator()(const char* const fmt, const T& value, const FieldName& field){
+      const std::vector<int>& colons = record.getFieldColons(field);
+      const int first = colons[0]-1;
+      const int last = colons[1]-1;
+      assert(first<=last);
+      assert(last<pdb_line_width);
+      int bytes_to_write = last+1-first;
+      char buff[bytes_to_write+2];
+      int w = std::snprintf(buff,bytes_to_write+1,fmt, value);
+      line.replace(last-w+1,w, buff);
+    };
+    const PdbRecordType& record;
+    std::string& line;
+  };
+}
+void PdbWriter::write(const xmol::polymer::Atom& atom, const xmol::pdb::basic_PdbRecords& db) {
 
   std::string line(pdb_line_width,' ');
 
-
   auto& atom_record = db.get_record(RecordName("ATOM"));
 
-  auto write_field = [&atom_record, &line](const char* const fmt, const auto& value, const FieldName& field){
-    const std::vector<int>& colons = atom_record.getFieldColons(field);
-    const int first = colons[0]-1;
-    const int last = colons[1]-1;
-    assert(first<=last);
-    assert(last<pdb_line_width);
-    int bytes_to_write = last+1-first;
-    char buff[bytes_to_write+2];
-    int w = std::snprintf(buff,bytes_to_write+1,fmt, value);
-    line.replace(last-w+1,w, buff);
-  };
+  auto write_field = write_field_t(atom_record,line);
 
   auto format_atom_name  = [](const AtomName& aname){
     auto s = aname.str();

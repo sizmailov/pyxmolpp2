@@ -54,7 +54,7 @@ TrajectoryRange& TrajectoryRange::operator-=(int n) {
 TrajectoryRange::TrajectoryRange(xmol::trajectory::Trajectory& trajectory,
                                  int pos, int end, int step)
     : trajectory(&trajectory), frame(trajectory.reference),
-      atoms(std::make_unique<AtomSelection>(frame.asAtoms())), pos(pos), end(end), step(step),
+      atoms(std::unique_ptr<AtomSelection>(new AtomSelection(frame.asAtoms()))), pos(pos), end(end), step(step),
       is_updated(false) {}
 
 TrajectoryRange TrajectorySlice::begin() const {

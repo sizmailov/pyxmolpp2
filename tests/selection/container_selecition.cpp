@@ -28,8 +28,8 @@ public:
 };
 
 template <typename T>
-using is_int_with_parent = std::enable_if_t<
-    std::is_same<std::remove_const_t<T>, int_with_parent>::value>;
+using is_int_with_parent = typename std::enable_if<
+    std::is_same<typename std::remove_const<T>::type, int_with_parent>::value>::type;
 
 namespace xmol {
 namespace selection {
@@ -60,10 +60,10 @@ TEST_F(ConSelTests, invalid_selection_throws_on_use) {
   C c2;
   auto value = int_with_parent(1, c2);
 
-  EXPECT_THROW(s[0], xmol::selection::dead_selection_access);
-  EXPECT_THROW(s.count(value), xmol::selection::dead_selection_access);
-  EXPECT_THROW(s.begin(), xmol::selection::dead_selection_access);
-  EXPECT_THROW(s.end(), xmol::selection::dead_selection_access);
+  EXPECT_THROW(s[0], xmol::selection::dead_selection_access<int_with_parent>);
+  EXPECT_THROW(s.count(value), xmol::selection::dead_selection_access<int_with_parent>);
+  EXPECT_THROW(s.begin(), xmol::selection::dead_selection_access<int_with_parent>);
+  EXPECT_THROW(s.end(), xmol::selection::dead_selection_access<int_with_parent>);
   EXPECT_NO_THROW(s.empty());
   EXPECT_NO_THROW(s.size());
 }
@@ -135,22 +135,22 @@ TEST_F(ConSelTests, selection_indexing) {
   EXPECT_NO_THROW(s[-1]);
   EXPECT_NO_THROW(s[-2]);
   EXPECT_NO_THROW(s[-3]);
-  EXPECT_THROW(s[-4], std::out_of_range);
+  EXPECT_THROW(s[-4], xmol::selection::selection_out_of_range<int_with_parent>);
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(s[1]);
   EXPECT_NO_THROW(s[2]);
-  EXPECT_THROW(s[3], std::out_of_range);
+  EXPECT_THROW(s[3], xmol::selection::selection_out_of_range<int_with_parent>);
 
   EXPECT_NO_THROW(s2[-1]);
   EXPECT_NO_THROW(s2[-2]);
   EXPECT_NO_THROW(s2[-3]);
   EXPECT_NO_THROW(s2[-4]);
-  EXPECT_THROW(s2[-5], std::out_of_range);
+  EXPECT_THROW(s2[-5], xmol::selection::selection_out_of_range<int_with_parent>);
   EXPECT_NO_THROW(s2[0]);
   EXPECT_NO_THROW(s2[1]);
   EXPECT_NO_THROW(s2[2]);
   EXPECT_NO_THROW(s2[3]);
-  EXPECT_THROW(s2[4], std::out_of_range);
+  EXPECT_THROW(s2[4], xmol::selection::selection_out_of_range<int_with_parent>);
 }
 
 TEST_F(ConSelTests, selection_count) {
@@ -252,9 +252,9 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
 
   ASSERT_EQ(c.size(), 0);
   ASSERT_EQ(s.size(), n);
-  EXPECT_THROW(s[0], xmol::selection::dead_selection_range_access);
-  EXPECT_THROW(*s.begin(), xmol::selection::dead_selection_range_access);
-  EXPECT_THROW(s.begin()->value, xmol::selection::dead_selection_range_access);
+  EXPECT_THROW(s[0], xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW(*s.begin(), xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW(s.begin()->value, xmol::selection::deleted_element_access<int_with_parent>);
 }
 
 TEST_F(ConSelTests, selection_tracks_container_move) {

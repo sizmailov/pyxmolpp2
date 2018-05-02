@@ -1,5 +1,6 @@
 #pragma once
 
+#include "exceptions.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/optional.h"
 
@@ -82,18 +83,18 @@ public:
   template <typename T, typename... Args>
   void add_trajectory_portion(Args&&... args);
 
-  void push_trajectory_portion(const TrajectoryPortion& trajectoryPortion){
+  void push_trajectory_portion(const TrajectoryPortion& trajectoryPortion) {
     portions.emplace_back(trajectoryPortion.get_copy());
     auto& ref = portions.back();
     cumulative_n_frames.push_back(n_frames() + ref->n_frames());
     if (check_portions_to_match_reference) {
       if (!ref->match(reference.asAtoms())) {
-        throw std::runtime_error(
+        throw TrajectoryException(
             "Trajectory portion does not match reference atoms");
       }
     }
+    ref->close();
   }
-
 
   xmol::polymer::frameIndex_t n_frames() const;
 
@@ -113,7 +114,8 @@ private:
   std::vector<xmol::polymer::frameIndex_t> cumulative_n_frames;
   bool check_portions_to_match_reference;
 
-  void update_frame(xmol::polymer::frameIndex_t position, const xmol::polymer::AtomSelection& atoms);
+  void update_frame(xmol::polymer::frameIndex_t position,
+                    const xmol::polymer::AtomSelection& atoms);
 };
 
 template <typename Sentinel>
@@ -127,16 +129,16 @@ bool TrajectoryRange::operator!=(const Sentinel&) const {
 
 template <typename T, typename... Args>
 void Trajectory::add_trajectory_portion(Args&&... args) {
-  portions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+  portions.emplace_back(std::unique_ptr<T>(new T(std::forward<Args>(args)...)));
   auto& ref = portions.back();
   cumulative_n_frames.push_back(n_frames() + ref->n_frames());
   if (check_portions_to_match_reference) {
     if (!ref->match(reference.asAtoms())) {
-      throw std::runtime_error(
+      throw TrajectoryException(
           "Trajectory portion does not match reference atoms");
     }
   }
+  ref->close();
 }
 }
 }
-

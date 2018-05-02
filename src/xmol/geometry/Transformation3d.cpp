@@ -1,4 +1,5 @@
 #include "xmol/geometry/Transformation3d.h"
+#include "xmol/geometry/exceptions.h"
 #include "gsl/gsl_assert"
 #include <iostream>
 using namespace xmol::geometry;
@@ -66,7 +67,10 @@ Rotation3d::Rotation3d(EulerAngles ea) {
 }
 
 Rotation3d::Rotation3d(const Eigen::Matrix3d& m) : m(m) {
-  Ensures(std::fabs(m.determinant() - 1.0) < 1e-10);
+  double diff = (m*m.transpose() - Eigen::Matrix3d::Identity()).norm();
+  if (GSL_UNLIKELY(diff > 1e-10)){
+    throw BadRotationMatrix("m * m^T != Identity");
+  }
 }
 
 YawPitchRoll Rotation3d::yaw_pitch_roll() const {
@@ -96,9 +100,7 @@ XYZ Rotation3d::axis() const {
 }
 
 Rotation3d& Rotation3d::operator*=(const Rotation3d& rhs) {
-  Expects(std::fabs(rhs.m.determinant() - 1.0) < 1e-10);
   m *= rhs.m;
-  Ensures(std::fabs(m.determinant() - 1.0) < 1e-10);
   return *this;
 }
 

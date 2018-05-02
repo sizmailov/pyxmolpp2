@@ -1,5 +1,6 @@
 #include "xmol/polymer/Atom.h"
 #include "xmol/pdb/PdbWriter.h"
+#include "xmol/polymer/exceptions.h"
 #include <fstream>
 
 using namespace xmol::polymer;
@@ -99,21 +100,32 @@ void Atom::set_deleted() { m_deleted = true; }
 Atom::Atom(Residue& residue, AtomName name, atomId_t id, XYZ r)
     : m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
 
-const xmol::selection::Container<Atom>* Atom::parent() const {
-  return m_residue;
-};
-xmol::selection::Container<Atom>* Atom::parent() { return m_residue; };
+const Residue* Atom::parent() const { return m_residue; };
+Residue* Atom::parent() { return m_residue; };
 
 Chain& Residue::chain() noexcept { return *m_chain; }
 
 const Chain& Residue::chain() const noexcept { return *m_chain; }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
-  return Container<Atom>::emplace(*this, name, id, r);
+  Atom* before = this->elements.data();
+  auto& ref = Container<Atom>::emplace(*this, name, id, r);
+  Atom* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Atom>>::notify_all(
+        &ElementReference<Atom>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Atom& Residue::emplace(const Atom& atom) {
-  auto& a = Container<Atom>::emplace(atom);
+  Atom* before = this->elements.data();
+  auto& a = Container<Atom>::emplace(Atom(atom));
+  Atom* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Atom>>::notify_all(
+        &ElementReference<Atom>::on_container_move, before, after);
+  }
   a.m_residue = this;
   return a;
 }
@@ -124,7 +136,7 @@ Atom& Residue::operator[](const AtomName& atomName) {
       return a;
     }
   }
-  throw std::runtime_error("Residue has no atom " + atomName.str());
+  throw OutOfRangeResidue("No atom with name `" + atomName.str() + "`");
 }
 
 const Atom& Residue::operator[](const AtomName& atomName) const {
@@ -135,7 +147,7 @@ const Atom& Residue::operator[](const AtomName& atomName) const {
       return a;
     }
   }
-  throw std::runtime_error("Residue has no atom " + atomName.str());
+  throw OutOfRangeResidue("No atom with name `" + atomName.str() + "`");
 }
 
 bool Residue::is_deleted() const { return m_deleted; }
@@ -149,10 +161,10 @@ Residue::Residue(Chain& chain, ResidueName name, residueId_t id, int reserve)
     : Container<Atom>(reserve), m_name(std::move(name)), m_id(id),
       m_chain(&chain) {}
 
-const xmol::selection::Container<Residue>* Residue::parent() const {
+const Chain* Residue::parent() const {
   return m_chain;
 };
-xmol::selection::Container<Residue>* Residue::parent() { return m_chain; };
+Chain* Residue::parent() { return m_chain; };
 
 // -------------------- Chain -------------------------
 
@@ -212,16 +224,28 @@ Frame& Chain::frame() noexcept { return *m_frame; }
 
 Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
   m_lookup_table.emplace(id, size());
-  return Container<Residue>::emplace(*this, name, id, reserve);
+  Residue* before = this->elements.data();
+  auto& ref = Container<Residue>::emplace(*this, name, id, reserve);
+  Residue* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Residue>>::notify_all(
+        &ElementReference<Residue>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Residue& Chain::emplace(const Residue& residue) {
   m_lookup_table.emplace(residue.id(), size());
-  auto& res = Container<Residue>::emplace(residue);
-  res.m_chain = this;
-  return res;
+  Residue* before = this->elements.data();
+  auto& ref = Container<Residue>::emplace(Residue(residue));
+  ref.m_chain = this;
+  Residue* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Residue>>::notify_all(
+        &ElementReference<Residue>::on_container_move, before, after);
+  }
+  return ref;
 }
-
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
   return this->elements[m_lookup_table.at(residueId)];
@@ -244,10 +268,8 @@ Chain::Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve)
     : Container<Residue>(reserve), m_name(std::move(name)), m_index(id),
       m_frame(&frame) {}
 
-const xmol::selection::Container<Chain>* Chain::parent() const {
-  return m_frame;
-};
-xmol::selection::Container<Chain>* Chain::parent() { return m_frame; };
+const Frame* Chain::parent() const { return m_frame; };
+Frame* Chain::parent() { return m_frame; };
 
 // -------------------- Frame -------------------------
 
@@ -263,48 +285,67 @@ Frame& Frame::set_index(xmol::polymer::frameIndex_t index) {
 
 void Frame::to_pdb(const std::string& filename) const {
   std::ofstream out(filename);
-  if (out.fail()){
-    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  if (out.fail()) {
+    throw IOError("Can't open file `" + filename + "` for writing");
   }
   pdb::PdbWriter writer(out);
   writer.write(*this);
 }
 
-void Frame::to_pdb(const std::string& filename, const xmol::pdb::basic_PdbRecords& db) const {
+void Frame::to_pdb(const std::string& filename,
+                   const xmol::pdb::basic_PdbRecords& db) const {
   std::ofstream out(filename);
-  if (out.fail()){
-    throw std::runtime_error("Can't open file `"+filename+"` for writing");
+  if (out.fail()) {
+    throw IOError("Can't open file `" + filename + "` for writing");
   }
   pdb::PdbWriter writer(out);
   writer.write(*this, db);
 }
 
 Chain& Frame::emplace(ChainName name, int reserve) {
-  return Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
+  Chain* before = this->elements.data();
+  auto& ref =
+      Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
+  Chain* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Chain>>::notify_all(
+        &ElementReference<Chain>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Chain& Frame::emplace(const Chain& chain) {
-  auto& c = Container<Chain>::emplace(chain);
-  c.m_frame = this;
-  return c;
+  Chain* before = this->elements.data();
+  auto& ref = Container<Chain>::emplace(Chain(chain));
+  ref.m_frame = this;
+  Chain* after = this->elements.data();
+  if (before != after) {
+    ObservableBy<ElementReference<Chain>>::notify_all(
+        &ElementReference<Chain>::on_container_move, before, after);
+  }
+  return ref;
 }
 
 Chain& Frame::operator[](const chainIndex_t& chainIndex) {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw std::out_of_range("out_of_range Frame::opreator[]");
+    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
+                          ") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw std::runtime_error("Chain was deleted");
+    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
+                             ") was deleted");
   }
   return elements[chainIndex];
 }
 
 const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
   if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw std::out_of_range("out_of_range Frame::opreator[]");
+    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
+                          ") is out of range");
   }
   if (elements[chainIndex].is_deleted()) {
-    throw std::runtime_error("Chain was deleted");
+    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
+                             ") was deleted");
   }
   return elements[chainIndex];
 }
@@ -380,26 +421,27 @@ Frame& Frame::operator=(Frame&& rhs) noexcept {
 //}
 
 namespace {
-auto compare_set(const Atom& atom) {
+std::tuple<frameIndex_t,const Frame*,const Chain*,const Residue*, const Atom*> compare_set(const Atom& atom) {
   const Residue& residue = atom.residue();
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain, &residue, &atom);
 }
-auto compare_set(const Residue& residue) {
+std::tuple<frameIndex_t,const Frame*,const Chain*,const Residue*> compare_set(const Residue& residue) {
 
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain, &residue);
 }
 
-auto compare_set(const Chain& chain) {
+std::tuple<frameIndex_t,const Frame*,const Chain*> compare_set(const Chain& chain) {
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain);
 }
 }
 
-namespace xmol{ namespace selection {
+namespace xmol {
+namespace selection {
 
 template <>
 bool xmol::selection::SelectionPointerComparator<Atom>::
@@ -420,8 +462,8 @@ operator()(const Chain* lhs, const Chain* rhs) const {
 
 template <typename T>
 std::vector<XYZ>
-SelectionBaseExtension<
-    T, xmol::polymer::detail::enabled_if_atom<T>>::toCoords() const {
+SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_atom<T>>::toCoords()
+    const {
   std::vector<XYZ> result;
   result.reserve(this->size());
 

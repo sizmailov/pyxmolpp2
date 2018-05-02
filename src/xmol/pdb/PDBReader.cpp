@@ -1,6 +1,7 @@
 #include "xmol/pdb/PdbLine.h"
 #include "xmol/pdb/PdbReader.h"
 #include "xmol/pdb/PdbRecord.h"
+#include "xmol/pdb/exceptions.h"
 #include "xmol/utils/string.h"
 
 #include "range/v3/all.hpp"
@@ -229,7 +230,7 @@ Frame PdbReader::read_frame(const basic_PdbRecords& db) {
   } catch (PdbFieldReadError& e) {
     std::string filler(std::min(std::max(e.colon_l, 0), 80), '~');
     std::string underline(std::min(e.colon_r - e.colon_l + 1, 80), '^');
-    throw std::runtime_error(std::string(e.what()) + "\n" + "at line "+std::to_string(pdbLines.line_number())+":"+std::to_string(e.colon_l)+"-"+std::to_string(e.colon_r)+"\n" +
+    throw PdbException(std::string(e.what()) + "\n" + "at line "+std::to_string(pdbLines.line_number())+":"+std::to_string(e.colon_l)+"-"+std::to_string(e.colon_r)+"\n" +
                              pdbLines.cached() + "\n" + filler + underline);
   }
   return result;

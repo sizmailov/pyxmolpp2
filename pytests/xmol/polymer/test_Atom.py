@@ -163,3 +163,121 @@ def test_assignment():
     assert frame.asAtoms[0].r.z == 3*2
 
 
+def test_selection_exceptions():
+    from pyxmolpp2.polymer import DeadAtomSelectionAccess, DeadResidueSelectionAccess, DeadChainSelectionAccess
+
+    zombie_selection = make_polyglycine([("A",1)]).asAtoms
+    with pytest.raises(DeadAtomSelectionAccess):
+        for a in zombie_selection:
+            pass
+
+    zombie_selection = make_polyglycine([("A",1)]).asResidues
+    with pytest.raises(DeadResidueSelectionAccess):
+        for a in zombie_selection:
+            pass
+
+    zombie_selection = make_polyglycine([("A",1)]).asChains
+    with pytest.raises(DeadChainSelectionAccess):
+        for a in zombie_selection:
+            pass
+
+def test_deleted_element_access_exceptions():
+    from pyxmolpp2.polymer import DeletedAtomAccess, DeletedChainAccess, DeletedResidueAccess
+
+    frame = make_polyglycine([("A",1)])
+    sel = frame.asAtoms
+    sel[0].delete()
+    with pytest.raises(DeletedAtomAccess):
+        for a in sel:
+            pass
+
+    frame = make_polyglycine([("A",2)])
+    sel = frame.asResidues
+    sel[0].delete()
+    with pytest.raises(DeletedResidueAccess):
+        for a in sel:
+            pass
+
+    frame = make_polyglycine([("A",2)]*2)
+    sel = frame.asChains
+    sel[0].delete()
+    with pytest.raises(DeletedChainAccess):
+        for a in sel:
+            pass
+
+
+
+def test_range_exceptions():
+    from pyxmolpp2.polymer import OutOfRangeAtomSelection,\
+        OutOfRangeChainSelection,\
+        OutOfRangeResidueSelection, \
+        OutOfRangeChain, \
+        OutOfRangeFrame, \
+        OutOfRangeResidue, \
+        AtomName
+
+
+    frame = make_polyglycine([("A",1),("B",4),("C",3)])
+
+    # with pytest.raises(OutOfRangeFrame):
+    #     x = frame[3]
+
+    # with pytest.raises(OutOfRangeChain):
+    #     x = frame.asChains[0][3]
+
+    with pytest.raises(OutOfRangeResidue):
+        x = frame.asResidues[0][AtomName("ca")]
+
+    assert frame.asResidues[0][AtomName("CA")].name.str == "CA"
+
+    natoms = frame.asAtoms.size
+    nresidues = frame.asResidues.size
+    nchains = frame.asChains.size
+
+    frame.asAtoms[0]
+    frame.asAtoms[-natoms]
+    frame.asResidues[0]
+    frame.asResidues[-nresidues]
+    frame.asChains[0]
+    frame.asChains[-nchains]
+
+    with pytest.raises(OutOfRangeAtomSelection):
+        x = frame.asAtoms[natoms]
+    with pytest.raises(OutOfRangeAtomSelection):
+        x = frame.asAtoms[-natoms-1]
+
+
+    with pytest.raises(OutOfRangeResidueSelection):
+        x = frame.asResidues[nresidues]
+    with pytest.raises(OutOfRangeResidueSelection):
+        x = frame.asResidues[-nresidues-1]
+
+    with pytest.raises(OutOfRangeChainSelection):
+        x = frame.asChains[nchains]
+    with pytest.raises(OutOfRangeChainSelection):
+        x = frame.asChains[-nchains-1]
+
+
+def test_tracking_atom_refernces():
+
+    frame = make_polyglycine([("A",1)])
+    last_atom = frame.asAtoms[-1]  # store reference to Atom in python variable
+    frame = None                   # release the reference to Frame and cause cascade deletion of everything
+    with pytest.raises(Exception):
+        last_atom.name             # access to destroyed elements is prohibited, exception raised
+
+
+def test_tracking_residue_refernces():
+
+    frame = make_polyglycine([("A",1)])
+    last_residue = frame.asResidues[-1]  # store reference to Atom in python variable
+    frame = None                   # release the reference to Frame and cause cascade deletion of everything
+    with pytest.raises(Exception):
+        last_residue.name             # access to destroyed elements is prohibited, exception raised
+
+def test_tracking_chain_refernces():
+    frame = make_polyglycine([("A",1)])
+    last_chain = frame.asChains[-1]  # store reference to Atom in python variable
+    frame = None                   # release the reference to Frame and cause cascade deletion of everything
+    with pytest.raises(Exception):
+        last_chain.name             # access to destroyed elements is prohibited, exception raised

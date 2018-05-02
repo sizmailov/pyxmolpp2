@@ -35,26 +35,96 @@ struct ResidueNameTag {};
 struct ChainNameTag {};
 
 template <typename T>
-using enabled_if_atom = std::enable_if_t<
-    std::is_same<typename std::remove_const<T>::type, Atom>::value>;
+using enabled_if_atom = typename std::enable_if<
+    std::is_same<typename std::remove_const<T>::type, Atom>::value>::type;
 
 template <typename T>
-using enabled_if_residue = std::enable_if_t<
-    std::is_same<typename std::remove_const<T>::type, Residue>::value>;
+using enabled_if_residue = typename std::enable_if<
+    std::is_same<typename std::remove_const<T>::type, Residue>::value>::type;
 
 template <typename T>
-using enabled_if_chain = std::enable_if_t<
-    std::is_same<typename std::remove_const<T>::type, Chain>::value>;
+using enabled_if_chain = typename std::enable_if<
+    std::is_same<typename std::remove_const<T>::type, Chain>::value>::type;
 
 template <typename T, typename U>
-using add_constness_as =
-    std::conditional_t<std::is_const<T>::value, const U,
-                       typename std::remove_const<U>::type>;
+using add_constness_as =typename
+    std::conditional<std::is_const<T>::value, const U,
+                       typename std::remove_const<U>::type>::type;
 }
 
 using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
 using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
+
+template<typename T>
+class ElementReference{
+public:
+  explicit ElementReference(T& t): ptr(&t){
+    ptr->parent()->add_reference(*this);
+  }
+  ElementReference(const ElementReference& other) : ptr(other.ptr){
+    if (is_valid()){
+      ptr->parent()->add_reference(*this);
+    }
+  }
+  ElementReference(ElementReference&& other) {
+    if (other.is_valid()){
+      other.ptr->parent()->remove_reference(other);
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr=other.ptr;
+    other.ptr = nullptr;
+  }
+
+  ElementReference& operator=(const ElementReference& other) {
+    if (this==&other){return *this;}
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+    if (other.is_valid()){
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr = other.ptr;
+    return *this;
+  }
+  ElementReference& operator=(ElementReference&& other) {
+    if (this==&other){return *this;}
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+    if (other.is_valid()){
+      other.ptr->parent()->remove_reference(other);
+      other.ptr->parent()->add_reference(*this);
+    }
+    ptr=other.ptr;
+    other.ptr = nullptr;
+    return *this;
+  }
+  ~ElementReference(){
+    if (is_valid()){
+      ptr->parent()->remove_reference(*this);
+    }
+  }
+  bool is_valid() const{
+    return ptr!=nullptr;
+  }
+  explicit operator T& () const{
+    if (ptr==nullptr){
+      throw std::runtime_error("Deleted element access through reference");
+    }
+    return *ptr;
+  }
+
+  void on_container_move(T* old_begin, T* new_begin){
+    ptr = new_begin + (ptr-old_begin);
+  }
+  void on_container_delete(){
+    ptr = nullptr;
+  }
+public:
+  T* ptr;
+};
+
 }
 }
 
@@ -68,7 +138,7 @@ public:
   SelectionBaseExtension() = default;
 
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE2 = typename std::enable_if<std::is_const<U>::value>::type>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};
@@ -94,7 +164,7 @@ public:
   SelectionBaseExtension() = default;
 
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE2 = typename std::enable_if<std::is_const<U>::value>::type>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};
@@ -117,7 +187,7 @@ public:
   SelectionBaseExtension() = default;
 
   template <typename U = T,
-            typename SFINAE2 = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE2 = typename std::enable_if<std::is_const<U>::value>::type>
   SelectionBaseExtension(const SelectionBaseExtension<
                          typename SelectionBaseExtension<U>::value_type>& rhs)
       : SelectionBase<T>(rhs){};

@@ -2,26 +2,12 @@
 
 #include "ContainerSelection_fwd.h"
 #include "Observer.h"
+#include "exceptions.h"
+
 #include <set>
 
 namespace xmol {
 namespace selection {
-
-class dead_selection_access : public std::logic_error {
-public:
-  explicit dead_selection_access(const std::string& what_arg)
-      : logic_error(what_arg) {}
-  explicit dead_selection_access(const char* what_arg)
-      : logic_error(what_arg) {}
-};
-
-class dead_selection_range_access : public std::logic_error {
-public:
-  explicit dead_selection_range_access(const std::string& what_arg)
-      : logic_error(what_arg) {}
-  explicit dead_selection_range_access(const char* what_arg)
-      : logic_error(what_arg) {}
-};
 
 enum class SelectionState { OK, HAS_DANGLING_REFERENCES };
 
@@ -69,7 +55,7 @@ public:
 
   SelectionBase();
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE = typename std::enable_if<std::is_const<U>::value>::type>
   SelectionBase(
       const SelectionBase<typename SelectionBase<U>::value_type>& rhs);
   SelectionBase(const SelectionBase& rhs);
@@ -135,7 +121,7 @@ public:
 
   Selection() = default;
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE = typename std::enable_if<std::is_const<U>::value>::type>
   Selection(const Selection<typename Selection<U>::value_type>& rhs)
       : SelectionBaseExtension<T>(rhs){};
   Selection(const Selection& rhs) = default;
@@ -154,25 +140,25 @@ public:
   const Selection& for_each(Transform&& transform) const;
 
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   bool operator==(const Selection<V>& rhs) const;
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   bool operator!=(const Selection<V>& rhs) const;
 
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value ||
-                                               !std::is_const<V>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator+=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator-=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
   template <typename Iterator>
@@ -241,13 +227,13 @@ SelectionRange<T>::SelectionRange(const SelectionBase<T>& selection, int pos,
 
 template <typename T> T& SelectionRange<T>::operator*() const {
   if (this->selection->elements[pos]->is_deleted()) {
-    throw dead_selection_range_access("SelectionRange<T>::operator*");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return *this->selection->elements[pos];
 }
 template <typename T> T* SelectionRange<T>::operator->() const {
   if (this->selection->elements[pos]->is_deleted()) {
-    throw dead_selection_range_access("SelectionRange<T>::operator->");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return this->selection->elements[pos];
 }
@@ -303,7 +289,7 @@ template <typename T> SelectionRange<T> SelectionRange<T>::operator+(int n) {
 template <typename T> SelectionRange<T> SelectionBase<T>::begin() const {
   LOG_VERBOSE_FUNCTION();
   if (state != SelectionState::OK) {
-    throw dead_selection_access("SelectionRange<T>::begin");
+    throw make_dead_selection_access<T>("Dead selection access in ::begin");
   }
   return SelectionRange<T>(*this, 0, elements.size(), 1);
 }
@@ -311,7 +297,7 @@ template <typename T> SelectionRange<T> SelectionBase<T>::begin() const {
 template <typename T> SelectionRange<T> SelectionBase<T>::end() const {
   LOG_VERBOSE_FUNCTION();
   if (state != SelectionState::OK) {
-    throw dead_selection_access("SelectionRange<T>::end");
+    throw make_dead_selection_access<T>("Dead selection access in ::end");
   }
   return SelectionRange<T>(*this, elements.size(), 0, 1);
 }
@@ -319,16 +305,16 @@ template <typename T> SelectionRange<T> SelectionBase<T>::end() const {
 template <typename T> T& SelectionBase<T>::operator[](int i) const {
   LOG_VERBOSE_FUNCTION();
   if (state != SelectionState::OK) {
-    throw dead_selection_access("SelectionRange<T>::operator[]");
+    throw make_dead_selection_access<T>("Dead selection access in ::operator[]");
   }
   if (i < -size() || i >= size()) {
-    throw std::out_of_range("SelectionBase<T>::[]");
+    throw make_selection_out_of_range<T>("");
   }
   if (i < 0) {
     i = size() + i;
   }
   if (elements[i]->is_deleted()) {
-    throw dead_selection_range_access("SelectionBase<T>::[]");
+    throw make_deleted_element_access<T>("Invalid access to deleted element");
   }
   return *elements[i];
 }
@@ -516,14 +502,14 @@ template <typename T>
 template <typename Predicate>
 Selection<T>& Selection<T>::remove_if(Predicate&& p) {
   LOG_DEBUG_FUNCTION();
-  if (this->state != SelectionState::OK) {
-    throw dead_selection_access("SelectionRange<T>::remove_if");
+  if (GSL_UNLIKELY(this->state != SelectionState::OK)) {
+    throw make_dead_selection_access<T>("Dead selection access in ::remove_if");
   }
   auto end = std::remove_if(this->elements.begin(), this->elements.end(),
                             [&p](selection_element_type ptr) {
-                              if (ptr->is_deleted()) {
-                                throw dead_selection_range_access(
-                                    "SelectionRange<T>::remove_if");
+                              if (GSL_UNLIKELY(ptr->is_deleted())) {
+                                throw make_deleted_element_access<T>(
+                                    "Invalid access to deleted element in ::remove_if");
                               }
                               const value_type& value = *ptr;
                               return p(value);
@@ -579,7 +565,7 @@ template <typename T> void SelectionBase<T>::remove_redundant_observers() {
 template <typename T> int SelectionBase<T>::count(const T& value) const {
   LOG_DEBUG_FUNCTION();
   if (state != SelectionState::OK) {
-    throw dead_selection_access("SelectionRange<T>::count");
+    throw make_dead_selection_access<T>("Dead selection access in ::count");
   }
   return std::find_if(elements.begin(), elements.end(),
                       [&value](const selection_element_type el) {

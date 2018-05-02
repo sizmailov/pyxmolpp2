@@ -4,6 +4,7 @@
 namespace pyxmolpp {
 namespace geometry {
 
+void init_exceptions(py::module& geometry);
 void init_alignment(py::module& geometry);
 void init_AngleValue(py::module& geometry);
 void init_basic(py::module& geometry);
