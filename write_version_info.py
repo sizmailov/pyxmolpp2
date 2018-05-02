@@ -5,7 +5,6 @@ import socket
 
 def get_version_info():
 
-
     try:
         git_revision = subprocess.check_output(["git", "rev-parse", "HEAD"]).split("\n")[0]
         git_branch = subprocess.check_output(["git", "rev-parse","--abbrev-ref", "HEAD"]).split("\n")[0]
@@ -13,8 +12,17 @@ def get_version_info():
         git_revision = ""
         git_branch = "non-git"
 
+    def read_version():
+        lines = []
+        with open("VERSION") as f:
+            for l in f:
+                if l.strip()=="": break
+                lines.append(l)
+
+        return ".".join([ l.strip().strip(".") for l in lines])
+
     build_datetime = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
-    version_number = open("VERSION").readline()
+    version_number = read_version()
 
     hostname = socket.gethostname()
 
@@ -29,11 +37,11 @@ if __name__ =="__main__":
 namespace xmol{{
 namespace version{{
 
-auto constexpr git_revision = "{0}";
-auto constexpr git_branch = "{1}";
-auto constexpr build_datetime = "{2}";
-auto constexpr version_number = "{3}";
-auto constexpr build_hostname = "{4}";
+auto constexpr git_revision = u8"{0}";
+auto constexpr git_branch = u8"{1}";
+auto constexpr build_datetime = u8"{2}";
+auto constexpr version_number = u8"{3}";
+auto constexpr build_hostname = u8"{4}";
 
 
 }}
