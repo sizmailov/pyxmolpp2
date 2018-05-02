@@ -6,8 +6,8 @@ import socket
 def get_version_info():
 
     try:
-        git_revision = subprocess.check_output(["git", "rev-parse", "HEAD"]).split("\n")[0]
-        git_branch = subprocess.check_output(["git", "rev-parse","--abbrev-ref", "HEAD"]).split("\n")[0]
+        git_revision = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("utf-8") .split("\n")[0]
+        git_branch = subprocess.check_output(["git", "rev-parse","--abbrev-ref", "HEAD"]).decode("utf-8").split("\n")[0]
     except (subprocess.CalledProcessError, OSError):
         git_revision = ""
         git_branch = "non-git"
