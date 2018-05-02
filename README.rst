@@ -107,9 +107,9 @@ To install from master branch run command
 
 
 
----------
+-------------
 API Reference
----------
+-------------
 
 To be written
 
