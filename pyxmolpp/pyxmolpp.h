@@ -5,6 +5,7 @@ namespace pyxmolpp {
 
 namespace py = pybind11;
 
+void init_version(py::module& version);
 void init_geometry(py::module& geometry);
 void init_pdb_fwd(py::module& pdb);
 void init_polymer(py::module& polymer);

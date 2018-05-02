@@ -40,12 +40,18 @@ include_directories(include)
 
 add_subdirectory(tests)
 
+include(WriteVersionInfo.cmake)
 
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+
+
+add_dependencies(observable_static write_version_info)
+add_dependencies(observable write_version_info)
+
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
     target_link_libraries(observable_static gcov)
