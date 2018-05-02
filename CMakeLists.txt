@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(observable)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(PythonInterp)
 find_package(PythonLibs REQUIRED)
@@ -22,7 +22,7 @@ else()
 ENDIF()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has depricated `register` keyword
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has `register` keyword, depricated in c++17
 
 
 enable_testing()

@@ -7,11 +7,11 @@ using namespace xmol::trjtool;
 
 DatFile::DatFile(const std::string& filename)
     : m_filename(filename),
-      m_stream(std::make_unique<std::ifstream>(filename, std::ios::binary)) {
+      m_stream(std::unique_ptr<std::ifstream>(new std::ifstream(filename, std::ios::binary))) {
   if (m_stream->fail()){
     throw TrjtoolException("Can't open `"+m_filename+"`");
   }
-  m_reader = std::make_unique<DATReader>(*m_stream);
+  m_reader = std::unique_ptr<DATReader>(new DATReader(*m_stream));
   m_stream->close();
 }
 
@@ -58,5 +58,5 @@ xmol::polymer::atomIndex_t DatFile::n_atoms_per_frame() const {
 }
 std::unique_ptr<xmol::trajectory::TrajectoryPortion> DatFile::get_copy() const
 {
-  return std::make_unique<DatFile>(*this);
+  return std::unique_ptr<DatFile>(new DatFile(*this));
 }

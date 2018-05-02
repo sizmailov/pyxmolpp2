@@ -23,29 +23,29 @@ public:
       uint64_t>::type;
   static const int max_length = MAX_LENGTH;
 
-  constexpr ShortAsciiString() : m_value(0){};
+  inline ShortAsciiString() : m_value(0){};
 
   explicit ShortAsciiString(const std::string& aName)
       : m_value(to_uint(aName.c_str())) {}
 
-  constexpr explicit ShortAsciiString(const char* aName)
+  inline explicit ShortAsciiString(const char* aName)
       : m_value(to_uint(aName)) {}
 
-  constexpr explicit ShortAsciiString(const char* aName, int exact_length)
+  inline explicit ShortAsciiString(const char* aName, int exact_length)
       : m_value(to_uint(aName, exact_length)) {}
 
-  constexpr ShortAsciiString(const ShortAsciiString& other)
+  inline ShortAsciiString(const ShortAsciiString& other)
       : m_value(other.m_value){};
-  constexpr ShortAsciiString(ShortAsciiString&& other) noexcept
+  inline ShortAsciiString(ShortAsciiString&& other) noexcept
       : m_value(other.m_value) {
     other.m_value = 0;
   };
 
-  constexpr ShortAsciiString& operator=(const ShortAsciiString& other) {
+  inline ShortAsciiString& operator=(const ShortAsciiString& other) {
     m_value = other.m_value;
     return *this;
   }
-  constexpr ShortAsciiString& operator=(ShortAsciiString&& other) noexcept {
+  inline ShortAsciiString& operator=(ShortAsciiString&& other) noexcept {
     m_value = other.m_value;
     other.m_value = 0;
     return *this;
@@ -55,27 +55,27 @@ public:
     m_value = to_uint(aName.c_str());
     return *this;
   }
-  constexpr ShortAsciiString& operator=(const char* aName) {
+  inline ShortAsciiString& operator=(const char* aName) {
     m_value = to_uint(aName);
     return *this;
   }
 
-  constexpr bool operator==(const ShortAsciiString& other) const {
+  inline bool operator==(const ShortAsciiString& other) const {
     return m_value == other.m_value;
   }
-  constexpr bool operator!=(const ShortAsciiString& other) const {
+  inline bool operator!=(const ShortAsciiString& other) const {
     return m_value != other.m_value;
   }
-  constexpr bool operator==(const char* other) const {
+  inline bool operator==(const char* other) const {
     return m_value == ShortAsciiString(other).m_value;
   }
-  constexpr bool operator!=(const char* other) const {
+  inline bool operator!=(const char* other) const {
     return m_value != ShortAsciiString(other).m_value;
   }
-  constexpr bool operator<(const ShortAsciiString& other) const {
+  inline bool operator<(const ShortAsciiString& other) const {
     return m_value < other.m_value;
   }
-  constexpr bool operator>(const ShortAsciiString& other) const {
+  inline bool operator>(const ShortAsciiString& other) const {
     return m_value > other.m_value;
   }
 
@@ -100,10 +100,10 @@ public:
   }
 
   explicit operator std::string() const { return this->str(); }
-  constexpr uint_type value() const { return m_value; }
+  inline uint_type value() const { return m_value; }
 
 private:
-  constexpr uint_type static to_uint(const char* aName) {
+  inline uint_type static to_uint(const char* aName) {
     uint_type m_value = 0;
     const char* origin = aName;
     for (int i = 0; *aName != '\0' && i < MAX_LENGTH; ++i, ++aName) {
@@ -115,7 +115,7 @@ private:
                                   std::string(origin, MAX_LENGTH) + "`...) > " +
                                   std::to_string(MAX_LENGTH));
   }
-  constexpr uint_type static to_uint(const char* aName, int exact_length) {
+  inline uint_type static to_uint(const char* aName, int exact_length) {
     assert(exact_length <= MAX_LENGTH);
     uint_type m_value = 0;
     const char* end = aName + exact_length;

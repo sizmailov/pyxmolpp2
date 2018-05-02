@@ -421,20 +421,20 @@ Frame& Frame::operator=(Frame&& rhs) noexcept {
 //}
 
 namespace {
-auto compare_set(const Atom& atom) {
+std::tuple<frameIndex_t,const Frame*,const Chain*,const Residue*, const Atom*> compare_set(const Atom& atom) {
   const Residue& residue = atom.residue();
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain, &residue, &atom);
 }
-auto compare_set(const Residue& residue) {
+std::tuple<frameIndex_t,const Frame*,const Chain*,const Residue*> compare_set(const Residue& residue) {
 
   const Chain& chain = residue.chain();
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain, &residue);
 }
 
-auto compare_set(const Chain& chain) {
+std::tuple<frameIndex_t,const Frame*,const Chain*> compare_set(const Chain& chain) {
   const Frame& frame = chain.frame();
   return std::make_tuple(frame.index(), &frame, &chain);
 }

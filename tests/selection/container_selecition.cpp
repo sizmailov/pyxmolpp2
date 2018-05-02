@@ -28,8 +28,8 @@ public:
 };
 
 template <typename T>
-using is_int_with_parent = std::enable_if_t<
-    std::is_same<std::remove_const_t<T>, int_with_parent>::value>;
+using is_int_with_parent = typename std::enable_if<
+    std::is_same<typename std::remove_const<T>::type, int_with_parent>::value>::type;
 
 namespace xmol {
 namespace selection {

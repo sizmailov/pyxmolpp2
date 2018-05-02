@@ -10,12 +10,9 @@ namespace xmol {
 namespace utils {
 namespace parsing {
 
-constexpr static int powers_of_10[] = {
-    1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+constexpr static int powers_of_10[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 
-template <int LEN>
-inline std::pair<bool, int> parse_uint_fixed_length(const std::string& line,
-                                                    int pos) noexcept {
+template <int LEN> inline std::pair<bool, int> parse_uint_fixed_length(const std::string& line, int pos) noexcept {
   bool success = GSL_LIKELY(line.size() >= pos + LEN);
   if (GSL_UNLIKELY(!success)) {
     return {false, 0};
@@ -30,8 +27,7 @@ inline std::pair<bool, int> parse_uint_fixed_length(const std::string& line,
   return std::make_pair(success, number);
 };
 
-inline std::pair<bool, int> parse_uint(const std::string& line, int pos,
-                                       int LEN) noexcept {
+inline std::pair<bool, int> parse_uint(const std::string& line, int pos, int LEN) noexcept {
   switch (LEN) {
   case (1):
     return parse_uint_fixed_length<1>(line, pos);
@@ -59,22 +55,19 @@ inline std::pair<bool, int> parse_uint(const std::string& line, int pos,
 enum class SpaceStrip { NONE, LEFT, RIGHT, LEFT_AND_RIGHT };
 
 template <SpaceStrip stripping = SpaceStrip::NONE>
-std::pair<bool, int> parse_int(const std::string& line, int pos,
-                               int LEN) noexcept {
+std::pair<bool, int> parse_int(const std::string& line, int pos, int LEN) noexcept {
   // short-circuit for invalid
   if (GSL_UNLIKELY(line.size() < pos + LEN)) {
     return {false, 0};
   }
 
-  if (stripping == SpaceStrip::RIGHT ||
-      stripping == SpaceStrip::LEFT_AND_RIGHT) {
+  if (stripping == SpaceStrip::RIGHT || stripping == SpaceStrip::LEFT_AND_RIGHT) {
     while (line[pos + LEN - 1] == ' ' && LEN > 0) {
       --LEN;
     }
   }
 
-  if (stripping == SpaceStrip::LEFT ||
-      stripping == SpaceStrip::LEFT_AND_RIGHT) {
+  if (stripping == SpaceStrip::LEFT || stripping == SpaceStrip::LEFT_AND_RIGHT) {
     while (line[pos] == ' ' && LEN > 0) {
       ++pos;
       --LEN;
@@ -91,18 +84,14 @@ std::pair<bool, int> parse_int(const std::string& line, int pos,
   }
 };
 
-template <int WIDTH, int PRECISION, SpaceStrip STRIP>
-struct parse_fixed_precision_fn {
-  static_assert(PRECISION >= 0,"");
-  static_assert(WIDTH > 0,"");
-  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2,"");
+template <int WIDTH, int PRECISION, SpaceStrip STRIP> struct parse_fixed_precision_fn {
+  static_assert(PRECISION >= 0, "");
+  static_assert(WIDTH > 0, "");
+  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2, "");
 
-  inline std::pair<bool, double> operator()(const std::string& line,
-                                            int pos) const noexcept {
+  inline std::pair<bool, double> operator()(const std::string& line, int pos) const noexcept {
 
-    if (GSL_UNLIKELY(
-            line.size() < pos + WIDTH ||
-            (PRECISION > 0 && line[pos + WIDTH - PRECISION - 1] != '.'))) {
+    if (GSL_UNLIKELY(line.size() < pos + WIDTH || (PRECISION > 0 && line[pos + WIDTH - PRECISION - 1] != '.'))) {
       return {false, 0};
     }
 
@@ -144,26 +133,26 @@ struct parse_fixed_precision_fn {
     }
     bool success2;
     int fraction_part;
-    std::tie(success2, fraction_part) =
-        parse_uint(line, pos + whole + 1, precision);
+    std::tie(success2, fraction_part) = parse_uint(line, pos + whole + 1, precision);
     if (GSL_UNLIKELY(!success2)) {
       return {false, 0};
     }
 
-    return {true, sign * (whole_part +
-                          double(fraction_part) / powers_of_10[precision])};
+    return {true, sign * (whole_part + double(fraction_part) / powers_of_10[precision])};
   };
 };
 
 inline namespace functional_objects {
-template <int WIDTH, int PRECISION,
-          SpaceStrip STRIP = SpaceStrip::LEFT_AND_RIGHT>
-constexpr parse_fixed_precision_fn<WIDTH, PRECISION, STRIP>
-    parse_fixed_precision = parse_fixed_precision_fn<WIDTH, PRECISION, STRIP>{};
+struct parse_fixed_precision_fn___ {
+  template <int WIDTH, int PRECISION, SpaceStrip STRIP = SpaceStrip::LEFT_AND_RIGHT>
+  inline std::pair<bool, double> parse(const std::string& line, int pos) const {
+    return parse_fixed_precision_fn<WIDTH,PRECISION,STRIP>{}(line,pos);
+  }
+};
+constexpr parse_fixed_precision_fn___ parse_fixed_precision{};
 }
 
-std::pair<bool, double> parse_fixed_precision_rt(const std::string& line,
-                                                 int pos, int width) noexcept;
+std::pair<bool, double> parse_fixed_precision_rt(const std::string& line, int pos, int width) noexcept;
 }
 }
 }

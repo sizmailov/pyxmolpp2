@@ -55,7 +55,7 @@ public:
 
   SelectionBase();
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE = typename std::enable_if<std::is_const<U>::value>::type>
   SelectionBase(
       const SelectionBase<typename SelectionBase<U>::value_type>& rhs);
   SelectionBase(const SelectionBase& rhs);
@@ -121,7 +121,7 @@ public:
 
   Selection() = default;
   template <typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value>>
+            typename SFINAE = typename std::enable_if<std::is_const<U>::value>::type>
   Selection(const Selection<typename Selection<U>::value_type>& rhs)
       : SelectionBaseExtension<T>(rhs){};
   Selection(const Selection& rhs) = default;
@@ -140,25 +140,25 @@ public:
   const Selection& for_each(Transform&& transform) const;
 
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   bool operator==(const Selection<V>& rhs) const;
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   bool operator!=(const Selection<V>& rhs) const;
 
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_const<U>::value ||
-                                               !std::is_const<V>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator+=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator-=(const Selection<V>& rhs);
   template <typename V, typename U = T,
-            typename SFINAE = std::enable_if_t<std::is_same<
-                std::remove_const_t<U>, std::remove_const_t<V>>::value>>
+            typename SFINAE = typename std::enable_if<std::is_same<
+                typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
   template <typename Iterator>

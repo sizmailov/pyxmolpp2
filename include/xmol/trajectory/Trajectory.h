@@ -129,7 +129,7 @@ bool TrajectoryRange::operator!=(const Sentinel&) const {
 
 template <typename T, typename... Args>
 void Trajectory::add_trajectory_portion(Args&&... args) {
-  portions.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+  portions.emplace_back(std::unique_ptr<T>(new T(std::forward<Args>(args)...)));
   auto& ref = portions.back();
   cumulative_n_frames.push_back(n_frames() + ref->n_frames());
   if (check_portions_to_match_reference) {
