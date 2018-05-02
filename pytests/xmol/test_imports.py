@@ -11,4 +11,8 @@ def test_import_geometry():
 
 def test_print_version():
     import pyxmolpp2.version
-    print(pyxmolpp2.version.version)
+
+    assert isinstance(pyxmolpp2.version.version,(str,unicode))
+    assert isinstance(pyxmolpp2.version.git_revision,(str,unicode))
+    assert isinstance(pyxmolpp2.version.build_datetime,(str,unicode))
+    assert isinstance(pyxmolpp2.version.build_hostname,(str,unicode))
