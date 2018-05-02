@@ -76,8 +76,8 @@ TEST_F(lattice_vectors_Tests, best_shift3){
   LatticeVectors latticeVectors(XYZ(1,0,0),XYZ(0,1,0),XYZ(0,0,1));
   BestShiftFinder bestShiftFinder(latticeVectors);
 
-  bestShiftFinder.scale_lattice_by(0.5);
-  latticeVectors.scale_by(0.5);
+  bestShiftFinder.scale_lattice_by(1.5);
+  latticeVectors.scale_by(1.5);
 
   auto ref = XYZ(0,0,0);
   auto var = latticeVectors.translate(ref,1,2,3);
@@ -87,7 +87,7 @@ TEST_F(lattice_vectors_Tests, best_shift3){
   std::tie(dr, shift)= bestShiftFinder.find_best_shift(ref,var);
 
   EXPECT_DOUBLE_EQ(dr,0);
-  EXPECT_DOUBLE_EQ(-0.5,shift.x());
-  EXPECT_DOUBLE_EQ(-1.0,shift.y());
-  EXPECT_DOUBLE_EQ(-1.5,shift.z());
+  EXPECT_DOUBLE_EQ(-1.5,shift.x());
+  EXPECT_DOUBLE_EQ(-3.0,shift.y());
+  EXPECT_DOUBLE_EQ(-4.5,shift.z());
 }

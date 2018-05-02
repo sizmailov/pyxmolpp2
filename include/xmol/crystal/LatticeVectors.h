@@ -6,7 +6,8 @@
 namespace xmol {
 namespace crystal {
 
-struct LatticeVectors {
+class LatticeVectors {
+public:
   LatticeVectors(const geometry::XYZ& v1, const geometry::XYZ& v2, const geometry::XYZ& v3) : v{v1, v2, v3} {}
   LatticeVectors(double a, double b, double c, geometry::AngleValue alpha, geometry::AngleValue beta,
                  geometry::AngleValue gamma) {
@@ -37,6 +38,7 @@ struct LatticeVectors {
   const geometry::XYZ& operator[](int i) const { return v[i]; }
 
   geometry::XYZ& operator[](int i) { return v[i]; }
+private:
   std::array<geometry::XYZ, 3> v;
 };
 
@@ -51,7 +53,7 @@ struct BestShiftFinder {
     A_inv = A.inverse();
   };
   void scale_lattice_by(double factor) {
-    A_inv /= factor;
+    A_inv /= factor*factor;
     v[0] *= factor;
     v[1] *= factor;
     v[2] *= factor;
@@ -62,8 +64,8 @@ struct BestShiftFinder {
     const int i = std::round(approx[0]);
     const int j = std::round(approx[1]);
     const int k = std::round(approx[2]);
-    geometry::XYZ best_shift;
-    double best_length2 = (ref - var).len2();
+    geometry::XYZ best_shift(i,j,k);
+    double best_length2 = (ref - (var+best_shift)).len2();
     for (int di = -1; di < 2; di++)
       for (int dj = -1; dj < 2; dj++)
         for (int dk = -1; dk < 2; dk++) {
