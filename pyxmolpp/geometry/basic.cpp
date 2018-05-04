@@ -6,7 +6,11 @@ using namespace xmol::geometry;
 
 void pyxmolpp::geometry::init_basic(pybind11::module& geometry) {
   geometry.def("distance", &xmol::geometry::distance, py::arg("a"),
-               py::arg("b"), "Calculate distance between two points");
+               py::arg("b"), R"(Calculate distance between two points
+
+:param a: first point
+:param b: second point
+)");
   geometry.def("distance2", &xmol::geometry::distance2, py::arg("a"),
                py::arg("b"), "Calculate distance square between two points");
   geometry.def("angle", &xmol::geometry::angle, py::arg("a"), py::arg("b"),

@@ -9,14 +9,18 @@ using namespace xmol::geometry;
 
 void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
-  auto&& pyTranslation3d = py::class_<Translation3d>(geometry,"Translation3d");
-  auto&& pyUniformScale3d = py::class_<UniformScale3d>(geometry,"UniformScale3d");
-  auto&& pyRotation3d = py::class_<Rotation3d>(geometry,"Rotation3d");
-  auto&& pyTransformation3d = py::class_<Transformation3d>(geometry,"Transformation3d");
+  auto&& pyTranslation3d = py::class_<Translation3d>(geometry,"Translation3d",R"pydoc(Represents translation by 3d vector)pydoc");
+  auto&& pyUniformScale3d = py::class_<UniformScale3d>(geometry,"UniformScale3d",R"pydoc(Represents unform 3d scaling)pydoc");
+  auto&& pyRotation3d = py::class_<Rotation3d>(geometry,"Rotation3d",R"pydoc(Represents 3d rotation)pydoc");
+  auto&& pyTransformation3d = py::class_<Transformation3d>(geometry,"Transformation3d",
+      R"pydoc(
+Represents arbitrary 3d transformation. The result of mixing two of :py:class:`Translation3d`, :py:class:`UniformScale3d`, :py:class:`Rotation3d` or :py:class:`Transformation3d`
+)pydoc"
+      );
 
   pyTranslation3d
-      .def(py::init<>())
-      .def(py::init<XYZ>())
+      .def(py::init<>(), "Identity transformation")
+      .def(py::init<XYZ>(), py::arg("dr"), ":param a: translation vector")
       .def("transform",&Translation3d::transform, py::arg("r"),"Returns translated point")
       .def("inverted",&Translation3d::inverted)
       .def("dr",&Translation3d::dr)
