@@ -231,11 +231,17 @@ def add_types_to_function(objtype, sig, docstringlines):
                 if arg_name not in args_with_decs:
                     line = ":param {}: {}".format(arg_name,"not documented yet")
                     docstringlines.append(line)
+
+                if "[" not in arg_type:
+                    arg_type = "~"+arg_type
                 line = ":type {}: :py:class:`{}`".format(arg_name,arg_type)
                 docstringlines.append(line)
 
         if ret is not None and ret.strip() !="None":
-            docstringlines.append(":rtype: :py:class:`{}`".format(ret.strip()))
+            ret = ret.strip()
+            if "[" not in ret:
+                ret = "~"+ret
+            docstringlines.append(":rtype: :py:class:`{}`".format(ret))
 
 
 def add_types_to_overloaded_function(objtype, f,docstringlines):
