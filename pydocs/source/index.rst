@@ -6,24 +6,26 @@
 Welcome to pyxmolpp2's documentation!
 =====================================
 
+.. toctree::
+    :caption: Tutorial
+    :maxdepth: 2
+    :glob:
 
-
-Change log
-^^^^^^^^^^
-
-
-API Reference
-^^^^^^^^^^^^^
+    tutorial/*
 
 .. toctree::
+    :caption: Examples
     :maxdepth: 2
+    :glob:
 
-    pyxmolpp2/geometry
-    pyxmolpp2/polymer
-    pyxmolpp2/pdb
-    pyxmolpp2/trjtool
-    pyxmolpp2/trajectory
-    pyxmolpp2/crystal
+    examples/*
+
+.. toctree::
+    :caption: API Reference
+    :maxdepth: 2
+    :glob:
+
+    pyxmolpp2/*
 
 
 
