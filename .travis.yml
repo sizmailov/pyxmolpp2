@@ -9,8 +9,8 @@ dist: trusty
 branches:
   only:
     - master
-    - *travis*
     - dev
+    - extend_travis_matrix
 
 cache:
   directories:
