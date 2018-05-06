@@ -19,3 +19,4 @@ sphinx-autodoc-annotation==1.0.post1
 sphinx-rtd-theme==0.3.1
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22
+git+https://github.com/Lingnik/sphinxcontrib-versioning@Lingnik-patch-1
