@@ -159,7 +159,9 @@ matrix:
 
 
 before_install:
-    - eval "${MATRIX_EVAL}"
+    - export CXX=$COMPILER
+    - $COMPILER --version
+    - python --version
 
 install:
     - python -m pip install pytest numpy

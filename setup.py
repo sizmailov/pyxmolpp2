@@ -36,7 +36,7 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
 
-        build_type = 'Release'  # 'Debug' if self.debug else 'Release'
+        build_type = os.environ.get("BUILD_TYPE", "Release")
         build_args = ['--config', build_type]
 
         # Pile all .so in one place and use $ORIGIN as RPATH
