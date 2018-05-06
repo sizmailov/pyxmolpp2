@@ -11,7 +11,7 @@ def test_read_frame():
 
         frame = PdbFile(filename).get_frame()
 
-        assert frame.asAtoms > 0
+        assert frame.asAtoms.size > 0
         # print (frame.asAtoms)
 
 def test_read_field_error():

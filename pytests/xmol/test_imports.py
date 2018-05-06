@@ -1,5 +1,10 @@
 import pytest
 
+try:
+    unicode = str
+except:
+    pass
+
 def test_import_pyxmolpp2():
     import pyxmolpp2
 

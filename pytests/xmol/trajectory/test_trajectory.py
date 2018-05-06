@@ -12,7 +12,7 @@ def test_traj_iteration():
 
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
 
-    assert frame.asAtoms > 0
+    assert frame.asAtoms.size > 0
 
     datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
     datfile2 = DatFile("tests_dataset/trjtool/GB1/run00002.dat")
