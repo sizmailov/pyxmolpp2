@@ -14,7 +14,7 @@ if (PYTHONLIBS_FOUND)
 endif()
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-    IF(CMAKE_COMPILER_IS_GNUCC)
+    IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ")
     ENDIF(CMAKE_COMPILER_IS_GNUCC)
