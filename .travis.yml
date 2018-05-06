@@ -23,7 +23,7 @@ python:
   - "3.5"
 #  - "3.6"
 #  - "pypy2.7"
-#  - "pypy3.5"
+  - "pypy3.5"
 
 git:
     submodules: false
@@ -35,7 +35,9 @@ matrix:
     ##########################################################################
 
     # Clang 3.6
-    - env: COMPILER=clang++-3.6 BUILD_TYPE=Coverage
+    - env:
+      - COMPILER=clang++-3.6
+      - BUILD_TYPE=Coverage
       addons: &clang36
         apt:
           packages:
@@ -51,40 +53,40 @@ matrix:
       addons: *clang36
 
     # Clang 3.7
-    - env:
-      - COMPILER=clang++-3.7
-      - BUILD_TYPE=Coverage
-      addons: &clang37
-        apt:
-          packages:
-            - clang-3.7
-            - g++-5
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-
-    - env:
-      - COMPILER=clang++-3.7
-      - BUILD_TYPE=Release
-      addons: *clang37
-
-    # Clang 3.8
-    - env:
-      - COMPILER=clang++-3.8
-      - BUILD_TYPE=Coverage
-      addons: &clang38
-        apt:
-          packages:
-            - clang-3.8
-            - g++-5
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-
-    - env:
-      - COMPILER=clang++-3.8
-      - BUILD_TYPE=Release
-      addons: *clang38
+#    - env:
+#      - COMPILER=clang++-3.7
+#      - BUILD_TYPE=Coverage
+#      addons: &clang37
+#        apt:
+#          packages:
+#            - clang-3.7
+#            - g++-5
+#          sources:
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.7
+#
+#    - env:
+#      - COMPILER=clang++-3.7
+#      - BUILD_TYPE=Release
+#      addons: *clang37
+#
+#    # Clang 3.8
+#    - env:
+#      - COMPILER=clang++-3.8
+#      - BUILD_TYPE=Coverage
+#      addons: &clang38
+#        apt:
+#          packages:
+#            - clang-3.8
+#            - g++-5
+#          sources:
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.8
+#
+#    - env:
+#      - COMPILER=clang++-3.8
+#      - BUILD_TYPE=Release
+#      addons: *clang38
 
     # Clang 3.9
     - env: COMPILER=clang++-3.9 BUILD_TYPE=Coverage
@@ -159,20 +161,20 @@ matrix:
       - BUILD_TYPE=Release
       addons: *gcc5
 
-    # GCC 6
-    - env:
-      - COMPILER=g++-6
-      - BUILD_TYPE=Coverage
-      addons: &gcc6
-        apt:
-          packages: g++-6
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - env:
-      - COMPILER=g++-6
-      - BUILD_TYPE=Release
-      addons: *gcc6
+#    # GCC 6
+#    - env:
+#      - COMPILER=g++-6
+#      - BUILD_TYPE=Coverage
+#      addons: &gcc6
+#        apt:
+#          packages: g++-6
+#          sources:
+#            - ubuntu-toolchain-r-test
+#
+#    - env:
+#      - COMPILER=g++-6
+#      - BUILD_TYPE=Release
+#      addons: *gcc6
 
 
     - env:

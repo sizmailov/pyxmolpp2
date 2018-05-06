@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(observable)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PythonInterp)
 find_package(PythonLibs REQUIRED)
@@ -20,6 +22,11 @@ IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
 else()
     message("DONT USE COVERAGE PROFILE")
 ENDIF()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
+endif()
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has `register` keyword, depricated in c++17
@@ -53,6 +60,11 @@ set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
 add_dependencies(observable_static write_version_info)
 add_dependencies(observable write_version_info)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(observable stdc++ m)
+    target_link_libraries(observable_static stdc++ m)
+endif()
 
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
