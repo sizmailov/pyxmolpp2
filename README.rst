@@ -12,7 +12,7 @@ A tool to process MD trajectories
     :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master
 
 
-.. |dev_build| image:: https://travis-ci.org/sizmailov/pyxmolpp2.svg?branch=master
+.. |dev_build| image:: https://travis-ci.org/sizmailov/pyxmolpp2.svg?branch=dev
     :alt: dev status
     :target: https://travis-ci.org/sizmailov/pyxmolpp2
 
