@@ -289,5 +289,19 @@ def test_operators():
     a1 = frame.asResidues[0].asAtoms
     a2 = frame.asResidues[-1].asAtoms
 
+    total = frame.asAtoms.size
 
-    assert frame.asAtoms.size
+    assert total == a1.size+a2.size
+
+    assert (a1-a2).size == a1.size
+    assert (a2-a1).size == a2.size
+    assert (a1+a2).size == total
+    assert (a2+a1).size == total
+    assert (a1*a2).size == 0
+    assert (a2*a1).size == 0
+
+    a1 -= a2
+    assert a1.size == a2.size
+
+
+

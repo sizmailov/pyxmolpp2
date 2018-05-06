@@ -1,6 +1,7 @@
 #include "init.h"
 
 #include "pybind11/functional.h"
+#include "pybind11/operators.h"
 
 #include "xmol/pdb/PdbRecord.h"
 #include "xmol/polymer/Atom.h"
@@ -383,7 +384,14 @@ Order is preserved across manipulations with ChainSelection
       .def("__repr__", [](const AtomSelection& selection) {
         return "<pyxmolpp2.polymer.AtomSelection size=" + std::to_string(selection.size()) + " at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      });
+      })
+      .def(py::self*=py::self)
+      .def(py::self+=py::self)
+      .def(py::self-=py::self)
+      .def(py::self*py::self)
+      .def(py::self+py::self)
+      .def(py::self-py::self)
+      ;
 
   pyResidueSelection
       .def("filter",
@@ -408,7 +416,14 @@ Order is preserved across manipulations with ChainSelection
       .def("__repr__", [](const ResidueSelection& selection) {
         return "<pyxmolpp2.polymer.ResidueSelection size=" + std::to_string(selection.size()) + " at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      });
+      })
+      .def(py::self*=py::self)
+      .def(py::self+=py::self)
+      .def(py::self-=py::self)
+      .def(py::self*py::self)
+      .def(py::self+py::self)
+      .def(py::self-py::self)
+      ;
 
   pyChainSelection
       .def("filter",
@@ -434,5 +449,12 @@ Order is preserved across manipulations with ChainSelection
       .def("__repr__", [](const ChainSelection& selection) {
         return "<pyxmolpp2.polymer.ChainSelection size=" + std::to_string(selection.size()) + " at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      });
+      })
+      .def(py::self*=py::self)
+      .def(py::self+=py::self)
+      .def(py::self-=py::self)
+      .def(py::self*py::self)
+      .def(py::self+py::self)
+      .def(py::self-py::self)
+      ;
 }
