@@ -33,8 +33,12 @@ template <typename T> struct optional {
     throw std::runtime_error("bad optional access");
   };
 
-  operator bool() { return is_set; };
-  bool operator!() { return !is_set; };
+  explicit operator bool() const { return is_set; };
+  bool operator!() const { return !is_set; };
+  bool operator<(const T& rhs) const { return value() < rhs; };
+  bool operator>(const T& rhs) const { return value() > rhs; };
+  bool operator<=(const T& rhs) const { return value() <= rhs; };
+  bool operator>=(const T& rhs) const { return value() >= rhs; };
 
 private:
   T m_value;
