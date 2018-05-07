@@ -16,6 +16,6 @@ do
   else 
      unset PYXMOLPP_RUN_PERFORMANCE_TESTS
   fi
-  pytest -s pytests
+  python -m pytest -s pytests
 done 
 

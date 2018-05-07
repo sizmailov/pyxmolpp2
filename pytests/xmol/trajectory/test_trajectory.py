@@ -28,7 +28,6 @@ def test_traj_iteration():
     stride = 50
     for frame in trj[::stride]:
         r = frame.asAtoms[0].r
-        print(r.x,r.y,r.z)
         n +=1
 
     assert trj.size//stride == n

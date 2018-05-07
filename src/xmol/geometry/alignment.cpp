@@ -43,8 +43,12 @@ Transformation3d xmol::geometry::calc_alignment(
 
   Eigen::JacobiSVD<Eigen::Matrix3d> svd(C, Eigen::ComputeFullU |
                                                Eigen::ComputeFullV);
-  std::cout << svd.singularValues() << std::endl;
-  double d = (C.determinant() > 0) ? 1.0 : -1.0;
+  double d = 1;
+  for (int i = 0; i < 3; i++) {
+    if (svd.singularValues()[i] < 0) {
+      d *= -1;
+    }
+  }
 
   Eigen::Matrix3d P;
   P << 1, 0, 0, 0, 1, 0, 0, 0, d;

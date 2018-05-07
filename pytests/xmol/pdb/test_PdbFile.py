@@ -21,9 +21,9 @@ def test_read_field_error():
 
     records = AlteredPdbRecords(StandardPdbRecords.instance())
     records.alter_record(RecordName("ATOM"), FieldName("serial"), [4,6])
-    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    #print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
-        print(filename)
+        # print(filename)
         with pytest.raises(PdbException):
             PdbFile(filename).get_frame(records)
 
@@ -31,22 +31,22 @@ def test_read_field_error():
 
     records = AlteredPdbRecords(StandardPdbRecords.instance())
     records.alter_record(RecordName("ATOM"), FieldName("x"), [4,4])
-    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    #print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
-        print(filename)
+        # print(filename)
         with pytest.raises(PdbException):
             frame = PdbFile(filename).get_frame(records)
-            print(frame)
+            # print(frame)
 
 
     records = AlteredPdbRecords(StandardPdbRecords.instance())
     records.alter_record(RecordName("ATOM"), FieldName("resName"), [1, 85])
-    print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+    #print(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
-        print(filename)
+        # print(filename)
         with pytest.raises(PdbException):
             frame = PdbFile(filename).get_frame(records)
-            print(frame)
+            # print(frame)
 
 
 def test_read_non_existent_file():
@@ -92,9 +92,12 @@ def test_rmsd():
             assert len(ats1) > 3
             assert len(ats2) > 3
             aligment = calc_alignment(ats1.toCoords,ats2.toCoords)
-            print(filenames[i],filenames[j])
-            print("Not aliged:", calc_rmsd(ats1.toCoords,ats2.toCoords))
-            print("   aligned:", calc_rmsd(ats1.toCoords,ats2.toCoords,aligment))
+            not_aligned_rmsd = calc_rmsd(ats1.toCoords,ats2.toCoords)
+            aligned_rmsd = calc_rmsd(ats1.toCoords,ats2.toCoords,aligment)
+
+            #print(filenames[i],filenames[j])
+            #print("Not aliged:", not_aligned_rmsd)
+            #print("   aligned:", aligned_rmsd)
 
         #     print(frame[i].asAtoms,frame[j].asAtoms)
 
