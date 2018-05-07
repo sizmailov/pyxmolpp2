@@ -82,9 +82,8 @@ protected:
 
   void on_container_move(container_type& from, container_type& to);
   void on_container_delete(container_type& half_dead);
-  void on_container_elements_move(selection_element_type old_begin,
-                                  selection_element_type old_end,
-                                  ptrdiff_t shift);
+  void on_container_elements_move(selection_element_type old_begin, selection_element_type old_end,
+                                  selection_element_type new_begin);
   void remove_redundant_observers();
 
   friend class SelectionRange<T>;
@@ -607,13 +606,12 @@ void SelectionBase<T>::on_container_move(SelectionBase<T>::container_type& from,
   this->move_observer(from, to);
 }
 template <typename T>
-void SelectionBase<T>::on_container_elements_move(
-    selection_element_type old_begin, selection_element_type old_end,
-    ptrdiff_t shift) {
+void SelectionBase<T>::on_container_elements_move(selection_element_type old_begin, selection_element_type old_end,
+                                                  selection_element_type new_begin) {
   LOG_DEBUG_FUNCTION();
   for (auto& ptr : elements) {
     if (old_begin <= ptr && ptr < old_end) {
-      ptr += shift;
+      ptr = new_begin + (ptr - old_begin);
     }
   }
 }
@@ -790,21 +788,17 @@ template <typename T> bool Container<T>::empty() const noexcept {
 
 template <typename T> void Container<T>::insert(T&& value) {
   LOG_DEBUG_FUNCTION();
-  assert(ElementFlags(value).parent() == this);
   auto old_begin = elements.data();
-  elements.reserve(elements.size() + 1);
-  auto new_pos = elements.data();
-
-  ptrdiff_t shift = new_pos - old_begin;
-  if (shift != 0) {
-    ObservableBy<SelectionBase<const T>>::notify_all(
-        &SelectionBase<const T>::on_container_elements_move, old_begin,
-        old_begin + elements.size(), shift);
-    ObservableBy<SelectionBase<T>>::notify_all(
-        &SelectionBase<T>::on_container_elements_move, old_begin,
-        old_begin + elements.size(), shift);
-  }
+  auto old_end = elements.data() + elements.size();
   elements.emplace_back(std::move(value));
+  auto new_begin = elements.data();
+
+  if (old_begin != new_begin) {
+    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move, old_begin,
+                                                     old_end, new_begin);
+    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
+                                               new_begin);
+  }
 }
 
 template <typename T>
@@ -812,20 +806,17 @@ template <typename... Args>
 T& Container<T>::emplace(Args&&... args) {
   LOG_DEBUG_FUNCTION();
   auto old_begin = elements.data();
-  elements.reserve(elements.size() + 1);
-  auto new_pos = elements.data();
-
-  ptrdiff_t shift = new_pos - old_begin;
-  if (shift != 0) {
-    ObservableBy<SelectionBase<const T>>::notify_all(
-        &SelectionBase<const T>::on_container_elements_move, old_begin,
-        old_begin + elements.size(), shift);
-    ObservableBy<SelectionBase<T>>::notify_all(
-        &SelectionBase<T>::on_container_elements_move, old_begin,
-        old_begin + elements.size(), shift);
-  }
+  auto old_end = elements.data() + elements.size();
   elements.emplace_back(T(std::forward<Args>(args)...));
   T& ref = elements.back();
+  auto new_begin = elements.data();
+
+  if (old_begin != new_begin) {
+    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move, old_begin,
+                                                     old_end, new_begin);
+    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
+                                               new_begin);
+  }
   return ref;
 }
 
