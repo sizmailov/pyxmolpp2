@@ -85,7 +85,7 @@ public:
   friend class DummyEnterScopeLog;
 
 private:
-  unsigned indent;
+  int indent;
   std::map<LOG_LEVEL, std::string> level_names;
   LOG_LEVEL log_level;
   std::string logfile;

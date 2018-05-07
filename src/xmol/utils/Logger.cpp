@@ -44,7 +44,7 @@ void xmol::utils::Logger::Log(const std::string& log_info, xmol::utils::Logger::
     if (indent_inc < 0) {
       instance().indent += indent_inc;
     }
-    std::string sindent(std::max(0u, instance().indent), ' ');
+    std::string sindent(std::max(0, instance().indent), ' ');
     if (indent_inc > 0) {
       instance().indent += indent_inc;
     }

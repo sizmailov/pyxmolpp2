@@ -33,9 +33,6 @@ template <typename T> struct optional {
     throw std::runtime_error("bad optional access");
   };
 
-  operator const T&() const { return this->value(); };
-  operator T&() { return this->value(); };
-
   operator bool() { return is_set; };
   bool operator!() { return !is_set; };
 

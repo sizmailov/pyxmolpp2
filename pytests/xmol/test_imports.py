@@ -1,8 +1,9 @@
 import pytest
 
 try:
-    unicode = str
-except:
+    _ = unicode("123")
+except NameError:
+    unicode=str
     pass
 
 def test_import_pyxmolpp2():
