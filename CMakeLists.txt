@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PythonInterp REQUIRED)
-find_package(PythonLibs ${PYTHON_VERSION_STRING} REQUIRED )
+find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED )
 if (PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_DIRS})
     message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
