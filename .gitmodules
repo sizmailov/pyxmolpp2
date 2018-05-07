@@ -1,15 +1,20 @@
 [submodule "external/googletest"]
 	path = external/googletest
-	url = git@github.com:google/googletest.git
+	url = https://github.com/google/googletest.git
+  shallow = true
 [submodule "external/range-v3"]
 	path = external/range-v3
-	url = git@github.com:ericniebler/range-v3.git
+	url = https://github.com/ericniebler/range-v3.git
+  shallow = true
 [submodule "external/GSL"]
 	path = external/GSL
-	url = git@github.com:Microsoft/GSL.git
+	url = https://github.com/Microsoft/GSL.git
+  shallow = true
 [submodule "external/pybind11"]
 	path = external/pybind11
-	url = git@github.com:pybind/pybind11.git
+	url = https://github.com/pybind/pybind11.git
+	shallow = true
 [submodule "external/eigen-git-mirror"]
 	path = external/eigen-git-mirror
-	url = git@github.com:eigenteam/eigen-git-mirror.git
+	url = https://github.com/eigenteam/eigen-git-mirror.git
+  shallow = true

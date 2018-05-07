@@ -17,6 +17,10 @@ struct int_with_parent {
   const Container<int_with_parent>* parent() const { return ptr; };
   Container<int_with_parent>* parent() { return ptr; };
 };
+bool operator==(const int_with_parent& lhs,
+    const int_with_parent& rhs) noexcept {
+  return lhs.value == rhs.value && lhs.ptr == rhs.ptr;
+}
 }
 
 class ConSelTests : public Test {
@@ -42,10 +46,6 @@ operator()(const int_with_parent* lhs, const int_with_parent* rhs) const {
 }
 }
 
-bool operator==(const int_with_parent& lhs,
-                const int_with_parent& rhs) noexcept {
-  return lhs.value == rhs.value && lhs.ptr == rhs.ptr;
-}
 
 TEST_F(ConSelTests, invalid_selection_throws_on_use) {
 
@@ -246,7 +246,7 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW(s.begin()->value);
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
 
   c.erase(c.all());
 
@@ -254,7 +254,7 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
   ASSERT_EQ(s.size(), n);
   EXPECT_THROW(s[0], xmol::selection::deleted_element_access<int_with_parent>);
   EXPECT_THROW(*s.begin(), xmol::selection::deleted_element_access<int_with_parent>);
-  EXPECT_THROW(s.begin()->value, xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW([&]{auto x = s.begin()->value;}(), xmol::selection::deleted_element_access<int_with_parent>);
 }
 
 TEST_F(ConSelTests, selection_tracks_container_move) {
@@ -276,7 +276,7 @@ TEST_F(ConSelTests, selection_tracks_container_move) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW(s.begin()->value);
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
 
   c.erase(c.all());
 
@@ -285,7 +285,7 @@ TEST_F(ConSelTests, selection_tracks_container_move) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW(s.begin()->value);
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
   int k = 0;
   EXPECT_NO_THROW(for (auto& x
                        : s) {

@@ -11,7 +11,7 @@ def test_read_trjtool():
 
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
 
-    assert frame.asAtoms > 0
+    assert frame.asAtoms.size > 0
 
     datfile = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
 

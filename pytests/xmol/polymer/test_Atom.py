@@ -73,7 +73,7 @@ def test_big_construction():
         frame = make_polyglycine([("A", n)])
         end = timer()
         assert frame.asAtoms.size == n*7
-        print "%5d  %.5f"%(n,end-start)
+        print("%5d  %.5f"%(n,end-start))
 
 def test_filters():
     n = 100
@@ -281,3 +281,27 @@ def test_tracking_chain_refernces():
     frame = None                   # release the reference to Frame and cause cascade deletion of everything
     with pytest.raises(Exception):
         last_chain.name             # access to destroyed elements is prohibited, exception raised
+
+def test_operators():
+
+    frame = make_polyglycine([("A",2)])
+
+    a1 = frame.asResidues[0].asAtoms
+    a2 = frame.asResidues[-1].asAtoms
+
+    total = frame.asAtoms.size
+
+    assert total == a1.size+a2.size
+
+    assert (a1-a2).size == a1.size
+    assert (a2-a1).size == a2.size
+    assert (a1+a2).size == total
+    assert (a2+a1).size == total
+    assert (a1*a2).size == 0
+    assert (a2*a1).size == 0
+
+    a1 -= a2
+    assert a1.size == a2.size
+
+
+

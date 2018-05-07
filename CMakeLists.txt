@@ -2,24 +2,30 @@ cmake_minimum_required(VERSION 3.5)
 project(observable)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(PythonInterp)
-find_package(PythonLibs REQUIRED)
-
+find_package(PythonInterp REQUIRED)
+find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED )
 if (PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_DIRS})
     message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
 endif()
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-    IF(CMAKE_COMPILER_IS_GNUCC)
+    IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fno-inline -fno-inline-small-functions -fno-default-inline -g ")
-    ENDIF(CMAKE_COMPILER_IS_GNUCC)
+    ENDIF()
     message("USE COVERAGE PROFILE")
 else()
     message("DONT USE COVERAGE PROFILE")
 ENDIF()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
+endif()
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wreturn-type")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has `register` keyword, depricated in c++17
@@ -54,11 +60,18 @@ set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 add_dependencies(observable_static write_version_info)
 add_dependencies(observable write_version_info)
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(observable stdc++ m)
+    target_link_libraries(observable_static stdc++ m)
+endif()
 
-IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-    target_link_libraries(observable_static gcov)
-    target_link_libraries(observable gcov)
-ENDIF()
+
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
+        target_link_libraries(observable_static gcov)
+        target_link_libraries(observable gcov)
+    ENDIF()
+endif()
 
 file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
 

@@ -5,6 +5,11 @@ import os
 import re
 import pyxmolpp2
 
+try:
+    unicode = str
+except:
+    pass
+
 def escape_docstring(docstring, indent=1):
     if re.sub("\s+","",docstring)=="":
         return ""

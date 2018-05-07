@@ -98,10 +98,10 @@ TrajectorySlice Trajectory::slice(xmol::utils::optional<int> first,
     stride = 1;
   }
 
-  if (last && last < 0) {
+  if (last && last.value() < 0) {
     last = n_frames() + last.value();
   }
-  if (first && first < 0) {
+  if (first && first.value() < 0) {
     first = n_frames() + first.value();
   }
 
