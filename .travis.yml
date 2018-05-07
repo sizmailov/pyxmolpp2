@@ -34,7 +34,12 @@ matrix:
           packages:
             - clang-3.6
             - g++-5
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
       python: 2.7
@@ -94,7 +99,12 @@ matrix:
           packages:
             - clang-3.9
             - g++-5
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
       python: 2.7
@@ -120,7 +130,12 @@ matrix:
           packages:
             - clang-4.0
             - g++-5
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
       python: 2.7
@@ -146,7 +161,12 @@ matrix:
           packages:
             - clang-5.0
             - g++-5
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
             - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
@@ -175,8 +195,14 @@ matrix:
       - BUILD_TYPE=Coverage
       addons: &gcc5
         apt:
-          packages: g++-5
+          packages:
+            - g++-5
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
       python: 2.7
 
@@ -213,8 +239,14 @@ matrix:
       - BUILD_TYPE=Coverage
       addons: &gcc7
         apt:
-          packages: g++-7
+          packages:
+            - g++-7
+            - python3.5
+            - python3.5-dev
+            - python2.7
+            - python2.7-dev
           sources:
+            - deadsnakes
             - ubuntu-toolchain-r-test
       python: 2.7
 
