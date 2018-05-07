@@ -16,15 +16,6 @@ cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps
 
-python:
-  - "2.7"
-#  - "3.3"
-#  - "3.4"
-  - "3.5"
-#  - "3.6"
-#  - "pypy2.7"
-  - "pypy3.5"
-
 git:
     submodules: false
 
@@ -46,11 +37,19 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
+      python: 2.7
 
     - env:
         - COMPILER=clang++-3.6
         - BUILD_TYPE=Release
       addons: *clang36
+      python: 2.7
+
+    - env:
+        - COMPILER=clang++-3.6
+        - BUILD_TYPE=Release
+      addons: *clang36
+      python: 3.5
 
     # Clang 3.7
 #    - env:
@@ -98,11 +97,19 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.9
+      python: 2.7
 
     - env:
       - COMPILER=clang++-3.9
       - BUILD_TYPE=Release
       addons: *clang39
+      python: 2.7
+
+    - env:
+      - COMPILER=clang++-3.9
+      - BUILD_TYPE=Release
+      addons: *clang39
+      python: 3.5
 
     # Clang 4.0
     - env:
@@ -116,11 +123,19 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
+      python: 2.7
 
     - env:
       - COMPILER=clang++-4.0
       - BUILD_TYPE=Release
       addons: *clang40
+      python: 2.7
+
+    - env:
+      - COMPILER=clang++-4.0
+      - BUILD_TYPE=Release
+      addons: *clang40
+      python: 3.5
 
     # Clang 5.0
     - env:
@@ -136,11 +151,19 @@ matrix:
             - llvm-toolchain-trusty-5.0
             - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+      python: 2.7
 
     - env:
       - COMPILER=clang++-5.0
       - BUILD_TYPE=Release
       addons: *clang50
+      python: 2.7
+
+    - env:
+      - COMPILER=clang++-5.0
+      - BUILD_TYPE=Release
+      addons: *clang50
+      python: 3.5
 
     ##########################################################################
     # GCC on Linux
@@ -155,11 +178,19 @@ matrix:
           packages: g++-5
           sources:
             - ubuntu-toolchain-r-test
+      python: 2.7
 
     - env:
       - COMPILER=g++-5
       - BUILD_TYPE=Release
       addons: *gcc5
+      python: 2.7
+
+    - env:
+      - COMPILER=g++-5
+      - BUILD_TYPE=Release
+      addons: *gcc5
+      python: 3.5
 
 #    # GCC 6
 #    - env:
@@ -185,11 +216,19 @@ matrix:
           packages: g++-7
           sources:
             - ubuntu-toolchain-r-test
+      python: 2.7
 
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
       addons: *gcc7
+      python: 2.7
+
+    - env:
+      - COMPILER=g++-7
+      - BUILD_TYPE=Release
+      addons: *gcc7
+      python: 3.5
 
 
 before_install:
