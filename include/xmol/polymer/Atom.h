@@ -292,5 +292,9 @@ using OutOfRangeAtomSelection = xmol::selection::selection_out_of_range<Atom>;
 using OutOfRangeResidueSelection = xmol::selection::selection_out_of_range<Residue>;
 using OutOfRangeChainSelection= xmol::selection::selection_out_of_range<Chain>;
 
+using AtomRef = ElementReference<Atom>;
+using ResidueRef = ElementReference<Residue>;
+using ChainRef = ElementReference<Chain>;
+
 }
 }
