@@ -546,11 +546,13 @@ SelectionBaseExtension<
     T, xmol::polymer::detail::enabled_if_residue<T>>::asAtoms() const {
   using result_type = Selection<
       xmol::polymer::detail::add_constness_as<T, xmol::polymer::Atom>>;
-  result_type result;
+  std::vector<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Atom>*> result;
   for (auto& x : *this) {
-    result += x.all();
+    for (auto& y: x){
+      result.push_back(&y);
+    }
   }
-  return result;
+  return result_type(result.begin(),result.end(),xmol::selection::NoSortTag{});
 };
 
 template <typename T>
@@ -559,11 +561,13 @@ SelectionBaseExtension<
     T, xmol::polymer::detail::enabled_if_chain<T>>::asResidues() const {
   using result_type = Selection<
       xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>;
-  result_type result;
+  std::vector<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>*> result;
   for (auto& x : *this) {
-    result += x.all();
+    for (auto& y: x){
+      result.push_back(&y);
+    }
   }
-  return result;
+  return result_type(result.begin(),result.end(),xmol::selection::NoSortTag{});
 };
 
 template <typename T>
