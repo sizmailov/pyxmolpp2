@@ -102,20 +102,24 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
                              &r[AtomName("C")]);
     };
     TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_c, Atom& n, Atom& ca, Atom& c) {
-      auto result = n.residue().asAtoms().filter([](const Atom&a){
+      std::vector<Atom*> result;
+      n.residue().asAtoms().filter([](const Atom&a){
 
         return a.name()!=AtomName("NH") &&
             a.name()!=AtomName("N") &&
             a.name()!=AtomName("CA")
             ;
-      });
-
-      Residue* current = c.residue().next();
-      while (current != nullptr) {
-        result += current->asAtoms();
-        current = current->next();
+      }).for_each([&result](Atom&a){result.push_back(&a);});
+      {
+        Residue* current = c.residue().next();
+        while (current != nullptr) {
+          for (auto&a : *current){
+            result.push_back(&a);
+          }
+          current = current->next();
+        }
       }
-      return result;
+      return AtomSelection(result.begin(),result.end(),xmol::selection::NoSortTag{});
     };
     bindings.emplace(std::make_pair(residueName, TorsionAngleName("phi")), std::make_pair(atom_refs_maker, selector));
   }
