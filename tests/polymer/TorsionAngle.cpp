@@ -2,11 +2,14 @@
 
 #include "xmol/polymer/TorsionAngle.h"
 #include "xmol/polymer/exceptions.h"
+#include "xmol/pdb/PdbFile.h"
+#include "xmol/pdb/PdbReader.h"
 #include <cmath>
 
 using ::testing::Test;
 using namespace xmol::geometry;
 using namespace xmol::polymer;
+using namespace xmol::pdb;
 
 class TorsionAngleTests : public Test {
 public:
@@ -63,4 +66,31 @@ TEST_F(TorsionAngleTests, test1) {
   EXPECT_THROW(t4.set(Degrees(10)), PolymerException);
 
 
+}
+TEST_F(TorsionAngleTests, test_backbone_atoms){
+  auto files ={
+      "pdb/rcsb/1PGB.pdb",
+      "pdb/rcsb/5BMG.pdb",
+      "pdb/rcsb/5BMH.pdb",
+  };
+  for(auto& file: files){
+    auto frame = PdbFile(file).get_frame();
+
+    for(auto&r : frame.asResidues()){
+
+      auto phi = TorsionAngleFactory::phi(r);
+      auto psi = TorsionAngleFactory::psi(r);
+      auto omega = TorsionAngleFactory::omega(r);
+      if (!!phi){
+        phi.value().set(Degrees(180.0));
+      }
+      if (!!psi){
+        psi.value().set(Degrees(180.0));
+      }
+      if (!!omega){
+        omega.value().set(Degrees(180.0));
+      }
+    }
+
+  }
 }

@@ -14,12 +14,14 @@ TorsionAngle::TorsionAngle(xmol::polymer::Atom& a, xmol::polymer::Atom& b, xmol:
 TorsionAngle::TorsionAngle(xmol::polymer::Atom& a, xmol::polymer::Atom& b, xmol::polymer::Atom& c,
                            xmol::polymer::Atom& d, TorsionAngle::AffectedAtomsSelector rotatedAtomsGetter)
     : a(a), b(b), c(c), d(d), rotatedAtomsGetter(std::move(rotatedAtomsGetter)) {
-  auto atoms = this->rotatedAtomsGetter(a, b, c, d);
-  if (atoms.count(a)) {
-    throw PolymerException("TorsionAngle: `a` atom MUST NOT be in rotated atoms");
-  }
-  if (!atoms.count(d)) {
-    throw PolymerException("TorsionAngle: `d` atom MUST be in rotated atoms");
+  if (this->rotatedAtomsGetter) {
+    auto atoms = this->rotatedAtomsGetter(a, b, c, d);
+    if (atoms.count(a)) {
+      throw PolymerException("TorsionAngle: `a` atom MUST NOT be in rotated atoms");
+    }
+    if (!atoms.count(d)) {
+      throw PolymerException("TorsionAngle: `d` atom MUST be in rotated atoms");
+    }
   }
 }
 
@@ -60,36 +62,134 @@ TorsionAngleFactory& TorsionAngleFactory::instance() {
   return _instance;
 }
 
-TorsionAngle TorsionAngleFactory::phi(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::phi(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("phi"));
 }
-TorsionAngle TorsionAngleFactory::psi(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::psi(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("psi"));
 }
-TorsionAngle TorsionAngleFactory::omega(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::omega(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("omega"));
 }
-TorsionAngle TorsionAngleFactory::chi1(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi1(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("chi1"));
 }
-TorsionAngle TorsionAngleFactory::chi2(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi2(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("chi2"));
 }
-TorsionAngle TorsionAngleFactory::chi3(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi3(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("chi3"));
 }
-TorsionAngle TorsionAngleFactory::chi4(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi4(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("chi4"));
 }
-TorsionAngle TorsionAngleFactory::chi5(xmol::polymer::Residue& r) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi5(xmol::polymer::Residue& r) {
   return instance().get(r, TorsionAngleName("chi5"));
 }
-TorsionAngle TorsionAngleFactory::get(Residue& r, const TorsionAngleName& angle_name) {
+
+void TorsionAngleFactory::define_protein_backbone_angles(xmol::polymer::ResidueName residueName) {
+  instance()._define_protein_backbone_angles(residueName);
+}
+
+void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::ResidueName residueName) {
+  { // phi
+    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
+      Residue* prev = r.prev();
+      if (!prev) {
+        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
+      }
+      return std::make_tuple(&prev->operator[](AtomName("C")), &r[AtomName("N")], &r[AtomName("CA")],
+                             &r[AtomName("C")]);
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_c, Atom& n, Atom& ca, Atom& c) {
+      auto result = n.residue().asAtoms().filter([](const Atom&a){
+
+        return a.name()!=AtomName("NH") &&
+            a.name()!=AtomName("N") &&
+            a.name()!=AtomName("CA")
+            ;
+      });
+
+      Residue* current = c.residue().next();
+      while (current != nullptr) {
+        result += current->asAtoms();
+        current = current->next();
+      }
+      return result;
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("phi")), std::make_pair(atom_refs_maker, selector));
+  }
+  { // psi
+    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
+      Residue* next = r.next();
+      if (!next) {
+        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
+      }
+      return std::make_tuple(&r[AtomName("N")], &r[AtomName("CA")], &r[AtomName("C")],
+                             &next->operator[](AtomName("N")));
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& n, Atom& ca, Atom& c, Atom& next_n) {
+      auto result = n.residue().asAtoms().filter([](const Atom&a){
+        return a.name()==AtomName("O");
+      });
+      Residue* current = c.residue().next();
+      while (current != nullptr) {
+        result += current->asAtoms();
+        current = current->next();
+      }
+      return result;
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("psi")), std::make_pair(atom_refs_maker, selector));
+  }
+  { // omega
+    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
+      Residue* prev = r.prev();
+      if (!prev) {
+        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
+      }
+      return std::make_tuple(&prev->operator[](AtomName("CA")), &prev->operator[](AtomName("C")), &r[AtomName("N")],
+                             &r[AtomName("CA")]);
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_ca, Atom& prev_c, Atom& n, Atom& ca) {
+
+      auto result = n.residue().asAtoms().filter([](const Atom&a){return a.name()!=AtomName("N");});
+
+      Residue* current = n.residue().next();
+      while (current != nullptr) {
+        result += current->asAtoms();
+        current = current->next();
+      }
+      return result;
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("omega")), std::make_pair(atom_refs_maker, selector));
+  }
+}
+
+void TorsionAngleFactory::define_protein_side_chain_angle(xmol::polymer::ResidueName residueName,
+                                                          xmol::polymer::TorsionAngleName torsionAngleName,
+                                                          const std::array<xmol::polymer::AtomName, 4>& names,
+                                                          const std::set<xmol::polymer::AtomName>& affected_atoms) {
+
+  residue_to_atoms atom_refs_maker = [names](Residue& r) {
+    return std::make_tuple(&r[names[0]], &r[names[1]], &r[names[2]], &r[names[3]]);
+  };
+  TorsionAngle::AffectedAtomsSelector selector = [affected_atoms](Atom& a, Atom&, Atom&, Atom&) {
+    return a.residue().asAtoms().filter(
+        [&affected_atoms](const Atom& x) { return affected_atoms.count(x.name()) == 1; });
+  };
+  instance().bindings.emplace(std::make_pair(residueName, torsionAngleName), std::make_pair(atom_refs_maker, selector));
+}
+
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::get(Residue& r, const TorsionAngleName& angle_name) {
   auto it = bindings.find(std::make_pair(r.name(), angle_name));
   if (it == bindings.end()) {
-    throw PolymerException("Torsion angle `" + angle_name.str() + "` is not defined for residue `" + r.name().str() + "`");
+    return xmol::utils::optional<TorsionAngle>{};
   }
   auto& funcs = it->second;
   auto atoms = funcs.first(r);
-  return TorsionAngle(std::get<0>(atoms), std::get<1>(atoms), std::get<2>(atoms), std::get<3>(atoms), funcs.second);
+  if (!std::get<0>(atoms) || !std::get<1>(atoms) || !std::get<2>(atoms) || !std::get<3>(atoms)) {
+    return xmol::utils::optional<TorsionAngle>{};
+  }
+  return xmol::utils::optional<TorsionAngle>(
+      TorsionAngle(*std::get<0>(atoms), *std::get<1>(atoms), *std::get<2>(atoms), *std::get<3>(atoms), funcs.second));
 }

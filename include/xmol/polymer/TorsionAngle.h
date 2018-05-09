@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include "Atom.h"
 #include "xmol/geometry/AngleValue.h"
+#include <xmol/utils/optional.h>
 
 namespace xmol {
 namespace polymer {
@@ -11,6 +11,7 @@ class TorsionAngle {
 public:
   using AffectedAtomsSelector = std::function<AtomSelection(Atom& a, Atom& b, Atom& c, Atom& d)>;
 
+  TorsionAngle() = default;
   TorsionAngle(Atom& a, Atom& b, Atom& c, Atom& d);
   TorsionAngle(Atom& a, Atom& b, Atom& c, Atom& d, AffectedAtomsSelector rotatedAtomsGetter);
 
@@ -31,26 +32,30 @@ using TorsionAngleName = utils::ShortAsciiString<4,true,detail::TorsionAngleName
 
 class TorsionAngleFactory{
 public:
+  static utils::optional<TorsionAngle> phi(Residue& r);
+  static utils::optional<TorsionAngle> psi(Residue& r);
+  static utils::optional<TorsionAngle> omega(Residue& r);
 
-  static TorsionAngle phi(Residue& r);
-  static TorsionAngle psi(Residue& r);
-  static TorsionAngle omega(Residue& r);
+  static utils::optional<TorsionAngle> chi1(Residue& r);
+  static utils::optional<TorsionAngle> chi2(Residue& r);
+  static utils::optional<TorsionAngle> chi3(Residue& r);
+  static utils::optional<TorsionAngle> chi4(Residue& r);
+  static utils::optional<TorsionAngle> chi5(Residue& r);
 
-  static TorsionAngle chi1(Residue& r);
-  static TorsionAngle chi2(Residue& r);
-  static TorsionAngle chi3(Residue& r);
-  static TorsionAngle chi4(Residue& r);
-  static TorsionAngle chi5(Residue& r);
+  static void define_protein_backbone_angles(ResidueName);
+  static void define_protein_side_chain_angle(ResidueName, TorsionAngleName, const std::array<AtomName, 4>& names,
+                                              const std::set<AtomName>& affected_atoms);
 
 private:
-  using residue_to_atoms = std::function<std::tuple<Atom&,Atom&,Atom&,Atom&>(Residue&)>;
+  using residue_to_atoms = std::function<std::tuple<Atom*,Atom*,Atom*,Atom*>(Residue&)>;
   using KeyType = std::pair<ResidueName, TorsionAngleName>;
   using ValueType = std::pair<residue_to_atoms, TorsionAngle::AffectedAtomsSelector>;
   std::map<KeyType,ValueType> bindings;
 
   static TorsionAngleFactory& instance();
   TorsionAngleFactory();
-  TorsionAngle get(Residue& residue, const TorsionAngleName& angleName);
+  xmol::utils::optional<TorsionAngle> get(Residue& residue, const TorsionAngleName& angleName);
+  void _define_protein_backbone_angles(ResidueName);
 };
 
 }

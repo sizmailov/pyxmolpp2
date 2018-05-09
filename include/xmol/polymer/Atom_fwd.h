@@ -59,6 +59,10 @@ using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 template<typename T>
 class ElementReference{
 public:
+
+  explicit ElementReference(): ptr(nullptr){
+  }
+
   explicit ElementReference(T& t): ptr(&t){
     ptr->parent()->add_reference(*this);
   }

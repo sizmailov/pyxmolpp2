@@ -8,12 +8,12 @@ namespace {
 std::pair<ResidueName, TorsionAngleName> make_key(const char* rname, const char* angle_name) {
   return std::make_pair(ResidueName(rname), TorsionAngleName(angle_name));
 };
-std::function<std::tuple<Atom&, Atom&, Atom&, Atom&>(Residue&)> make_atoms_refs(const char* a, const char* b,
+std::function<std::tuple<Atom*, Atom*, Atom*, Atom*>(Residue&)> make_atoms_refs(const char* a, const char* b,
                                                                                 const char* c, const char* d) {
-  return [a, b, c, d](Residue& r) { return std::tie(r[AtomName(a)], r[AtomName(b)], r[AtomName(c)], r[AtomName(d)]); };
+  return [a, b, c, d](Residue& r) { return std::make_tuple(&r[AtomName(a)], &r[AtomName(b)], &r[AtomName(c)], &r[AtomName(d)]); };
 };
 template <int N>
-std::function<AtomSelection(Atom&, Atom&, Atom&, Atom&)> make_atom_selector(std::vector<std::string> names) {
+TorsionAngle::AffectedAtomsSelector make_atom_selector(std::vector<std::string> names) {
   std::set<AtomName> names_set;
   for (auto& name : names) {
     names_set.insert(AtomName(name));
@@ -83,6 +83,32 @@ TorsionAngleFactory::TorsionAngleFactory() {
       {make_key("LYS", "chi4"), {make_atoms_refs("CG","CD","CE","NZ"), nullptr}},
 
       {make_key("MET", "chi5"), {make_atoms_refs("CD","NE","CZ","NH1"), nullptr}},
-
   };
+  _define_protein_backbone_angles(ResidueName("ALA"));
+  _define_protein_backbone_angles(ResidueName("ARG"));
+  _define_protein_backbone_angles(ResidueName("ASN"));
+  _define_protein_backbone_angles(ResidueName("ASP"));
+  _define_protein_backbone_angles(ResidueName("ASH"));
+  _define_protein_backbone_angles(ResidueName("CYS"));
+  _define_protein_backbone_angles(ResidueName("CYM"));
+  _define_protein_backbone_angles(ResidueName("CYX"));
+  _define_protein_backbone_angles(ResidueName("GLN"));
+  _define_protein_backbone_angles(ResidueName("GLU"));
+  _define_protein_backbone_angles(ResidueName("GLH"));
+  _define_protein_backbone_angles(ResidueName("HIS"));
+  _define_protein_backbone_angles(ResidueName("HID"));
+  _define_protein_backbone_angles(ResidueName("HIP"));
+  _define_protein_backbone_angles(ResidueName("HIE"));
+  _define_protein_backbone_angles(ResidueName("ILE"));
+  _define_protein_backbone_angles(ResidueName("LEU"));
+  _define_protein_backbone_angles(ResidueName("LYS"));
+  _define_protein_backbone_angles(ResidueName("MET"));
+  _define_protein_backbone_angles(ResidueName("PHE"));
+  _define_protein_backbone_angles(ResidueName("PRO"));
+  _define_protein_backbone_angles(ResidueName("SER"));
+  _define_protein_backbone_angles(ResidueName("THR"));
+  _define_protein_backbone_angles(ResidueName("TRP"));
+  _define_protein_backbone_angles(ResidueName("TYR"));
+  _define_protein_backbone_angles(ResidueName("VAL"));
+  _define_protein_backbone_angles(ResidueName("GLY"));
 }

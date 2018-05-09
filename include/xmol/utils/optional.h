@@ -4,8 +4,9 @@ namespace xmol {
 namespace utils {
 
 template <typename T> struct optional {
+  static_assert(std::is_default_constructible<T>::value,"");
   optional() : is_set(false) {}
-  optional(T t) : m_value(std::move(t)), is_set(true) {}
+  explicit optional(T t) : m_value(std::move(t)), is_set(true) {}
   optional(optional<T>&&) = default;
   optional(const optional<T>&) = default;
   optional& operator=(optional<T>&&) = default;
