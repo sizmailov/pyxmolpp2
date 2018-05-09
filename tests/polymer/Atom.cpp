@@ -359,3 +359,38 @@ TEST_F(AtomTests, refcount_2){
   c = ElementReference<Chain>(frame.emplace(ChainName("A")));
 
 }
+
+TEST_F(AtomTests, residue_prev_next){
+  Frame frame (0);
+  Chain& c = frame.emplace(ChainName("A"));
+  c.emplace(ResidueName("LYS"),residueId_t(1));
+  c.emplace(ResidueName("GLY"),residueId_t(2));
+  c.emplace(ResidueName("CYS"),residueId_t(3));
+  c.emplace(ResidueName("ABC"),residueId_t(4));
+
+  EXPECT_EQ(c.size(),4);
+
+  EXPECT_EQ(c[1].next(),&c[2]);
+  EXPECT_EQ(c[2].next(),&c[3]);
+  EXPECT_EQ(c[3].next(),&c[4]);
+  EXPECT_EQ(c[4].next(),nullptr);
+
+  EXPECT_EQ(c[1].prev(),nullptr);
+  EXPECT_EQ(c[2].prev(),&c[1]);
+  EXPECT_EQ(c[3].prev(),&c[2]);
+  EXPECT_EQ(c[4].prev(),&c[3]);
+
+  c[3].set_deleted();
+
+  EXPECT_EQ(c[1].next(),&c[2]);
+  EXPECT_EQ(c[2].next(),nullptr);
+  EXPECT_EQ(c[3].next(),&c[4]);
+  EXPECT_EQ(c[4].next(),nullptr);
+
+  EXPECT_EQ(c[1].prev(),nullptr);
+  EXPECT_EQ(c[2].prev(),&c[1]);
+  EXPECT_EQ(c[3].prev(),&c[2]);
+  EXPECT_EQ(c[4].prev(),nullptr);
+
+
+}

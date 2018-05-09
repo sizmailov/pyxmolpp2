@@ -105,6 +105,38 @@ Residue* Atom::parent() { return m_residue; };
 
 Chain& Residue::chain() noexcept { return *m_chain; }
 
+const Residue* Residue::next() const noexcept {
+  if (this == &chain().elements.back() ||
+      (this+1)->is_deleted()){
+    return nullptr;
+  }
+  return this+1;
+}
+
+Residue* Residue::next() noexcept {
+  if (this == &chain().elements.back() ||
+      (this+1)->is_deleted()){
+    return nullptr;
+  }
+  return this+1;
+}
+
+const Residue* Residue::prev() const noexcept {
+  if (this == &chain().elements.front() ||
+      (this-1)->is_deleted()){
+    return nullptr;
+  }
+  return this-1;
+}
+
+Residue* Residue::prev() noexcept  {
+  if (this == &chain().elements.front() ||
+      (this-1)->is_deleted()){
+    return nullptr;
+  }
+  return this-1;
+}
+
 const Chain& Residue::chain() const noexcept { return *m_chain; }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
