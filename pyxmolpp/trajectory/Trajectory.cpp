@@ -41,8 +41,13 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
       .def_property_readonly("n_frames", &Trajectory::n_frames, "Returns number of frames in trajectory")
       .def("__iter__", &Trajectory::begin)
       .def("__getitem__",[](Trajectory& trj, py::slice& slice){
-        size_t start, stop, step, slicelength;
-        if (!slice.compute(trj.n_frames(), &start, &stop, &step, &slicelength))
+        ssize_t start, stop, step, slicelength;
+        if (!slice.compute(
+            static_cast<size_t>(trj.n_frames()),
+            reinterpret_cast<size_t*>(&start),
+            reinterpret_cast<size_t*>(&stop),
+            reinterpret_cast<size_t*>(&step),
+            reinterpret_cast<size_t*>(&slicelength)))
           throw py::error_already_set();
         return trj.slice(start,stop,step);
       })
