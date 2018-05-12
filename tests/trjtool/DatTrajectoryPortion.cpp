@@ -57,7 +57,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
   Trajectory traj(frame);
   traj.add_trajectory_portion<DatFile>("trjtool/GB1/run00001.dat");
   traj.add_trajectory_portion<DatFile>("trjtool/GB1/run00002.dat");
-
+  traj.set_update_list(frame.asResidues()[0].asAtoms());
   {
     int k = 0;
     for (auto& x : traj.slice(0, 100)) {

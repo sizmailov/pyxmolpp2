@@ -37,7 +37,7 @@ public:
   const int n_frames() const;
 
   bool match(const xmol::polymer::ConstAtomSelection& sel) const;
-  void set_frame(size_t n, const xmol::polymer::AtomSelection& sel);
+  void set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indeces);
   void clear_info(){m_info.clear();};
 
   xmol::polymer::atomIndex_t n_atoms_per_frame() const;

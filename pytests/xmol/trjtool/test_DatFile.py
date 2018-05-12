@@ -19,7 +19,7 @@ def test_read_trjtool():
     assert datfile.match(frame.asAtoms)
     assert datfile.n_atoms_per_frame == frame.asAtoms.size
 
-    datfile.set_coordinates(0, frame.asAtoms)
+    datfile.set_coordinates(0, frame.asAtoms, list(range(frame.asAtoms.size)))
 
 
 def test_raise_file_does_not_exists():

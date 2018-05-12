@@ -97,14 +97,20 @@ bool DATReader::match(const xmol::polymer::ConstAtomSelection& sel) const {
   return true;
 }
 
-void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel) {
+void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indices) {
   const size_t float_size = sizeof(float);
   const std::streamoff frame_begin =
       float_size * m_header.fields.nitems * m_header.fields.ndim * n;
   m_in->seekg(m_offset + frame_begin, std::ios::beg);
-  for (int i = 0; i < info().size(); i++) {
+  int curpos = 0;
+  for (auto i: indices) {
+    if (curpos!=i){
+      m_in->seekg(sizeof(XYZf)*(i-curpos),std::ios::cur);
+      curpos=i;
+    }
     FromRawBytes<XYZf> xyzf{};
     m_in->read(xyzf.bytes, sizeof(xyzf));
+    ++curpos;
     sel[i].set_r(xmol::polymer::XYZ{xyzf.value.x,
                                     xyzf.value.y,
                                     xyzf.value.z});
