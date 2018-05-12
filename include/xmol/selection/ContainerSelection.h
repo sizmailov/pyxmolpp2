@@ -11,6 +11,46 @@ namespace selection {
 
 enum class SelectionState { OK, HAS_DANGLING_REFERENCES };
 
+struct NoSortTag {};
+
+template <typename T> class ContainerRange {
+public:
+  ContainerRange(const ContainerRange& other) noexcept = default;
+  ContainerRange(ContainerRange&& other) noexcept = default;
+  ContainerRange& operator=(const ContainerRange& other) noexcept = default;
+  ContainerRange& operator=(ContainerRange&& other) noexcept = default;
+
+  T& operator*() const{
+    return *it;
+  }
+  T* operator->() const{
+    return it;
+  }
+
+  template <typename Sentinel> bool operator!=(const Sentinel&) const{
+    return it!=end;
+  }
+  template <typename Sentinel> bool operator==(const Sentinel&) const{
+    return it==end;
+  }
+
+  ContainerRange& operator++(){
+    if (it!=end){
+      ++it;
+      while(it!=end && it->is_deleted()){
+        ++it;
+      }
+    }
+    return *this;
+  }
+
+private:
+  ContainerRange(T* start, T* end) noexcept : it(start),end(end){ assert(it<=end);};
+  friend class Container<typename std::remove_const<T>::type>;
+  T* it;
+  T* end;
+};
+
 template <typename T> class SelectionRange {
 public:
   SelectionRange(const SelectionRange& other) noexcept = default;
@@ -163,6 +203,8 @@ public:
   template <typename Iterator>
   explicit Selection(Iterator begin_, Iterator end_);
 
+  template <typename Iterator> explicit Selection(Iterator begin_, Iterator end_, const NoSortTag&);
+
 protected:
   friend class Selection<value_type>;
   friend class Selection<const value_type>;
@@ -197,6 +239,19 @@ public:
 
   Selection<T> all();
   Selection<const T> all() const;
+
+  ContainerRange<T> begin(){
+    return ContainerRange<T>(elements.data(),elements.data()+elements.size());
+  }
+  ContainerRange<const T> begin() const{
+    return ContainerRange<const T>(elements.data(),elements.data()+elements.size());
+  }
+  ContainerRange<T> end(){
+    return ContainerRange<T>(elements.data()+elements.size(),elements.data()+elements.size());
+  }
+  ContainerRange<const T> end()const{
+    return ContainerRange<const T>(elements.data()+elements.size(),elements.data()+elements.size());
+  }
 
   friend class Selection<T>;
   friend class Selection<const T>;
@@ -655,9 +710,29 @@ Selection<T>::Selection(Iterator begin_, Iterator end_) {
   for (auto container : parents) {
     this->add_observer(*container);
     container->on_selection_copy(*this);
-    auto comparator = SelectionPointerComparator<value_type>{};
-    std::sort(this->elements.begin(), this->elements.end(), comparator);
   }
+  auto comparator = SelectionPointerComparator<value_type>{};
+  std::sort(this->elements.begin(), this->elements.end(), comparator);
+}
+
+template <typename T>
+template <typename Iterator>
+Selection<T>::Selection(Iterator begin_, Iterator end_, const NoSortTag&) {
+  LOG_DEBUG_FUNCTION();
+  this->state = SelectionState::OK;
+  std::set<container_type*> parents;
+  for (; begin_ != end_; ++begin_) {
+    if (!(**begin_).is_deleted()) {
+      this->elements.push_back(*begin_);
+      parents.insert((**begin_).parent());
+    }
+  }
+  for (auto container : parents) {
+    this->add_observer(*container);
+    container->on_selection_copy(*this);
+  }
+  auto comparator = SelectionPointerComparator<value_type>{};
+  assert(std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
 }
 
 template <typename T>

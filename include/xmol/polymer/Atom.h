@@ -68,6 +68,12 @@ public:
   const Chain& chain() const noexcept;
   Chain& chain() noexcept;
 
+  const Residue* next() const noexcept;
+  Residue* next() noexcept;
+
+  const Residue* prev() const noexcept;
+  Residue* prev() noexcept;
+
   Atom& emplace(AtomName name, atomId_t id, XYZ r);
   Atom& emplace(const Atom& atom);
 
@@ -291,6 +297,10 @@ using DeletedChainAccess = xmol::selection::deleted_element_access<Chain>;
 using OutOfRangeAtomSelection = xmol::selection::selection_out_of_range<Atom>;
 using OutOfRangeResidueSelection = xmol::selection::selection_out_of_range<Residue>;
 using OutOfRangeChainSelection= xmol::selection::selection_out_of_range<Chain>;
+
+using AtomRef = ElementReference<Atom>;
+using ResidueRef = ElementReference<Residue>;
+using ChainRef = ElementReference<Chain>;
 
 }
 }
