@@ -133,15 +133,21 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
                              &next->operator[](AtomName("N")));
     };
     TorsionAngle::AffectedAtomsSelector selector = [](Atom& n, Atom& ca, Atom& c, Atom& next_n) {
-      auto result = n.residue().asAtoms().filter([](const Atom&a){
-        return a.name()==AtomName("O");
-      });
+      std::vector<Atom*> result;
+
+      for (auto& a : n.residue()) {
+        if (a.name() == AtomName("O")) {
+          result.push_back(&a);
+        }
+      }
       Residue* current = c.residue().next();
       while (current != nullptr) {
-        result += current->asAtoms();
+        for (auto& a : *current) {
+          result.push_back(&a);
+        }
         current = current->next();
       }
-      return result;
+      return AtomSelection(result.begin(),result.end(),selection::NoSortTag{});
     };
     bindings.emplace(std::make_pair(residueName, TorsionAngleName("psi")), std::make_pair(atom_refs_maker, selector));
   }
@@ -155,15 +161,22 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
                              &r[AtomName("CA")]);
     };
     TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_ca, Atom& prev_c, Atom& n, Atom& ca) {
+      std::vector<Atom*> result;
 
-      auto result = n.residue().asAtoms().filter([](const Atom&a){return a.name()!=AtomName("N");});
+      for (auto& a : n.residue()) {
+        if (a.name() != AtomName("N")) {
+          result.push_back(&a);
+        }
+      }
 
       Residue* current = n.residue().next();
       while (current != nullptr) {
-        result += current->asAtoms();
+        for (auto& a : *current) {
+          result.push_back(&a);
+        }
         current = current->next();
       }
-      return result;
+      return AtomSelection(result.begin(),result.end(),selection::NoSortTag{});
     };
     bindings.emplace(std::make_pair(residueName, TorsionAngleName("omega")), std::make_pair(atom_refs_maker, selector));
   }

@@ -67,7 +67,7 @@ TEST_F(TorsionAngleTests, test1) {
 
 
 }
-TEST_F(TorsionAngleTests, test_backbone_atoms){
+TEST_F(TorsionAngleTests, test_backbone_angles){
   auto files ={
       "pdb/rcsb/1PGB.pdb",
       "pdb/rcsb/5BMG.pdb",
@@ -91,6 +91,5 @@ TEST_F(TorsionAngleTests, test_backbone_atoms){
         omega.value().set(Degrees(180.0));
       }
     }
-
   }
 }
