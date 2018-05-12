@@ -45,7 +45,7 @@ public:
   }
 
 private:
-  ContainerRange(T* start, T* end) noexcept : it(start),end(end){ assert(it<end);};
+  ContainerRange(T* start, T* end) noexcept : it(start),end(end){ assert(it<=end);};
   friend class Container<typename std::remove_const<T>::type>;
   T* it;
   T* end;
