@@ -7,6 +7,7 @@ namespace xmol {
 namespace utils {
 
 template <typename T> struct optional {
+  using value_type = T;
   static_assert(std::is_default_constructible<T>::value,"");
   optional() : is_set(false) {}
   explicit optional(const T& t) : m_value(t), is_set(true) {}
@@ -44,6 +45,16 @@ template <typename T> struct optional {
   bool operator>(const T& rhs) const { return value() > rhs; };
   bool operator<=(const T& rhs) const { return value() <= rhs; };
   bool operator>=(const T& rhs) const { return value() >= rhs; };
+
+  const T* operator->() const{ return &m_value;}
+  T* operator->() { return &m_value;}
+
+  const T& operator*() const &{ return m_value;}
+  T& operator*() & { return m_value;}
+
+  const T& operator*() const&&{ return std::move(m_value);}
+  T&& operator*() &&{ return std::move(m_value);}
+
 
 private:
   T m_value;

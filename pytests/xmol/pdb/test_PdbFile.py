@@ -102,5 +102,35 @@ def test_rmsd():
         #     print(frame[i].asAtoms,frame[j].asAtoms)
 
 
+def test_torsions():
+    from pyxmolpp2.polymer import TorsionAngleFactory, OutOfRangeResidue
+    from pyxmolpp2.pdb import PdbFile
+    from pyxmolpp2.geometry import Degrees
+    import glob
+    filenames = sorted(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
+
+    for filename in filenames:
+        frame = PdbFile(filename).get_frame()
+        for r in frame.asResidues:
+            try:
+                angles = [
+                    TorsionAngleFactory.phi(r),
+                    TorsionAngleFactory.psi(r),
+                    TorsionAngleFactory.omega(r),
+                    TorsionAngleFactory.chi1(r),
+                    TorsionAngleFactory.chi2(r),
+                    TorsionAngleFactory.chi3(r),
+                    TorsionAngleFactory.chi4(r),
+                    TorsionAngleFactory.chi5(r),
+                ]
+                for angle in angles:
+                    if angle:
+                        try:
+                            value = angle.value()
+                            angle.set(value + Degrees(30), Degrees(0))
+                        except Exception:
+                            pass
+            except OutOfRangeResidue:
+                pass
 
 
