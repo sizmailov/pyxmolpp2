@@ -63,28 +63,28 @@ TorsionAngleFactory& TorsionAngleFactory::instance() {
 }
 
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::phi(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("phi"));
+  return instance()._get(r, TorsionAngleName("phi"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::psi(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("psi"));
+  return instance()._get(r, TorsionAngleName("psi"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::omega(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("omega"));
+  return instance()._get(r, TorsionAngleName("omega"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi1(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("chi1"));
+  return instance()._get(r, TorsionAngleName("chi1"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi2(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("chi2"));
+  return instance()._get(r, TorsionAngleName("chi2"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi3(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("chi3"));
+  return instance()._get(r, TorsionAngleName("chi3"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi4(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("chi4"));
+  return instance()._get(r, TorsionAngleName("chi4"));
 }
 xmol::utils::optional<TorsionAngle> TorsionAngleFactory::chi5(xmol::polymer::Residue& r) {
-  return instance().get(r, TorsionAngleName("chi5"));
+  return instance()._get(r, TorsionAngleName("chi5"));
 }
 
 void TorsionAngleFactory::define_protein_backbone_angles(xmol::polymer::ResidueName residueName) {
@@ -197,7 +197,12 @@ void TorsionAngleFactory::define_protein_side_chain_angle(xmol::polymer::Residue
   instance().bindings.emplace(std::make_pair(residueName, torsionAngleName), std::make_pair(atom_refs_maker, selector));
 }
 
-xmol::utils::optional<TorsionAngle> TorsionAngleFactory::get(Residue& r, const TorsionAngleName& angle_name) {
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::get(xmol::polymer::Residue& residue,
+                                                             const xmol::polymer::TorsionAngleName& angleName) {
+  return instance()._get(residue, angleName);
+}
+
+xmol::utils::optional<TorsionAngle> TorsionAngleFactory::_get(Residue& r, const TorsionAngleName& angle_name) {
   auto it = bindings.find(std::make_pair(r.name(), angle_name));
   if (it == bindings.end()) {
     return xmol::utils::optional<TorsionAngle>{};

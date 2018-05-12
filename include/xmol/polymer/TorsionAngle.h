@@ -45,6 +45,7 @@ public:
   static void define_protein_backbone_angles(ResidueName);
   static void define_protein_side_chain_angle(ResidueName, TorsionAngleName, const std::array<AtomName, 4>& names,
                                               const std::set<AtomName>& affected_atoms);
+  static xmol::utils::optional<TorsionAngle> get(Residue& residue, const TorsionAngleName& angleName);
 
 private:
   using residue_to_atoms = std::function<std::tuple<Atom*,Atom*,Atom*,Atom*>(Residue&)>;
@@ -54,7 +55,7 @@ private:
 
   static TorsionAngleFactory& instance();
   TorsionAngleFactory();
-  xmol::utils::optional<TorsionAngle> get(Residue& residue, const TorsionAngleName& angleName);
+  xmol::utils::optional<TorsionAngle> _get(Residue& residue, const TorsionAngleName& angleName);
   void _define_protein_backbone_angles(ResidueName);
 };
 
