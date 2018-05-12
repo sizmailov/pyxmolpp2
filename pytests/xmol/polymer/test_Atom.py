@@ -40,7 +40,7 @@ def test_Frame():
 
     assert f.asChains[0] == c
 
-def make_polyglycine( chain_lengths ):
+def make_polyglycine( chain_lengths, no_reserve=True):
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
@@ -51,9 +51,16 @@ def make_polyglycine( chain_lengths ):
     rid=1
     frame = Frame(0)
     for chainId, N in chain_lengths:
-        c = frame.emplace(ChainName(chainId),N)
+        if no_reserve:
+            c = frame.emplace(ChainName(chainId))
+        else:
+            c = frame.emplace(ChainName(chainId),N)
         for i in range(N):
-            r = c.emplace(ResidueName("GLY"),rid,7)
+            if no_reserve:
+                r = c.emplace(ResidueName("GLY"),rid)
+            else:
+                r = c.emplace(ResidueName("GLY"),rid,7)
+
             rid+=1
             for aname in ["N","H","CA","HA2","HA3","C","O"]:
                 r.emplace(AtomName(aname),aid,XYZ(1,2,3))
@@ -67,13 +74,14 @@ def make_polyglycine( chain_lengths ):
 def test_big_construction():
     from timeit import default_timer as timer
 
-    print()
-    for n in [10,100,1000,2000]:
-        start = timer()
-        frame = make_polyglycine([("A", n)])
-        end = timer()
-        assert frame.asAtoms.size == n*7
-        print("%5d  %.5f"%(n,end-start))
+
+    for no_reserve in [True, False]:
+        for n in [10,100,1000,2000]:
+            start = timer()
+            frame = make_polyglycine([("A", n)], no_reserve=no_reserve)
+            end = timer()
+            assert frame.asAtoms.size == n*7
+            #print("%5d  %.5f"%(n,end-start))
 
 def test_filters():
     n = 100
@@ -109,22 +117,22 @@ def test_repr():
 
     frame = make_polyglycine([("A",10)])
 
-    print(frame)
-    print(frame.asChains[0].name)
-    print(frame.asResidues[0].name)
-    print(frame.asAtoms[0].name)
-    print([frame.asChains[0].name,
+    str(frame)
+    str(frame.asChains[0].name)
+    str(frame.asResidues[0].name)
+    str(frame.asAtoms[0].name)
+    str([frame.asChains[0].name,
             frame.asResidues[0].name,
             frame.asAtoms[0].name]
     )
 
-    print(frame.asChains[0])
-    print(frame.asResidues[0])
-    print(frame.asAtoms[0])
+    str(frame.asChains[0])
+    str(frame.asResidues[0])
+    str(frame.asAtoms[0])
 
-    print(frame.asChains)
-    print(frame.asResidues)
-    print(frame.asAtoms)
+    str(frame.asChains)
+    str(frame.asResidues)
+    str(frame.asAtoms)
 
 
 def test_for_each():
@@ -150,10 +158,11 @@ def test_assignment():
     from pyxmolpp2.geometry import XYZ
     frame = make_polyglycine([("A",1)])
     for a in frame.asAtoms:
-        print(a,a.r)
+        #print(a,a.r)
+        pass
 
     def translate_by_dr(a):
-        print(a,a.r)
+        #print(a,a.r)
         a.r = a.r+XYZ(1,2,3)
 
     frame.asAtoms.for_each(translate_by_dr)

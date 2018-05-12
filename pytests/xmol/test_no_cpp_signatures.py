@@ -104,7 +104,8 @@ def check_class(klass):
 
 
     for field in fields:
-        print("FIELD", field.__doc__)
+        #print("FIELD", field.__doc__)
+        pass
 
     # write properties
     for prop_name, prop in properties:
@@ -126,7 +127,7 @@ def check_class(klass):
 def check_module(module, main_module=None):
     if main_module is None:
         main_module = module
-    print("Processing", module)
+    #print("Processing", module)
 
 
     docstrings = []

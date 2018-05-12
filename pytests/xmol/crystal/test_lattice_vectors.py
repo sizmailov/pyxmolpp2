@@ -15,10 +15,10 @@ def test_calc_rmsd():
 
     ref = XYZ(0,0,0)
     var = latticeVectors.translate(ref,1,4,43)
-    print()
-    print(var.x,var.y,var.z)
+    # print()
+    # print(var.x,var.y,var.z)
     dr, shift = bestShiftFinder.find_best_shift(ref,var)
-    print(shift.x,shift.y,shift.z)
+    # print(shift.x,shift.y,shift.z)
     var = var + shift
 
     assert var.x == pytest.approx(ref.x)
