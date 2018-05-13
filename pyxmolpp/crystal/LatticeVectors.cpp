@@ -17,9 +17,8 @@ void pyxmolpp::crystal::init_lattice_vectors(py::module& crystal) {
       .def("__getitem__",(const XYZ& (LatticeVectors::*)(int i) const)&LatticeVectors::operator[],py::arg("i"))
       ;
 
-  py::class_<BestShiftFinder>(crystal,"BestShiftFinder")
-      .def(py::init<LatticeVectors>())
-      .def("find_best_shift",&BestShiftFinder::find_best_shift,py::arg("ref"),py::arg("var"))
-      .def("scale_lattice_by",&BestShiftFinder::scale_lattice_by,py::arg("factor"))
-      ;
+  py::class_<BestShiftFinder>(crystal, "BestShiftFinder")
+      .def(py::init<LatticeVectors>(), py::arg("lattice_vectors"))
+      .def("find_best_shift", &BestShiftFinder::find_best_shift, py::arg("ref"), py::arg("var"))
+      .def("scale_lattice_by", &BestShiftFinder::scale_lattice_by, py::arg("factor"));
 }

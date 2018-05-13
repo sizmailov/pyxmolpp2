@@ -151,7 +151,7 @@ Order is preserved across manipulations with ChainSelection
                xmol::utils::string::int2hex((uint64_t)(std::addressof(rid))) + ">";
       });
 
-  pyAtomName.def(py::init<const std::string&>())
+  pyAtomName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &AtomName::str)
       .def("__hash__", &AtomName::value)
       .def("__str__", [](const AtomName& name) { return '"' + name.str() + '"'; })
@@ -160,7 +160,7 @@ Order is preserved across manipulations with ChainSelection
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
       });
 
-  pyResidueName.def(py::init<const std::string&>())
+  pyResidueName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &ResidueName::str)
       .def("__hash__", &ResidueName::value)
       .def("__str__", [](const ResidueName& name) { return '"' + name.str() + '"'; })
@@ -169,7 +169,7 @@ Order is preserved across manipulations with ChainSelection
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
       });
 
-  pyChainName.def(py::init<const std::string&>())
+  pyChainName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &ChainName::str)
       .def("__hash__", &ChainName::value)
       .def("__str__", [](const ChainName& name) { return '"' + name.str() + '"'; })
@@ -348,7 +348,7 @@ Order is preserved across manipulations with ChainSelection
       });
   ;
 
-  pyFrame.def(py::init<frameIndex_t>())
+  pyFrame.def(py::init<frameIndex_t>(),py::arg("frame_index"))
       .def("__len__", &Frame::size, "Returns number of chains")
       .def("__getitem__",
           [](Frame& frame, const ChainName& name) { return ChainRef(frame[name]); })

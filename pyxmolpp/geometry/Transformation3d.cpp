@@ -52,18 +52,15 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
       .def(UniformScale3d() * py::self)
       ;
 
-  pyTransformation3d
-      .def(py::init<>())
-      .def(py::init<Rotation3d,Translation3d>(),py::arg("rotation_followed_by"),py::arg("translation"))
-      .def("transform",&Transformation3d::transform, "Returns transformed point")
-      .def("inverted",&Transformation3d::inverted, "Returns inverted transformation")
+  pyTransformation3d.def(py::init<>())
+      .def(py::init<Rotation3d, Translation3d>(), py::arg("rotation_followed_by"), py::arg("translation"))
+      .def("transform", &Transformation3d::transform, py::arg("r"), "Returns transformed point")
+      .def("inverted", &Transformation3d::inverted, "Returns inverted transformation")
       .def(py::self * py::self)
       .def(py::self * Translation3d())
       .def(py::self * Rotation3d())
       .def(py::self * UniformScale3d())
       .def(Translation3d() * py::self)
       .def(Rotation3d() * py::self)
-      .def(UniformScale3d() * py::self)
-      ;
-
+      .def(UniformScale3d() * py::self);
 }
