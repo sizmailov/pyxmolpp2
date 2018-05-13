@@ -12,13 +12,12 @@ DatFile::DatFile(const std::string& filename)
     throw TrjtoolException("Can't open `"+m_filename+"`");
   }
   m_reader = std::unique_ptr<DATReader>(new DATReader(*m_stream));
-  m_stream->close();
+  this->close();
 }
 
 void DatFile::close() {
   if (m_stream->is_open()){
     m_stream->close();
-    m_reader->clear_info();
   }
 }
 

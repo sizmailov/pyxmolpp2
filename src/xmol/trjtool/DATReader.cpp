@@ -8,6 +8,10 @@ namespace {
 struct XYZf{
   float x,y,z;
 };
+
+template <class T> inline void hash_combine(std::size_t& seed, const T& v) {
+  seed ^= std::hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
 }
 
 DATReader::DATReader(std::istream& in) : m_in(&in) {
@@ -29,7 +33,7 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
     throw trjtool::corrupted_file("trjtool::DATReader::Unknown datatype");
   }
   }
-
+  m_atoms_hash = 0;
   for (int i = 0; i < m_header.fields.nitems; i++) {
     FromRawBytes<int> info_len;
     if (!in.read(info_len.bytes, sizeof(info_len.bytes))) {
@@ -39,7 +43,17 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
     if (!in.read(buffer, info_len.value)) {
       throw trjtool::unexpected_eof("trjtool::DATReader::EOF");
     }
-    m_info.emplace_back(std::string(buffer, info_len.value));
+    std::stringstream ss(std::string(buffer, info_len.value));
+    int resid;
+    std::string rname;
+    std::string aname;
+    if (ss >> resid >> rname >> aname) {
+      hash_combine(m_atoms_hash,xmol::polymer::residueId_t(resid));
+      hash_combine(m_atoms_hash,xmol::polymer::ResidueName(rname));
+      hash_combine(m_atoms_hash,xmol::polymer::AtomName(aname));
+    } else {
+      throw trjtool::corrupted_file("Can't read info");
+    }
   }
 
   m_offset = in.tellg();
@@ -73,8 +87,6 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
   }
 }
 
-const std::vector<std::string>& DATReader::info() const { return m_info; }
-
 const int DATReader::n_frames() const { return m_n_frames; }
 
 bool DATReader::match(const xmol::polymer::ConstAtomSelection& sel) const {
@@ -82,19 +94,13 @@ bool DATReader::match(const xmol::polymer::ConstAtomSelection& sel) const {
       sel.size() != m_header.fields.nitems || m_header.fields.ndim != 3) {
     return false;
   }
-  for (int i = 0; i < info().size(); i++) {
-    int resid;
-    std::string rname;
-    std::string aname;
-    ;
-    if (!(std::stringstream(info()[i]) >> resid >> rname >> aname) ||
-        sel[i].residue().id() != resid ||
-        sel[i].name() != xmol::polymer::AtomName(aname) ||
-        sel[i].residue().name() != xmol::polymer::ResidueName(rname)) {
-      return false;
-    }
+  size_t sel_hash=0;
+  for (auto& a: sel) {
+    hash_combine(sel_hash,a.residue().id());
+    hash_combine(sel_hash,a.residue().name());
+    hash_combine(sel_hash,a.name());
   }
-  return true;
+  return sel_hash==m_atoms_hash;
 }
 
 void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indices) {
@@ -116,6 +122,4 @@ void DATReader::set_frame(size_t n, const xmol::polymer::AtomSelection& sel, con
                                     xyzf.value.z});
   }
 }
-xmol::polymer::atomIndex_t DATReader::n_atoms_per_frame() const {
-  return info().size();
-}
+xmol::polymer::atomIndex_t DATReader::n_atoms_per_frame() const { return m_header.fields.nitems; }

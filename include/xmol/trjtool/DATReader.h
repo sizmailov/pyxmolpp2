@@ -33,19 +33,17 @@ public:
 
   explicit DATReader(std::istream& in);
 
-  const std::vector<std::string>& info() const;
   const int n_frames() const;
 
   bool match(const xmol::polymer::ConstAtomSelection& sel) const;
-  void set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indeces);
-  void clear_info(){m_info.clear();};
+  void set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indices);
 
   xmol::polymer::atomIndex_t n_atoms_per_frame() const;
 
 private:
   std::istream* m_in;
   Header m_header;
-  std::vector<std::string> m_info;
+  size_t m_atoms_hash=0;
   int m_n_frames;
   std::streampos m_offset;
   DataType m_data_type = DataType::undefined;
