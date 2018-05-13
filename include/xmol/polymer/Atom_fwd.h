@@ -10,12 +10,56 @@
 namespace xmol {
 namespace polymer {
 
+namespace detail {
+struct InsertionCodeTag {};
+}
+using ResidueInsertionCode = xmol::utils::ShortAsciiString<1, false, detail::InsertionCodeTag>;
+
+using residueSerial_t = int32_t;
+struct ResidueId {
+  ResidueId() : ResidueId(0, ResidueInsertionCode("")) {}
+  explicit ResidueId(residueSerial_t serial) : serial(serial) {}
+  ResidueId(residueSerial_t serial, const ResidueInsertionCode& iCode) : serial(serial), iCode(iCode) {}
+
+  ResidueId(const ResidueId& other) = default;
+  ResidueId(ResidueId&& other) = default;
+
+  ResidueId& operator=(const ResidueId& other) = default;
+  ResidueId& operator=(ResidueId&& other) = default;
+  ResidueId& operator=(const residueSerial_t& serial) { this->serial=serial; iCode=ResidueInsertionCode{}; return *this;};
+
+  inline bool operator<(const ResidueId& other) const { return std::tie(serial, iCode) < std::tie(other.serial, other.iCode); }
+  inline bool operator>(const ResidueId& other) const { return std::tie(serial, iCode) > std::tie(other.serial, other.iCode); }
+  inline bool operator==(const ResidueId& other) const { return std::tie(serial, iCode) == std::tie(other.serial, other.iCode); }
+  inline bool operator!=(const ResidueId& other) const { return std::tie(serial, iCode) != std::tie(other.serial, other.iCode); }
+  inline bool operator<=(const ResidueId& other) const { return std::tie(serial, iCode) <= std::tie(other.serial, other.iCode); }
+  inline bool operator>=(const ResidueId& other) const { return std::tie(serial, iCode) >= std::tie(other.serial, other.iCode); }
+
+  residueSerial_t serial;
+  ResidueInsertionCode iCode;
+};
+
+inline bool operator< (const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <  ResidueId(rhs); }
+inline bool operator> (const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >  ResidueId(rhs); }
+inline bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }
+inline bool operator!=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs != ResidueId(rhs); }
+inline bool operator<=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <= ResidueId(rhs); }
+inline bool operator>=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >= ResidueId(rhs); }
+
+inline bool operator< (const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <  rhs; }
+inline bool operator> (const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >  rhs; }
+inline bool operator==(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) == rhs; }
+inline bool operator!=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) != rhs; }
+inline bool operator<=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <= rhs; }
+inline bool operator>=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >= rhs; }
+
+
 using atomIndex_t = int32_t;
 using residueIndex_t = int32_t;
 using chainIndex_t = int32_t;
 
 using atomId_t = int32_t;
-using residueId_t = int32_t;
+using residueId_t = ResidueId;
 using frameIndex_t = int32_t;
 
 using XYZ = xmol::geometry::XYZ;
@@ -207,4 +251,18 @@ public:
   asResidues() const;
 };
 }
+}
+
+namespace std {
+template<>
+struct hash<xmol::polymer::ResidueId> {
+  using argument_type = xmol::polymer::ResidueId;
+  using result_type = size_t;
+
+  result_type operator()(argument_type const& s) const {
+    size_t seed = static_cast<size_t>(s.serial);
+    seed ^= std::hash<decltype(s.iCode)>()(s.iCode) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    return seed;
+  }
+};
 }

@@ -5,12 +5,12 @@ def test_Frame():
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.polymer import ResidueName
+    from pyxmolpp2.polymer import ResidueName, ResidueId
     from pyxmolpp2.geometry import XYZ
 
     f = Frame(5)
-    c = f.emplace(ChainName("A"),1)
-    r = c.emplace(ResidueName("LYS"),1)
+    c = f.emplace(ChainName("A"), 1)
+    r = c.emplace(ResidueName("LYS"), ResidueId(1))
     a = r.emplace(AtomName("CA"), 1, XYZ(1,2,3))
 
     assert a.residue == r
@@ -44,7 +44,7 @@ def make_polyglycine( chain_lengths, no_reserve=True):
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.polymer import ResidueName
+    from pyxmolpp2.polymer import ResidueName, ResidueId
     from pyxmolpp2.geometry import XYZ
 
     aid=1
@@ -57,9 +57,9 @@ def make_polyglycine( chain_lengths, no_reserve=True):
             c = frame.emplace(ChainName(chainId),N)
         for i in range(N):
             if no_reserve:
-                r = c.emplace(ResidueName("GLY"),rid)
+                r = c.emplace(ResidueName("GLY"),ResidueId(rid))
             else:
-                r = c.emplace(ResidueName("GLY"),rid,7)
+                r = c.emplace(ResidueName("GLY"),ResidueId(rid),7)
 
             rid+=1
             for aname in ["N","H","CA","HA2","HA3","C","O"]:
@@ -312,5 +312,46 @@ def test_operators():
     a1 -= a2
     assert a1.size == a2.size
 
+
+
+def test_lookup_by_name():
+    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
+        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
+    frame = make_polyglycine([("A",2)])
+
+    frame[ChainName("A")]  # does not throw
+    frame[ChainName("A")][ResidueId(2)] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("N")] # does not throw
+
+    with pytest.raises(OutOfRangeFrame):
+        frame[ChainName("B")] # does throw
+
+    with pytest.raises(OutOfRangeChain):
+        frame[ChainName("A")][ResidueId(3)] # does throw
+
+    with pytest.raises(OutOfRangeResidue):
+        frame[ChainName("A")][ResidueId(2)][AtomName("CX")] # does not throw
+
+
+
+
+
+def test_lookup_after_rename():
+    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
+        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
+    frame = make_polyglycine([("A",2)])
+
+    frame[ChainName("A")]  # does not throw
+    frame[ChainName("A")][ResidueId(2)] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
+
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")].name = AtomName("CX")
+    frame[ChainName("A")][ResidueId(2)].id = ResidueId(99)
+    frame[ChainName("A")].name = ChainName("X")
+
+    frame[ChainName("X")]  # does not throw
+    frame[ChainName("X")][ResidueId(99)] # does not throw
+    frame[ChainName("X")][ResidueId(99)][AtomName("CX")] # does not throw
 
 
