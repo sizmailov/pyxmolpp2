@@ -314,3 +314,44 @@ def test_operators():
 
 
 
+def test_lookup_by_name():
+    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
+        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
+    frame = make_polyglycine([("A",2)])
+
+    frame[ChainName("A")]  # does not throw
+    frame[ChainName("A")][ResidueId(2)] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("N")] # does not throw
+
+    with pytest.raises(OutOfRangeFrame):
+        frame[ChainName("B")] # does throw
+
+    with pytest.raises(OutOfRangeChain):
+        frame[ChainName("A")][ResidueId(3)] # does throw
+
+    with pytest.raises(OutOfRangeResidue):
+        frame[ChainName("A")][ResidueId(2)][AtomName("CX")] # does not throw
+
+
+
+
+
+def test_lookup_after_rename():
+    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
+        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
+    frame = make_polyglycine([("A",2)])
+
+    frame[ChainName("A")]  # does not throw
+    frame[ChainName("A")][ResidueId(2)] # does not throw
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
+
+    frame[ChainName("A")][ResidueId(2)][AtomName("CA")].name = AtomName("CX")
+    frame[ChainName("A")][ResidueId(2)].id = ResidueId(99)
+    frame[ChainName("A")].name = ChainName("X")
+
+    frame[ChainName("X")]  # does not throw
+    frame[ChainName("X")][ResidueId(99)] # does not throw
+    frame[ChainName("X")][ResidueId(99)][AtomName("CX")] # does not throw
+
+

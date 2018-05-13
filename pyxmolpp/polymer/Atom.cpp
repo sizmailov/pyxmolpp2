@@ -250,7 +250,7 @@ Order is preserved across manipulations with ChainSelection
                              AtomName& name) -> AtomRef { return AtomRef(static_cast<Residue&>(residue)[name]); },
            AtomRefPolicy, "Returns first atom in residue with given name. If no atoms with "
                           "such name exception raised.")
-      .def_property_readonly("id", [](const ResidueRef& residue) { return static_cast<Residue&>(residue).id(); },
+      .def_property("id", [](const ResidueRef& residue) { return static_cast<Residue&>(residue).id(); }, [](const ResidueRef& residue, const ResidueId& rid) { static_cast<Residue&>(residue).set_id(rid); },
                              "Residue id")
       .def_property_readonly("rId", [](const ResidueRef& residue) { return static_cast<Residue&>(residue).id(); },
                              "Residue id")
@@ -350,6 +350,8 @@ Order is preserved across manipulations with ChainSelection
 
   pyFrame.def(py::init<frameIndex_t>())
       .def("__len__", &Frame::size, "Returns number of chains")
+      .def("__getitem__",
+          [](Frame& frame, const ChainName& name) { return ChainRef(frame[name]); })
       .def_property_readonly("size", &Frame::size, "Number of chains")
       .def_property_readonly("index", [](const Frame& frame) { return frame.index(); }, "Frame index")
       .def_property_readonly("asChains", [](Frame& frame) { return frame.asChains(); },
