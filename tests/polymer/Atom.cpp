@@ -292,8 +292,8 @@ TEST_F(AtomTests, brakets){
   r.set_id(residueId_t(42));
   a.set_name(AtomName("XX"));
 
-  EXPECT_EQ(f.asChains()[0][1],r);
-  EXPECT_EQ(f.asChains()[0][1][AtomName("XX")],a);
+  EXPECT_EQ(f.asChains()[0][42],r);
+  EXPECT_EQ(f.asChains()[0][42][AtomName("XX")],a);
 
   EXPECT_ANY_THROW(f.asChains()[0][2]);
   EXPECT_ANY_THROW(f.asChains()[0][42][AtomName("YY")]);
