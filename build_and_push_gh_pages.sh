@@ -2,7 +2,7 @@
 set -e # Exit with nonzero exit code if anything fails
 
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-SOURCE_BRANCH="multiple_versions_build"
+SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 GH_PAGES_ROOT="$PWD/docs/build/html"
 WD="$PWD"
@@ -10,12 +10,22 @@ WD="$PWD"
 REPO=`git config remote.origin.url`
 SSH_REPO="${REPO/https:\/\/github.com\//git@github.com:}"
 
-source "./build_docs.sh"
+function doCompile {
+  pip install -r docs/requirements.txt
+  sphinx-versioning build \
+      docs/source docs/build/html \
+      --run-setup-py \
+      --whitelist-branches 'master|dev' \
+      --whitelist-tags '.*' \
+      --show-banner \
+      --greatest-tag \
+      --banner-greatest-tag
+}
 
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 #if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
 if [ "$CURRENT_BRANCH" != "$SOURCE_BRANCH" ]; then
-    echo "Skipping deploy; just doing a build."
+    echo -e "\e[42mSkipping deploy; just doing a build.\e[0m"
     doCompile
     exit 0
 fi
