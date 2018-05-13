@@ -27,6 +27,7 @@ Welcome to pyxmolpp2's documentation!
 
     pyxmolpp2/*
 
+.. include:: changelog.rst
 
 
 Indices and tables
