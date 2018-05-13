@@ -38,8 +38,8 @@ void pyxmolpp::geometry::init_AngleValue(pybind11::module& geometry) {
                [](double value) { return AngleValue(Radians(value)); },
                py::return_value_policy::copy, py::arg("radians"));
 
-  geometry.def("sin", xmol::geometry::sin, py::return_value_policy::copy);
-  geometry.def("cos", xmol::geometry::cos, py::return_value_policy::copy);
-  geometry.def("tan", xmol::geometry::tan, py::return_value_policy::copy);
-  geometry.def("fabs", xmol::geometry::fabs, py::return_value_policy::copy);
+  geometry.def("sin", xmol::geometry::sin, py::arg("angle"), py::return_value_policy::copy);
+  geometry.def("cos", xmol::geometry::cos, py::arg("angle"), py::return_value_policy::copy);
+  geometry.def("tan", xmol::geometry::tan, py::arg("angle"), py::return_value_policy::copy);
+  geometry.def("fabs", xmol::geometry::fabs, py::arg("angle"), py::return_value_policy::copy);
 }

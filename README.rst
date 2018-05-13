@@ -19,8 +19,10 @@ A tool to process MD trajectories
 
 .. |dev_coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/dev/graph/badge.svg
     :alt: dev coverage
-    :target: https://travis-ci.org/sizmailov/pyxmolpp2/branch/dev
+    :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/dev
 
+.. image:: https://badge.fury.io/py/pyxmolpp2.svg
+    :target: https://badge.fury.io/py/pyxmolpp2
 
 ================= =================
     **master**         **dev**
@@ -33,13 +35,13 @@ A tool to process MD trajectories
 Goal
 ----
 
-We want our scripts to 
+We want our scripts to
  - run fast
- - be easy to read  
+ - be easy to read
  - be easy to write correct
  - be hard to write incorrect
 
-So we need a library which 
+So we need a library which
  - is reliable
  - full of features
 
@@ -48,36 +50,13 @@ Well-written C++ code gives us speed. An IDE augmented with static type system s
 pythonic mistakes before script is run. Moderate functional style programming contributes to readability.
 At least it's how it was meant to be)
 
-------------
-Feature list
-------------
+-------------
+Documentation
+-------------
 
-To be written
+https://sizmailov.github.io/pyxmolpp2/
 
---------------
-Usage examples
---------------
-
-Translate all atoms by (1,2,3):
-
-.. code-block:: python
-
-    from pyxmolpp2.pdb import PdbFile
-    from pyxmolpp2.geometry import XYZ
-
-    def translate_by(dr):
-        def translate(a):
-            a.r = a.r+dr
-        return translate
-
-    frame = PdbFile("test.pdb").get_frame()
-
-    frame.asAtoms.for_each(translate_by(XYZ(1,2,3)))
-
-    # write as pdb
-    frame.to_pdb("out.pdb")
-
-
+It includes tutorial, usage examples and python API reference.
 
 -------
 Install
@@ -97,29 +76,14 @@ Install command:
 
 from git repository
 ^^^^^^^^^^^^^^^^^^^
-.. caution:: Total size of repository with sub-repositories exceeds 100mb
+
+**Caution**: Total size of repository with sub-repositories exceeds 100mb
 
 To install from master branch run command
 
 .. code-block:: bash
 
     python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git
-
-
-
--------------
-API Reference
--------------
-
-To be written
-
------------------
-Project structure
------------------
-
-1. C++ library ``xmol``, the core
-2. Python library ``pyxmolpp2``, wraps ``xmol`` by ``pybind11``
-3. User scripts, are written for daily duties  
 
 
 -------

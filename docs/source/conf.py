@@ -162,7 +162,7 @@ texinfo_documents = [
 
 # -- Extension configuration -------------------------------------------------
 
-autodoc_default_flags = ['members','undoc-members', 'show-inheritance']
+autodoc_default_flags = ['members','undoc-members', 'show-inheritance','special-members']
 autoclass_content = "both"
 
 

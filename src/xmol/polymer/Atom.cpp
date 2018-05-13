@@ -74,10 +74,12 @@ Residue& Residue::operator=(Residue&& rhs) noexcept {
 
 const residueId_t& Residue::id() const { return m_id; }
 
-Residue& Residue::set_id(residueId_t&& value) {
+Residue& Residue::set_id(const residueId_t& value) {
   auto it = chain().m_lookup_table.find(m_id);
+  Ensures (it!=chain().m_lookup_table.end());
+  m_id = value;
   auto index = it->second;
-  m_id = std::move(value);
+  chain().m_lookup_table.erase(it);
   chain().m_lookup_table[m_id] = index;
   return *this;
 }
@@ -248,7 +250,12 @@ const chainIndex_t& Chain::index() const { return m_index; }
 const ChainName& Chain::name() const { return m_name; }
 
 Chain& Chain::set_name(const ChainName& value) {
-  m_name = std::move(value);
+  auto it = frame().m_lookup_table.find(m_name);
+  Ensures(it!=frame().m_lookup_table.end());
+  m_name = value;
+  auto index = it->second;
+  frame().m_lookup_table.erase(it);
+  frame().m_lookup_table[m_name] = index;
   return *this;
 }
 
@@ -280,11 +287,27 @@ Residue& Chain::emplace(const Residue& residue) {
 }
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
-  return this->elements[m_lookup_table.at(residueId)];
+  auto it = m_lookup_table.find(residueId);
+  if (it==m_lookup_table.end()){
+    throw OutOfRangeChain("Chain has no residue with id `"+std::to_string(residueId.serial)+residueId.iCode.str()+"`");
+  }
+  return this->elements[it->second];
 }
 
 Residue& Chain::operator[](const residueId_t& residueId) {
-  return this->elements[m_lookup_table.at(residueId)];
+  auto it = m_lookup_table.find(residueId);
+  if (it==m_lookup_table.end()){
+    throw OutOfRangeChain("Chain has no residue with id `"+std::to_string(residueId.serial)+residueId.iCode.str()+"`");
+  }
+  return this->elements[it->second];
+}
+
+const Residue& Chain::operator[](const residueSerial_t& residueId) const {
+  return this->operator[](ResidueId(residueId));
+}
+
+Residue& Chain::operator[](const residueSerial_t& residueId) {
+  return this->operator[](ResidueId(residueId));
 }
 
 bool Chain::is_deleted() const { return m_deleted; }
@@ -335,6 +358,7 @@ void Frame::to_pdb(const std::string& filename,
 }
 
 Chain& Frame::emplace(ChainName name, int reserve) {
+  m_lookup_table[name] = static_cast<chainIndex_t>(elements.size());
   Chain* before = this->elements.data();
   auto& ref =
       Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
@@ -347,6 +371,7 @@ Chain& Frame::emplace(ChainName name, int reserve) {
 }
 
 Chain& Frame::emplace(const Chain& chain) {
+  m_lookup_table[chain.name()] = static_cast<chainIndex_t>(elements.size());
   Chain* before = this->elements.data();
   auto& ref = Container<Chain>::emplace(Chain(chain));
   ref.m_frame = this;
@@ -358,28 +383,20 @@ Chain& Frame::emplace(const Chain& chain) {
   return ref;
 }
 
-Chain& Frame::operator[](const chainIndex_t& chainIndex) {
-  if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
-                          ") is out of range");
+Chain& Frame::operator[](const ChainName& chainName) {
+  auto it = m_lookup_table.find(chainName);
+  if (it==m_lookup_table.end()){
+    throw OutOfRangeFrame("Frame has no chain named `"+chainName.str()+"`");
   }
-  if (elements[chainIndex].is_deleted()) {
-    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
-                             ") was deleted");
-  }
-  return elements[chainIndex];
+  return elements[it->second];
 }
 
-const Chain& Frame::operator[](const chainIndex_t& chainIndex) const {
-  if (chainIndex < 0 || chainIndex >= this->elements.size()) {
-    throw OutOfRangeFrame("Chain index (=" + std::to_string(chainIndex) +
-                          ") is out of range");
+const Chain& Frame::operator[](const ChainName& chainName) const {
+  auto it = m_lookup_table.find(chainName);
+  if (it==m_lookup_table.end()){
+    throw OutOfRangeFrame("Frame has no chain named `"+chainName.str()+"`");
   }
-  if (elements[chainIndex].is_deleted()) {
-    throw DeletedChainAccess("Chain (index=" + std::to_string(chainIndex) +
-                             ") was deleted");
-  }
-  return elements[chainIndex];
+  return elements[it->second];
 }
 
 Frame::Frame(const Frame& rhs) : Container<Chain>(rhs) {

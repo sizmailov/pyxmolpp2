@@ -10,11 +10,7 @@ WD="$PWD"
 REPO=`git config remote.origin.url`
 SSH_REPO="${REPO/https:\/\/github.com\//git@github.com:}"
 
-
-function doCompile {
-  pip install -r docs/requirements.txt
-  sphinx-versioning build -r write_the_docs docs/source docs/build/html --run-setup-py
-}
+source "./build_docs.sh"
 
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 #if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then

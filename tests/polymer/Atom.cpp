@@ -38,8 +38,8 @@ TEST_F(AtomTests, composition){
   frame.emplace(ChainName("B"));
   Chain& C = frame.emplace(ChainName("C"));
 
-  C.emplace(ResidueName("GLY"),1);
-  Residue& C_GLY2 = C.emplace(ResidueName("GLY"),2);
+  C.emplace(ResidueName("GLY"),residueId_t(1));
+  Residue& C_GLY2 = C.emplace(ResidueName("GLY"),residueId_t(2));
 
   C_GLY2.emplace(AtomName("CA"),1,XYZ{});
   C_GLY2.emplace(AtomName("CB"),2,XYZ{});
@@ -88,7 +88,7 @@ TEST_F(AtomTests, composition){
   EXPECT_EQ(C_GLY2.name().str(),"LYS");
 
   EXPECT_EQ(C_GLY2.id(),2);
-  C_GLY2.set_id(2);
+  C_GLY2.set_id(residueId_t(2));
   EXPECT_EQ(C_GLY2.id(),2);
 
   EXPECT_EQ(C_GLY2.chain(),C);
@@ -267,36 +267,36 @@ TEST_F(AtomTests, brakets){
   Frame f(1);
 
   Chain&c = f.emplace(ChainName(""));
-  Residue&r = c.emplace(ResidueName("GLY"),1);
+  Residue&r = c.emplace(ResidueName("GLY"),ResidueId(1));
   Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
 
   { // cover const functions
     const Frame& frame = f;
-    EXPECT_EQ(frame[0],c);
-    EXPECT_EQ(frame[0][1],r);
-    EXPECT_EQ(frame[0][1][AtomName("CA")],a);
+    EXPECT_EQ(frame.asChains()[0],c);
+    EXPECT_EQ(frame.asChains()[0][1],r);
+    EXPECT_EQ(frame.asChains()[0][1][AtomName("CA")],a);
 
-    EXPECT_ANY_THROW(frame[1]);
-    EXPECT_ANY_THROW(frame[0][2]);
-    EXPECT_ANY_THROW(frame[0][1][AtomName("CB")]);
+    EXPECT_ANY_THROW(frame.asChains()[1]);
+    EXPECT_ANY_THROW(frame.asChains()[0][2]);
+    EXPECT_ANY_THROW(frame.asChains()[0][1][AtomName("CB")]);
   }
 
-  EXPECT_EQ(f[0],c);
-  EXPECT_EQ(f[0][1],r);
-  EXPECT_EQ(f[0][1][AtomName("CA")],a);
+  EXPECT_EQ(f.asChains()[0],c);
+  EXPECT_EQ(f.asChains()[0][1],r);
+  EXPECT_EQ(f.asChains()[0][1][AtomName("CA")],a);
 
-  EXPECT_ANY_THROW(f[1]);
-  EXPECT_ANY_THROW(f[0][2]);
-  EXPECT_ANY_THROW(f[0][1][AtomName("CB")]);
+  EXPECT_ANY_THROW(f.asChains()[1]);
+  EXPECT_ANY_THROW(f.asChains()[0][2]);
+  EXPECT_ANY_THROW(f.asChains()[0][1][AtomName("CB")]);
 
-  r.set_id(42);
+  r.set_id(residueId_t(42));
   a.set_name(AtomName("XX"));
 
-  EXPECT_EQ(f[0][1],r);
-  EXPECT_EQ(f[0][1][AtomName("XX")],a);
+  EXPECT_EQ(f.asChains()[0][42],r);
+  EXPECT_EQ(f.asChains()[0][42][AtomName("XX")],a);
 
-  EXPECT_ANY_THROW(f[0][2]);
-  EXPECT_ANY_THROW(f[0][42][AtomName("YY")]);
+  EXPECT_ANY_THROW(f.asChains()[0][2]);
+  EXPECT_ANY_THROW(f.asChains()[0][42][AtomName("YY")]);
 
 }
 
@@ -304,7 +304,7 @@ TEST_F(AtomTests, dedicated_selections){
   Frame f(1);
 
   Chain&c = f.emplace(ChainName(""));
-  Residue&r = c.emplace(ResidueName("GLY"),1);
+  Residue&r = c.emplace(ResidueName("GLY"),residueId_t(1));
   Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
 
   EXPECT_EQ(r.all().asResidues().size(),1);
@@ -327,7 +327,7 @@ TEST_F(AtomTests, deletion_invalidates_selections_2){
   Frame frame = make_polyglycines({{"A",10},{"B",20}});
 
   auto atoms = frame.asAtoms();
-  auto residues_to_delete = frame.asResidues().filter([](const Residue&r){return r.id()%2==0;});
+  auto residues_to_delete = frame.asResidues().filter([](const Residue&r){return r.id().serial%2==0;});
   auto atoms_to_delete = residues_to_delete.asAtoms();
   residues_to_delete.for_each([](Residue& r) { r.set_deleted(); });
   EXPECT_ANY_THROW(for (auto&a: atoms){});
