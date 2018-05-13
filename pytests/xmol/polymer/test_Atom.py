@@ -5,12 +5,12 @@ def test_Frame():
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.polymer import ResidueName
+    from pyxmolpp2.polymer import ResidueName, ResidueId
     from pyxmolpp2.geometry import XYZ
 
     f = Frame(5)
-    c = f.emplace(ChainName("A"),1)
-    r = c.emplace(ResidueName("LYS"),1)
+    c = f.emplace(ChainName("A"), 1)
+    r = c.emplace(ResidueName("LYS"), ResidueId(1))
     a = r.emplace(AtomName("CA"), 1, XYZ(1,2,3))
 
     assert a.residue == r
@@ -44,7 +44,7 @@ def make_polyglycine( chain_lengths, no_reserve=True):
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.polymer import ResidueName
+    from pyxmolpp2.polymer import ResidueName, ResidueId
     from pyxmolpp2.geometry import XYZ
 
     aid=1
@@ -57,9 +57,9 @@ def make_polyglycine( chain_lengths, no_reserve=True):
             c = frame.emplace(ChainName(chainId),N)
         for i in range(N):
             if no_reserve:
-                r = c.emplace(ResidueName("GLY"),rid)
+                r = c.emplace(ResidueName("GLY"),ResidueId(rid))
             else:
-                r = c.emplace(ResidueName("GLY"),rid,7)
+                r = c.emplace(ResidueName("GLY"),ResidueId(rid),7)
 
             rid+=1
             for aname in ["N","H","CA","HA2","HA3","C","O"]:

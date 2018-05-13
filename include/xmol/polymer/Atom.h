@@ -138,6 +138,9 @@ public:
   Residue& operator[](const residueId_t& residueId);
   const Residue& operator[](const residueId_t& residueId) const;
 
+  Residue& operator[](const residueSerial_t& residueId);
+  const Residue& operator[](const residueSerial_t& residueId) const;
+
   xmol::selection::Selection<const Atom> asAtoms() const {
     return all().asAtoms();
   }

@@ -287,6 +287,14 @@ Residue& Chain::operator[](const residueId_t& residueId) {
   return this->elements[m_lookup_table.at(residueId)];
 }
 
+const Residue& Chain::operator[](const residueSerial_t& residueId) const {
+  return this->elements[m_lookup_table.at(residueId_t(residueId))];
+}
+
+Residue& Chain::operator[](const residueSerial_t& residueId) {
+  return this->elements[m_lookup_table.at(residueId_t(residueId))];
+}
+
 bool Chain::is_deleted() const { return m_deleted; }
 
 void Chain::set_deleted() {

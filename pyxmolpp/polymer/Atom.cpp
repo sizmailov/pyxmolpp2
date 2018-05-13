@@ -110,6 +110,47 @@ Order is preserved across manipulations with ChainSelection
       py::class_<xmol::selection::SelectionRange<Residue>>(polymer, "ResidueSelectionRange");
   auto&& pyChainSelectionRange = py::class_<xmol::selection::SelectionRange<Chain>>(polymer, "ChainSelectionRange");
 
+  py::class_<ResidueInsertionCode>(polymer, "ResidueInsertionCode")
+      .def(py::init<const std::string&>())
+      .def_property_readonly("str", &ResidueInsertionCode::str)
+      .def("__hash__", &ResidueInsertionCode::value)
+      .def("__str__", [](const ResidueInsertionCode& name) { return '"' + name.str() + '"'; })
+      .def("__repr__", [](const ResidueInsertionCode& name) {
+        return "<pyxmolpp2.polymer.ResidueInsertionCode\"" + name.str() + "\" at 0x" +
+               xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
+      });
+
+  py::class_<ResidueId>(polymer, "ResidueId")
+      .def(py::init<>())
+      .def(py::init<residueSerial_t>())
+      .def(py::init<residueSerial_t, const ResidueInsertionCode&>())
+      .def(py::self==py::self)
+      .def(py::self!=py::self)
+      .def(py::self<=py::self)
+      .def(py::self>=py::self)
+      .def(py::self<py::self)
+      .def(py::self>py::self)
+      .def(py::self==residueSerial_t{})
+      .def(py::self!=residueSerial_t{})
+      .def(py::self<=residueSerial_t{})
+      .def(py::self>=residueSerial_t{})
+      .def(py::self<residueSerial_t{})
+      .def(py::self>residueSerial_t{})
+      .def(residueSerial_t{}==py::self)
+      .def(residueSerial_t{}!=py::self)
+      .def(residueSerial_t{}<=py::self)
+      .def(residueSerial_t{}>=py::self)
+      .def(residueSerial_t{}<py::self)
+      .def(residueSerial_t{}>py::self)
+      .def_readwrite("serial", &ResidueId::serial)
+      .def_readwrite("iCode", &ResidueId::iCode)
+      .def("__str__", [](const ResidueId& rid) { return std::to_string(rid.serial) + rid.iCode.str(); })
+      .def("__hash__", [](const ResidueId& rid) { return std::hash<ResidueId>()(rid); })
+      .def("__repr__", [](const ResidueId& rid) {
+        return "<pyxmolpp2.polymer.ResidueId\"" + std::to_string(rid.serial) + rid.iCode.str() + "\" at 0x" +
+               xmol::utils::string::int2hex((uint64_t)(std::addressof(rid))) + ">";
+      });
+
   pyAtomName.def(py::init<const std::string&>())
       .def_property_readonly("str", &AtomName::str)
       .def("__hash__", &AtomName::value)
@@ -238,9 +279,9 @@ Order is preserved across manipulations with ChainSelection
       .def("delete", [](ResidueRef residue) { static_cast<Residue&>(residue).set_deleted(); },
            "Marks residue as deleted. Further access to deleted residue is illegal")
       .def("__repr__", [](const ResidueRef residue) {
-        return "<pyxmolpp2.polymer.Residue id=" + std::to_string(static_cast<Residue&>(residue).id()) + " name=\"" +
-               static_cast<Residue&>(residue).name().str() + "\" at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(static_cast<Residue&>(residue)))) + ">";
+        auto& r = static_cast<Residue&>(residue);
+        return "<pyxmolpp2.polymer.Residue id=" + std::to_string(r.id().serial) + r.id().iCode.str() + " name=\"" +
+               r.name().str() + "\" at 0x" + xmol::utils::string::int2hex((uint64_t)(std::addressof(r))) + ">";
       });
   ;
   static_assert(AtomRefPolicy == ResidueRefPolicy, "");
