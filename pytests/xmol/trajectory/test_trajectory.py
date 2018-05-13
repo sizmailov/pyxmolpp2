@@ -26,10 +26,18 @@ def test_traj_iteration():
 
     n = 0
     stride = 50
-    for frame in trj[::stride]:
-        r = frame.asAtoms[0].r
+    for f in trj[::stride]:
+        r = f.asAtoms[0].r
         n +=1
 
+    assert trj.size//stride == n
+
+    n = 0
+    stride = 1
+    ats = frame.asResidues[0].asAtoms
+    trj.set_update_list(ats)
+    for f in trj[::stride]:
+        n +=1
     assert trj.size//stride == n
 
 

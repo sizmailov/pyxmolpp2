@@ -12,13 +12,12 @@ DatFile::DatFile(const std::string& filename)
     throw TrjtoolException("Can't open `"+m_filename+"`");
   }
   m_reader = std::unique_ptr<DATReader>(new DATReader(*m_stream));
-  m_stream->close();
+  this->close();
 }
 
 void DatFile::close() {
   if (m_stream->is_open()){
     m_stream->close();
-    m_reader->clear_info();
   }
 }
 
@@ -26,17 +25,12 @@ bool DatFile::match(
     const xmol::polymer::AtomSelection& atoms) const {
   return m_reader->match(atoms);
 }
-void DatFile::set_coordinates(
-    xmol::polymer::frameIndex_t frameIndex,
-    const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) {
-  //  return m_reader->set_frame(frameIndex,)
-  throw TrjtoolException("Not implemented");
-}
-void DatFile::set_coordinates(
-    xmol::polymer::frameIndex_t frameIndex,
-    const xmol::polymer::AtomSelection& atoms) {
-    Expects(frameIndex<n_frames());
-    Expects(frameIndex>=0);
+
+void DatFile::set_coordinates(xmol::polymer::frameIndex_t frameIndex, const xmol::polymer::AtomSelection& atoms,
+                              const std::vector<int>& update_list) {
+  Expects(frameIndex < n_frames());
+  Expects(frameIndex >= 0);
+  Expects(atoms.size() == update_list.size());
 
   if (!m_stream->is_open()) {
     m_stream->clear();
@@ -48,7 +42,7 @@ void DatFile::set_coordinates(
   }
   assert(m_stream->is_open());
   assert(m_stream->good());
-  return m_reader->set_frame(frameIndex, atoms);
+  m_reader->set_frame(frameIndex, atoms, update_list);
 }
 xmol::polymer::frameIndex_t DatFile::n_frames() const {
   return m_reader->n_frames();
