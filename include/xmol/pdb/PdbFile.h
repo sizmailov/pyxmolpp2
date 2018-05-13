@@ -18,10 +18,7 @@ public:
   ~PdbFile() override = default;
   std::unique_ptr<TrajectoryPortion> get_copy() const override;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                       const std::vector<std::pair<int, xmol::polymer::Atom*>>&
-                           index_atoms) override;
-  void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                       const xmol::polymer::AtomSelection& atoms) override;
+                       const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) override;
   xmol::polymer::frameIndex_t n_frames() const override;
   xmol::polymer::atomIndex_t n_atoms_per_frame() const override;
   bool match(const xmol::polymer::AtomSelection& atoms) const override;

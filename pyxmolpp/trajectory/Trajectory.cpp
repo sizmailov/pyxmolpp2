@@ -36,6 +36,7 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
   py::class_<Trajectory>(trajectory, "Trajectory")
       .def(py::init<const xmol::polymer::Frame&, bool>(),py::arg("reference"),py::arg("check_portions_to_match_reference")=true)
       .def("push_trajectory_portion", &Trajectory::push_trajectory_portion, "Add a trajectory portion")
+      .def("set_update_list", &Trajectory::set_update_list, "Select atoms which will be updated in iterations")
       .def("__len__", &Trajectory::n_frames, "Returns number of frames in trajectory")
       .def_property_readonly("size", &Trajectory::n_frames, "Returns number of frames in trajectory")
       .def_property_readonly("n_frames", &Trajectory::n_frames, "Returns number of frames in trajectory")

@@ -49,15 +49,15 @@ public:
   virtual ~TrajectoryPortion() = default;
   virtual std::unique_ptr<TrajectoryPortion> get_copy() const = 0;
 
-  virtual void set_coordinates(
-      xmol::polymer::frameIndex_t frameIndex,
-      const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) = 0;
+  void set_update_list(const xmol::polymer::AtomSelection& selection);
   virtual void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                               const xmol::polymer::AtomSelection& atoms) = 0;
+                               const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) = 0;
   virtual bool match(const xmol::polymer::AtomSelection& atoms) const = 0;
   virtual xmol::polymer::frameIndex_t n_frames() const = 0;
   virtual xmol::polymer::atomIndex_t n_atoms_per_frame() const = 0;
   virtual void close() = 0;
+
+protected:
 };
 
 class TrajectorySlice {
@@ -98,6 +98,8 @@ public:
 
   xmol::polymer::frameIndex_t n_frames() const;
 
+  void set_update_list(const xmol::polymer::AtomSelection& selection);
+
   TrajectorySlice slice(xmol::utils::optional<int> first = {},
                         xmol::utils::optional<int> last = {},
                         xmol::utils::optional<int> stride = {});
@@ -107,6 +109,7 @@ public:
 private:
   friend class TrajectoryRange;
 
+  std::vector<int> m_update_list;
   xmol::polymer::Frame reference;
   TrajectoryPortion* m_prev_portion = nullptr;
 

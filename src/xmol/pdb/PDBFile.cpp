@@ -15,13 +15,9 @@ PdbFile::PdbFile(const std::string& filename)
 }
 
 void PdbFile::set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                              const xmol::polymer::AtomSelection& atoms) {
+                              const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) {
   throw xmol::BaseException("not implemented");
 }
-
-void PdbFile::set_coordinates(
-    xmol::polymer::frameIndex_t frameIndex,
-    const std::vector<std::pair<int, xmol::polymer::Atom*>>& index_atoms) {}
 
 xmol::polymer::frameIndex_t PdbFile::n_frames() const {
   throw xmol::BaseException("not implemented");

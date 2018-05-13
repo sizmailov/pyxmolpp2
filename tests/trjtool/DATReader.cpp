@@ -16,7 +16,11 @@ public:
                                     xmol::pdb::FieldName("serial"),
                                     {7, 12});
   }
-
+  std::vector<int> get_vector_n(int n) const {
+    std::vector<int> update_list;
+    for (int k=0;k<n;k++){update_list.push_back(k);}
+    return update_list;
+  }
   xmol::pdb::AlteredPdbRecords permissibleRecords;
 };
 
@@ -34,7 +38,7 @@ TEST_F(TrjtoolTests, basic_read) {
 
   xmol::geometry::XYZ first_atom_coords (8.9505224227905273, -9.4666690826416016, -3.2724499702453613);
   EXPECT_GE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-1);
-  reader.set_frame(0,frame.asAtoms());
+  reader.set_frame(0,frame.asAtoms(),get_vector_n(atoms.size()));
   EXPECT_LE((first_atom_coords-frame.asAtoms()[0].r()).len(), 1e-3);
 
 }
