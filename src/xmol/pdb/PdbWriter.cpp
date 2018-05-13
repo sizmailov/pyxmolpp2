@@ -63,7 +63,7 @@ void PdbWriter::write(const xmol::polymer::Atom& atom, const xmol::pdb::basic_Pd
   write_field("%-s", atom.residue().name().str().c_str(), FieldName("resName"));
   write_field("%-s", atom.residue().chain().name().str().c_str(), FieldName("chainID"));
   write_field("%-d", atom.residue().id().serial, FieldName("resSeq"));
-  write_field("%s", atom.residue().id().iCode, FieldName("iCode"));
+  write_field("%s", atom.residue().id().iCode.str().c_str(), FieldName("iCode"));
   write_field("%8.3f", atom.r().x(), FieldName("x"));
   write_field("%8.3f", atom.r().y(), FieldName("y"));
   write_field("%8.3f", atom.r().z(), FieldName("z"));
