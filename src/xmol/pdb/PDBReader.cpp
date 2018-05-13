@@ -11,6 +11,11 @@ using namespace xmol::polymer;
 
 namespace {
 
+template <typename Iterator> ResidueId to_resid(const Iterator& it) {
+  using xmol::utils::string::trim;
+  return ResidueId(it->getInt(FieldName("resSeq")), ResidueInsertionCode(trim(it->getString(FieldName("iCode")))));
+}
+
 struct AtomStub {
   explicit AtomStub(AtomName name, atomId_t serial, XYZ xyz)
       : name(name), serial(serial), xyz(xyz){};
@@ -73,7 +78,7 @@ ResidueStub& readResidue(ChainStub& c, Iterator& it) {
 
   using xmol::utils::string::trim;
 
-  residueId_t residueId = it->getInt(FieldName("resSeq"));
+  auto residueId = to_resid(it);
   chainIndex_t chainName = it->getChar(FieldName("chainID"));
 
   c.residues.emplace_back(
@@ -81,11 +86,9 @@ ResidueStub& readResidue(ChainStub& c, Iterator& it) {
   ResidueStub& r = c.residues.back();
 
   while (it != ranges::default_sentinel{} &&
-         (it->getRecordName() == RecordName("ATOM") ||
-          it->getRecordName() == RecordName("HETATM") ||
+         (it->getRecordName() == RecordName("ATOM") || it->getRecordName() == RecordName("HETATM") ||
           it->getRecordName() == RecordName("ANISOU")) &&
-         it->getChar(FieldName("chainID")) == chainName &&
-         it->getInt(FieldName("resSeq")) == residueId) {
+         it->getChar(FieldName("chainID")) == chainName && to_resid(it) == residueId) {
     readAtom(r, it);
   }
 

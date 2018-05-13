@@ -63,7 +63,7 @@ public:
   Residue& set_name(const ResidueName& value);
 
   const residueId_t& id() const;
-  Residue& set_id(residueId_t&& value);
+  Residue& set_id(const residueId_t& value);
 
   const Chain& chain() const noexcept;
   Chain& chain() noexcept;
@@ -138,6 +138,9 @@ public:
   Residue& operator[](const residueId_t& residueId);
   const Residue& operator[](const residueId_t& residueId) const;
 
+  Residue& operator[](const residueSerial_t& residueId);
+  const Residue& operator[](const residueSerial_t& residueId) const;
+
   xmol::selection::Selection<const Atom> asAtoms() const {
     return all().asAtoms();
   }
@@ -207,8 +210,8 @@ public:
   Chain& emplace(ChainName name, int reserve = 0);
   Chain& emplace(const Chain& chain);
 
-  Chain& operator[](const chainIndex_t& chainIndex);
-  const Chain& operator[](const chainIndex_t& residueId) const;
+  Chain& operator[](const ChainName& chainName);
+  const Chain& operator[](const ChainName& chainName) const;
 
   xmol::selection::Selection<const Atom> asAtoms() const {
     return asResidues().asAtoms();
@@ -235,6 +238,7 @@ public:
   }
 
 private:
+  friend class Chain;
   friend class ElementReference<Chain>;
   void add_reference(ElementReference<Chain>& aref){
     ObservableBy<ElementReference<Chain>>::add_observer(aref);
@@ -242,6 +246,8 @@ private:
   void remove_reference(ElementReference<Chain>& aref){
     ObservableBy<ElementReference<Chain>>::remove_observer(aref);
   }
+
+  std::map<ChainName, chainIndex_t> m_lookup_table;
   frameIndex_t m_index;
 };
 
