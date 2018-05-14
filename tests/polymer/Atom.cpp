@@ -2,7 +2,6 @@
 
 #include "xmol/polymer/Atom.h"
 
-
 using ::testing::Test;
 using namespace xmol::polymer;
 

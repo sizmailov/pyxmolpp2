@@ -34,4 +34,9 @@ TEST_F(PdbReaderTests, sound){
   EXPECT_DOUBLE_EQ(atom.r().x(),11.281);
   EXPECT_DOUBLE_EQ(atom.r().y(),86.699);
   EXPECT_DOUBLE_EQ(atom.r().z(),94.383);
+
+  EXPECT_NO_THROW(frame[ChainName("A")]);
+  EXPECT_NO_THROW(frame[ChainName("A")][ResidueId(-3,ResidueInsertionCode("Z"))]);
+  EXPECT_NO_THROW(frame[ChainName("A")][ResidueId(-3,ResidueInsertionCode("Z"))][AtomName("N")]);
+  EXPECT_THROW(frame[ChainName("B")],OutOfRangeFrame);
 }
