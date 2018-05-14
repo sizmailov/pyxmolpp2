@@ -220,6 +220,7 @@ Chain::Chain(Chain&& rhs) noexcept : Container<Residue>(std::move(rhs)) {
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
   m_deleted = rhs.m_deleted;
+  m_lookup_table = std::move(rhs.m_lookup_table);
 }
 
 Chain& Chain::operator=(const Chain& rhs) {
@@ -230,6 +231,7 @@ Chain& Chain::operator=(const Chain& rhs) {
   m_name = rhs.m_name;
   m_frame = rhs.m_frame;
   m_deleted = rhs.m_deleted;
+  m_lookup_table = rhs.m_lookup_table;
   return *this;
 }
 
@@ -242,6 +244,7 @@ Chain& Chain::operator=(Chain&& rhs) noexcept {
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
   m_deleted = rhs.m_deleted;
+  m_lookup_table = std::move(rhs.m_lookup_table);
   return *this;
 }
 
@@ -404,6 +407,7 @@ Frame::Frame(const Frame& rhs) : Container<Chain>(rhs) {
     chain.m_frame = this;
   }
   m_index = rhs.m_index;
+  m_lookup_table = rhs.m_lookup_table;
 }
 
 Frame::Frame(Frame&& rhs) noexcept : Container<Chain>(std::move(rhs)) {
@@ -411,6 +415,7 @@ Frame::Frame(Frame&& rhs) noexcept : Container<Chain>(std::move(rhs)) {
     chain.m_frame = this;
   }
   m_index = rhs.m_index;
+  m_lookup_table = std::move(rhs.m_lookup_table);
 }
 
 Frame& Frame::operator=(const Frame& rhs) {
@@ -419,6 +424,7 @@ Frame& Frame::operator=(const Frame& rhs) {
     chain.m_frame = this;
   }
   m_index = rhs.m_index;
+  m_lookup_table = rhs.m_lookup_table;
   return *this;
 }
 
@@ -428,6 +434,7 @@ Frame& Frame::operator=(Frame&& rhs) noexcept {
     chain.m_frame = this;
   }
   m_index = rhs.m_index;
+  m_lookup_table = std::move(rhs.m_lookup_table);
   return *this;
 }
 // -------------------- Stubs -------------------------
