@@ -2,6 +2,9 @@
 Change log
 ----------
 
+v0.1.1:
+  - Bug fix: name/index lookup in Frame and Chain
+
 v0.1.0:
   - Add set operations for selections
   - Optimize selections construction
