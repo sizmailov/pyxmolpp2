@@ -98,6 +98,7 @@ private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Residue>;
+  friend class Atom;
   friend class Chain;
   friend class ElementReference<Atom>;
 
