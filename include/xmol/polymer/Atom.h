@@ -108,6 +108,8 @@ private:
     ObservableBy<ElementReference<Atom>>::remove_observer(aref);
   }
 
+  residueIndex_t pos_in_parent() const;
+
   ResidueName m_name;
   residueId_t m_id;
   Chain* m_chain;
@@ -182,8 +184,10 @@ private:
     ObservableBy<ElementReference<Residue>>::remove_observer(aref);
   }
 
+  chainIndex_t pos_in_parent() const;
+
   ChainName m_name;
-  std::map<residueId_t, residueIndex_t> m_lookup_table;
+  std::map<residueId_t, std::set<residueIndex_t>> m_lookup_table;
   chainIndex_t m_index;
   Frame* m_frame;
   bool m_deleted = false;
@@ -247,7 +251,7 @@ private:
     ObservableBy<ElementReference<Chain>>::remove_observer(aref);
   }
 
-  std::map<ChainName, chainIndex_t> m_lookup_table;
+  std::map<ChainName, std::set<chainIndex_t>> m_lookup_table;
   frameIndex_t m_index;
 };
 

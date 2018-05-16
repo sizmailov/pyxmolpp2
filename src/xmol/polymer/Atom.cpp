@@ -76,18 +76,19 @@ const residueId_t& Residue::id() const { return m_id; }
 
 Residue& Residue::set_id(const residueId_t& value) {
   auto it = chain().m_lookup_table.find(m_id);
-  Ensures (it!=chain().m_lookup_table.end());
+  Ensures(it!=chain().m_lookup_table.end());
+  Ensures(!it->second.empty());
   m_id = value;
-  auto index = it->second;
-  chain().m_lookup_table.erase(it);
-  chain().m_lookup_table[m_id] = index;
+  auto index = pos_in_parent();
+  it->second.erase(index);
+  chain().m_lookup_table[value].insert(index);
   return *this;
 }
 
 const ResidueName& Residue::name() const { return m_name; }
 
 Residue& Residue::set_name(const ResidueName& value) {
-  m_name = std::move(value);
+  m_name = value;
   return *this;
 }
 
@@ -105,7 +106,19 @@ Atom::Atom(Residue& residue, AtomName name, atomId_t id, XYZ r)
 const Residue* Atom::parent() const { return m_residue; };
 Residue* Atom::parent() { return m_residue; };
 
-Chain& Residue::chain() noexcept { return *m_chain; }
+Chain& Residue::chain() noexcept {
+  Ensures(m_chain != nullptr);
+  Ensures(this>=m_chain->elements.data());
+  Ensures(this<(m_chain->elements.data()+m_chain->elements.size()));
+  return *m_chain;
+}
+
+const Chain& Residue::chain() const noexcept {
+  Ensures(m_chain != nullptr);
+  Ensures(this>=m_chain->elements.data());
+  Ensures(this<(m_chain->elements.data()+m_chain->elements.size()));
+  return *m_chain;
+}
 
 const Residue* Residue::next() const noexcept {
   if (this == &chain().elements.back() ||
@@ -138,8 +151,6 @@ Residue* Residue::prev() noexcept  {
   }
   return this-1;
 }
-
-const Chain& Residue::chain() const noexcept { return *m_chain; }
 
 Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
   Atom* before = this->elements.data();
@@ -187,7 +198,16 @@ const Atom& Residue::operator[](const AtomName& atomName) const {
 bool Residue::is_deleted() const { return m_deleted; }
 
 void Residue::set_deleted() {
-  asAtoms().for_each([](Atom& a) { a.set_deleted(); });
+  Ensures(this>=chain().elements.data());
+  Ensures(this<(chain().elements.data()+chain().elements.size()));
+  for (Atom& a: *this) { a.set_deleted(); };
+
+  auto it = chain().m_lookup_table.find(m_id);
+
+  Ensures(it!=chain().m_lookup_table.end());
+  Ensures(!it->second.empty());
+
+  it->second.erase(pos_in_parent());
   m_deleted = true;
 }
 
@@ -200,6 +220,10 @@ const Chain* Residue::parent() const {
 };
 Chain* Residue::parent() { return m_chain; };
 
+residueIndex_t Residue::pos_in_parent() const {
+  return static_cast<residueIndex_t>(this-chain().elements.data());
+}
+
 // -------------------- Chain -------------------------
 
 Chain::Chain(const Chain& rhs) : Container<Residue>(rhs) {
@@ -210,6 +234,7 @@ Chain::Chain(const Chain& rhs) : Container<Residue>(rhs) {
   m_index = rhs.m_index;
   m_frame = rhs.m_frame;
   m_deleted = rhs.m_deleted;
+  m_lookup_table = rhs.m_lookup_table;
 }
 
 Chain::Chain(Chain&& rhs) noexcept : Container<Residue>(std::move(rhs)) {
@@ -228,8 +253,8 @@ Chain& Chain::operator=(const Chain& rhs) {
   for (auto& residues : this->elements) {
     residues.m_chain = this;
   }
-  m_name = rhs.m_name;
-  m_frame = rhs.m_frame;
+  set_name(rhs.m_name);
+  m_index = rhs.m_index;
   m_deleted = rhs.m_deleted;
   m_lookup_table = rhs.m_lookup_table;
   return *this;
@@ -240,9 +265,8 @@ Chain& Chain::operator=(Chain&& rhs) noexcept {
   for (auto& residues : this->elements) {
     residues.m_chain = this;
   }
-  m_name = rhs.m_name;
+  set_name(rhs.m_name);
   m_index = rhs.m_index;
-  m_frame = rhs.m_frame;
   m_deleted = rhs.m_deleted;
   m_lookup_table = std::move(rhs.m_lookup_table);
   return *this;
@@ -253,19 +277,23 @@ const chainIndex_t& Chain::index() const { return m_index; }
 const ChainName& Chain::name() const { return m_name; }
 
 Chain& Chain::set_name(const ChainName& value) {
+  Ensures(this>=frame().elements.data());
+  Ensures(this<(frame().elements.data()+frame().elements.size()));
+
   auto it = frame().m_lookup_table.find(m_name);
   Ensures(it!=frame().m_lookup_table.end());
+  Ensures(!it->second.empty());
   m_name = value;
-  auto index = it->second;
-  frame().m_lookup_table.erase(it);
-  frame().m_lookup_table[m_name] = index;
+  auto index = static_cast<int>(this-frame().elements.data());
+  it->second.erase(index);
+  frame().m_lookup_table[value].insert(index);
   return *this;
 }
 
 Frame& Chain::frame() noexcept { return *m_frame; }
 
 Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
-  m_lookup_table.emplace(id, size());
+  m_lookup_table[id].insert(size());
   Residue* before = this->elements.data();
   auto& ref = Container<Residue>::emplace(*this, name, id, reserve);
   Residue* after = this->elements.data();
@@ -277,7 +305,7 @@ Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
 }
 
 Residue& Chain::emplace(const Residue& residue) {
-  m_lookup_table.emplace(residue.id(), size());
+  m_lookup_table[residue.id()].insert(size());
   Residue* before = this->elements.data();
   auto& ref = Container<Residue>::emplace(Residue(residue));
   ref.m_chain = this;
@@ -291,18 +319,18 @@ Residue& Chain::emplace(const Residue& residue) {
 
 const Residue& Chain::operator[](const residueId_t& residueId) const {
   auto it = m_lookup_table.find(residueId);
-  if (it==m_lookup_table.end()){
+  if (it==m_lookup_table.end() || it->second.empty()){
     throw OutOfRangeChain("Chain has no residue with id `"+std::to_string(residueId.serial)+residueId.iCode.str()+"`");
   }
-  return this->elements[it->second];
+  return this->elements[*it->second.begin()];
 }
 
 Residue& Chain::operator[](const residueId_t& residueId) {
   auto it = m_lookup_table.find(residueId);
-  if (it==m_lookup_table.end()){
+  if (it==m_lookup_table.end() || it->second.empty()){
     throw OutOfRangeChain("Chain has no residue with id `"+std::to_string(residueId.serial)+residueId.iCode.str()+"`");
   }
-  return this->elements[it->second];
+  return this->elements[*it->second.begin()];
 }
 
 const Residue& Chain::operator[](const residueSerial_t& residueId) const {
@@ -328,6 +356,10 @@ Chain::Chain(Frame& frame, ChainName name, chainIndex_t id, int reserve)
 
 const Frame* Chain::parent() const { return m_frame; };
 Frame* Chain::parent() { return m_frame; };
+
+chainIndex_t Chain::pos_in_parent() const {
+  return static_cast<chainIndex_t>(this-frame().elements.data());
+}
 
 // -------------------- Frame -------------------------
 
@@ -361,7 +393,7 @@ void Frame::to_pdb(const std::string& filename,
 }
 
 Chain& Frame::emplace(ChainName name, int reserve) {
-  m_lookup_table[name] = static_cast<chainIndex_t>(elements.size());
+  m_lookup_table[name].insert(static_cast<chainIndex_t>(elements.size()));
   Chain* before = this->elements.data();
   auto& ref =
       Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
@@ -374,7 +406,7 @@ Chain& Frame::emplace(ChainName name, int reserve) {
 }
 
 Chain& Frame::emplace(const Chain& chain) {
-  m_lookup_table[chain.name()] = static_cast<chainIndex_t>(elements.size());
+  m_lookup_table[chain.name()].insert(static_cast<chainIndex_t>(elements.size()));
   Chain* before = this->elements.data();
   auto& ref = Container<Chain>::emplace(Chain(chain));
   ref.m_frame = this;
@@ -388,18 +420,18 @@ Chain& Frame::emplace(const Chain& chain) {
 
 Chain& Frame::operator[](const ChainName& chainName) {
   auto it = m_lookup_table.find(chainName);
-  if (it==m_lookup_table.end()){
+  if (it ==m_lookup_table.end() || it->second.empty()){
     throw OutOfRangeFrame("Frame has no chain named `"+chainName.str()+"`");
   }
-  return elements[it->second];
+  return elements[*it->second.begin()];
 }
 
 const Chain& Frame::operator[](const ChainName& chainName) const {
   auto it = m_lookup_table.find(chainName);
-  if (it==m_lookup_table.end()){
+  if (it ==m_lookup_table.end() || it->second.empty()){
     throw OutOfRangeFrame("Frame has no chain named `"+chainName.str()+"`");
   }
-  return elements[it->second];
+  return elements[*it->second.begin()];
 }
 
 Frame::Frame(const Frame& rhs) : Container<Chain>(rhs) {

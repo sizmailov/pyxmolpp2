@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "xmol/pdb/PdbReader.h"
+#include "xmol/polymer/exceptions.h"
 
 
 using ::testing::Test;
