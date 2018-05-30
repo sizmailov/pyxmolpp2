@@ -309,6 +309,15 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
 
     return None
 
+
+def skip(app, what, name, obj, skip, options):
+    skip_list = [ "__module__","__weakref__"]
+    if name in skip_list:
+        return True
+    return skip
+
+
 def setup(app):
     app.connect('autodoc-process-signature', strip_argumet_types)
     app.connect('autodoc-process-docstring', process_docs)
+    app.connect("autodoc-skip-member", skip)
