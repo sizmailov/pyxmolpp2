@@ -31,8 +31,9 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
         throw py::stop_iteration();
       }, py::return_value_policy::reference);
 
-  py::class_<TrajectorySlice>(trajectory,"TrajectorySlice")
-      .def("__iter__", &TrajectorySlice::begin);
+  py::class_<TrajectorySlice>(trajectory, "TrajectorySlice")
+      .def("__iter__", &TrajectorySlice::begin)
+      .def("__len__", &TrajectorySlice::size);
 
   py::class_<Trajectory>(trajectory, "Trajectory")
       .def(py::init<const xmol::polymer::Frame&, bool>(), py::arg("reference"),

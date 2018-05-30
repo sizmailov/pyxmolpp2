@@ -66,3 +66,27 @@ def test_traj_exceptions():
         trj.push_trajectory_portion(datfile1)
 
 
+def test_traj_size():
+
+    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+
+    from pyxmolpp2.trjtool import DatFile
+    from pyxmolpp2.trajectory import Trajectory
+
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+
+    assert frame.asAtoms.size > 0
+
+    trj = Trajectory(frame, True)
+    trj.push_trajectory_portion(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+    assert len(trj[0:10]) == 10
+    assert len(trj[0:10:10]) == 1
+    assert len(trj[0:10:100]) == 1
+    assert len(trj[0:100:10]) == 10
+    assert len(trj[0:100:-10]) == 0
+    assert len(trj[100:0:-1]) == 100
+    assert len(trj[0:100:-1]) == 0
