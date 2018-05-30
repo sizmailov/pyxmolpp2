@@ -355,3 +355,24 @@ def test_lookup_after_rename():
     frame[ChainName("X")][ResidueId(99)][AtomName("CX")] # does not throw
 
 
+def test_dumb_copy_lookup():
+    from pyxmolpp2.polymer import Frame
+    frame = make_polyglycine([("A", 3),("B", 3)])
+
+    frame2 = Frame(2)
+    for c in frame.asChains:
+        frame2.emplace(c)
+
+    assert frame.asChains.size == frame2.asChains.size
+    assert frame.asResidues.size == frame2.asResidues.size
+    assert frame.asAtoms.size == frame2.asAtoms.size
+
+    for x in frame2.asAtoms:
+        assert x.residue[x.name] == x
+
+    for x in frame2.asResidues:
+        assert x.chain[x.id] == x
+
+    for x in frame2.asChains:
+        assert x.frame[x.name] == x
+        assert x.frame == frame2

@@ -98,6 +98,7 @@ private:
   Residue(Chain& chain, ResidueName name, residueId_t id, int reserve = 0);
 
   friend class xmol::selection::Container<Residue>;
+  friend class Atom;
   friend class Chain;
   friend class ElementReference<Atom>;
 
@@ -107,6 +108,8 @@ private:
   void remove_reference(ElementReference<Atom>& aref){
     ObservableBy<ElementReference<Atom>>::remove_observer(aref);
   }
+
+  residueIndex_t pos_in_parent() const;
 
   ResidueName m_name;
   residueId_t m_id;
@@ -182,8 +185,10 @@ private:
     ObservableBy<ElementReference<Residue>>::remove_observer(aref);
   }
 
+  chainIndex_t pos_in_parent() const;
+
   ChainName m_name;
-  std::map<residueId_t, residueIndex_t> m_lookup_table;
+  std::map<residueId_t, std::set<residueIndex_t>> m_lookup_table;
   chainIndex_t m_index;
   Frame* m_frame;
   bool m_deleted = false;
@@ -247,7 +252,7 @@ private:
     ObservableBy<ElementReference<Chain>>::remove_observer(aref);
   }
 
-  std::map<ChainName, chainIndex_t> m_lookup_table;
+  std::map<ChainName, std::set<chainIndex_t>> m_lookup_table;
   frameIndex_t m_index;
 };
 

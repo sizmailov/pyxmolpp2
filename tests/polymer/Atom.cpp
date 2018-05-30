@@ -383,12 +383,10 @@ TEST_F(AtomTests, residue_prev_next){
 
   EXPECT_EQ(c[1].next(),&c[2]);
   EXPECT_EQ(c[2].next(),nullptr);
-  EXPECT_EQ(c[3].next(),&c[4]);
   EXPECT_EQ(c[4].next(),nullptr);
 
   EXPECT_EQ(c[1].prev(),nullptr);
   EXPECT_EQ(c[2].prev(),&c[1]);
-  EXPECT_EQ(c[3].prev(),&c[2]);
   EXPECT_EQ(c[4].prev(),nullptr);
 
 

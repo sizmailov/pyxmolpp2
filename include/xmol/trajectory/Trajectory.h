@@ -64,6 +64,7 @@ class TrajectorySlice {
 public:
   TrajectoryRange begin() const;
   TrajectoryRange end() const;
+  int size() const;
 
 private:
   friend class Trajectory;

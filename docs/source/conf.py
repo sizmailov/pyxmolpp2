@@ -39,6 +39,7 @@ release = u'0.0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
     'sphinx_autodoc_annotation',
 ]
@@ -163,7 +164,7 @@ texinfo_documents = [
 # -- Extension configuration -------------------------------------------------
 
 autodoc_default_flags = ['members','undoc-members', 'show-inheritance','special-members']
-autoclass_content = "both"
+autoclass_content = "class"
 
 
 def strip_argumet_types(app=None, what=None, name=None, obj=None, options=None, arg=None, ret=None):
@@ -265,7 +266,7 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
             fname = m.group("fname")
             end = i
 
-    new_docs = [".. note:: There are several overloads for :py:meth:`{}`".format(fname),""]
+    new_docs = [".. note:: There are {} overloads for :py:meth:`{}`".format(len(overloads), fname),""]
 
     docstringlines[:] = new_docs
 
@@ -308,6 +309,15 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
 
     return None
 
+
+def skip(app, what, name, obj, skip, options):
+    skip_list = [ "__module__","__weakref__"]
+    if name in skip_list:
+        return True
+    return skip
+
+
 def setup(app):
     app.connect('autodoc-process-signature', strip_argumet_types)
     app.connect('autodoc-process-docstring', process_docs)
+    app.connect("autodoc-skip-member", skip)

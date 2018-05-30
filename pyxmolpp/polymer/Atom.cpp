@@ -7,22 +7,6 @@
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
 
-#define POLYMER_USE_SMART_POINTERS
-//
-// PYBIND11_MAKE_OPAQUE(xmol::polymer::Frame);
-// PYBIND11_MAKE_OPAQUE(xmol::polymer::ElementReference<xmol::polymer::Atom>);
-// PYBIND11_MAKE_OPAQUE(xmol::polymer::ElementReference<xmol::polymer::Residue>);
-// PYBIND11_MAKE_OPAQUE(xmol::polymer::ElementReference<xmol::polymer::Chain>);
-
-#ifndef POLYMER_USE_SMART_POINTERS
-PYBIND11_MAKE_OPAQUE(xmol::polymer::Atom);
-PYBIND11_MAKE_OPAQUE(xmol::polymer::Residue);
-PYBIND11_MAKE_OPAQUE(xmol::polymer::Chain);
-PYBIND11_MAKE_OPAQUE(xmol::polymer::AtomSelection);
-PYBIND11_MAKE_OPAQUE(xmol::polymer::ResidueSelection);
-PYBIND11_MAKE_OPAQUE(xmol::polymer::ChainSelection);
-#endif
-
 void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
   using namespace xmol::polymer;
@@ -32,42 +16,17 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   auto&& pyResidueName = py::class_<ResidueName>(polymer, "ResidueName");
   auto&& pyChainName = py::class_<ChainName>(polymer, "ChainName");
 
-#ifdef POLYMER_USE_SMART_POINTERS
   using AtomType = ElementReference<Atom>;
   using ResidueType = ElementReference<Residue>;
   using ChainType = ElementReference<Chain>;
   using FrameType = Frame;
-#else
-  using AtomType = Atom;
-  using ResidueType = Residue;
-  using ChainType = Chain;
-  using FrameType = Frame;
-#endif
 
-  using AtomRef = std::conditional<std::is_same<AtomType, Atom>::value, Atom&, ElementReference<Atom>>::type;
-  using ResidueRef =
-      std::conditional<std::is_same<ResidueType, Residue>::value, Residue&, ElementReference<Residue>>::type;
-  using ChainRef = std::conditional<std::is_same<ChainType, Chain>::value, Chain&, ElementReference<Chain>>::type;
   using FrameRef = Frame&;
 
-  constexpr py::return_value_policy AtomRefPolicy =
-      std::is_same<AtomType, Atom>::value ? py::return_value_policy::reference : py::return_value_policy::move;
-  constexpr py::return_value_policy ResidueRefPolicy =
-      std::is_same<ResidueType, Residue>::value ? py::return_value_policy::reference : py::return_value_policy::move;
-  constexpr py::return_value_policy ChainRefPolicy =
-      std::is_same<ChainType, Chain>::value ? py::return_value_policy::reference : py::return_value_policy::move;
-  constexpr py::return_value_policy FrameRefPolicy =
-      std::is_same<FrameType, Frame>::value ? py::return_value_policy::reference : py::return_value_policy::move;
-
-  static_assert(!std::is_same<AtomType, Atom>::value, "");
-  static_assert(!std::is_same<ResidueType, Residue>::value, "");
-  static_assert(!std::is_same<ChainType, Chain>::value, "");
-  static_assert(std::is_same<FrameType, Frame>::value, "");
-
-  static_assert(std::is_same<AtomRef, ElementReference<Atom>>::value, "");
-  static_assert(std::is_same<ResidueRef, ElementReference<Residue>>::value, "");
-  static_assert(std::is_same<ChainRef, ElementReference<Chain>>::value, "");
-  static_assert(std::is_same<FrameRef, Frame&>::value, "");
+  constexpr py::return_value_policy AtomRefPolicy = py::return_value_policy::reference;
+  constexpr py::return_value_policy ResidueRefPolicy = py::return_value_policy::reference;
+  constexpr py::return_value_policy ChainRefPolicy = py::return_value_policy::reference;
+  constexpr py::return_value_policy FrameRefPolicy = py::return_value_policy::reference;
 
   auto&& pyAtom = py::class_<AtomType>(polymer, "Atom");
   auto&& pyResidue = py::class_<ResidueType>(polymer, "Residue");
@@ -77,31 +36,33 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   auto&& pyAtomSelection = py::class_<AtomSelection>(polymer, "AtomSelection", R"pydoc(
 Ordered list of atoms.
 
-Order of atoms within single Residue matches their construction order.
-Atoms from different residues are ordered as parent residues, see ResidueSelection for details.
+Order of atoms within residue match their construction order.
+Atoms from different residues are ordered as parent residues, see :py:class:`ResidueSelection` for details.
 
-Order is preserved across manipulations with AtomSelection
+Order is preserved across manipulations with :py:class:`AtomSelection`
 
 )pydoc");
   auto&& pyResidueSelection = py::class_<ResidueSelection>(polymer, "ResidueSelection", R"pydoc(
 Ordered list of residues.
 
-Order of residues within single Chain matches their construction order.
-Residues from different chains are ordered as parent chains, see ChainSelection for details.
+Order of residues within chain match their construction order.
+Residues from different chains are ordered as parent chains, see :py:class:`ChainSelection` for details.
 
-Order is preserved across manipulations with ResidueSelection
+Order is preserved across manipulations with :py:class:`ResidueSelection`
 
 )pydoc");
   auto&& pyChainSelection = py::class_<ChainSelection>(polymer, "ChainSelection", R"pydoc(
 Ordered list of chains.
 
-Order of chains within single Frame matches their construction order.
+Order of chains within frame matches their construction order.
 Chains from different frames are ordered as parent frames.
 
-Frames are ordered by Frame.index. If two frames have identical index, order is undefined.
-Generally it's a *bad* idea to have Atom/Residue/Chain selection with elements from two frames with same index.
+Frames are ordered by their :py:attr:`~Frame.index`.
 
-Order is preserved across manipulations with ChainSelection
+.. warning: If two frames have identical index, order is undefined
+    Generally it's a *bad* idea to have :py:class:`Atom`/:py:class:`Residue`/:py:class:`Chain` selection with elements from two frames with same index.
+
+Order is preserved across manipulations with :py:class:`ChainSelection`
 
 )pydoc");
 

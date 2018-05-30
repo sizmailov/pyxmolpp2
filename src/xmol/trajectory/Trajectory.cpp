@@ -70,6 +70,11 @@ TrajectoryRange TrajectorySlice::end() const {
   return TrajectoryRange(trj, last, last, stride);
 }
 
+int TrajectorySlice::size() const {
+  int result = (last - first + stride + (stride > 0 ? -1 : 1)) / stride;
+  return (result > 0) ? result : 0;
+}
+
 TrajectorySlice::TrajectorySlice(xmol::trajectory::Trajectory& trj, int first,
                                  int last, int stride)
     : trj(trj), first(first), last(last), stride(stride) {}
