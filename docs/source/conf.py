@@ -163,7 +163,7 @@ texinfo_documents = [
 # -- Extension configuration -------------------------------------------------
 
 autodoc_default_flags = ['members','undoc-members', 'show-inheritance','special-members']
-autoclass_content = "both"
+autoclass_content = "class"
 
 
 def strip_argumet_types(app=None, what=None, name=None, obj=None, options=None, arg=None, ret=None):
