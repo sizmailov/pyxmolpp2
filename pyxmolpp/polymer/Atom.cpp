@@ -36,31 +36,33 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   auto&& pyAtomSelection = py::class_<AtomSelection>(polymer, "AtomSelection", R"pydoc(
 Ordered list of atoms.
 
-Order of atoms within single Residue matches their construction order.
-Atoms from different residues are ordered as parent residues, see ResidueSelection for details.
+Order of atoms within residue match their construction order.
+Atoms from different residues are ordered as parent residues, see :py:class:`ResidueSelection` for details.
 
-Order is preserved across manipulations with AtomSelection
+Order is preserved across manipulations with :py:class:`AtomSelection`
 
 )pydoc");
   auto&& pyResidueSelection = py::class_<ResidueSelection>(polymer, "ResidueSelection", R"pydoc(
 Ordered list of residues.
 
-Order of residues within single Chain matches their construction order.
-Residues from different chains are ordered as parent chains, see ChainSelection for details.
+Order of residues within chain match their construction order.
+Residues from different chains are ordered as parent chains, see :py:class:`ChainSelection` for details.
 
-Order is preserved across manipulations with ResidueSelection
+Order is preserved across manipulations with :py:class:`ResidueSelection`
 
 )pydoc");
   auto&& pyChainSelection = py::class_<ChainSelection>(polymer, "ChainSelection", R"pydoc(
 Ordered list of chains.
 
-Order of chains within single Frame matches their construction order.
+Order of chains within frame matches their construction order.
 Chains from different frames are ordered as parent frames.
 
-Frames are ordered by Frame.index. If two frames have identical index, order is undefined.
-Generally it's a *bad* idea to have Atom/Residue/Chain selection with elements from two frames with same index.
+Frames are ordered by their :py:attr:`~Frame.index`.
 
-Order is preserved across manipulations with ChainSelection
+.. warning: If two frames have identical index, order is undefined
+    Generally it's a *bad* idea to have :py:class:`Atom`/:py:class:`Residue`/:py:class:`Chain` selection with elements from two frames with same index.
+
+Order is preserved across manipulations with :py:class:`ChainSelection`
 
 )pydoc");
 
