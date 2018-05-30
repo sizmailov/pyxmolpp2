@@ -266,7 +266,7 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
             fname = m.group("fname")
             end = i
 
-    new_docs = [".. note:: There are several overloads for :py:meth:`{}`".format(fname),""]
+    new_docs = [".. note:: There are {} overloads for :py:meth:`{}`".format(len(overloads), fname),""]
 
     docstringlines[:] = new_docs
 
