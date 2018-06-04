@@ -13,8 +13,9 @@ class basic_PdbRecords;
 
 class PdbFile : public xmol::trajectory::TrajectoryPortion {
 public:
-  PdbFile(const PdbFile& rhs) : PdbFile(rhs.m_filename){};
+  PdbFile(const PdbFile& rhs) : PdbFile(rhs.m_filename,*rhs.m_db){};
   explicit PdbFile(const std::string& filename);
+  explicit PdbFile(const std::string& filename, const basic_PdbRecords& db);
   ~PdbFile() override = default;
   std::unique_ptr<TrajectoryPortion> get_copy() const override;
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
@@ -24,14 +25,14 @@ public:
   bool match(const xmol::polymer::AtomSelection& atoms) const override;
   void close() override;
 
-  xmol::polymer::Frame get_frame(const basic_PdbRecords& pdbRecords);
   xmol::polymer::Frame get_frame();
-  xmol::polymer::Frame get_frame(int n);
+  std::vector<xmol::polymer::Frame> get_frames();
 
 private:
   std::string m_filename;
   std::unique_ptr<std::ifstream> m_stream;
   std::unique_ptr<PdbReader> m_reader;
+  const basic_PdbRecords* m_db;
 };
 }
 }

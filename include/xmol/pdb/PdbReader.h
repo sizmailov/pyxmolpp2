@@ -14,6 +14,7 @@ public:
   xmol::polymer::Frame read_frame();
   xmol::polymer::Frame read_frame(const basic_PdbRecords& db);
   std::vector<xmol::polymer::Frame> read_frames();
+  std::vector<xmol::polymer::Frame> read_frames(const basic_PdbRecords& db);
 
 private:
   std::istream* is;

@@ -239,9 +239,11 @@ Frame PdbReader::read_frame(const basic_PdbRecords& db) {
   return result;
 }
 
-std::vector<Frame> PdbReader::read_frames() {
+std::vector<Frame> PdbReader::read_frames() { return read_frames(StandardPdbRecords::instance()); }
 
-  auto pdbLines = getPDBLines(*is);
+std::vector<Frame> PdbReader::read_frames(const basic_PdbRecords& db) {
+
+  auto pdbLines = getPDBLines(*is, db);
   std::vector<Frame> frames;
 
   auto it = ranges::begin(pdbLines);

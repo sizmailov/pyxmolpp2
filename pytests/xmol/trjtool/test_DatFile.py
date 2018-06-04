@@ -9,7 +9,7 @@ def test_read_trjtool():
 
     records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
 
     assert frame.asAtoms.size > 0
 

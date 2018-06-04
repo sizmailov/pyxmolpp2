@@ -14,6 +14,17 @@ def test_read_frame():
         assert frame.asAtoms.size > 0
         # print (frame.asAtoms)
 
+def test_read_frames():
+    from pyxmolpp2.pdb import PdbFile
+    import glob
+
+    for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
+
+        frames = PdbFile(filename).get_frames()
+
+        assert len(frames) > 0
+        print(len(frames))
+
 def test_read_field_error():
     from pyxmolpp2.pdb import PdbFile, StandardPdbRecords, AlteredPdbRecords, RecordName, FieldName, PdbException
     import glob
@@ -25,7 +36,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            PdbFile(filename).get_frame(records)
+            PdbFile(filename, records).get_frame()
 
 
 
@@ -35,7 +46,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            frame = PdbFile(filename).get_frame(records)
+            frame = PdbFile(filename,records).get_frame()
             # print(frame)
 
 
@@ -45,7 +56,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            frame = PdbFile(filename).get_frame(records)
+            frame = PdbFile(filename,records).get_frame()
             # print(frame)
 
 
