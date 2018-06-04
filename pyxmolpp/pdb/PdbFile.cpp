@@ -17,7 +17,7 @@ void pyxmolpp::pdb::init_PdbFile(py::module& pdb) {
 
 :param db: Non-standard PDB records
 )pydoc")
-      .def("close", &PdbFile::close, "Release file handle")
+      .def("close", (void (PdbFile::*)())&PdbFile::close, "Release file handle")
       .def("match", &PdbFile::match, py::arg("reference_atoms"),
            "Checks atom names, residue names and residue ids to match reference_atoms")
       .def_property_readonly("n_frames", &PdbFile::n_frames,

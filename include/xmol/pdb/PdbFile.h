@@ -24,13 +24,14 @@ public:
   xmol::polymer::atomIndex_t n_atoms_per_frame() const override;
   bool match(const xmol::polymer::AtomSelection& atoms) const override;
   void close() override;
+  void close() const;
 
-  xmol::polymer::Frame get_frame();
-  std::vector<xmol::polymer::Frame> get_frames();
+  xmol::polymer::Frame get_frame() const;
+  std::vector<xmol::polymer::Frame> get_frames() const;
 
 private:
   std::string m_filename;
-  std::unique_ptr<std::ifstream> m_stream;
+  mutable std::unique_ptr<std::ifstream> m_stream;
   std::unique_ptr<PdbReader> m_reader;
   const basic_PdbRecords* m_db;
 };
