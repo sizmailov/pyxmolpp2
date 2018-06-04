@@ -8,9 +8,9 @@ def test_traj_iteration():
 
     records = AlteredPdbRecords(StandardPdbRecords.instance())
 
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7, 12])
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
 
     assert frame.asAtoms.size > 0
 
@@ -22,7 +22,7 @@ def test_traj_iteration():
     trj.push_trajectory_portion(datfile1)
     trj.push_trajectory_portion(datfile2)
 
-    assert trj.size == datfile1.n_frames+ datfile2.n_frames
+    assert trj.size == datfile1.n_frames + datfile2.n_frames
 
     n = 0
     stride = 50
@@ -54,13 +54,13 @@ def test_traj_exceptions():
     datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
 
     with pytest.raises(TrajectoryException):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb", records).get_frame()
         frame.asAtoms[0].name=AtomName("XX")
         trj = Trajectory(frame, True)
         trj.push_trajectory_portion(datfile1)
 
     with pytest.raises(TrajectoryException):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
         frame.asAtoms[0].delete()
         trj = Trajectory(frame, True)
         trj.push_trajectory_portion(datfile1)
@@ -77,7 +77,7 @@ def test_traj_size():
     records = AlteredPdbRecords(StandardPdbRecords.instance())
     records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").get_frame(records)
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
 
     assert frame.asAtoms.size > 0
 

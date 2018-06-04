@@ -25,7 +25,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            PdbFile(filename).get_frame(records)
+            PdbFile(filename, records).get_frame()
 
 
 
@@ -35,7 +35,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            frame = PdbFile(filename).get_frame(records)
+            frame = PdbFile(filename,records).get_frame()
             # print(frame)
 
 
@@ -45,7 +45,7 @@ def test_read_field_error():
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
         # print(filename)
         with pytest.raises(PdbException):
-            frame = PdbFile(filename).get_frame(records)
+            frame = PdbFile(filename,records).get_frame()
             # print(frame)
 
 
