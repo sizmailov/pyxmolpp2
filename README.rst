@@ -91,3 +91,8 @@ Credits
 -------
 
 Written by Sergei Izmailov in BioNMR lab at SPbSU
+
+
+.. image:: https://badges.gitter.im/pyxmolpp2/Lobby.svg
+   :alt: Join the chat at https://gitter.im/pyxmolpp2/Lobby
+   :target: https://gitter.im/pyxmolpp2/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
