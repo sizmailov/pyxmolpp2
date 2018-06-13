@@ -312,6 +312,21 @@ TEST_F(AtomTests, dedicated_selections){
   EXPECT_EQ(c.all().asAtoms().asResidues().asChains().size(),1);
 }
 
+TEST_F(AtomTests, selection_slices){
+  Frame frame = make_polyglycines({{"A",10},{"B",20}});
+  auto atoms = frame.asAtoms();
+  EXPECT_EQ(atoms.size(), 7*10+20*7);
+  EXPECT_EQ(atoms.slice_range().size(), 7*10+20*7);
+  EXPECT_EQ(atoms.slice_range({},{},-1).size(), 7*10+20*7);
+  EXPECT_EQ(atoms.slice_range(10,{},1).size(), 7*10+20*7-10);
+  EXPECT_EQ(atoms.slice_range({},10).size(),10);
+  EXPECT_EQ(atoms.slice_range({},10,2).size(),5);
+  EXPECT_EQ(atoms.slice_range(0,10,-2).size(),0);
+  EXPECT_EQ(atoms.slice_range(10,{},-2).size(),6);
+  EXPECT_EQ(frame.asAtoms().slice(10,{},-2).size(),6);
+  EXPECT_EQ(frame.asAtoms().slice({},{},-1).size(), 7*10+20*7);
+}
+
 TEST_F(AtomTests, deletion_invalidates_selections_1){
   Frame frame = make_polyglycines({{"A",10},{"B",20}});
 
