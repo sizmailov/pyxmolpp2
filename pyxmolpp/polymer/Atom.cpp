@@ -396,18 +396,32 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
                              "Returns selection of parent residues")
       .def("__iter__", [](AtomSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
       .def("__getitem__", [](AtomSelection& sel, int index) -> AtomRef { return AtomRef(sel[index]); }, AtomRefPolicy,
-           py::arg("n"), "Get n'th element")
-      .def("__repr__", [](const AtomSelection& selection) {
-        return "<pyxmolpp2.polymer.AtomSelection size=" + std::to_string(selection.size()) + " at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      })
-      .def(py::self*=py::self)
-      .def(py::self+=py::self)
-      .def(py::self-=py::self)
-      .def(py::self*py::self)
-      .def(py::self+py::self)
-      .def(py::self-py::self)
-      ;
+           py::arg("n"), "Access n'th element")
+      .def("__getitem__",
+           [](const AtomSelection& sel, py::slice slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
+               throw py::error_already_set();
+             }
+             std::cout << "["
+                          << start << ":"
+                       << stop << ":"
+                       << step << "] (" << slicelength << ")";
+             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
+           },
+           py::arg("slice"), "Slice overload")
+      .def("__repr__",
+           [](const AtomSelection& selection) {
+             return "<pyxmolpp2.polymer.AtomSelection size=" + std::to_string(selection.size()) + " at 0x" +
+                    xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
+           })
+      .def(py::self *= py::self)
+      .def(py::self += py::self)
+      .def(py::self -= py::self)
+      .def(py::self * py::self)
+      .def(py::self + py::self)
+      .def(py::self - py::self);
 
   pyResidueSelection
       .def("filter",
@@ -428,18 +442,28 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
                              "Returns selection of child atoms")
       .def("__iter__", [](ResidueSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
       .def("__getitem__", [](ResidueSelection& sel, int index) -> ResidueRef { return ResidueRef(sel[index]); },
-           ResidueRefPolicy, py::arg("n"), "Get n'th element")
-      .def("__repr__", [](const ResidueSelection& selection) {
-        return "<pyxmolpp2.polymer.ResidueSelection size=" + std::to_string(selection.size()) + " at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      })
-      .def(py::self*=py::self)
-      .def(py::self+=py::self)
-      .def(py::self-=py::self)
-      .def(py::self*py::self)
-      .def(py::self+py::self)
-      .def(py::self-py::self)
-      ;
+           ResidueRefPolicy, py::arg("n"), "Access n'th element")
+      .def("__getitem__",
+           [](const ResidueSelection& sel, py::slice slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
+               throw py::error_already_set();
+             }
+             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
+           },
+           py::arg("slice"), "Slice overload")
+      .def("__repr__",
+           [](const ResidueSelection& selection) {
+             return "<pyxmolpp2.polymer.ResidueSelection size=" + std::to_string(selection.size()) + " at 0x" +
+                    xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
+           })
+      .def(py::self *= py::self)
+      .def(py::self += py::self)
+      .def(py::self -= py::self)
+      .def(py::self * py::self)
+      .def(py::self + py::self)
+      .def(py::self - py::self);
 
   pyChainSelection
       .def("filter",
@@ -461,16 +485,26 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
                              "Returns selection of child chains")
       .def("__iter__", [](ChainSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
       .def("__getitem__", [](ChainSelection& sel, int index) -> ChainRef { return ChainRef(sel[index]); },
-           ChainRefPolicy, py::arg("n"), "Get n'th element")
-      .def("__repr__", [](const ChainSelection& selection) {
-        return "<pyxmolpp2.polymer.ChainSelection size=" + std::to_string(selection.size()) + " at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-      })
-      .def(py::self*=py::self)
-      .def(py::self+=py::self)
-      .def(py::self-=py::self)
-      .def(py::self*py::self)
-      .def(py::self+py::self)
-      .def(py::self-py::self)
-      ;
+           ChainRefPolicy, py::arg("n"), "Access n'th element")
+      .def("__getitem__",
+           [](const ChainSelection& sel, py::slice slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
+               throw py::error_already_set();
+             }
+             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
+           },
+           py::arg("slice"), "Slice overload")
+      .def("__repr__",
+           [](const ChainSelection& selection) {
+             return "<pyxmolpp2.polymer.ChainSelection size=" + std::to_string(selection.size()) + " at 0x" +
+                    xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
+           })
+      .def(py::self *= py::self)
+      .def(py::self += py::self)
+      .def(py::self -= py::self)
+      .def(py::self * py::self)
+      .def(py::self + py::self)
+      .def(py::self - py::self);
 }
