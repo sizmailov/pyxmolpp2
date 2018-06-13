@@ -3,6 +3,7 @@
 #include "ContainerSelection_fwd.h"
 #include "Observer.h"
 #include "exceptions.h"
+#include "xmol/utils/optional.h"
 
 #include <set>
 
@@ -10,7 +11,10 @@ namespace xmol {
 namespace selection {
 
 enum class SelectionState { OK, HAS_DANGLING_REFERENCES };
-
+enum class SlicingScheme{
+  INTERPRET_NEGATIVE_INDICES,
+  USE_INDICES_AS_IS,
+};
 struct NoSortTag {};
 
 template <typename T> class ContainerRange {
@@ -72,13 +76,15 @@ public:
   SelectionRange& operator+=(int n);
   SelectionRange& operator-=(int n);
 
+  int size() const;
+
 private:
   explicit SelectionRange(const SelectionBase<T>& selection, int pos, int end,
                           int step);
   friend class SelectionBase<T>;
   const SelectionBase<T>* selection;
   int pos;
-  int end;
+  int m_end;
   int step;
 };
 
@@ -114,6 +120,14 @@ public:
 
   SelectionRange<T> begin() const;
   SelectionRange<T> end() const;
+  SelectionRange<T> slice_range(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
+                                xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) &;
+  SelectionRange<T> slice_range(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
+                                xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) const&;
+  SelectionRange<T> slice_range(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
+                                xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) && = delete;
+  SelectionRange<T> slice_range(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
+                                xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) const&& = delete;
 
   T& operator[](int i) const;
 
@@ -200,8 +214,13 @@ public:
                 typename std::remove_const<U>::type, typename std::remove_const<V>::type>::value>::type>
   Selection<U>& operator*=(const Selection<V>& rhs);
 
+  Selection slice(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
+                  xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) const;
+
   template <typename Iterator>
   explicit Selection(Iterator begin_, Iterator end_);
+
+  explicit Selection(SelectionRange<T> rng);
 
   template <typename Iterator> explicit Selection(Iterator begin_, Iterator end_, const NoSortTag&);
 
@@ -275,9 +294,8 @@ protected:
 };
 
 template <typename T>
-SelectionRange<T>::SelectionRange(const SelectionBase<T>& selection, int pos,
-                                  int end, int step)
-    : selection(&selection), pos(pos), end(end), step(step) {}
+SelectionRange<T>::SelectionRange(const SelectionBase<T>& selection, int pos, int end, int step)
+    : selection(&selection), pos(pos), m_end(end), step(step) {}
 
 template <typename T> T& SelectionRange<T>::operator*() const {
   if (this->selection->elements[pos]->is_deleted()) {
@@ -296,9 +314,9 @@ template <typename T>
 template <typename Sentinel>
 bool SelectionRange<T>::operator!=(const Sentinel&) const {
   if (step > 0) {
-    return pos < end;
+    return pos < m_end;
   } else {
-    return pos > end;
+    return pos > m_end;
   }
 }
 
@@ -340,6 +358,19 @@ template <typename T> SelectionRange<T> SelectionRange<T>::operator+(int n) {
   return result;
 }
 
+template <typename T> int SelectionRange<T>::size() const {
+  int n = 0;
+  if (step > 0) {
+    n = (m_end - pos + step - 1) / step;
+  } else {
+    n = (m_end - pos + step + 1) / step;
+  }
+  if (n > 0) {
+    return n;
+  }
+  return 0;
+}
+
 template <typename T> SelectionRange<T> SelectionBase<T>::begin() const {
   LOG_VERBOSE_FUNCTION();
   if (state != SelectionState::OK) {
@@ -354,6 +385,52 @@ template <typename T> SelectionRange<T> SelectionBase<T>::end() const {
     throw make_dead_selection_access<T>("Dead selection access in ::end");
   }
   return SelectionRange<T>(*this, elements.size(), 0, 1);
+}
+
+template <typename T>
+SelectionRange<T> SelectionBase<T>::slice_range(xmol::utils::optional<int> first, xmol::utils::optional<int> last,
+                                                xmol::utils::optional<int> stride, const SlicingScheme& index_scheme)& {
+  return const_cast<const SelectionBase<T>*>(this)->slice_range(first, last, stride, index_scheme);
+}
+
+template <typename T>
+SelectionRange<T> SelectionBase<T>::slice_range(xmol::utils::optional<int> first, xmol::utils::optional<int> last,
+                                                xmol::utils::optional<int> stride, const SlicingScheme& index_scheme) const& {
+  Expects(index_scheme==SlicingScheme::INTERPRET_NEGATIVE_INDICES || first && last && stride);
+  LOG_VERBOSE_FUNCTION();
+  if (state != SelectionState::OK) {
+    throw make_dead_selection_access<T>("Dead selection access in ::begin");
+  }
+
+  const auto N = elements.size();
+  if (index_scheme==SlicingScheme::INTERPRET_NEGATIVE_INDICES){
+    if (!stride) {
+      stride = 1;
+    }
+
+    if (last && last.value() < 0) {
+      last = N + last.value();
+    }
+    if (first && first.value() < 0) {
+      first = N + first.value();
+    }
+
+    if (!first) {
+      if (stride > 0) {
+        first = 0;
+      } else {
+        first = N - 1;
+      }
+    }
+    if (!last) {
+      if (stride > 0) {
+        last = N;
+      } else {
+        last = -1;
+      }
+    }
+  }
+  return SelectionRange<T>(*this, first.value(), last.value(), stride.value());
 }
 
 template <typename T> T& SelectionBase<T>::operator[](int i) const {
@@ -553,6 +630,12 @@ Selection<U>& Selection<T>::operator*=(const Selection<V>& rhs) {
 }
 
 template <typename T>
+Selection<T> Selection<T>::slice(xmol::utils::optional<int> first, xmol::utils::optional<int> last,
+                                 xmol::utils::optional<int> stride, const SlicingScheme& index_scheme) const {
+  return Selection<T>(this->slice_range(first, last, stride, index_scheme));
+}
+
+template <typename T>
 template <typename Predicate>
 Selection<T>& Selection<T>::remove_if(Predicate&& p) {
   LOG_DEBUG_FUNCTION();
@@ -705,6 +788,24 @@ Selection<T>::Selection(Iterator begin_, Iterator end_) {
     if (!(**begin_).is_deleted()) {
       this->elements.push_back(*begin_);
       parents.insert((**begin_).parent());
+    }
+  }
+  for (auto container : parents) {
+    this->add_observer(*container);
+    container->on_selection_copy(*this);
+  }
+  auto comparator = SelectionPointerComparator<value_type>{};
+  std::sort(this->elements.begin(), this->elements.end(), comparator);
+}
+
+template <typename T> Selection<T>::Selection(SelectionRange<T> rng) {
+  LOG_DEBUG_FUNCTION();
+  this->state = SelectionState::OK;
+  std::set<container_type*> parents;
+  for (; rng != rng; ++rng) {
+    if (!(*rng).is_deleted()) {
+      this->elements.push_back(std::addressof(*rng));
+      parents.insert((*rng).parent());
     }
   }
   for (auto container : parents) {

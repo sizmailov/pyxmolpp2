@@ -376,3 +376,15 @@ def test_dumb_copy_lookup():
     for x in frame2.asChains:
         assert x.frame[x.name] == x
         assert x.frame == frame2
+
+
+def test_selection_strides():
+
+    frame = make_polyglycine([("A", 2)])
+
+    assert frame.asAtoms.size == 2*7
+    assert frame.asAtoms[::2].size == 7
+    assert frame.asAtoms[::-2].size == 7
+    assert frame.asAtoms[:10].size == 10
+    assert frame.asAtoms[:-10].size == 4
+    assert frame.asAtoms[-10:].size == 10
