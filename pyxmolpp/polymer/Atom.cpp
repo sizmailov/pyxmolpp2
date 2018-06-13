@@ -404,10 +404,6 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
                                 reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
                throw py::error_already_set();
              }
-             std::cout << "["
-                          << start << ":"
-                       << stop << ":"
-                       << step << "] (" << slicelength << ")";
              return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
            },
            py::arg("slice"), "Slice overload")
