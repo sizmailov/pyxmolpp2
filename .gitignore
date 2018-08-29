@@ -1,4 +1,5 @@
 *.log
+*.pyc
 .idea/*
 coverage
 tests_dataset/*/
