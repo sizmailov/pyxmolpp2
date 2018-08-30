@@ -9,6 +9,8 @@ def test_AtomName():
         a = AtomName("ATOME")
 
     assert AtomName("ATOM").str == "ATOM"
+    assert AtomName("ATOM") == AtomName("ATOM")
+
 
 
 
@@ -19,6 +21,7 @@ def test_ResidueName():
         a = ResidueName("RESI")
 
     assert ResidueName("RES").str == "RES"
+    assert ResidueName("RES") == ResidueName("RES")
 
 
 def test_ChainName():
@@ -28,5 +31,6 @@ def test_ChainName():
         a = ChainName("CH")
 
     assert ChainName("C").str == "C"
+    assert ChainName("C") == ChainName("C")
 
 

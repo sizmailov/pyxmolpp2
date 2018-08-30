@@ -116,6 +116,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def_property_readonly("str", &AtomName::str)
       .def("__hash__", &AtomName::value)
       .def("__str__", [](const AtomName& name) { return '"' + name.str() + '"'; })
+      .def(py::self==py::self)
+      .def(py::self!=py::self)
       .def("__repr__", [](const AtomName& name) {
         return "<pyxmolpp2.polymer.AtomName \"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
@@ -124,6 +126,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
   pyResidueName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &ResidueName::str)
       .def("__hash__", &ResidueName::value)
+      .def(py::self==py::self)
+      .def(py::self!=py::self)
       .def("__str__", [](const ResidueName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ResidueName& name) {
         return "<pyxmolpp2.polymer.ResidueName \"" + name.str() + "\" at 0x" +
@@ -133,6 +137,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
   pyChainName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &ChainName::str)
       .def("__hash__", &ChainName::value)
+      .def(py::self==py::self)
+      .def(py::self!=py::self)
       .def("__str__", [](const ChainName& name) { return '"' + name.str() + '"'; })
       .def("__repr__", [](const ChainName& name) {
         return "<pyxmolpp2.polymer.ChainName \"" + name.str() + "\" at 0x" +
