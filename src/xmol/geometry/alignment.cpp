@@ -43,19 +43,16 @@ Transformation3d xmol::geometry::calc_alignment(
 
   Eigen::JacobiSVD<Eigen::Matrix3d> svd(C, Eigen::ComputeFullU |
                                                Eigen::ComputeFullV);
-  double d = 1;
-  for (int i = 0; i < 3; i++) {
-    if (svd.singularValues()[i] < 0) {
-      d *= -1;
-    }
-  }
-
-  Eigen::Matrix3d P;
-  P << 1, 0, 0, 0, 1, 0, 0, 0, d;
 
   Eigen::Matrix3d V = svd.matrixV();
   Eigen::Matrix3d W = svd.matrixU();
-  Rotation3d R(W * P * V.transpose());
+  Rotation3d R(W * V.transpose());
+  if (R.get_underlying_matrix().determinant()< 0){
+    Eigen::Matrix3d P;
+    P << 1, 0, 0, 0, 1, 0, 0, 0, -1;
+    R = Rotation3d(W * P * V.transpose());
+  }
+
   Translation3d T(xc - R.transform(yc));
   return Transformation3d(R, T);
 }
