@@ -388,3 +388,10 @@ def test_selection_strides():
     assert frame.asAtoms[:10].size == 10
     assert frame.asAtoms[:-10].size == 4
     assert frame.asAtoms[-10:].size == 10
+
+def test_AtomName_compare():
+    from pyxmolpp2.polymer import AtomName
+    frame = make_polyglycine([("A", 1)])
+    a = frame.asAtoms[0]
+    assert a.name == AtomName(a.name.str)
+
