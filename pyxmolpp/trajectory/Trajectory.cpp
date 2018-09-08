@@ -55,6 +55,17 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
                throw py::error_already_set();
              return trj.slice(start, stop, step);
            })
+      .def("__getitem__",
+           [](Trajectory& trj, int i) {
+             if (i<-trj.n_frames() || i>=trj.n_frames()){
+               throw std::out_of_range("Trajectory index is out of bounds");
+             }
+             if (i<0){
+               i+=trj.n_frames();
+             }
+             Frame frame =*(trj.begin()+i);
+             return std::move(frame);
+           }, py::return_value_policy::move)
       //      .def("__getitem__",&Trajectory::operator[], py::return_value_policy::reference)
       ;
 }

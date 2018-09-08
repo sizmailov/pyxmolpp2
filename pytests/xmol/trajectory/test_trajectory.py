@@ -90,3 +90,37 @@ def test_traj_size():
     assert len(trj[0:100:-10]) == 0
     assert len(trj[100:0:-1]) == 100
     assert len(trj[0:100:-1]) == 0
+
+
+def test_trajectory_integer_indexing():
+
+    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+
+    from pyxmolpp2.trjtool import DatFile
+    from pyxmolpp2.trajectory import Trajectory
+
+
+    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
+
+    trj = Trajectory(frame, True)
+    trj.push_trajectory_portion(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+
+    n = trj.size
+
+
+    trj[-n]
+    trj[n-1]
+
+    with pytest.raises(IndexError):
+        trj[n]
+
+    with pytest.raises(IndexError):
+        trj[-n-1]
+
+    frame1 = trj[0]
+    frame2 = trj[-n]
+
+    assert frame1.index == frame2.index
