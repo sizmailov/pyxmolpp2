@@ -340,6 +340,9 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def("to_pdb", [](Frame& frame, const std::string& output_filename,
                         const xmol::pdb::basic_PdbRecords& db) { frame.to_pdb(output_filename, db); },
            py::arg("output_filename"), py::arg("db"), "Writes frame to file using db as non-standard PDB records")
+      .def("copy",[](Frame& frame) -> Frame{
+        return frame;
+      }, py::return_value_policy::move)
       .def("__repr__", [](const Frame& frame) {
         return "<pyxmolpp2.polymer.Frame index=" + std::to_string(frame.index()) + " at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(frame))) + ">";

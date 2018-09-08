@@ -395,3 +395,13 @@ def test_AtomName_compare():
     a = frame.asAtoms[0]
     assert a.name == AtomName(a.name.str)
 
+
+def test_frame_copy():
+
+    frame = make_polyglycine([("A", 2)])
+    frame2 = frame.copy()
+
+    frame.asAtoms[0].r.x = 1
+    frame2.asAtoms[0].r.x = 2
+
+    assert frame.asAtoms[0].r.x != frame2.asAtoms[0].r.x
