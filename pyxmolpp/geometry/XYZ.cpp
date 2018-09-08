@@ -32,6 +32,13 @@ void pyxmolpp::geometry::init_XYZ(pybind11::module& geometry) {
       .def_property("z",&XYZ::z,&XYZ::set_z,"z coordinate")
       .def("len",&XYZ::len, "Returns vector length")
       .def("len2",&XYZ::len2, "Returns vector length squared")
+      .def_property_readonly("to_np",[](XYZ& xyz){
+          py::array_t<double> result(3);
+          result.mutable_data()[0] = xyz.x();
+          result.mutable_data()[1] = xyz.y();
+          result.mutable_data()[2] = xyz.z();
+          return result;
+        })
       ;
 
 }
