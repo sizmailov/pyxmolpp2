@@ -3,6 +3,7 @@
 #include "xmol/geometry/XYZ.h"
 
 #include <pybind11/operators.h>
+#include <pybind11/numpy.h>
 
 
 using namespace xmol::geometry;
@@ -20,6 +21,12 @@ void pyxmolpp::geometry::init_XYZ(pybind11::module& geometry) {
       .def(double()*py::self)
       .def("dot",&XYZ::dot, py::arg("rhs"), "Returns dot product")
       .def("cross",&XYZ::cross, py::arg("rhs"), "Returns cross product")
+      .def("__repr__",[](XYZ& xyz){
+        return "["+std::to_string(xyz.x())+", "+std::to_string(xyz.y())+", "+std::to_string(xyz.z())+"]";
+      })
+      .def("__str__",[](XYZ& xyz){
+        return "["+std::to_string(xyz.x())+", "+std::to_string(xyz.y())+", "+std::to_string(xyz.z())+"]";
+      })
       .def_property("x",&XYZ::x,&XYZ::set_x,"x coordinate")
       .def_property("y",&XYZ::y,&XYZ::set_y,"y coordinate")
       .def_property("z",&XYZ::z,&XYZ::set_z,"z coordinate")
