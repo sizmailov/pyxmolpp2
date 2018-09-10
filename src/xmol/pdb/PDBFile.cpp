@@ -20,7 +20,7 @@ PdbFile::PdbFile(const std::string& filename, const basic_PdbRecords& db)
 }
 
 void PdbFile::set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                              const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) {
+                              const xmol::polymer::AtomSelection& atoms, const std::vector<int>& /*update_list*/) {
   auto frame = get_frames()[frameIndex];
   auto ats = frame.asAtoms();
   Expects(ats.size()==atoms.size());

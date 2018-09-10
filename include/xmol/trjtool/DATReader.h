@@ -33,7 +33,7 @@ public:
 
   explicit DATReader(std::istream& in);
 
-  const int n_frames() const;
+  int n_frames() const;
 
   bool match(const xmol::polymer::ConstAtomSelection& sel) const;
   void set_frame(size_t n, const xmol::polymer::AtomSelection& sel, const std::vector<int>& indices);

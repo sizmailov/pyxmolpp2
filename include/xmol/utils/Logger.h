@@ -91,7 +91,7 @@ private:
   std::string logfile;
   static Logger& instance();
 
-  Logger() : logfile(""), log_level(NO_LOG), indent(2){};
+  Logger() : indent(2), log_level(NO_LOG), logfile("") {};
 };
 
 class Logger::DummyEnterFunctionLog {

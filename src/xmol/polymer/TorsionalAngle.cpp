@@ -101,7 +101,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
       return std::make_tuple(&prev->operator[](AtomName("C")), &r[AtomName("N")], &r[AtomName("CA")],
                              &r[AtomName("C")]);
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_c, Atom& n, Atom& ca, Atom& c) {
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& /*prev_c*/, Atom& n, Atom& /*ca*/, Atom& c) {
       std::vector<Atom*> result;
       n.residue().asAtoms().filter([](const Atom&a){
 
@@ -132,7 +132,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
       return std::make_tuple(&r[AtomName("N")], &r[AtomName("CA")], &r[AtomName("C")],
                              &next->operator[](AtomName("N")));
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](Atom& n, Atom& ca, Atom& c, Atom& next_n) {
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& n, Atom& /*ca*/, Atom& c, Atom& /*next_n*/) {
       std::vector<Atom*> result;
 
       for (auto& a : n.residue()) {
@@ -160,7 +160,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(xmol::polymer::Residue
       return std::make_tuple(&prev->operator[](AtomName("CA")), &prev->operator[](AtomName("C")), &r[AtomName("N")],
                              &r[AtomName("CA")]);
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](Atom& prev_ca, Atom& prev_c, Atom& n, Atom& ca) {
+    TorsionAngle::AffectedAtomsSelector selector = [](Atom& /*prev_ca*/, Atom& /*prev_c*/, Atom& n, Atom& /*ca*/) {
       std::vector<Atom*> result;
 
       for (auto& a : n.residue()) {
