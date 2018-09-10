@@ -46,3 +46,12 @@ def test_operators():
 
 
 
+def test_conversion():
+    import numpy as np
+
+    def as_np(xyz):
+        return np.array([xyz.x,xyz.y,xyz.z])
+
+    a = XYZ(5,8,1)
+
+    assert np.allclose(a.to_np,as_np(a))
