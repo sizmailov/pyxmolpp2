@@ -112,6 +112,12 @@ public:
   XYZ transform(const XYZ& r) const;
   Transformation3d inverted() const;
 
+
+  const Eigen::Matrix3d& get_underlying_matrix() const { return m; }
+  Eigen::Matrix3d& get_underlying_matrix() { return m; }
+
+  XYZ get_translation() const { return dr;}
+
 private:
   Eigen::Matrix3d m;
   XYZ dr;
