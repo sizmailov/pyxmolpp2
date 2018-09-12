@@ -246,7 +246,7 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;static_cast<void>(x);}());
 
   c.erase(c.all());
 
@@ -254,7 +254,7 @@ TEST_F(ConSelTests, access_dead_selection_throws) {
   ASSERT_EQ(s.size(), n);
   EXPECT_THROW(s[0], xmol::selection::deleted_element_access<int_with_parent>);
   EXPECT_THROW(*s.begin(), xmol::selection::deleted_element_access<int_with_parent>);
-  EXPECT_THROW([&]{auto x = s.begin()->value;}(), xmol::selection::deleted_element_access<int_with_parent>);
+  EXPECT_THROW([&]{auto x = s.begin()->value;static_cast<void>(x);}(), xmol::selection::deleted_element_access<int_with_parent>);
 }
 
 TEST_F(ConSelTests, selection_tracks_container_move) {
@@ -276,7 +276,7 @@ TEST_F(ConSelTests, selection_tracks_container_move) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;static_cast<void>(x);}());
 
   c.erase(c.all());
 
@@ -285,7 +285,7 @@ TEST_F(ConSelTests, selection_tracks_container_move) {
 
   EXPECT_NO_THROW(s[0]);
   EXPECT_NO_THROW(*s.begin());
-  EXPECT_NO_THROW([&]{auto x = s.begin()->value;}());
+  EXPECT_NO_THROW([&]{auto x = s.begin()->value;static_cast<void>(x);}());
   int k = 0;
   EXPECT_NO_THROW(for (auto& x
                        : s) {

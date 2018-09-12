@@ -305,6 +305,7 @@ TEST_F(AtomTests, dedicated_selections){
   Chain&c = f.emplace(ChainName(""));
   Residue&r = c.emplace(ResidueName("GLY"),residueId_t(1));
   Atom&a = r.emplace(AtomName("CA"),1,XYZ{0,0,0});
+  static_cast<void>(a);
 
   EXPECT_EQ(r.all().asResidues().size(),1);
   EXPECT_EQ(r.all().asResidues().size(),1);
@@ -333,8 +334,8 @@ TEST_F(AtomTests, deletion_invalidates_selections_1){
   auto atoms = frame.asAtoms();
   auto atoms_to_delete = frame.asAtoms().filter([](const Atom&a){return a.id()%2==0;});
   atoms_to_delete.for_each([](Atom& a) { a.set_deleted(); });
-  EXPECT_ANY_THROW(for (auto&a: atoms){});
-  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
+  EXPECT_ANY_THROW(for (auto&a: atoms){static_cast<void>(a);});
+  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){static_cast<void>(a);});
 }
 
 TEST_F(AtomTests, deletion_invalidates_selections_2){
@@ -344,8 +345,8 @@ TEST_F(AtomTests, deletion_invalidates_selections_2){
   auto residues_to_delete = frame.asResidues().filter([](const Residue&r){return r.id().serial%2==0;});
   auto atoms_to_delete = residues_to_delete.asAtoms();
   residues_to_delete.for_each([](Residue& r) { r.set_deleted(); });
-  EXPECT_ANY_THROW(for (auto&a: atoms){});
-  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){});
+  EXPECT_ANY_THROW(for (auto&a: atoms){static_cast<void>(a);});
+  EXPECT_NO_THROW(for (auto&a: atoms-atoms_to_delete){static_cast<void>(a);});
 }
 
 TEST_F(AtomTests, access_after_resize){
@@ -353,6 +354,7 @@ TEST_F(AtomTests, access_after_resize){
 
   auto chain_a = ElementReference<Atom>(frame.asAtoms()[0]);
   auto& res = ((Atom&)(chain_a)).residue();
+  static_cast<void>(res);
   ((Atom&)(chain_a)).residue().emplace((Atom&)(chain_a));
   auto chain_b = ElementReference<Atom>(frame.asAtoms()[0]);
 

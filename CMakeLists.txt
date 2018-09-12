@@ -43,6 +43,7 @@ include_directories(SYSTEM external/range-v3/include)
 include_directories(SYSTEM external/GSL/include)
 include_directories(SYSTEM external/eigen-git-mirror)
 add_subdirectory(external/pybind11)
+include_directories(SYSTEM external/pybind11/include)
 
 
 include_directories(include)
