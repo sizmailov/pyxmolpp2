@@ -1,6 +1,7 @@
 #include "init.h"
 
 #include <pybind11/operators.h>
+#include <pybind11/numpy.h>
 
 #include "xmol/geometry/Transformation3d.h"
 
@@ -50,6 +51,12 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
       .def(py::self * UniformScale3d())
       .def(Translation3d() * py::self)
       .def(UniformScale3d() * py::self)
+      .def("matrix3d",[](Rotation3d& rotation3d){
+        py::array_t<double, py::array::f_style> result({3,3});
+        auto matrix =rotation3d.get_underlying_matrix();
+        std::copy(matrix.data(),matrix.data()+9, result.mutable_data());
+        return result;
+      })
       ;
 
   pyTransformation3d.def(py::init<>())
@@ -62,5 +69,15 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
       .def(py::self * UniformScale3d())
       .def(Translation3d() * py::self)
       .def(Rotation3d() * py::self)
-      .def(UniformScale3d() * py::self);
+      .def(UniformScale3d() * py::self)
+      .def("matrix3d",[](Transformation3d& transformation3d){
+        py::array_t<double, py::array::f_style> result({3,3});
+        auto matrix =transformation3d.get_underlying_matrix();
+        std::copy(matrix.data(),matrix.data()+9, result.mutable_data());
+        return result;
+      })
+      .def("vector3d",[](Transformation3d& transformation3d){
+        return transformation3d.get_translation();
+      });
+
 }
