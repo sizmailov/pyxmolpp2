@@ -2,6 +2,20 @@
 Change log
 ----------
 
+v0.2.0:
+  - Change :py:class:`~pyxmolpp2.pdb.PdbFile` interface
+  - Fix :py:func:`~pyxmolpp2.geometry.calc_alignment`
+  - Support selection slicing
+  - Implement predicates on C++ side
+  - Implement convenient predicate generators (`aName`,`rId`, etc)
+  - Fix representation of `XYZ`
+  - Add conversion method `XYZ` -> `numpy.array`
+  - Provide access to transformation matrices for `Transformation3d` and `Rotation3d`
+  - Add equality operations to Atom/Residue/Chain names
+  - Minor improvements
+  - Update docs
+
+
 v0.1.1:
   - Bug fix: name/index lookup in Frame and Chain
 
