@@ -47,11 +47,11 @@ bool Atom::is_deleted() const { return m_deleted; }
 void Atom::set_deleted() { m_deleted = true; }
 
 Atom::Atom(Residue& residue, AtomName name, atomId_t id, XYZ r)
-    : m_r(r), m_name(std::move(name)), m_id(id), m_residue(&residue) {}
+    : m_r(r), m_residue(&residue), m_name(std::move(name)), m_id(id) {}
 
 // -------------------- Residue -------------------------
 
-Residue::Residue(const Residue& rhs) : Container<Atom>(rhs) {
+Residue::Residue(const Residue& rhs) :  Container<Atom>(rhs) {
   for (auto& atom : this->elements) {
     atom.m_residue = this;
   }

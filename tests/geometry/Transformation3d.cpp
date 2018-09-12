@@ -18,7 +18,7 @@ TEST_F(Transformation3dTests,inverse){
   Translation3d T(XYZ(1,3,7));
   Rotation3d R(XYZ(1,1,1),Degrees(97));
 
-  XYZ r2 = R.transform(r);
+  R.transform(r);
 
   { auto G(T*R*U); EXPECT_LE(((G*G.inverted()).transform(r)-r).len(),1e-9);}
   { auto G(U); EXPECT_LE(((G*G.inverted()).transform(r)-r).len(),1e-9);}

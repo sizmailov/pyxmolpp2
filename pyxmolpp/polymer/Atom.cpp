@@ -19,7 +19,7 @@ void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
   using AtomType = ElementReference<Atom>;
   using ResidueType = ElementReference<Residue>;
   using ChainType = ElementReference<Chain>;
-  using FrameType = Frame;
+//  using FrameType = Frame;
 
   using FrameRef = Frame&;
 

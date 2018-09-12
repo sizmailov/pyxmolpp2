@@ -129,7 +129,7 @@ template <typename Iterator> Frame readFrame(Iterator& it) {
   FrameStub frame{id};
   assert(it->getRecordName() == RecordName("ATOM") ||
          it->getRecordName() == RecordName("HETATM"));
-  chainIndex_t chainIndex = 0;
+
   while (it != ranges::default_sentinel{} &&
          ((has_model && it->getRecordName() != RecordName("ENDMDL")) ||
           it->getRecordName() == RecordName("ATOM") ||

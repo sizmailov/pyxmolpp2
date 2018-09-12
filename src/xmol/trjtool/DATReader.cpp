@@ -87,7 +87,7 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
   }
 }
 
-const int DATReader::n_frames() const { return m_n_frames; }
+int DATReader::n_frames() const { return m_n_frames; }
 
 bool DATReader::match(const xmol::polymer::ConstAtomSelection& sel) const {
   if (m_data_type != DataType::float32 ||

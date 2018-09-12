@@ -70,6 +70,7 @@ TEST_F(TrjtoolDatPortionTests, add_to_trajectory) {
     int k = 0;
     for (auto& x : traj.slice(100, 0)) {
       k++;
+      static_cast<void>(x);
     }
     EXPECT_EQ(k, 0);
   }

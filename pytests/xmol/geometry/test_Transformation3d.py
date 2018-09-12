@@ -24,3 +24,25 @@ def test_composition():
             check(a*b)
 
 
+def test_transformation_3d():
+    import numpy as np
+    from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees, UniformScale3d
+
+    R = Rotation3d(XYZ(1,0,0), Degrees(45))
+    T = Translation3d(XYZ(1,2,5))
+
+    G = T*R
+
+    m = G.matrix3d()
+    v = G.vector3d()
+
+    assert pytest.approx(m[0,0]) == 1
+    assert pytest.approx(m[0,1]) == 0
+    assert pytest.approx(m[0,2]) == 0
+    assert pytest.approx(np.sqrt(2)/2) == m[2,1]
+
+    assert v.x == 1
+    assert v.y == 2
+    assert v.z == 5
+
+    print()

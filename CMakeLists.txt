@@ -22,24 +22,28 @@ else()
     message("DONT USE COVERAGE PROFILE")
 ENDIF()
 
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
+endif()
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 endif()
-
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register") # pybind11 has `register` keyword, depricated in c++17
-
 
 enable_testing()
 
 
 add_subdirectory(external/googletest)
-include_directories(external/googletest/googletest/include)
-include_directories(external/range-v3/include)
-include_directories(external/GSL/include)
-include_directories(external/eigen-git-mirror)
+include_directories(SYSTEM external/googletest/googletest/include)
+include_directories(SYSTEM external/range-v3/include)
+include_directories(SYSTEM external/GSL/include)
+include_directories(SYSTEM external/eigen-git-mirror)
 add_subdirectory(external/pybind11)
+include_directories(SYSTEM external/pybind11/include)
 
 
 include_directories(include)

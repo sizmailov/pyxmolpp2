@@ -14,7 +14,7 @@ public:
   using TrajectoryPortion::TrajectoryPortion;
 
   void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                       const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) override {
+                       const xmol::polymer::AtomSelection& atoms, const std::vector<int>& /*update_list*/) override {
     PYBIND11_OVERLOAD_PURE(
         void,              /* Return type */
         TrajectoryPortion, /* Parent class */

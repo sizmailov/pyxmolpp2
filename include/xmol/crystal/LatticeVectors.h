@@ -8,7 +8,7 @@ namespace crystal {
 
 class LatticeVectors {
 public:
-  LatticeVectors(const geometry::XYZ& v1, const geometry::XYZ& v2, const geometry::XYZ& v3) : v{v1, v2, v3} {}
+  LatticeVectors(const geometry::XYZ& v1, const geometry::XYZ& v2, const geometry::XYZ& v3) : v{{v1, v2, v3}} {}
   LatticeVectors(double a, double b, double c, geometry::AngleValue alpha, geometry::AngleValue beta,
                  geometry::AngleValue gamma) {
     using XYZ = geometry::XYZ;

@@ -396,7 +396,7 @@ SelectionRange<T> SelectionBase<T>::slice_range(xmol::utils::optional<int> first
 template <typename T>
 SelectionRange<T> SelectionBase<T>::slice_range(xmol::utils::optional<int> first, xmol::utils::optional<int> last,
                                                 xmol::utils::optional<int> stride, const SlicingScheme& index_scheme) const& {
-  Expects(index_scheme==SlicingScheme::INTERPRET_NEGATIVE_INDICES || first && last && stride);
+  Expects(index_scheme==SlicingScheme::INTERPRET_NEGATIVE_INDICES || (first && last && stride));
   LOG_VERBOSE_FUNCTION();
   if (state != SelectionState::OK) {
     throw make_dead_selection_access<T>("Dead selection access in ::begin");
@@ -462,8 +462,9 @@ template <typename T> SelectionBase<T>::~SelectionBase() {
 
 template <typename T>
 SelectionBase<T>::SelectionBase(const SelectionBase<T>& rhs)
-    : ObservableBy<container_type>(rhs), state(rhs.state),
-      elements(rhs.elements) {
+    : ObservableBy<container_type>(rhs),
+      elements(rhs.elements),
+      state(rhs.state) {
   LOG_DEBUG_FUNCTION();
   this->notify_all(
       static_cast<typename SelectionTraits<T>::on_selection_copy_type>(
@@ -475,7 +476,7 @@ template <typename T>
 template <typename U, typename SFINAE>
 SelectionBase<T>::SelectionBase(
     const SelectionBase<typename SelectionBase<U>::value_type>& rhs)
-    : state(rhs.state), elements(rhs.elements.begin(), rhs.elements.end()) {
+    : elements(rhs.elements.begin(), rhs.elements.end()), state(rhs.state) {
   LOG_DEBUG_FUNCTION();
   this->observers.insert(rhs.observers.begin(), rhs.observers.end());
   this->notify_all(
@@ -487,8 +488,8 @@ SelectionBase<T>::SelectionBase(
 template <typename T>
 SelectionBase<T>::SelectionBase(SelectionBase<T>&& rhs) noexcept
     : ObservableBy<container_type>(std::move(rhs)),
-      state(rhs.state),
-      elements(std::move(rhs.elements)) {
+      elements(std::move(rhs.elements)),
+      state(rhs.state) {
   LOG_DEBUG_FUNCTION();
   this->notify_all(
       static_cast<typename SelectionTraits<T>::on_selection_move_type>(
@@ -914,8 +915,8 @@ template <typename T> Container<T>::~Container() {
 
 template <typename T>
 Container<T>::Container(Container<T>&& rhs) noexcept
-    : ObservableBy<SelectionBase<const T>>(std::move(rhs)),
-      ObservableBy<SelectionBase<T>>(std::move(rhs)),
+    : ObservableBy<SelectionBase<T>>(std::move(rhs)),
+      ObservableBy<SelectionBase<const T>>(std::move(rhs)),
       elements(std::move(rhs.elements)),
       n_deleted(rhs.n_deleted) {
   LOG_DEBUG_FUNCTION();
@@ -998,7 +999,6 @@ T& Container<T>::emplace(Args&&... args) {
 
 template <typename T> void Container<T>::clear() {
   LOG_DEBUG_FUNCTION();
-  int n = elements.size();
   elements.clear();
   n_deleted = 0;
   ObservableBy<SelectionBase<T>>::notify_all(
