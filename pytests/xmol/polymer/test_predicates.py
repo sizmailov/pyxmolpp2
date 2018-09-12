@@ -76,3 +76,46 @@ def test_chain_name():
     assert frame.asChains.filter((cName == "A") | (cName != "B")).size == 1
 
 
+def test_atom_id():
+    from pyxmolpp2.polymer import aId
+    frame = make_polyglycine([("A", 10)])
+
+    assert frame.asAtoms.filter(aId == 5).size == 1
+    assert frame.asAtoms.filter(aId.is_in({1,2,3})).size == 3
+    assert frame.asAtoms.filter(~aId.is_in({1,2,3})).size == 70-3
+    assert frame.asAtoms.filter((aId == 2) | (aId == 3)).size == 2
+
+
+def test_residue_id():
+    from pyxmolpp2.polymer import rId, ResidueId, ResidueInsertionCode
+    frame = make_polyglycine([("A", 10)])
+
+    assert frame.asAtoms.filter(rId == 5).size == 1*7
+    assert frame.asAtoms.filter(rId.is_in({1,2,3})).size == 3*7
+    assert frame.asAtoms.filter(~rId.is_in({1,2,3})).size == 7*7
+    assert frame.asAtoms.filter((rId == 2) | (rId == 3)).size == 2*7
+
+    assert frame.asResidues.filter(rId == 5).size == 1
+    assert frame.asResidues.filter(rId.is_in({1,2,3})).size == 3
+    assert frame.asResidues.filter(~rId.is_in({1,2,3})).size == 7
+    assert frame.asResidues.filter((rId == 2) | (rId == 3)).size == 2
+
+    assert frame.asResidues.filter(rId == ResidueId(5,ResidueInsertionCode("A"))).size == 0
+
+
+def test_chain_index():
+    from pyxmolpp2.polymer import cIndex
+    frame = make_polyglycine([("A", 10)])
+
+    assert frame.asAtoms.filter(cIndex == 0).size == 70
+    assert frame.asAtoms.filter(cIndex.is_in({0})).size == 70
+    assert frame.asAtoms.filter(cIndex.is_in({1,2})).size == 0
+
+
+    assert frame.asResidues.filter(cIndex == 0).size == 10
+    assert frame.asResidues.filter(cIndex.is_in({0})).size == 10
+    assert frame.asResidues.filter(cIndex.is_in({1,2})).size == 0
+
+
+    assert frame.asChains.filter(cIndex == 0).size == 1
+    assert frame.asChains.filter(cIndex == 1).size == 0

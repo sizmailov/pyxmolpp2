@@ -126,9 +126,50 @@ void pyxmolpp::polymer::init_predicates(pybind11::module& polymer) {
     .def("is_in",overload_cast<ChainPredicate,ChainNamePredicateGenerator,std::set<std::string>>(&ChainNamePredicateGenerator::is_in))
   ;
 
+  pyAtomIdPredicateGenerator
+    .def(py::self==atomId_t{})
+    .def(py::self!=atomId_t{})
+    .def(py::self<atomId_t{})
+    .def(py::self>atomId_t{})
+    .def(py::self<=atomId_t{})
+    .def(py::self>=atomId_t{})
+    .def("is_in",&AtomIdPredicateGenerator::is_in)
+    ;
+
+  pyResidueIdPredicateGenerator
+    .def(py::self==residueId_t{})
+    .def(py::self!=residueId_t{})
+    .def(py::self<residueId_t{})
+    .def(py::self>residueId_t{})
+    .def(py::self<=residueId_t{})
+    .def(py::self>=residueId_t{})
+    .def(py::self==residueSerial_t{})
+    .def(py::self!=residueSerial_t{})
+    .def(py::self<residueSerial_t{})
+    .def(py::self>residueSerial_t{})
+    .def(py::self<=residueSerial_t{})
+    .def(py::self>=residueSerial_t{})
+    .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<residueSerial_t>>(&ResidueIdPredicateGenerator::is_in))
+    .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<residueId_t>>(&ResidueIdPredicateGenerator::is_in))
+    ;
+
+  pyChainIndexPredicateGenerator
+      .def(py::self==chainIndex_t{})
+      .def(py::self!=chainIndex_t{})
+      .def(py::self<chainIndex_t{})
+      .def(py::self>chainIndex_t{})
+      .def(py::self<=chainIndex_t{})
+      .def(py::self>=chainIndex_t{})
+      .def("is_in",&ChainIndexPredicateGenerator::is_in)
+      ;
+
+
   polymer.attr("aName") = aName;
   polymer.attr("rName") = rName;
   polymer.attr("cName") = cName;
 
+  polymer.attr("aId") = aId;
+  polymer.attr("rId") = rId;
+  polymer.attr("cIndex") = cIndex;
 
 }

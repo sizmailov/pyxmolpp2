@@ -237,6 +237,34 @@ public:
     return ResiduePredicate([ids](const Residue& r){ return ids.count(r.id())==1 ;});
   }
 
+  ResiduePredicate operator==(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() == id;});
+  }
+
+  ResiduePredicate operator!=(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() != id;});
+  }
+
+  ResiduePredicate operator<=(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() <= id;});
+  }
+
+  ResiduePredicate operator<(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() < id;});
+  }
+
+  ResiduePredicate operator>=(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() >= id;});
+  }
+
+  ResiduePredicate operator>(const residueSerial_t& id) const {
+    return ResiduePredicate([id](const Residue& r){ return r.id() > id;});
+  }
+
+  ResiduePredicate is_in(const std::set<residueSerial_t>& ids) const {
+    return ResiduePredicate([ids](const Residue& r){ return r.id().iCode.value()==0 && ids.count(r.id().serial)==1 ;});
+  }
+
 };
 
 
