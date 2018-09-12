@@ -55,8 +55,7 @@ protected:
 
   void remove_observer(T& ptr) const {
     LOG_DEBUG_FUNCTION();
-    auto count = observers.erase(&ptr);
-    assert(count == 1);
+    assert(observers.erase(&ptr) == 1);
   }
 
   void remove_all_observers() const {
