@@ -64,7 +64,7 @@ void pyxmolpp::trajectory::init_Trajectory(pybind11::module& trajectory) {
                i+=trj.n_frames();
              }
              Frame frame =*(trj.begin()+i);
-             return std::move(frame);
+             return frame;
            }, py::return_value_policy::move)
       //      .def("__getitem__",&Trajectory::operator[], py::return_value_policy::reference)
       ;

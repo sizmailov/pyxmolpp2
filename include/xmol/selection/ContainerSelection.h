@@ -552,6 +552,7 @@ template <typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator+=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
 
   for (auto cs : rhs.observers) {
     this->add_observer(*cs.first);
@@ -579,6 +580,7 @@ template <typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator-=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
   assert(
       std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
   assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(), comparator));
@@ -616,6 +618,7 @@ template <typename V, typename U, typename SFINAE>
 Selection<U>& Selection<T>::operator*=(const Selection<V>& rhs) {
   LOG_DEBUG_FUNCTION();
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
   assert(
       std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
   assert(std::is_sorted(rhs.elements.begin(), rhs.elements.end(), comparator));
@@ -775,6 +778,7 @@ Selection<T>::Selection(typename SelectionBase<T>::container_type& container) {
   if (!this->empty()) {
     this->add_observer(container);
     auto comparator = SelectionPointerComparator<value_type>{};
+    static_cast<void>(comparator);
     std::sort(this->elements.begin(), this->elements.end(), comparator);
   }
 }
@@ -796,6 +800,7 @@ Selection<T>::Selection(Iterator begin_, Iterator end_) {
     container->on_selection_copy(*this);
   }
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
   std::sort(this->elements.begin(), this->elements.end(), comparator);
 }
 
@@ -814,6 +819,7 @@ template <typename T> Selection<T>::Selection(SelectionRange<T> rng) {
     container->on_selection_copy(*this);
   }
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
   std::sort(this->elements.begin(), this->elements.end(), comparator);
 }
 
@@ -834,6 +840,7 @@ Selection<T>::Selection(Iterator begin_, Iterator end_, const NoSortTag&) {
     container->on_selection_copy(*this);
   }
   auto comparator = SelectionPointerComparator<value_type>{};
+  static_cast<void>(comparator);
   assert(std::is_sorted(this->elements.begin(), this->elements.end(), comparator));
 }
 
