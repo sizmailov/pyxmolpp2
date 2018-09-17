@@ -44,7 +44,7 @@ def remove_signature(docstring):
     signature_regex = r"(\s*{name})?\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name="\w+")
     return "\n".join(filter(lambda line: not re.match(signature_regex,line),docstring.split("\n")))
 
-def get_function_signature(func, strip_module_name=True, module_name=None, klass_name=None):
+def get_function_signature(func, strip_module_name=False, module_name=None, klass_name=None):
     name = func.__name__
     try:
         signature_regex = r"(\s*(?P<overload>\d+).)?\s*{name}\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*".format(name=name)
@@ -235,10 +235,10 @@ def write_stubs_for_module(module, main_module=None):
                 docstrings.append(member)
             elif name in ["__file__", "__loader__", "__name__", "__package__", "__spec__"]:
                 pass
-            elif isinstance(member, (int, float, bool, str, unicode)):
+            else: #  isinstance(member, (int, float, bool, str, unicode)):
                 attributes.append((name,member))
-            else:
-                print("Unknown type in module", name,"::",member)
+            # else:
+            #     print("Unknown type in module", name,"::",member)
 
         with open("__init__.pyi", "w") as init:
             # write docstring if exists
@@ -278,7 +278,7 @@ from typing import overload, \
 
             # write attribute
             for name, value in attributes:
-                init.write("{} = {} \n".format(name,repr(value)))
+                init.write("{} = {}()  #  {}\n".format(name,type(value).__name__,repr(value)))
 
             # declare variables
 
