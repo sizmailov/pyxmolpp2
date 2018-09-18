@@ -1,6 +1,6 @@
 #include "xmol/geometry/autocorrelation.h"
 
-#include "eigen3/unsupported/Eigen/FFT"
+#include "unsupported/Eigen/FFT"
 #include <iostream>
 
 using namespace xmol::geometry;
