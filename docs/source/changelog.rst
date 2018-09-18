@@ -1,6 +1,8 @@
 ----------
 Change log
 ----------
+v0.3.0:
+  - Add :py:func:`~pyxmolpp2.geometry.calc_autocorr_order_2`
 
 v0.2.0:
   - Change :py:class:`~pyxmolpp2.pdb.PdbFile` interface
