@@ -200,10 +200,17 @@ def add_types_to_function(objtype, sig, docstringlines):
     for l in docstringlines:
         m = re.match("\s*:param\s+(?P<arg>\w+)\s*:.*",l)
         if m:
-            args_with_type.add(m.group("arg"))
+            args_with_decs.add(m.group("arg"))
+            continue
         m = re.match("\s*:type\s+(?P<arg>\w+)\s*:.*",l)
         if m:
+            args_with_type.add(m.group("arg"))
+            continue
+        m = re.match("\s*:param\s+(?P<argtype>[\w\[\]\s]+)\s+(?P<arg>\w+)\s*:.*",l)
+        if m:
+            args_with_type.add(m.group("arg"))
             args_with_decs.add(m.group("arg"))
+            continue
     m = re.match(r".*\((?P<args>[^\(\)]*)\)"
                  r"(\s*->\s*(?P<ret>\w[\[\],\w\.\s]+))?\s*",sig)
     if m:
