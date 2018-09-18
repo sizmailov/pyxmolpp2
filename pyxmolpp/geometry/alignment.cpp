@@ -2,16 +2,10 @@
 
 #include "init.h"
 
-#include <pybind11/stl_bind.h>
-
 using namespace xmol::geometry;
-
-PYBIND11_MAKE_OPAQUE(std::vector<XYZ>);
 
 void pyxmolpp::geometry::init_alignment(pybind11::module& geometry) {
 
-  py::bind_vector<std::vector<XYZ>>(geometry, "VectorXYZ",
-                                    py::module_local(false));
 
   geometry.def("calc_alignment", xmol::geometry::calc_alignment, py::arg("ref"),
                py::arg("var"),

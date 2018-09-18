@@ -54,7 +54,9 @@ def autocorr_all_harmonics(r):
     res = np.array([ k*autocorr(x) for x,k in zip([Y2p2(r), Y2p1(r),  Y20(r)],[2,2,1])])
     return 0.8*np.pi*np.sum(res,axis=0)
     #return np.sum(res, axis=0)
-
+def autocorr_all_harmonics5(r):
+    res = np.array([ autocorr(x) for x in [Y2m2(r), Y2m1(r), Y2p2(r), Y2p1(r),  Y20(r)]])
+    return 0.8*np.pi*np.sum(res,axis=0)
 
 def test_autocorr():
     from pyxmolpp2.geometry import XYZ, VectorXYZ, calc_autocorr_order_2
@@ -75,7 +77,9 @@ def test_autocorr():
     py = autocorr_all_harmonics(v2)
     end = timer()
     py_time = end-start
+    py2 = autocorr_all_harmonics5(v2)
     assert np.max(np.abs([ a-b for a,b in zip(cpp,py)])) < 1e-9
+    assert np.max(np.abs([ a-b for a,b in zip(py2,py)])) < 1e-9
     assert pytest.approx(1) == cpp[0]
     print("Time(c++) = %f" % cpp_time)
     print("Time(py)  = %f" % py_time)
