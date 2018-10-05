@@ -4,6 +4,7 @@
 #include "pybind11/operators.h"
 
 #include "xmol/pdb/PdbRecord.h"
+#include "xmol/geometry/Transformation3d.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
 
@@ -395,6 +396,26 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
              return sel.for_each([&](Atom& a) { func(AtomRef(a)); });
            },
            py::arg("transformation"), "Applies (mutating) transformation to atoms")
+      .def("transform",
+          [](AtomSelection& sel, xmol::geometry::Transformation3d& transformation3d) {
+            return sel.for_each([&](Atom& a) { a.set_r(transformation3d.transform(a.r())); });
+          },
+          py::arg("transformation"), "Applies transformation to atom coordinates")
+      .def("transform",
+          [](AtomSelection& sel, xmol::geometry::Rotation3d& rotation3d) {
+            return sel.for_each([&](Atom& a) { a.set_r(rotation3d.transform(a.r())); });
+          },
+          py::arg("transformation"), "Applies transformation to atom coordinates")
+      .def("transform",
+          [](AtomSelection& sel, xmol::geometry::UniformScale3d& uniformScale3d) {
+            return sel.for_each([&](Atom& a) { a.set_r(uniformScale3d.transform(a.r())); });
+          },
+          py::arg("transformation"), "Applies transformation to atom coordinates")
+      .def("transform",
+          [](AtomSelection& sel, xmol::geometry::Translation3d& translation3d) {
+            return sel.for_each([&](Atom& a) { a.set_r(translation3d.transform(a.r())); });
+          },
+          py::arg("transformation"), "Applies transformation to atom coordinates")
       .def("__len__", [](AtomSelection& asel) { return asel.size(); }, "Returns number of elements")
       .def_property_readonly("size", [](AtomSelection& asel) { return asel.size(); }, "Returns number of elements")
       .def_property_readonly("toCoords", [](AtomSelection& aSel) { return aSel.toCoords(); },
