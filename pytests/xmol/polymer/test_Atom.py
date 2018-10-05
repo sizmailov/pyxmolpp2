@@ -405,3 +405,18 @@ def test_frame_copy():
     frame2.asAtoms[0].r.x = 2
 
     assert frame.asAtoms[0].r.x != frame2.asAtoms[0].r.x
+
+
+def test_AtomSelection_transformations():
+    from pyxmolpp2.geometry import Translation3d, XYZ
+    frame = make_polyglycine([("A", 20)])
+
+    ats = frame.asAtoms
+    for a in ats:
+        assert (a.r - XYZ(1,2,3)).len() == 0
+
+    transformation = Translation3d(XYZ(1,2,3))
+    ats.transform(transformation)
+    for a in ats:
+        assert (a.r - XYZ(2,4,6)).len() == 0
+
