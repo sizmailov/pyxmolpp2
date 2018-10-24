@@ -39,11 +39,14 @@ DATReader::DATReader(std::istream& in) : m_in(&in) {
     if (!in.read(info_len.bytes, sizeof(info_len.bytes))) {
       throw trjtool::unexpected_eof("trjtool::DATReader::EOF");
     }
-    char buffer[info_len.value];
+    if (info_len.value<=5){
+      throw trjtool::corrupted_file("Can't read info (info_len<=5)");
+    }
+    char buffer[info_len.value+1];
     if (!in.read(buffer, info_len.value)) {
       throw trjtool::unexpected_eof("trjtool::DATReader::EOF");
     }
-    std::stringstream ss(std::string(buffer, info_len.value));
+    std::stringstream ss(std::string(buffer+5, info_len.value-5));
     int resid;
     std::string rname;
     std::string aname;
