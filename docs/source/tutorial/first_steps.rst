@@ -20,6 +20,18 @@ Installation
 from PyPi package
 ^^^^^^^^^^^^^^^^^
 
+.. warning::
+
+    If your default C++ compiler does not have full C++11 support you will see messy error
+    message during installation and you must set environment variables to point to modern
+    version of C++ compiler (g++>=5.0 or clang>=3.6), for example:
+
+    .. code-block:: bash
+
+        export CC=gcc-7.3.0 ; export CXX=g++-7.3.0 ;
+
+
+
 PyPi package contains all C++ dependencies, total size is about ~4 mb.
 Install command:
 
