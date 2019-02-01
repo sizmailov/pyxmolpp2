@@ -6,6 +6,8 @@ import subprocess
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
+from setuptools.command.egg_info import egg_info
+from setuptools.command.install import install
 from distutils.version import LooseVersion
 
 from write_version_info import get_version_info
@@ -30,6 +32,16 @@ class CMakeBuild(build_ext):
 
         for ext in self.extensions:
             self.build_extension(ext)
+
+        env = os.environ.copy()
+        env.update({"PYTHONPATH":env["PYTHONPATH"]+os.pathsep+os.curdir})
+
+        subprocess.call([sys.executable,
+                         os.path.join(os.path.dirname(__file__), "external", "pybind11-stubgen",
+                                      "pybind11_stubgen.py"),
+                         "--output-dir", os.path.dirname(__file__),
+                         "pyxmolpp2"
+                         ], env=env)
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -64,6 +76,22 @@ class CMakeBuild(build_ext):
                                ] + build_args,
                               cwd=self.build_temp)
 
+def find_stubs(package):
+    stubs = []
+    for root, dirs, files in os.walk(package):
+        for file in files:
+            path = os.path.join(root, file).replace(package + os.sep, '', 1)
+            stubs.append(path)
+    return {package: stubs}
+
+
+def build_ext_before(command):
+    class Build_ext_first(command):
+        def run(self):
+            self.run_command("build_ext")
+            return command.run(self)
+    return Build_ext_first
+
 setup(
     name='pyxmolpp2',
     version=get_version_info()[3],
@@ -72,8 +100,14 @@ setup(
     description='Utils for processing MD',
     long_description=open("README.rst").read(),
     ext_modules=[CMakeExtension('pyxmolpp2')],
-    packages=find_packages('pyxmolpp2'),
-    cmdclass=dict(build_ext=CMakeBuild),
+    packages=["pyxmolpp2-stubs"] + find_packages(),
+    cmdclass = dict(install=build_ext_before(install),
+                    egg_info=build_ext_before(egg_info),
+                    build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
+    package_data={
+        'pyxmolpp2-stubs':
+            find_stubs('pyxmolpp2-stubs'),
+    }
 )

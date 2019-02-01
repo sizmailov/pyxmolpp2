@@ -23,3 +23,6 @@
 	url = git@github.com:sizmailov/eigen-git-mirror.git
   shallow = true
 	branch = master
+[submodule "external/pybind11-stubgen"]
+	path = external/pybind11-stubgen
+	url = https://github.com/sizmailov/pybind11-stubgen.git
