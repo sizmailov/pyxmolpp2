@@ -422,7 +422,7 @@ def test_AtomSelection_transformations():
 
 def test_Atom_setters():
     from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.geometry import Translation3d, XYZ
+    from pyxmolpp2.geometry import XYZ
     frame = make_polyglycine([("A", 1)])
     a = frame.asAtoms[0]
 
@@ -443,7 +443,6 @@ def test_Atom_setters():
 
 def test_Residue_setters():
     from pyxmolpp2.polymer import ResidueName, ResidueId
-    from pyxmolpp2.geometry import Translation3d, XYZ
     frame = make_polyglycine([("A", 1)])
     r = frame.asResidues[0]
 
@@ -458,4 +457,15 @@ def test_Residue_setters():
 
     r.rId = ResidueId(7)
     assert r.rId == ResidueId(7)
+
+def test_Chain_setters():
+    from pyxmolpp2.polymer import ChainName
+    frame = make_polyglycine([("A", 1)])
+    c = frame.asChains[0]
+
+    c.name = ChainName("X")
+    assert c.name == ChainName("X")
+
+    c.cName = ChainName("Y")
+    assert c.cName == ChainName("Y")
 
