@@ -41,23 +41,20 @@ To install from master branch run command
     python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git
 
 
-Generation stubs for PyCharm
-----------------------------
+Generation stubs for PyCharm/mypy
+---------------------------------
 
-``pyxmolpp2`` is a binary python module, so it can't be readily understood by PyCharm. You need to
-generate stubs for it. Go to your project tree and run commands:
+``pyxmolpp2`` is a binary python module, so it can't be readily understood by static analysis tools.
+The ``pyxmolpp2-stubs`` package generates stubs for installed ``pyxmolpp2`` module.
+
 
 .. code-block:: bash
 
-    # get script
-    wget -c https://github.com/sizmailov/pyxmolpp2/raw/master/write_version_info.py
+    # install from PyPI
+    python -m pip install pyxmolpp2-stubs
 
-    # generate stubs
-    python write_version_info.py
-
-Then mark newly created directory "stubs" as "Sources Root" form context menu in PyCharm project tab.
-
-Done!
+    # install from github
+    python -m pip install git+https://github.com/sizmailov/pyxmolpp2-stubs.git
 
 
 
