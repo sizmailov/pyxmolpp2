@@ -1,25 +1,25 @@
 [submodule "external/googletest"]
 	path = external/googletest
-	url = https://github.com/sizmailov/googletest.git
+	url = git@github.com:sizmailov/googletest.git
   shallow = true
 	branch = master
 [submodule "external/range-v3"]
 	path = external/range-v3
-	url = https://github.com/sizmailov/range-v3.git
+	url = git@github.com:sizmailov/range-v3.git
   shallow = true
 	branch = master
 [submodule "external/GSL"]
 	path = external/GSL
-	url = https://github.com/sizmailov/GSL.git
+	url = git@github.com:sizmailov/GSL.git
   shallow = true
 	branch = master
 [submodule "external/pybind11"]
 	path = external/pybind11
-	url = https://github.com/sizmailov/pybind11.git
+	url = git@github.com:sizmailov/pybind11.git
 	shallow = true
 	branch = master
 [submodule "external/eigen-git-mirror"]
 	path = external/eigen-git-mirror
-	url = https://github.com/sizmailov/eigen-git-mirror.git
+	url = git@github.com:sizmailov/eigen-git-mirror.git
   shallow = true
 	branch = master

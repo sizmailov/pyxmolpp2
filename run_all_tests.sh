@@ -7,6 +7,11 @@ do
   make -j 4 -C ${build_dir} all
 done
 
+
+if [[ ! -d tests_dataset ]]; then
+  git clone git@github.com:sizmailov/pyxmopp_tests_dataset.git tests_dataset
+fi
+
 for build_dir in cmake-build-*
 do
   make -C ${build_dir} test
