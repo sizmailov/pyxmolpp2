@@ -492,7 +492,7 @@ def test_ResidueSelection_construction_from_list():
 
 
 def test_bad_selection_construction_from_list():
-    from pyxmolpp2.polymer import *
+    from pyxmolpp2.polymer import AtomSelection, ChainSelection
 
     frame = make_polyglycine([("A", 20)])
 
