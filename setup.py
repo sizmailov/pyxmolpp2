@@ -31,15 +31,6 @@ class CMakeBuild(build_ext):
         for ext in self.extensions:
             self.build_extension(ext)
 
-
-        subprocess.call([sys.executable,
-                         os.path.join(os.path.dirname(__file__), "external", "pybind11-stubgen",
-                                      "pybind11_stubgen.py"),
-                         "--output-dir", os.path.dirname(os.path.abspath(__file__)),
-                         "--no-setup-py",
-                         "pyxmolpp2"
-                         ])
-
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
@@ -73,22 +64,6 @@ class CMakeBuild(build_ext):
                                ] + build_args,
                               cwd=self.build_temp)
 
-def find_stubs(package):
-    stubs = []
-    for root, dirs, files in os.walk(package):
-        for file in files:
-            path = os.path.join(root, file).replace(package + os.sep, '', 1)
-            stubs.append(path)
-    return {package: stubs}
-
-
-def build_ext_before(command):
-    class Build_ext_first(command):
-        def run(self):
-            self.run_command("build_ext")
-            return command.run(self)
-    return Build_ext_first
-
 setup(
     name='pyxmolpp2',
     version=get_version_info()[3],
@@ -100,9 +75,5 @@ setup(
     packages=find_packages(),
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
-    zip_safe=False,
-    package_data={
-        'pyxmolpp2':
-            find_stubs('pyxmolpp2-stubs'),
-    }
+    zip_safe=False
 )
