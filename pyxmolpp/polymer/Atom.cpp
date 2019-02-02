@@ -548,48 +548,105 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
                             ChainRefPolicy, py::keep_alive<0, 1>());
 
   pyAtomSelection
-      .def("filter", // python predicates may alter atom, no way to prevent it
-           [](AtomSelection& sel, std::function<bool(AtomRef)>& predicate) {
-             return sel.filter([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); });
-           },
-           py::arg("predicate"), "Keeps in selection only elements that match predicate")
-      .def("for_each",
-           [](AtomSelection& sel, std::function<void(AtomRef)>& func) {
-             return sel.for_each([&](Atom& a) { func(AtomRef(a)); });
-           },
-           py::arg("transformation"), "Applies (mutating) transformation to atoms")
-      .def("transform",
+      .def(
+          py::init([](py::iterable atom_list){
+            std::vector<Atom*> ats;
+            auto iter = py::iter(atom_list);
+            while (iter != py::iterator::sentinel())
+            {
+              AtomRef atom_ref = py::cast<AtomRef>(*iter);
+              ats.push_back(std::addressof(static_cast<Atom&>(atom_ref)));
+              ++iter;
+            }
+            return AtomSelection(ats.begin(),ats.end());
+          }),
+          py::arg("atom_list"),
+          "Construct AtomSelection from iterable with Atom elements")
+
+      .def(
+          "filter", // python predicates may alter atom, no way to prevent it
+          [](AtomSelection& sel, std::function<bool(AtomRef)>& predicate) {
+            return sel.filter([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); });
+          },
+          py::arg("predicate"),
+          "Keeps in selection only elements that match predicate")
+
+      .def(
+          "for_each",
+          [](AtomSelection& sel, std::function<void(AtomRef)>& func) {
+            return sel.for_each([&](Atom& a) { func(AtomRef(a)); });
+          },
+          py::arg("transformation"),
+          "Applies (mutating) transformation to atoms")
+
+      .def(
+          "transform",
           [](AtomSelection& sel, xmol::geometry::Transformation3d& transformation3d) {
             return sel.for_each([&](Atom& a) { a.set_r(transformation3d.transform(a.r())); });
           },
-          py::arg("transformation"), "Applies transformation to atom coordinates")
+          py::arg("transformation"),
+          "Applies transformation to atom coordinates")
+
       .def("transform",
           [](AtomSelection& sel, xmol::geometry::Rotation3d& rotation3d) {
             return sel.for_each([&](Atom& a) { a.set_r(rotation3d.transform(a.r())); });
           },
-          py::arg("transformation"), "Applies transformation to atom coordinates")
+          py::arg("transformation"),
+          "Applies transformation to atom coordinates")
+
       .def("transform",
           [](AtomSelection& sel, xmol::geometry::UniformScale3d& uniformScale3d) {
             return sel.for_each([&](Atom& a) { a.set_r(uniformScale3d.transform(a.r())); });
           },
-          py::arg("transformation"), "Applies transformation to atom coordinates")
-      .def("transform",
+          py::arg("transformation"),
+          "Applies transformation to atom coordinates")
+
+      .def(
+          "transform",
           [](AtomSelection& sel, xmol::geometry::Translation3d& translation3d) {
             return sel.for_each([&](Atom& a) { a.set_r(translation3d.transform(a.r())); });
           },
-          py::arg("transformation"), "Applies transformation to atom coordinates")
-      .def("__len__", [](AtomSelection& asel) { return asel.size(); }, "Returns number of elements")
-      .def_property_readonly("size", [](AtomSelection& asel) { return asel.size(); }, "Returns number of elements")
-      .def_property_readonly("toCoords", [](AtomSelection& aSel) { return aSel.toCoords(); },
-                             "Returns copy of atom coordinates")
-      .def_property_readonly("asChains", [](AtomSelection& aSel) { return aSel.asChains(); },
-                             "Returns selection of parent chains")
-      .def_property_readonly("asResidues", [](AtomSelection& aSel) { return aSel.asResidues(); },
-                             "Returns selection of parent residues")
-      .def("__iter__", [](AtomSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
-      .def("__getitem__", [](AtomSelection& sel, int index) -> AtomRef { return AtomRef(sel[index]); }, AtomRefPolicy,
-           py::arg("n"), "Access n'th element")
-      .def("__getitem__",
+          py::arg("transformation"),
+          "Applies transformation to atom coordinates")
+
+      .def(
+          "__len__",
+          [](AtomSelection& asel) { return asel.size(); },
+          "Returns number of elements")
+
+      .def_property_readonly(
+          "size",
+          [](AtomSelection& asel) { return asel.size(); },
+          "Returns number of elements")
+
+      .def_property_readonly(
+          "toCoords",
+          [](AtomSelection& aSel) { return aSel.toCoords(); },
+          "Returns copy of atom coordinates")
+
+      .def_property_readonly(
+          "asChains",
+          [](AtomSelection& aSel) { return aSel.asChains(); },
+          "Returns selection of parent chains")
+
+      .def_property_readonly(
+          "asResidues",
+          [](AtomSelection& aSel) { return aSel.asResidues(); },
+          "Returns selection of parent residues")
+
+      .def(
+          "__iter__",
+          [](AtomSelection& sel) { return sel.begin(); },
+          py::keep_alive<0, 1>())
+
+      .def(
+          "__getitem__",
+          [](AtomSelection& sel, int index) -> AtomRef { return AtomRef(sel[index]); }, AtomRefPolicy,
+          py::arg("n"),
+          "Access n'th element")
+
+      .def(
+          "__getitem__",
            [](const AtomSelection& sel, py::slice slice) {
              ssize_t start, stop, step, slicelength;
              if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
@@ -598,100 +655,205 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
              }
              return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
            },
-           py::arg("slice"), "Slice overload")
-      .def("__repr__",
-           [](const AtomSelection& selection) {
-             return "<pyxmolpp2.polymer.AtomSelection size=" + std::to_string(selection.size()) + " at 0x" +
-                    xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-           })
+           py::arg("slice"),
+           "Slice overload")
+
+      .def(
+          "__repr__",
+          [](const AtomSelection& selection) {
+            return "<pyxmolpp2.polymer.AtomSelection size="
+            + std::to_string(selection.size())
+            + " at 0x"
+            + xmol::utils::string::int2hex((uint64_t)(std::addressof(selection)))
+            + ">";
+          })
+
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);
 
   pyResidueSelection
-      .def("filter",
-           [](ResidueSelection& sel, std::function<bool(ResidueRef)>& predicate) {
-             return sel.filter([&](const Residue& a) { return predicate(ResidueRef(const_cast<Residue&>(a))); });
+      .def(py::init([](py::iterable residue_list){
+            std::vector<Residue*> elements;
+            auto iter = py::iter(residue_list);
+            while (iter != py::iterator::sentinel())
+            {
+              ResidueRef ref = py::cast<ResidueRef>(*iter);
+              elements.push_back(std::addressof(static_cast<Residue&>(ref)));
+              ++iter;
+            }
+            return ResidueSelection(elements.begin(),elements.end());
+          }),
+          py::arg("residue_list"),
+          "Construct ResidueSelection from iterable with Residue elements")
+
+      .def(
+          "filter",
+          [](ResidueSelection& sel, std::function<bool(ResidueRef)>& predicate) {
+            return sel.filter([&](const Residue& a) { return predicate(ResidueRef(const_cast<Residue&>(a))); });
+          },
+          py::arg("predicate"),
+          "Keeps in selection only elements that match predicate")
+
+      .def(
+          "for_each",
+          [](ResidueSelection& sel, std::function<void(ResidueRef)>& func) {
+            return sel.for_each([&](Residue& a) { func(ResidueRef(a)); });
+          },
+          py::arg("transformation"), "Apply (mutating) transformation to selection")
+
+      .def(
+          "__len__",
+          &ResidueSelection::size,
+          "Returns number of elements")
+
+      .def_property_readonly(
+          "size",
+          &ResidueSelection::size,
+          "Returns number of elements")
+
+      .def_property_readonly(
+          "asChains",
+          [](ResidueSelection& rSel) { return rSel.asChains(); },
+          "Returns selection of parent chains")
+
+      .def_property_readonly(
+          "asAtoms",
+          [](ResidueSelection& rSel) { return rSel.asAtoms(); },
+          "Returns selection of child atoms")
+
+      .def(
+          "__iter__",
+          [](ResidueSelection& sel) { return sel.begin(); },
+          py::keep_alive<0, 1>())
+
+      .def(
+          "__getitem__",
+          [](ResidueSelection& sel, int index) -> ResidueRef { return ResidueRef(sel[index]); },
+          ResidueRefPolicy, py::arg("n"),
+          "Access n'th element")
+
+      .def(
+          "__getitem__",
+          [](const ResidueSelection& sel, py::slice slice) {
+            ssize_t start, stop, step, slicelength;
+            if (!slice.compute(sel.size(),
+                              reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+                              reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength)
+                              )) {
+                  throw py::error_already_set();
+            }
+            return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
            },
-           py::arg("predicate"), "Keeps in selection only elements that match predicate")
-      .def("for_each",
-           [](ResidueSelection& sel, std::function<void(ResidueRef)>& func) {
-             return sel.for_each([&](Residue& a) { func(ResidueRef(a)); });
-           },
-           py::arg("transformation"), "Apply (mutating) transformation to selection")
-      .def("__len__", &ResidueSelection::size, "Returns number of elements")
-      .def_property_readonly("size", &ResidueSelection::size, "Returns number of elements")
-      .def_property_readonly("asChains", [](ResidueSelection& rSel) { return rSel.asChains(); },
-                             "Returns selection of parent chains")
-      .def_property_readonly("asAtoms", [](ResidueSelection& rSel) { return rSel.asAtoms(); },
-                             "Returns selection of child atoms")
-      .def("__iter__", [](ResidueSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
-      .def("__getitem__", [](ResidueSelection& sel, int index) -> ResidueRef { return ResidueRef(sel[index]); },
-           ResidueRefPolicy, py::arg("n"), "Access n'th element")
-      .def("__getitem__",
-           [](const ResidueSelection& sel, py::slice slice) {
-             ssize_t start, stop, step, slicelength;
-             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
-                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
-               throw py::error_already_set();
-             }
-             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
-           },
-           py::arg("slice"), "Slice overload")
+           py::arg("slice"),
+           "Slice overload")
+
       .def("__repr__",
            [](const ResidueSelection& selection) {
              return "<pyxmolpp2.polymer.ResidueSelection size=" + std::to_string(selection.size()) + " at 0x" +
                     xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
            })
+
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);
 
   pyChainSelection
+      .def(py::init([](py::iterable chain_list){
+            std::vector<Chain*> elements;
+            auto iter = py::iter(chain_list);
+            while (iter != py::iterator::sentinel())
+            {
+              ChainRef ref = py::cast<ChainRef>(*iter);
+              elements.push_back(std::addressof(static_cast<Chain&>(ref)));
+              ++iter;
+            }
+            return ChainSelection(elements.begin(),elements.end());
+          }),
+          py::arg("chain_list"),
+          "Construct ChainSelection from iterable with Chain elements")
+
       .def("filter",
            [](ChainSelection& sel, std::function<bool(ChainRef)>& predicate) {
              return sel.filter([&](const Chain& a) { return predicate(ChainRef(const_cast<Chain&>(a))); });
            },
-           py::arg("predicate"), "Keeps in selection only elements that match predicate")
+           py::arg("predicate"),
+           "Keeps in selection only elements that match predicate")
 
       .def("for_each",
            [](ChainSelection& sel, std::function<void(ChainRef)>& func) {
              return sel.for_each([&](Chain& a) { func(ChainRef(a)); });
            },
-           py::arg("transformation"), "Apply (mutating) transformation to selection")
-      .def("__len__", &ChainSelection::size)
-      .def_property_readonly("size", &ChainSelection::size)
-      .def_property_readonly("asResidues", [](ChainSelection& cSel) { return cSel.asResidues(); },
-                             "Returns selection of child residues")
-      .def_property_readonly("asAtoms", [](ChainSelection& cSel) { return cSel.asAtoms(); },
-                             "Returns selection of child chains")
-      .def("__iter__", [](ChainSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
-      .def("__getitem__", [](ChainSelection& sel, int index) -> ChainRef { return ChainRef(sel[index]); },
-           ChainRefPolicy, py::arg("n"), "Access n'th element")
-      .def("__getitem__",
+           py::arg("transformation"),
+           "Apply (mutating) transformation to selection")
+
+      .def(
+          "__len__",
+          &ChainSelection::size)
+
+      .def_property_readonly(
+          "size", &ChainSelection::size)
+
+      .def_property_readonly(
+          "asResidues",
+          [](ChainSelection& cSel) { return cSel.asResidues(); },
+          "Returns selection of child residues")
+
+      .def_property_readonly(
+          "asAtoms",
+          [](ChainSelection& cSel) { return cSel.asAtoms(); },
+          "Returns selection of child chains")
+
+      .def(
+          "__iter__",
+          [](ChainSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
+
+      .def(
+          "__getitem__",
+          [](ChainSelection& sel, int index) -> ChainRef { return ChainRef(sel[index]); },
+           ChainRefPolicy,
+           py::arg("n"),
+           "Access n'th element")
+
+      .def(
+          "__getitem__",
            [](const ChainSelection& sel, py::slice slice) {
              ssize_t start, stop, step, slicelength;
-             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+             if (!slice.compute(sel.size(),
+                                reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
                                 reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
                throw py::error_already_set();
              }
              return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
            },
-           py::arg("slice"), "Slice overload")
-      .def("__repr__",
-           [](const ChainSelection& selection) {
-             return "<pyxmolpp2.polymer.ChainSelection size=" + std::to_string(selection.size()) + " at 0x" +
-                    xmol::utils::string::int2hex((uint64_t)(std::addressof(selection))) + ">";
-           })
+           py::arg("slice"),
+           "Slice overload")
+
+      .def(
+          "__repr__",
+          [](const ChainSelection& selection) {
+            return "<pyxmolpp2.polymer.ChainSelection size="
+            + std::to_string(selection.size())
+            + " at 0x"
+            + xmol::utils::string::int2hex((uint64_t)(std::addressof(selection)))
+            + ">";
+          })
+
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);

@@ -469,3 +469,36 @@ def test_Chain_setters():
     c.cName = ChainName("Y")
     assert c.cName == ChainName("Y")
 
+
+def test_AtomSelection_construction_from_list():
+    from pyxmolpp2.polymer import AtomSelection
+
+    frame = make_polyglycine([("A", 20)])
+    atom_list = [ a for a in frame.asAtoms ]
+
+    asel = AtomSelection(atom_list)
+
+    assert asel == frame.asAtoms
+
+def test_ResidueSelection_construction_from_list():
+    from pyxmolpp2.polymer import ResidueSelection
+
+    frame = make_polyglycine([("A", 20)])
+    thelist = [ a for a in frame.asResidues ]
+
+    sel = ResidueSelection(thelist)
+
+    assert sel == frame.asResidues
+
+
+def test_bad_selection_construction_from_list():
+    from pyxmolpp2.polymer import AtomSelection, ChainSelection
+
+    frame = make_polyglycine([("A", 20)])
+
+    with pytest.raises(Exception):
+        AtomSelection([ a for a in frame.asChains ])
+    with pytest.raises(Exception):
+        ChainSelection([ a for a in frame.asResidues ])
+
+
