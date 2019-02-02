@@ -420,3 +420,23 @@ def test_AtomSelection_transformations():
     for a in ats:
         assert (a.r - XYZ(2,4,6)).len() == 0
 
+def test_Atom_setters():
+    from pyxmolpp2.polymer import AtomName
+    from pyxmolpp2.geometry import Translation3d, XYZ
+    frame = make_polyglycine([("A", 1)])
+    a = frame.asAtoms[0]
+
+    a.name = AtomName("X")
+    assert a.name == AtomName("X")
+
+    a.aName = AtomName("Y")
+    assert a.aName == AtomName("Y")
+
+    a.id = 5
+    assert a.id == 5
+
+    a.aId = 7
+    assert a.aId == 7
+
+    a.r = XYZ(9,9,9)
+    assert (a.r - XYZ(9,9,9)).len() == 0

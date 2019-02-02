@@ -148,53 +148,96 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
 
   pyAtom
       .def_property_readonly(
-          "residue", [](const AtomRef& ref) -> ResidueRef { return ResidueRef(static_cast<Atom&>(ref).residue()); },
-          ResidueRefPolicy, "Parent residue, guarantied to be not None")
-      .def_property("r", [](const AtomRef& ref) -> const XYZ& { return static_cast<Atom&>(ref).r(); },
-                    py::cpp_function(
-                        [](const AtomRef& ref, XYZ value) -> AtomRef {
-                          static_cast<Atom&>(ref).set_r(value);
-                          return AtomRef(static_cast<Atom&>(ref));
-                        },
-                        py::return_value_policy::reference),
-                    "Atom coordinates")
-      .def_property_readonly("id", [](const AtomRef& ref) { return static_cast<Atom&>(ref).id(); }, "Atom id")
+          "residue",
+          [](const AtomRef& ref) -> ResidueRef { return ResidueRef(static_cast<Atom&>(ref).residue()); },
+          ResidueRefPolicy,
+          "Parent residue, guarantied to be not None")
+
+      .def_property(
+          "r",
+          [](const AtomRef& ref) -> const XYZ& { return static_cast<Atom&>(ref).r(); },
+          [](const AtomRef& ref, XYZ value) { static_cast<Atom&>(ref).set_r(value); },
+          "Atom coordinates")
+
+      .def_property(
+          "id",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).id(); },
+          [](const AtomRef& ref, atomId_t value) {static_cast<Atom&>(ref).set_id(std::move(value));},
+          "Atom id")
+
       .def("__eq__",
            [](const AtomRef& a, const AtomRef& b) -> bool { return &static_cast<Atom&>(a) == &static_cast<Atom&>(b); })
-      .def_property_readonly("aId", [](const AtomRef& ref) { return static_cast<Atom&>(ref).id(); }, "Atom id")
-      .def_property("name", [](const AtomRef& ref) { return static_cast<Atom&>(ref).name(); },
-                    py::cpp_function(
-                        [](const AtomRef& ref, AtomName value) -> AtomRef {
-                          static_cast<Atom&>(ref).set_name(value);
-                          return AtomRef(static_cast<Atom&>(ref));
-                        },
-                        AtomRefPolicy),
-                    "Atom name")
-      .def_property_readonly("aName", [](const AtomRef& ref) { return static_cast<Atom&>(ref).name(); }, "Atom name")
-      .def_property_readonly("rId", [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().id(); },
-                             "Residue id")
-      .def_property_readonly("rName", [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().name(); },
-                             "Residue name")
+
+      .def_property(
+          "aId",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).id(); },
+          [](const AtomRef& ref, atomId_t value) {static_cast<Atom&>(ref).set_id(std::move(value));},
+          "Atom id")
+
+      .def_property(
+          "name",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).name(); },
+          [](const AtomRef& ref, AtomName value) {static_cast<Atom&>(ref).set_name(value);},
+          "Atom name")
+
+      .def_property(
+          "aName",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).name(); },
+          [](const AtomRef& ref, AtomName value) {static_cast<Atom&>(ref).set_name(value);},
+          "Atom name"
+          )
       .def_property_readonly(
-          "cIndex", [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().index(); }, "Chain index")
-      .def_property_readonly("cName",
-                             [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().name(); },
-                             "Chain name (chainID in PDB nomenclature)")
+          "rId",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().id(); },
+          "Residue id")
+
       .def_property_readonly(
-          "fIndex", [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().frame().index(); },
+          "rName",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().name(); },
+          "Residue name")
+
+      .def_property_readonly(
+          "cIndex",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().index(); },
+          "Chain index")
+
+      .def_property_readonly(
+          "cName",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().name(); },
+          "Chain name (chainID in PDB nomenclature)"
+          )
+
+      .def_property_readonly(
+          "fIndex",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).residue().chain().frame().index(); },
           "Frame index")
+
       .def_property_readonly(
-          "chain", [](const AtomRef& ref) -> ChainRef { return ChainRef(static_cast<Atom&>(ref).residue().chain()); },
-          ChainRefPolicy, "Parent chain")
+          "chain",
+          [](const AtomRef& ref) -> ChainRef { return ChainRef(static_cast<Atom&>(ref).residue().chain()); },
+          ChainRefPolicy,
+          "Parent chain")
+
       .def_property_readonly(
-          "frame", [](const AtomRef& ref) -> Frame& { return static_cast<Atom&>(ref).residue().chain().frame(); },
-          FrameRefPolicy, "Parent frame")
-      .def("delete", [](const AtomRef& ref) { return static_cast<Atom&>(ref).set_deleted(); },
-           "Mark atom as deleted. Further access to deleted atom is illegal.")
-      .def("__repr__", [](const AtomRef& atom) {
-        return "<pyxmolpp2.polymer.Atom id=" + std::to_string(static_cast<Atom&>(atom).id()) + " name=\"" +
-               static_cast<Atom&>(atom).name().str() + "\" at 0x" +
-               xmol::utils::string::int2hex((uint64_t)(std::addressof(static_cast<Atom&>(atom)))) + ">";
+          "frame",
+          [](const AtomRef& ref) -> Frame& { return static_cast<Atom&>(ref).residue().chain().frame(); },
+          FrameRefPolicy,
+          "Parent frame"
+          )
+
+      .def("delete",
+          [](const AtomRef& ref) { return static_cast<Atom&>(ref).set_deleted(); },
+          "Mark atom as deleted. Further access to deleted atom is illegal.")
+
+      .def("__repr__",
+          [](const AtomRef& atom) {
+                return "<pyxmolpp2.polymer.Atom id="
+                + std::to_string(static_cast<Atom&>(atom).id())
+                + " name=\""
+                + static_cast<Atom&>(atom).name().str()
+                + "\" at 0x"
+                + xmol::utils::string::int2hex((uint64_t)(std::addressof(static_cast<Atom&>(atom))))
+                + ">";
       });
   ;
 
