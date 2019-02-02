@@ -6,8 +6,6 @@ import subprocess
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
-from setuptools.command.egg_info import egg_info
-from setuptools.command.install import install
 from distutils.version import LooseVersion
 
 from write_version_info import get_version_info
@@ -33,15 +31,14 @@ class CMakeBuild(build_ext):
         for ext in self.extensions:
             self.build_extension(ext)
 
-        env = os.environ.copy()
-        env.update({"PYTHONPATH":env["PYTHONPATH"]+os.pathsep+os.curdir})
 
         subprocess.call([sys.executable,
                          os.path.join(os.path.dirname(__file__), "external", "pybind11-stubgen",
                                       "pybind11_stubgen.py"),
-                         "--output-dir", os.path.dirname(__file__),
+                         "--output-dir", os.path.dirname(os.path.abspath(__file__)),
+                         "--no-setup-py",
                          "pyxmolpp2"
-                         ], env=env)
+                         ])
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -100,14 +97,12 @@ setup(
     description='Utils for processing MD',
     long_description=open("README.rst").read(),
     ext_modules=[CMakeExtension('pyxmolpp2')],
-    packages=["pyxmolpp2-stubs"] + find_packages(),
-    cmdclass = dict(install=build_ext_before(install),
-                    egg_info=build_ext_before(egg_info),
-                    build_ext=CMakeBuild),
+    packages=find_packages(),
+    cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
     package_data={
-        'pyxmolpp2-stubs':
+        'pyxmolpp2':
             find_stubs('pyxmolpp2-stubs'),
     }
 )
