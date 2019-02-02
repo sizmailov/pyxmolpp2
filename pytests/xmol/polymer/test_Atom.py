@@ -420,3 +420,52 @@ def test_AtomSelection_transformations():
     for a in ats:
         assert (a.r - XYZ(2,4,6)).len() == 0
 
+def test_Atom_setters():
+    from pyxmolpp2.polymer import AtomName
+    from pyxmolpp2.geometry import XYZ
+    frame = make_polyglycine([("A", 1)])
+    a = frame.asAtoms[0]
+
+    a.name = AtomName("X")
+    assert a.name == AtomName("X")
+
+    a.aName = AtomName("Y")
+    assert a.aName == AtomName("Y")
+
+    a.id = 5
+    assert a.id == 5
+
+    a.aId = 7
+    assert a.aId == 7
+
+    a.r = XYZ(9,9,9)
+    assert (a.r - XYZ(9,9,9)).len() == 0
+
+def test_Residue_setters():
+    from pyxmolpp2.polymer import ResidueName, ResidueId
+    frame = make_polyglycine([("A", 1)])
+    r = frame.asResidues[0]
+
+    r.name = ResidueName("X")
+    assert r.name == ResidueName("X")
+
+    r.rName = ResidueName("Y")
+    assert r.rName == ResidueName("Y")
+
+    r.id = ResidueId(5)
+    assert r.id == ResidueId(5)
+
+    r.rId = ResidueId(7)
+    assert r.rId == ResidueId(7)
+
+def test_Chain_setters():
+    from pyxmolpp2.polymer import ChainName
+    frame = make_polyglycine([("A", 1)])
+    c = frame.asChains[0]
+
+    c.name = ChainName("X")
+    assert c.name == ChainName("X")
+
+    c.cName = ChainName("Y")
+    assert c.cName == ChainName("Y")
+
