@@ -549,6 +549,21 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
 
   pyAtomSelection
       .def(
+          py::init([](py::iterable atom_list){
+            std::vector<Atom*> ats;
+            auto iter = py::iter(atom_list);
+            while (iter != py::iterator::sentinel())
+            {
+              AtomRef atom_ref = py::cast<AtomRef>(*iter);
+              ats.push_back(std::addressof(static_cast<Atom&>(atom_ref)));
+              ++iter;
+            }
+            return AtomSelection(ats.begin(),ats.end());
+          }),
+          py::arg("atom_list"),
+          "Construct AtomSelection from iterable with Atom elements")
+
+      .def(
           "filter", // python predicates may alter atom, no way to prevent it
           [](AtomSelection& sel, std::function<bool(AtomRef)>& predicate) {
             return sel.filter([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); });
@@ -656,11 +671,27 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);
 
   pyResidueSelection
+      .def(py::init([](py::iterable residue_list){
+            std::vector<Residue*> elements;
+            auto iter = py::iter(residue_list);
+            while (iter != py::iterator::sentinel())
+            {
+              ResidueRef ref = py::cast<ResidueRef>(*iter);
+              elements.push_back(std::addressof(static_cast<Residue&>(ref)));
+              ++iter;
+            }
+            return ResidueSelection(elements.begin(),elements.end());
+          }),
+          py::arg("residue_list"),
+          "Construct ResidueSelection from iterable with Residue elements")
+
       .def(
           "filter",
           [](ResidueSelection& sel, std::function<bool(ResidueRef)>& predicate) {
@@ -731,11 +762,27 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);
 
   pyChainSelection
+      .def(py::init([](py::iterable chain_list){
+            std::vector<Chain*> elements;
+            auto iter = py::iter(chain_list);
+            while (iter != py::iterator::sentinel())
+            {
+              ChainRef ref = py::cast<ChainRef>(*iter);
+              elements.push_back(std::addressof(static_cast<Chain&>(ref)));
+              ++iter;
+            }
+            return ChainSelection(elements.begin(),elements.end());
+          }),
+          py::arg("chain_list"),
+          "Construct ChainSelection from iterable with Chain elements")
+
       .def("filter",
            [](ChainSelection& sel, std::function<bool(ChainRef)>& predicate) {
              return sel.filter([&](const Chain& a) { return predicate(ChainRef(const_cast<Chain&>(a))); });
@@ -805,6 +852,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(py::self *= py::self)
       .def(py::self += py::self)
       .def(py::self -= py::self)
+      .def(py::self != py::self)
+      .def(py::self == py::self)
       .def(py::self * py::self)
       .def(py::self + py::self)
       .def(py::self - py::self);
