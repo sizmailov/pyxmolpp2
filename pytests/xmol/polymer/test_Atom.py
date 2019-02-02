@@ -440,3 +440,22 @@ def test_Atom_setters():
 
     a.r = XYZ(9,9,9)
     assert (a.r - XYZ(9,9,9)).len() == 0
+
+def test_Residue_setters():
+    from pyxmolpp2.polymer import ResidueName, ResidueId
+    from pyxmolpp2.geometry import Translation3d, XYZ
+    frame = make_polyglycine([("A", 1)])
+    r = frame.asResidues[0]
+
+    r.name = ResidueName("X")
+    assert r.name == ResidueName("X")
+
+    r.rName = ResidueName("Y")
+    assert r.rName == ResidueName("Y")
+
+    r.id = ResidueId(5)
+    assert r.id == ResidueId(5)
+
+    r.rId = ResidueId(7)
+    assert r.rId == ResidueId(7)
+
