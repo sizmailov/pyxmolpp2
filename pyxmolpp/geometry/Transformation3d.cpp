@@ -2,6 +2,7 @@
 
 #include <pybind11/operators.h>
 #include <pybind11/numpy.h>
+#include <pybind11/eigen.h>
 
 #include "xmol/geometry/Transformation3d.h"
 
