@@ -286,13 +286,41 @@ after_success:
     - gcovr cmake-build-coverage --root=./ --delete --exclude='external/.*' --exclude='tests/.*' --xml -o coverage.xml
     - bash <(curl -s https://codecov.io/bash)
 
+before_deploy:
+  - bash build_docs.sh
+  - git config --global user.email "builds@travis-ci.com"
+  - git config --global user.name "Travis CI"
+
+
 deploy:
-  provider: pypi
-  user: sizmailov
-  server: https://test.pypi.org/legacy/ # Remove for deployment to official PyPi repo
-  password:
-    secure: "Nl30LxQNGWXsNTqMBwjHY9CAfDks4reOk0wV89iWjCK+4KjX3dwoa4vB0L+j/a0v8qAHSnwQYfNaFBWnUycwqgViOiDePEp8orM3UCxji/QSVFQ3oQQd6Xxzzpgem/N0pcyhf540xRypAnQyfOZP7vsRnvMyU3s8xRn3Vhws64niZGFtt7MaMfz/dew74ji3+nYrJdZTnuGXXj5oazUArxalVbO7Er3yNYTPEpZ4mo1+6PJEJrPqCyTkYBIRLv5F/JiX37wNv1CF2uKN9QtmB1folC266I5cEAZORvR5TEdP9RQrV32tv0kqt+bLnAFeV0x0zGlVYurgchXyiw3MsW1tPzZlVehjLqKOGxpoPAbZBclsIUfCy5ZG5Dj3qZ/kf2XlP9u+loqYqKMeAVoGNwwYCcZDY98C4RGdvW1AF96JJRLiMtPd3W8bB2lx2MeJRbN1BTDWy0C23NJ9/oluBO3LEBJk6RFZFDlB96viGPr/0Pd05RFPa7bKrdUApShue1AbmyVkDkT263f9Knbdh1VcJVxyoa0Jtg3qIofsdk2hvSKY+UkA3TO8f2Q3WHPIDFQPyLVSL4vNtZ7URdz9HnBKh/sQqWX3ssfOB7hXhCqjmUQ0af9PVUc689Vl2Z2TJKq2RREwDvJJBuQdTEF4ErxNXwwPdN4UG9ys+3Gg7ek="
-  distributions: "sdist"
-  skip_existing: true
-  on:
-    branch: feature/automate_pypi
+  - provider: pages
+    verbose: true
+    local-dir: docs/build/html
+    skip-cleanup: true
+    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+    keep-history: false
+    on:
+      tags: false
+      branch: master
+
+  - provider: pypi
+    user: sizmailov
+    server: https://test.pypi.org/legacy/ # Remove for deployment to official PyPi repo
+    password:
+      secure: "Nl30LxQNGWXsNTqMBwjHY9CAfDks4reOk0wV89iWjCK+4KjX3dwoa4vB0L+j/a0v8qAHSnwQYfNaFBWnUycwqgViOiDePEp8orM3UCxji/QSVFQ3oQQd6Xxzzpgem/N0pcyhf540xRypAnQyfOZP7vsRnvMyU3s8xRn3Vhws64niZGFtt7MaMfz/dew74ji3+nYrJdZTnuGXXj5oazUArxalVbO7Er3yNYTPEpZ4mo1+6PJEJrPqCyTkYBIRLv5F/JiX37wNv1CF2uKN9QtmB1folC266I5cEAZORvR5TEdP9RQrV32tv0kqt+bLnAFeV0x0zGlVYurgchXyiw3MsW1tPzZlVehjLqKOGxpoPAbZBclsIUfCy5ZG5Dj3qZ/kf2XlP9u+loqYqKMeAVoGNwwYCcZDY98C4RGdvW1AF96JJRLiMtPd3W8bB2lx2MeJRbN1BTDWy0C23NJ9/oluBO3LEBJk6RFZFDlB96viGPr/0Pd05RFPa7bKrdUApShue1AbmyVkDkT263f9Knbdh1VcJVxyoa0Jtg3qIofsdk2hvSKY+UkA3TO8f2Q3WHPIDFQPyLVSL4vNtZ7URdz9HnBKh/sQqWX3ssfOB7hXhCqjmUQ0af9PVUc689Vl2Z2TJKq2RREwDvJJBuQdTEF4ErxNXwwPdN4UG9ys+3Gg7ek="
+    distributions: "sdist"
+    skip_existing: true
+    on:
+      branch: dev
+
+  - provider: pypi
+    user: sizmailov
+    password:
+      secure: "cr7uoS3mUnPOCqhwORZ8B+eqMYcejNSZPLpTzE2/oCbmoWgVT6Rb9k+NTFzmWc9KzfLnxYljSOKCXQ92qp1zQvgV7bcqjQjNj8SOdfSndVIGmy3PKLqxuQyo11mecMH2JgPoK8bVHJtxjFjml/jmx6jXTspYlvSFqiDl7t6rXjSKbDpMtePGrmhAnixD1Qw1PodrMzZ4vhcKlpTCn0rb+jmCkAQczRjgvUkB4PUCMB5L1940/LVbLpA7S59nKKgFmPUD6djPk6QqqjK22z2qSFe8EIC0jrN0q1B/U2WGEYHceEByR9PKTwA828i0/RSuslNzVA199VFiDCvPZ/1G1vIysdZ9VdMSpyR/dEZ9AOR2CvdELuf7hGrT4xIck5i1RjjGu2fFQ6p8p8rGJ20czQJp6gMBpVwAVRM6KF9Fv0oH5Xtok9nZXJCzIZ2CpDl/Cu+6+ZK6wIseflJslKvTGY4sJG9sXza54GMBuoQEBHEih3PZ1QLE1ViLnAbQJ04auSqtODuoUkvA/1HY7Z7p48TKJFBT6rAEnihRp755ZtgB7FaKsKK2Kge3BETVdMYw48yrxoZ4RqpEDKcv+8YsoaEOlT2oAJ+8ikpFECl+q9Oc04D4fDRc4Ds33XBdDMwV+rfUMUiFZuvyFo+ACBzo+SOv+izmnTpSNYEvk1UN0+E="
+    distributions: "sdist"
+    skip_existing: true
+    on:
+      branch: master
+
+
+
