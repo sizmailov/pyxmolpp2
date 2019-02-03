@@ -1,10 +1,15 @@
 #include "init.h"
 
+#include "../geometry/init.h"
+
 #include "pybind11/functional.h"
 #include "pybind11/operators.h"
+#include "pybind11/stl.h"
+#include "pybind11/eigen.h"
 
 #include "xmol/pdb/PdbRecord.h"
 #include "xmol/geometry/Transformation3d.h"
+#include "xmol/geometry/alignment.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
 
@@ -578,6 +583,89 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
           },
           py::arg("transformation"),
           "Applies (mutating) transformation to atoms")
+
+      .def(
+          "geom_center",
+          [](AtomSelection& sel) {
+            return xmol::geometry::calc_geom_center(sel.toCoords());
+          },
+          "Returns selection geometric center")
+
+      .def(
+          "mass_center",
+          [](AtomSelection& sel, std::vector<double> mass) {
+            return xmol::geometry::calc_mass_center(sel.toCoords(), mass);
+          },
+          py::arg("mass"),
+          "Returns selection center of mass")
+
+      .def(
+          "inertia_tensor",
+          [](AtomSelection& sel, std::vector<double> mass) {
+            return xmol::geometry::calc_inertia_tensor(sel.toCoords(), mass);
+          },
+          py::arg("mass"),
+          "Returns selection inertia tensor")
+
+      .def(
+          "geom_inertia_tensor",
+          [](AtomSelection& sel) {
+            return xmol::geometry::calc_inertia_tensor(sel.toCoords());
+          },
+          "Returns inertia tensor calculated with equal mass assumption")
+
+      .def(
+          "rmsd",
+          [](AtomSelection& sel, AtomSelection& ref) {
+            return xmol::geometry::calc_rmsd(sel.toCoords(),ref.toCoords());
+          },
+          py::arg("ref"),
+          "Returns rmsd between two selections")
+
+      .def(
+          "rmsd",
+          [](AtomSelection& sel, std::vector<XYZ> ref) {
+            return xmol::geometry::calc_rmsd(sel.toCoords(), ref);
+          },
+          py::arg("ref"),
+          "Returns rmsd between selection and reference coordinates")
+
+      .def(
+          "alignment",
+          [](AtomSelection& sel, std::vector<XYZ> ref) {
+            return xmol::geometry::calc_alignment(sel.toCoords(), ref);
+          },
+          py::arg("ref"),
+          "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
+
+
+      .def(
+          "alignment",
+          [](AtomSelection& sel, AtomSelection& ref) {
+            return xmol::geometry::calc_alignment(sel.toCoords(), ref.toCoords());
+          },
+          py::arg("ref"),
+          "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
+
+      .def(
+          "align_to",
+          [](AtomSelection& sel, std::vector<XYZ> ref) -> AtomSelection& {
+            xmol::geometry::calc_alignment(sel.toCoords(), ref);
+            return sel;
+          },
+          py::arg("ref"),
+          py::return_value_policy::reference,
+          "Equivalent to :code:`calc_alignment(ref, self.toCoords())`")
+
+      .def(
+          "align_to",
+          [](AtomSelection& sel, AtomSelection& ref) -> AtomSelection& {
+            xmol::geometry::calc_alignment(sel.toCoords(), ref.toCoords());
+            return sel;
+          },
+          py::arg("ref"),
+          py::return_value_policy::reference,
+          "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
 
       .def(
           "transform",

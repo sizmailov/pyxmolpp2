@@ -6,8 +6,6 @@
 #include <pybind11/operators.h>
 #include <pybind11/numpy.h>
 
-#include "pybind11/stl_bind.h"
-
 
 using namespace xmol::geometry;
 
