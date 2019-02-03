@@ -10,8 +10,6 @@ branches:
   only:
     - master
     - dev
-    - extend_travis_matrix
-    - feature/automate_pypi
 
 cache:
   directories:
