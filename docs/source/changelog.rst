@@ -1,6 +1,13 @@
 ----------
 Change log
 ----------
+v0.5.0:
+  - Add convenient methods to :py:class:`~pyxmolpp2.polymer.AtomSelection`, :py:class:`~pyxmolpp2.geometry.VectorXYZ`
+  - Allow :py:class:`~pyxmolpp2.geometry.Rotation3d` construction from numpy array
+  - Allow :py:class:`~pyxmolpp2.polymer.AtomSelection` construction python lists of :py:class:`~pyxmolpp2.polymer.Atom`
+  - Make :py:class:`~pyxmolpp2.polymer.Atom` properties writable
+  - Move PyCharm stubs to a separate package (`https://github.com/sizmailov/pyxmolpp2-stubs`)
+  - Automate PyPI upload and github-pages generation
 v0.4.0:
   - Allow :py:func:`pyxmolpp2.polymer.AtomSelection.transform` to accept :py:class:`~pyxmolpp2.geometry.Transformation3d`, :py:class:`~pyxmolpp2.geometry.UniformScale3d` ,
     :py:class:`~pyxmolpp2.geometry.Rotation3d` and :py:class:`~pyxmolpp2.geometry.Translation3d`
