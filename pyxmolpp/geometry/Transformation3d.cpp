@@ -42,6 +42,7 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
   pyRotation3d
       .def(py::init<>())
       .def(py::init<XYZ,AngleValue>(),py::arg("rotation_axis"),py::arg("rotation_angle"))
+      .def(py::init<const Eigen::Matrix3d>(), py::arg("rotation_matrix"))
       .def("transform",&Rotation3d::transform, py::arg("r"),"Returns rotated point")
       .def("inverted",&Rotation3d::inverted, "Returns inverted rotation")
       .def("axis",&Rotation3d::axis, "Returns axis of rotation")
