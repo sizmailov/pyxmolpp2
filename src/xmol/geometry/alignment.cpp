@@ -57,6 +57,85 @@ Transformation3d xmol::geometry::calc_alignment(
   return Transformation3d(R, T);
 }
 
+Eigen::Matrix3d xmol::geometry::calc_inertia_tensor(const std::vector<XYZ>& coords){
+  double xx = 0;
+  double yy = 0;
+  double zz = 0;
+  double xy = 0;
+  double xz = 0;
+  double yz = 0;
+
+  auto com = calc_geom_center(coords);
+
+  for (auto& r: coords){
+      auto dr = r - com;
+      xx += dr.y()*dr.y() + dr.z()*dr.z();
+      yy += dr.x()*dr.x() + dr.z()*dr.z();
+      zz += dr.y()*dr.y() + dr.x()*dr.x();
+      xy += dr.x()*dr.y();
+      xz += dr.x()*dr.z();
+      yz += dr.y()*dr.z();
+  }
+  Eigen::Matrix3d result;
+  result <<
+      xx, xy, xz,
+      xy, yy, yz,
+      xz, yz, zz;
+  return result;
+}
+
+Eigen::Matrix3d xmol::geometry::calc_inertia_tensor(const std::vector<XYZ>& coords, const std::vector<double>& mass){
+
+  double xx = 0;
+  double yy = 0;
+  double zz = 0;
+  double xy = 0;
+  double xz = 0;
+  double yz = 0;
+
+  auto com = calc_mass_center(coords, mass);
+
+  for (size_t i = 0; i<coords.size(); i++) {
+    auto& r = coords[i];
+    auto m = mass[i];
+    auto dr = r-com;
+    xx += (dr.y()*dr.y()+dr.z()*dr.z())*m;
+    yy += (dr.x()*dr.x()+dr.z()*dr.z())*m;
+    zz += (dr.y()*dr.y()+dr.x()*dr.x())*m;
+    xy += dr.x()*dr.y()*m;
+    xz += dr.x()*dr.z()*m;
+    yz += dr.y()*dr.z()*m;
+  }
+  Eigen::Matrix3d result;
+  result <<
+         xx, xy, xz,
+         xy, yy, yz,
+         xz, yz, zz;
+  return result;
+}
+
+
+XYZ xmol::geometry::calc_mass_center(
+    const std::vector<xmol::geometry::XYZ>& coordinates, const std::vector<double>& mass) {
+  if (GSL_UNLIKELY(coordinates.size()!=mass.size())) {
+    throw GeometryException(
+        "coordinates.size(" + std::to_string(coordinates.size()) + ") "
+        + "!= "
+        + "mass.size(" + std::to_string(mass.size()) + ") " );
+  }
+  if (GSL_UNLIKELY(coordinates.empty())) {
+    throw GeometryException("coordinates.size(" +
+        std::to_string(coordinates.size()) + ") == 0");
+  }
+  XYZ c;
+  double m = 0;
+  for (size_t i=0;i<coordinates.size();i++) {
+    c += coordinates[i]*mass[i];
+    m+= mass[i];
+  }
+  return c / m;
+}
+
 XYZ xmol::geometry::calc_geom_center(
     const std::vector<xmol::geometry::XYZ>& coordinates) {
   if (GSL_UNLIKELY(coordinates.empty())) {
