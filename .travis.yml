@@ -11,6 +11,7 @@ branches:
     - master
     - dev
     - extend_travis_matrix
+    - feature/automate_pypi
 
 cache:
   directories:
@@ -294,4 +295,4 @@ deploy:
   distributions: "sdist"
   skip_existing: true
   on:
-    branch: dev
+    branch: feature/automate_pypi
