@@ -286,6 +286,10 @@ after_success:
     - bash <(curl -s https://codecov.io/bash)
     - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
         DO_GH_PAGES=true;
+        DO_PYPI_RELEASE=true;
+      fi;
+    - if [ "$TRAVIS_BRANCH" == "dev" ]  && [ $RELEASE_MAKER ]; then
+          DO_PYPI_PRERELEASE=true;
       fi;
 
 before_deploy:
@@ -315,6 +319,7 @@ deploy:
     skip_existing: true
     on:
       branch: dev
+      condition: $DO_PYPI_PRERELEASE
 
   - provider: pypi
     user: sizmailov
@@ -324,6 +329,7 @@ deploy:
     skip_existing: true
     on:
       branch: master
+      condition: $DO_PYPI_RELEASE
 
 
 
