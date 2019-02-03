@@ -260,6 +260,7 @@ matrix:
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
+      - RELEASE_MAKER=true
       addons: *gcc7
       python: 3.5
 
@@ -285,6 +286,9 @@ after_success:
     - python -m pip install gcovr
     - gcovr cmake-build-coverage --root=./ --delete --exclude='external/.*' --exclude='tests/.*' --xml -o coverage.xml
     - bash <(curl -s https://codecov.io/bash)
+    - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
+        DO_GH_PAGES=true;
+      fi;
 
 before_deploy:
   - bash build_docs.sh
@@ -302,6 +306,7 @@ deploy:
     on:
       tags: false
       branch: master
+      condition: $DO_GH_PAGES
 
   - provider: pypi
     user: sizmailov
