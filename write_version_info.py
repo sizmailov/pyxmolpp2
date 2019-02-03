@@ -13,13 +13,8 @@ def get_version_info():
         git_branch = "non-git"
 
     def read_version():
-        lines = []
         with open("VERSION") as f:
-            for l in f:
-                if l.strip()=="": break
-                lines.append(l)
-
-        return ".".join([ l.strip().strip(".") for l in lines])
+            return f.readline().strip()
 
     build_datetime = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
     version_number = read_version()
