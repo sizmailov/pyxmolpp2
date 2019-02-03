@@ -1,6 +1,7 @@
 #include "init.h"
 
 #include "xmol/geometry/XYZ.h"
+#include "xmol/geometry/Transformation3d.h"
 
 #include <pybind11/operators.h>
 #include <pybind11/numpy.h>
@@ -40,5 +41,4 @@ void pyxmolpp::geometry::init_XYZ(pybind11::module& geometry) {
           return result;
         })
       ;
-
 }

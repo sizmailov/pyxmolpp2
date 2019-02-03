@@ -73,5 +73,31 @@ def test_calc_alignment():
 
 
 
+def test_calc_inertia_tensor():
+    from pyxmolpp2.geometry import calc_inertia_tensor, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees
+    import numpy as np
+
+    a = VectorXYZ([XYZ(0,1,0),XYZ(1,0,0),XYZ(-1,0,0),XYZ(0,-1,0)])
+    x = calc_inertia_tensor(a)
+
+    assert np.allclose(x,np.diag([2,2,4]))
+
+    m = [10,1,1,10]
+    x = calc_inertia_tensor(a ,m)
+    assert np.allclose(x,np.diag([20,2,22]))
+
+def test_calc_mass_center():
+    from pyxmolpp2.geometry import calc_mass_center, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees
+    import numpy as np
+
+    a = VectorXYZ([XYZ(0,1,0),XYZ(1,0,0),XYZ(-1,0,0),XYZ(0,-1,0)])
+
+    m = np.random.random((len(a),)).tolist()
+    x = calc_mass_center(a, m)
+    cm = sum([ r*M for r,M in zip(a,m) ], XYZ(0,0,0))/np.sum(m)
+    assert (x-cm).len() == pytest.approx(0)
+
+
+
 
 

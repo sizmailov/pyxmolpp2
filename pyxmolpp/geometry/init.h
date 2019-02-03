@@ -14,5 +14,6 @@ void init_autocorrelation(py::module& geometry);
 void init_basic(py::module& geometry);
 void init_Transformation3d(py::module& geometry);
 void init_XYZ(py::module& geometry);
+void init_VectorXYZ(py::module& geometry);
 }
 }

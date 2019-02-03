@@ -1,6 +1,8 @@
 #include "xmol/geometry/alignment.h"
 
 #include "init.h"
+#include "pybind11/eigen.h"
+#include "pybind11/stl.h"
 
 using namespace xmol::geometry;
 
@@ -18,6 +20,13 @@ void pyxmolpp::geometry::init_alignment(pybind11::module& geometry) {
 )pydoc");
   geometry.def("calc_geom_center", xmol::geometry::calc_geom_center,
                py::arg("coords"), "Returns mean coordinates");
+
+  geometry.def("calc_mass_center",
+      xmol::geometry::calc_mass_center,
+      py::arg("coords"),
+      py::arg("mass"),
+      "Returns center of mass");
+
   geometry.def("calc_rmsd",
                (double (*)(const std::vector<XYZ>&,
                            const std::vector<XYZ>&))xmol::geometry::calc_rmsd,
@@ -28,4 +37,16 @@ void pyxmolpp::geometry::init_alignment(pybind11::module& geometry) {
                            const Transformation3d&))xmol::geometry::calc_rmsd,
                py::arg("ref"), py::arg("var"), py::arg("T"),
                "Calculate RMSD between ref and T*var");
+
+  geometry.def(
+      "calc_inertia_tensor",
+      (Eigen::Matrix3d (*)(const std::vector<XYZ>&))xmol::geometry::calc_inertia_tensor,
+      py::arg("coordinates"),
+      "Calculate inertia tensor. All masses are assumed to be 1.0");
+
+  geometry.def(
+      "calc_inertia_tensor",
+      (Eigen::Matrix3d (*)(const std::vector<XYZ>&, const std::vector<double>&))xmol::geometry::calc_inertia_tensor,
+      py::arg("coordinates"), py::arg("mass"),
+      "Calculate inertia tensor");
 }
