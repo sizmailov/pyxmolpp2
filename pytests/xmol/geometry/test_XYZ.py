@@ -1,5 +1,6 @@
 import pytest
 import math
+import numpy as np
 
 from pyxmolpp2.geometry import XYZ, VectorXYZ, Translation3d, Rotation3d, UniformScale3d, Transformation3d, Degrees
 
@@ -67,3 +68,35 @@ def test_vectorXYZ_transformations():
     v.transform(Transformation3d(Rotation3d(XYZ(1, 1, 1), Degrees(30)), Translation3d(XYZ(2, 2, 2))))
     v.transform(Rotation3d(XYZ(1, 1, 1), Degrees(30)))
     v.transform(UniformScale3d(5))
+
+
+def test_vectorXYZ_numpy_conversions():
+    from timeit import default_timer as timer
+
+
+    vectors = np.random.random( (10000,3) )
+
+    start = timer()
+    v1 = VectorXYZ([XYZ(x,y,z) for x,y,z in vectors ])
+    end = timer()
+    t1 = end-start
+
+    start = timer()
+    v2 = VectorXYZ.from_numpy(vectors)
+    end = timer()
+    t2 = end-start
+
+    print("Time(py) = %f" % t1)
+    print("Time(c++)  = %f" % t2)
+    print("Speedup   = %g%%" % (t1/t2*100))
+
+
+    assert np.allclose(vectors, v2.to_numpy())
+
+
+
+
+
+
+
+
