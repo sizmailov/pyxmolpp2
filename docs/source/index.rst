@@ -13,12 +13,12 @@ Welcome to pyxmolpp2's documentation!
 
     tutorial/*
 
-.. toctree::
-    :caption: Examples
-    :maxdepth: 2
-    :glob:
 
-    examples/*
+.. toctree::
+    :maxdepth: 2
+    :caption: Examples
+
+    auto_examples/index
 
 .. toctree::
     :caption: API Reference
