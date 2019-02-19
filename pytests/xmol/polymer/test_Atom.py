@@ -500,28 +500,3 @@ def test_bad_selection_construction_from_list():
         AtomSelection([ a for a in frame.asChains ])
     with pytest.raises(Exception):
         ChainSelection([ a for a in frame.asResidues ])
-
-
-
-def test_shorthands():
-    # from pyxmolpp2.polymer import AtomSelection, ChainSelection
-
-    frame = make_polyglycine([("A", 20)])
-
-    asel = frame.asAtoms
-
-    asel.geom_center()
-    asel.mass_center([1.0]*asel.size)
-    asel.inertia_tensor([1.0]*asel.size)
-    asel.geom_inertia_tensor()
-    asel.rmsd(asel)
-    asel.rmsd(asel.toCoords)
-    asel.alignment(asel)
-    asel.alignment(asel.toCoords)
-    asel.align_to(asel)
-    asel.align_to(asel.toCoords)
-
-
-
-
-
