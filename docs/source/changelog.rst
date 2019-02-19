@@ -1,6 +1,12 @@
 ----------
 Change log
 ----------
+v0.6.0:
+  - Fix alignment shortcuts (:py:meth:`~pyxmolpp2.polymer.AtomSelection.align_to`, :py:meth:`~pyxmolpp2.polymer.AtomSelection.alignment_to`)
+  - Remove :py:meth:`pyxmolpp2.polymer.AtomSelection.alignment`
+  - Add :py:meth:`~pyxmolpp2.geometry.VectorXYZ.to_numpy`, :py:meth:`~pyxmolpp2.geometry.VectorXYZ.from_numpy`
+  - Show detailed message or read error in :py:meth:`~pyxmolpp2.pdb.PdbFile.get_frames`
+  - Use live examples in docs (do avoid divergence with sources)
 v0.5.0:
   - Add convenient methods to :py:class:`~pyxmolpp2.polymer.AtomSelection`, :py:class:`~pyxmolpp2.geometry.VectorXYZ`
   - Allow :py:class:`~pyxmolpp2.geometry.Rotation3d` construction from numpy array
