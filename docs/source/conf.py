@@ -42,6 +42,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
     'sphinx_autodoc_annotation',
+    'sphinx_gallery.gen_gallery',
 ]
 
 autosummary_generate = True
@@ -318,7 +319,7 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
 
 
 def skip(app, what, name, obj, skip, options):
-    skip_list = [ "__module__","__weakref__"]
+    skip_list = [ "__module__", "__weakref__"]
     if name in skip_list:
         return True
     return skip
@@ -328,3 +329,19 @@ def setup(app):
     app.connect('autodoc-process-signature', strip_argumet_types)
     app.connect('autodoc-process-docstring', process_docs)
     app.connect("autodoc-skip-member", skip)
+
+import os
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    'examples_dirs': './examples',
+    # path where to save gallery generated examples
+    'gallery_dirs': 'auto_examples',
+    'filename_pattern': '/',
+    'default_thumb_file': os.path.abspath('images/python-logo.png'),
+    'line_numbers': True,
+
+    'expected_failing_examples': [
+        'examples/PDB/read_pdb_errors.py',
+    ]
+}
