@@ -16,7 +16,7 @@
 
 
 RMSD/RMSF calculation
-----------------
+---------------------
 
 Calculate RMSD/RMSF
 

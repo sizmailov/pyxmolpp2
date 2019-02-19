@@ -16,7 +16,7 @@
 
 
 Reorder atoms/residues
-----------------
+----------------------
 
 In this example we will see how to reorder atoms/residues/chains
 
