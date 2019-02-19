@@ -6,12 +6,7 @@
 Welcome to pyxmolpp2's documentation!
 =====================================
 
-.. toctree::
-    :caption: Tutorial
-    :maxdepth: 2
-    :glob:
-
-    tutorial/*
+.. include:: install.rst
 
 
 .. toctree::
