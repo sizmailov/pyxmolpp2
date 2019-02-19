@@ -540,8 +540,8 @@ std::vector<XYZ> SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_ato
   std::vector<XYZ> result;
   result.reserve(this->size());
 
-  for (auto& a : this->elements) {
-    result.push_back(a->r());
+  for (auto& a : *this) {
+    result.push_back(a.r());
   }
   return result;
 };
@@ -551,8 +551,8 @@ Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>
 SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_atom<T>>::asResidues() const {
   using result_type = Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>>;
   std::set<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Residue>*> parents;
-  for (auto& a : this->elements) {
-    parents.insert(&a->residue());
+  for (auto& a : *this) {
+    parents.insert(&a.residue());
   }
   return result_type(parents.begin(), parents.end());
 };
@@ -568,8 +568,8 @@ Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Chain>>
 SelectionBaseExtension<T, xmol::polymer::detail::enabled_if_residue<T>>::asChains() const {
   using result_type = Selection<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Chain>>;
   std::set<xmol::polymer::detail::add_constness_as<T, xmol::polymer::Chain>*> parents;
-  for (auto& a : this->elements) {
-    parents.insert(&a->chain());
+  for (auto& a : *this) {
+    parents.insert(&a.chain());
   }
   return result_type(parents.begin(), parents.end());
 };

@@ -247,15 +247,22 @@ std::vector<Frame> PdbReader::read_frames(const basic_PdbRecords& db) {
   std::vector<Frame> frames;
 
   auto it = ranges::begin(pdbLines);
-
-  while (it != ranges::default_sentinel{}) {
-    if (it->getRecordName() == RecordName("MODEL") ||
-        it->getRecordName() == RecordName("ATOM") ||
-        it->getRecordName() == RecordName("HETATM")) {
-      frames.push_back(readFrame(it));
-    } else {
-      ++it;
+  try{
+    while (it != ranges::default_sentinel{}) {
+      if (it->getRecordName() == RecordName("MODEL") ||
+          it->getRecordName() == RecordName("ATOM") ||
+          it->getRecordName() == RecordName("HETATM")) {
+        frames.push_back(readFrame(it));
+      } else {
+        ++it;
+      }
     }
+  }
+  catch (PdbFieldReadError& e) {
+    std::string filler(std::min(std::max(e.colon_l, 0), 80), '~');
+    std::string underline(std::min(e.colon_r - e.colon_l + 1, 80), '^');
+    throw PdbException(std::string(e.what()) + "\n" + "at line "+std::to_string(pdbLines.line_number())+":"+std::to_string(e.colon_l)+"-"+std::to_string(e.colon_r)+"\n" +
+        pdbLines.cached() + "\n" + filler + underline);
   }
   return frames;
 }

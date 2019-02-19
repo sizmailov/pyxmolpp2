@@ -617,7 +617,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "rmsd",
           [](AtomSelection& sel, AtomSelection& ref) {
-            return xmol::geometry::calc_rmsd(sel.toCoords(),ref.toCoords());
+            return xmol::geometry::calc_rmsd(sel.toCoords(), ref.toCoords());
           },
           py::arg("ref"),
           "Returns rmsd between two selections")
@@ -631,18 +631,18 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
           "Returns rmsd between selection and reference coordinates")
 
       .def(
-          "alignment",
+          "alignment_to",
           [](AtomSelection& sel, std::vector<XYZ> ref) {
-            return xmol::geometry::calc_alignment(sel.toCoords(), ref);
+            return xmol::geometry::calc_alignment(ref, sel.toCoords());
           },
           py::arg("ref"),
           "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
 
 
       .def(
-          "alignment",
+          "alignment_to",
           [](AtomSelection& sel, AtomSelection& ref) {
-            return xmol::geometry::calc_alignment(sel.toCoords(), ref.toCoords());
+            return xmol::geometry::calc_alignment(ref.toCoords(), sel.toCoords());
           },
           py::arg("ref"),
           "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
@@ -650,7 +650,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "align_to",
           [](AtomSelection& sel, std::vector<XYZ> ref) -> AtomSelection& {
-            xmol::geometry::calc_alignment(sel.toCoords(), ref);
+            auto al = xmol::geometry::calc_alignment(ref, sel.toCoords());
+            sel.for_each([&](Atom& a) { a.set_r(al.transform(a.r())); });
             return sel;
           },
           py::arg("ref"),
@@ -660,7 +661,8 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "align_to",
           [](AtomSelection& sel, AtomSelection& ref) -> AtomSelection& {
-            xmol::geometry::calc_alignment(sel.toCoords(), ref.toCoords());
+            auto al = xmol::geometry::calc_alignment(ref.toCoords(), sel.toCoords());
+            sel.for_each([&](Atom& a) { a.set_r(al.transform(a.r())); });
             return sel;
           },
           py::arg("ref"),
