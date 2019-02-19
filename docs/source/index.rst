@@ -6,19 +6,14 @@
 Welcome to pyxmolpp2's documentation!
 =====================================
 
+.. include:: install.rst
+
+
 .. toctree::
-    :caption: Tutorial
     :maxdepth: 2
-    :glob:
-
-    tutorial/*
-
-.. toctree::
     :caption: Examples
-    :maxdepth: 2
-    :glob:
 
-    examples/*
+    auto_examples/index
 
 .. toctree::
     :caption: API Reference

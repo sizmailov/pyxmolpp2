@@ -1,6 +1,7 @@
 *.log
 *.pyc
 .idea/*
+venv
 coverage
 tests_dataset/*/
 cmake-build-*
