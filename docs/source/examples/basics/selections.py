@@ -87,7 +87,7 @@ chain.asResidues.filter(lambda r: r.name == ResidueName("LYS"))  # select LYS re
 
 ##############################################################################
 #
-# ``pyxmolpp2` defines predicate-generators which return predicate when compared to something:
+# ``pyxmolpp2`` defines predicate-generators which return predicate when compared to something:
 #
 from pyxmolpp2.polymer import aName, rName, aId, rId, cName, cIndex
 
@@ -126,7 +126,7 @@ except TypeError as e:
 
 
 ##############################################################################
-# Predicates can be combined using `&``, ``|``, ``~`` operators and reused:
+# Predicates can be combined using ``&``, ``|``, ``~`` operators and reused:
 
 from pyxmolpp2.polymer import AtomPredicate
 
@@ -138,7 +138,8 @@ print(frame.asAtoms.filter(criteria | cName.is_in({"X", "Y", "Z"})))
 # Set operations
 # ^^^^^^^^^^^^^^
 #
-# Selections support number set operations:
+# Selections support set operations:
+#
 # - `union` (operators ``+``, ``+=``)
 # - `set intersection` (operators ``*``, ``*=``)
 # - `difference` (operators ``-``, ``-=``)
