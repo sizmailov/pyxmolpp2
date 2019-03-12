@@ -26,7 +26,8 @@ author = u'Sergei Izmailov'
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'0.0.1'
+import pyxmolpp2
+release = pyxmolpp2.version.version
 
 
 # -- General configuration ---------------------------------------------------
@@ -294,13 +295,20 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
     pass
 
 def process_docs(app, objtype, fullname, object, options, docstringlines):
-    import re
+    from pybind11_stubgen import PropertyStubsGenerator
     sig = None
-
     try:
         sig = object.__doc__.split("\n")[0]
     except (KeyError,AttributeError,IndexError):
         pass
+
+    if objtype=="attribute":
+        typename = object.__class__.__name__
+        if isinstance(object, property):
+            prop = PropertyStubsGenerator("name", object, None)
+            prop.parse()
+            typename = prop.signature.rtype
+        docstringlines.append(":type: :py:class:`{}`".format(typename))
 
     if sig:
 

@@ -12,7 +12,7 @@ using namespace xmol::geometry;
 void pyxmolpp::geometry::init_Transformation3d(pybind11::module& geometry) {
 
   auto&& pyTranslation3d = py::class_<Translation3d>(geometry,"Translation3d",R"pydoc(Represents translation by 3d vector)pydoc");
-  auto&& pyUniformScale3d = py::class_<UniformScale3d>(geometry,"UniformScale3d",R"pydoc(Represents unform 3d scaling)pydoc");
+  auto&& pyUniformScale3d = py::class_<UniformScale3d>(geometry,"UniformScale3d",R"pydoc(Represents uniform 3d scaling)pydoc");
   auto&& pyRotation3d = py::class_<Rotation3d>(geometry,"Rotation3d",R"pydoc(Represents 3d rotation)pydoc");
   auto&& pyTransformation3d = py::class_<Transformation3d>(geometry,"Transformation3d",
       R"pydoc(
@@ -34,7 +34,7 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
       .def(py::init<double>(),py::arg("scale_factor"))
       .def("transform",&UniformScale3d::transform, py::arg("r"), "Returns scaled point")
       .def("inverted",&UniformScale3d::inverted, "Returns inverted scale transformation")
-      .def_property_readonly("scale",&UniformScale3d::scale,"Scale factor")
+      .def_property_readonly("scale",&UniformScale3d::scale,"Returns scale factor as :py:class:`float`")
       .def(py::self * py::self)
       .def(py::self * Translation3d())
       .def(Translation3d() * py::self)
@@ -58,8 +58,9 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
         auto matrix =rotation3d.get_underlying_matrix();
         std::copy(matrix.data(),matrix.data()+9, result.mutable_data());
         return result;
-      })
-      ;
+        },
+        "Returns underlying rotational matrix"
+        );
 
   pyTransformation3d.def(py::init<>())
       .def(py::init<Rotation3d, Translation3d>(), py::arg("rotation_followed_by"), py::arg("translation"))
@@ -72,14 +73,20 @@ Represents arbitrary 3d transformation. The result of mixing two of :py:class:`T
       .def(Translation3d() * py::self)
       .def(Rotation3d() * py::self)
       .def(UniformScale3d() * py::self)
-      .def("matrix3d",[](Transformation3d& transformation3d){
-        py::array_t<double, py::array::f_style> result({3,3});
-        auto matrix =transformation3d.get_underlying_matrix();
-        std::copy(matrix.data(),matrix.data()+9, result.mutable_data());
-        return result;
-      })
-      .def("vector3d",[](Transformation3d& transformation3d){
-        return transformation3d.get_translation();
-      });
+      .def("matrix3d",
+          [](Transformation3d& transformation3d){
+              py::array_t<double, py::array::f_style> result({3,3});
+              auto matrix =transformation3d.get_underlying_matrix();
+              std::copy(matrix.data(),matrix.data()+9, result.mutable_data());
+              return result;
+          },
+           "Returns non-translational part of transformation"
+          )
+      .def("vector3d",
+          [](Transformation3d& transformation3d){
+            return transformation3d.get_translation();
+          },
+          "Returns translational part of transformation"
+          );
 
 }

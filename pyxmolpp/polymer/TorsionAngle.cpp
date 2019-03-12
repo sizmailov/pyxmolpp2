@@ -46,7 +46,7 @@ void pyxmolpp::polymer::init_TorsionAngle(pybind11::module& polymer) {
            },
            py::arg("a"), py::arg("b"), py::arg("c"), py::arg("d"), py::arg("affected_atoms_selector"))
       .def("value", &TorsionAngle::value, "Get current value")
-      .def("set", &TorsionAngle::set, py::arg("value"), py::arg("noop_tolerance"),
+      .def("set", &TorsionAngle::set, py::arg("value"), py::arg("noop_tolerance")=xmol::geometry::AngleValue(xmol::geometry::Degrees(0.01)),
            R"pydoc(Perform rotation around torsion angle, all dependent atoms are also rotated.
 
 Precondition:

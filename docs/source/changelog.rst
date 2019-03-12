@@ -1,6 +1,10 @@
 ----------
 Change log
 ----------
+v0.6.1
+  - Remove redundant quotes from ``str(AtomName)``
+  - Explicitly set locale to avoid commas in float numbers
+  - Update docs
 v0.6.0:
   - Fix alignment shortcuts (:py:meth:`~pyxmolpp2.polymer.AtomSelection.align_to`, :py:meth:`~pyxmolpp2.polymer.AtomSelection.alignment_to`)
   - Remove :py:meth:`pyxmolpp2.polymer.AtomSelection.alignment`

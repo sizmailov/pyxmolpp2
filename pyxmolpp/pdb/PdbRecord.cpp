@@ -13,7 +13,7 @@ void pyxmolpp::pdb::init_PdbRecords(pybind11::module& pdb) {
       .def(py::init<const std::string&>(), py::arg("name"))
       .def_property_readonly("str", &xmol::pdb::RecordName::str)
       .def_property_readonly("__hash__", &xmol::pdb::RecordName::value)
-      .def("__str__", [](const xmol::pdb::RecordName& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](const xmol::pdb::RecordName& name) { return name.str(); })
       .def("__repr__", [](const xmol::pdb::RecordName& name) {
         return "<pyxmolpp2.pdb.RecordName\"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) +
@@ -24,7 +24,7 @@ void pyxmolpp::pdb::init_PdbRecords(pybind11::module& pdb) {
       .def(py::init<const std::string&>(), py::arg("name"))
       .def_property_readonly("str", &xmol::pdb::FieldName::str)
       .def_property_readonly("__hash__", &xmol::pdb::FieldName::value)
-      .def("__str__", [](const xmol::pdb::FieldName& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](const xmol::pdb::FieldName& name) { return name.str(); })
       .def("__repr__", [](const xmol::pdb::FieldName& name) {
         return "<pyxmolpp2.pdb.FieldName\"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) +
