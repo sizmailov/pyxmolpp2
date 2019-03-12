@@ -81,7 +81,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(py::init<const std::string&>())
       .def_property_readonly("str", &ResidueInsertionCode::str)
       .def("__hash__", &ResidueInsertionCode::value)
-      .def("__str__", [](ResidueInsertionCode& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](ResidueInsertionCode& name) { return name.str(); })
       .def("__repr__", [](ResidueInsertionCode& name) {
         return "<pyxmolpp2.polymer.ResidueInsertionCode\"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
@@ -121,7 +121,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
   pyAtomName.def(py::init<const std::string&>(),py::arg("name"))
       .def_property_readonly("str", &AtomName::str)
       .def("__hash__", &AtomName::value)
-      .def("__str__", [](AtomName& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](AtomName& name) { return name.str(); })
       .def(py::self==py::self)
       .def(py::self!=py::self)
       .def("__repr__", [](AtomName& name) {
@@ -134,7 +134,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def("__hash__", &ResidueName::value)
       .def(py::self==py::self)
       .def(py::self!=py::self)
-      .def("__str__", [](ResidueName& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](ResidueName& name) { return name.str(); })
       .def("__repr__", [](ResidueName& name) {
         return "<pyxmolpp2.polymer.ResidueName \"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
@@ -145,7 +145,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def("__hash__", &ChainName::value)
       .def(py::self==py::self)
       .def(py::self!=py::self)
-      .def("__str__", [](ChainName& name) { return '"' + name.str() + '"'; })
+      .def("__str__", [](ChainName& name) { return  name.str() ; })
       .def("__repr__", [](ChainName& name) {
         return "<pyxmolpp2.polymer.ChainName \"" + name.str() + "\" at 0x" +
                xmol::utils::string::int2hex((uint64_t)(std::addressof(name))) + ">";
