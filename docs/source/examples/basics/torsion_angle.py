@@ -55,7 +55,7 @@ print(TorsionAngleFactory.omega(frame.asResidues[0]))
 # Torsion angle allows to set a new one:
 
 # All residues 49-76 are affected by this rotation
-psi_48.set(Degrees(150), Degrees(0))
+psi_48.set(Degrees(150))
 print(psi_48.value().degrees)
 
 ##############################################################################
@@ -83,7 +83,7 @@ assert phi_2_ro.value().degrees == TorsionAngleFactory.phi(r2).value().degrees
 ##############################################################################
 # Attempt to set TorsionAngle will lead to ``RuntimeError``:
 try:
-    phi_2_ro.set(Degrees(-130), Degrees(0))
+    phi_2_ro.set(Degrees(-130))
 except RuntimeError as e:
     print(e)
 
@@ -104,7 +104,7 @@ phi_2_rw = TorsionAngle(r1[AtomName("C")],
                         affected_phi_atoms
                         )
 
-phi_2_rw.set(Degrees(-130), Degrees(0))
+phi_2_rw.set(Degrees(-130))
 
 print(phi_2_ro.value().degrees)
 print(phi_2_rw.value().degrees)

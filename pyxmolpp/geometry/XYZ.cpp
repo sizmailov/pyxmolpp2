@@ -39,6 +39,7 @@ void pyxmolpp::geometry::init_XYZ(pybind11::module& geometry) {
           result.mutable_data()[1] = xyz.y();
           result.mutable_data()[2] = xyz.z();
           return result;
-        })
+        },
+            "Returns XYZ object as numpy.array")
       ;
 }
