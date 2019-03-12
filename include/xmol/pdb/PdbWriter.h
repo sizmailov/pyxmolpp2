@@ -11,7 +11,8 @@ namespace pdb {
 
 class PdbWriter{
 public:
-  explicit PdbWriter(std::ostream& out) : m_ostream(&out) {}
+  explicit PdbWriter(std::ostream& out) : m_old_locale(std::locale::global(std::locale::classic())), m_ostream(&out) {}
+  ~PdbWriter() {std::locale::global(m_old_locale);}
 
   void write(const xmol::polymer::Frame& frame);
   void write(const xmol::polymer::Chain& chain);
@@ -25,6 +26,7 @@ public:
 
 
 private:
+  std::locale m_old_locale;
   std::ostream* m_ostream;
 };
 
