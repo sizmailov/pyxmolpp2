@@ -636,7 +636,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
             return xmol::geometry::calc_alignment(ref, sel.toCoords());
           },
           py::arg("ref"),
-          "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
+          "Equivalent to :code:`calc_alignment_to(ref, self.toCoords())`")
 
 
       .def(
@@ -645,7 +645,7 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
             return xmol::geometry::calc_alignment(ref.toCoords(), sel.toCoords());
           },
           py::arg("ref"),
-          "Equivalent to :code:`calc_alignment(ref.toCoords(), self.toCoords())`")
+          "Equivalent to :code:`calc_alignment_to(ref.toCoords(), self.toCoords())`")
 
       .def(
           "align_to",
