@@ -9,4 +9,5 @@ void pyxmolpp::init_geometry(pybind11::module& m) {
   geometry::init_VectorXYZ(m);
   geometry::init_alignment(m);
   geometry::init_autocorrelation(m);
+  geometry::init_calc_sasa(m);
 }
