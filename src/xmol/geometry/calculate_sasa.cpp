@@ -14,7 +14,7 @@ std::vector<double> xmol::geometry::calculate_sasa(
   if (coords.size()!=radii.size()) {
     throw xmol::geometry::GeometryException("xmol::geometry::calculate_sasa: coords.size()!=radii.size()");
   }
-  const double max_radii = std::accumulate(radii.begin(), radii.end(), 0,
+  const double max_radii = std::accumulate(radii.begin(), radii.end(), 0.0,
       [](const double& a, const double& b) { return std::max(a, b); });
   const double neighbour_cell_size = (max_radii+solvent_radii)*2;
 
