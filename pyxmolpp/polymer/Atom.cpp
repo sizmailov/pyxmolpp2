@@ -577,6 +577,14 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
           "Keeps in selection only elements that match predicate")
 
       .def(
+          "index", // python predicates may alter atom, no way to prevent it
+          [](AtomSelection& sel, std::function<bool(AtomRef)>& predicate) {
+            return sel.index([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); });
+          },
+          py::arg("predicate"),
+          "Return indices for which predicate is true")
+
+      .def(
           "for_each",
           [](AtomSelection& sel, std::function<void(AtomRef)>& func) {
             return sel.for_each([&](Atom& a) { func(AtomRef(a)); });
@@ -747,6 +755,55 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
            },
            py::arg("slice"),
            "Slice overload")
+
+      .def(
+          "__getitem__",
+          [](AtomSelection& sel, py::buffer& b) {
+            py::buffer_info info = b.request();
+
+            /* Some sanity checks ... */
+            if (info.ndim != 1) {
+              throw std::runtime_error("AtomSelection::__getitem__(indices): index array dimension != 1");
+            }
+
+            if (info.format == "i"){
+
+              auto begin = static_cast<int* >(info.ptr);
+              auto end = static_cast<int* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "l"){
+
+              auto begin = static_cast<long* >(info.ptr);
+              auto end = static_cast<long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "L"){
+
+              auto begin = static_cast<long long* >(info.ptr);
+              auto end = static_cast<long long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == py::format_descriptor<bool>::format()){
+              if (info.size!=sel.size()){
+                throw std::runtime_error("AtomSelection::__getitem__(indices): bool array size doesn't match selection size");
+              }
+              auto begin = static_cast<bool* >(info.ptr);
+              auto end = static_cast<bool* >(info.ptr)+info.size;
+
+              assert(std::distance(begin,end) == info.size);
+
+              return sel.filter(begin, end);
+            }else{
+              throw std::runtime_error("Incompatible format: expected List[float] or List[int], found List["+info.format+"]");
+            }
+
+          },
+          py::arg("indices"),
+          "Indicator array overload")
 
       .def(
           "__repr__",
