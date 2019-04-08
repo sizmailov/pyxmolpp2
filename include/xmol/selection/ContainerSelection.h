@@ -881,6 +881,8 @@ Selection<T>::Selection(Iterator begin_, Iterator end_) {
   auto comparator = SelectionPointerComparator<value_type>{};
   static_cast<void>(comparator);
   std::sort(this->elements.begin(), this->elements.end(), comparator);
+  auto end = std::unique(this->elements.begin(), this->elements.end());
+  this->elements.erase(end, this->elements.end());
 }
 
 template <typename T> Selection<T>::Selection(SelectionRange<T> rng) {
