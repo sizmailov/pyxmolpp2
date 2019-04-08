@@ -1,7 +1,12 @@
 ----------
 Change log
 ----------
-v0.6.1
+
+v0.7.0:
+  - Add Solvent Accessible Surface Area calculation procedure :py:func:`~pyxmolpp2.geometry.calc_sasa`, see :ref:`examples.sasa_calc`
+  - Allow numpy-style array indexing for selections, see :ref:`examples.array_indexing`
+
+v0.6.1:
   - Remove redundant quotes from ``str(AtomName)``
   - Explicitly set locale to avoid commas in float numbers
   - Update docs

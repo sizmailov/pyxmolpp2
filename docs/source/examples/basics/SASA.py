@@ -1,5 +1,6 @@
 """
 
+.. _examples.sasa_calc:
 
 Solvent Accessible Solvent Area (SASA)
 --------------------------------------
