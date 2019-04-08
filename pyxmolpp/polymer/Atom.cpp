@@ -739,25 +739,6 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
 
       .def(
           "__getitem__",
-          [](AtomSelection& sel, int index) -> AtomRef { return AtomRef(sel[index]); }, AtomRefPolicy,
-          py::arg("n"),
-          "Access n'th element")
-
-      .def(
-          "__getitem__",
-           [](AtomSelection& sel, py::slice slice) {
-             ssize_t start, stop, step, slicelength;
-             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
-                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
-               throw py::error_already_set();
-             }
-             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
-           },
-           py::arg("slice"),
-           "Slice overload")
-
-      .def(
-          "__getitem__",
           [](AtomSelection& sel, py::buffer& b) {
             py::buffer_info info = b.request();
 
@@ -798,12 +779,31 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
 
               return sel.filter(begin, end);
             }else{
-              throw std::runtime_error("Incompatible format: expected List[float] or List[int], found List["+info.format+"]");
+              throw std::runtime_error("Incompatible format: expected np.array[bool] or np.array[int], found buffer["+info.format+"]");
             }
 
           },
           py::arg("indices"),
           "Indicator array overload")
+
+      .def(
+          "__getitem__",
+          [](AtomSelection& sel, int index) -> AtomRef { return AtomRef(sel[index]); }, AtomRefPolicy,
+          py::arg("n"),
+          "Access n'th element")
+
+      .def(
+          "__getitem__",
+           [](AtomSelection& sel, py::slice slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(sel.size(), reinterpret_cast<size_t*>(&start), reinterpret_cast<size_t*>(&stop),
+                                reinterpret_cast<size_t*>(&step), reinterpret_cast<size_t*>(&slicelength))) {
+               throw py::error_already_set();
+             }
+             return sel.slice(start, stop, step, xmol::selection::SlicingScheme::USE_INDICES_AS_IS);
+           },
+           py::arg("slice"),
+           "Slice overload")
 
       .def(
           "__repr__",
@@ -848,6 +848,14 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
           "Keeps in selection only elements that match predicate")
 
       .def(
+          "index", // python predicates may alter atom, no way to prevent it
+          [](ResidueSelection& sel, std::function<bool(ResidueRef)>& predicate) {
+            return sel.index([&](const Residue& a) { return predicate(ResidueRef(const_cast<Residue&>(a))); });
+          },
+          py::arg("predicate"),
+          "Return indices for which predicate is true")
+
+      .def(
           "for_each",
           [](ResidueSelection& sel, std::function<void(ResidueRef)>& func) {
             return sel.for_each([&](Residue& a) { func(ResidueRef(a)); });
@@ -878,6 +886,55 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
           "__iter__",
           [](ResidueSelection& sel) { return sel.begin(); },
           py::keep_alive<0, 1>())
+
+      .def(
+          "__getitem__",
+          [](ResidueSelection& sel, py::buffer& b) {
+            py::buffer_info info = b.request();
+
+            /* Some sanity checks ... */
+            if (info.ndim != 1) {
+              throw std::runtime_error("ResidueSelection::__getitem__(indices): index array dimension != 1");
+            }
+
+            if (info.format == "i"){
+
+              auto begin = static_cast<int* >(info.ptr);
+              auto end = static_cast<int* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "l"){
+
+              auto begin = static_cast<long* >(info.ptr);
+              auto end = static_cast<long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "L"){
+
+              auto begin = static_cast<long long* >(info.ptr);
+              auto end = static_cast<long long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == py::format_descriptor<bool>::format()){
+              if (info.size!=sel.size()){
+                throw std::runtime_error("ResidueSelection::__getitem__(indices): bool array size doesn't match selection size");
+              }
+              auto begin = static_cast<bool* >(info.ptr);
+              auto end = static_cast<bool* >(info.ptr)+info.size;
+
+              assert(std::distance(begin,end) == info.size);
+
+              return sel.filter(begin, end);
+            }else{
+              throw std::runtime_error("Incompatible format: expected np.array[bool] or np.array[int], found buffer["+info.format+"]");
+            }
+
+          },
+          py::arg("indices"),
+          "Indicator array overload")
 
       .def(
           "__getitem__",
@@ -937,6 +994,15 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
            py::arg("predicate"),
            "Keeps in selection only elements that match predicate")
 
+      .def(
+          "index", // python predicates may alter atom, no way to prevent it
+          [](ChainSelection& sel, std::function<bool(ChainRef)>& predicate) {
+            return sel.index([&](const Chain& a) { return predicate(ChainRef(const_cast<Chain&>(a))); });
+          },
+          py::arg("predicate"),
+          "Return indices for which predicate is true")
+
+
       .def("for_each",
            [](ChainSelection& sel, std::function<void(ChainRef)>& func) {
              return sel.for_each([&](Chain& a) { func(ChainRef(a)); });
@@ -964,6 +1030,55 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "__iter__",
           [](ChainSelection& sel) { return sel.begin(); }, py::keep_alive<0, 1>())
+
+      .def(
+          "__getitem__",
+          [](ChainSelection& sel, py::buffer& b) {
+            py::buffer_info info = b.request();
+
+            /* Some sanity checks ... */
+            if (info.ndim != 1) {
+              throw std::runtime_error("ChainSelection::__getitem__(indices): index array dimension != 1");
+            }
+
+            if (info.format == "i"){
+
+              auto begin = static_cast<int* >(info.ptr);
+              auto end = static_cast<int* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "l"){
+
+              auto begin = static_cast<long* >(info.ptr);
+              auto end = static_cast<long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == "L"){
+
+              auto begin = static_cast<long long* >(info.ptr);
+              auto end = static_cast<long long* >(info.ptr)+info.size;
+
+              return sel.at_index(begin, end);
+            }
+            else if (info.format == py::format_descriptor<bool>::format()){
+              if (info.size!=sel.size()){
+                throw std::runtime_error("ChainSelection::__getitem__(indices): bool array size doesn't match selection size");
+              }
+              auto begin = static_cast<bool* >(info.ptr);
+              auto end = static_cast<bool* >(info.ptr)+info.size;
+
+              assert(std::distance(begin,end) == info.size);
+
+              return sel.filter(begin, end);
+            }else{
+              throw std::runtime_error("Incompatible format: expected np.array[bool] or np.array[int], found buffer["+info.format+"]");
+            }
+
+          },
+          py::arg("indices"),
+          "Indicator array overload")
 
       .def(
           "__getitem__",

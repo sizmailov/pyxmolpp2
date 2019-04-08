@@ -1,3 +1,6 @@
+import pytest
+
+
 def make_polyglycine(chain_lengths, no_reserve=True):
     from pyxmolpp2.polymer import Frame
     from pyxmolpp2.polymer import ChainName
@@ -44,12 +47,49 @@ def test_selection_int_indexing():
     from pyxmolpp2.polymer import aName
     frame = make_polyglycine([("A", 20)])
     asel = frame.asAtoms
+    rsel = frame.asResidues
+    csel = frame.asChains
 
     ind = np.array([i for i, a in enumerate(asel) if a.name.str == "C"])
-    ind2 = asel.index( aName == "C")
+    ind2 = asel.index(aName == "C")
     subset = asel[ind]
     assert np.allclose(ind, ind2)
     assert subset.size == 20
+
+    # Bool array size doesn't match selection size
+    with pytest.raises(RuntimeError):
+        asel[np.array([True, False])]
+
+    with pytest.raises(RuntimeError):
+        rsel[np.array([True, False])]
+
+    with pytest.raises(RuntimeError):
+        csel[np.array([True, False])]
+
+    # Bool array element type is not integer or bool
+    with pytest.raises(RuntimeError):
+        asel[np.array([1.0, 2.0])]
+
+    with pytest.raises(RuntimeError):
+        rsel[np.array([1.0, 2.0])]
+
+    with pytest.raises(RuntimeError):
+        csel[np.array([1.0, 2.0])]
+
+    # Array dimension is not 1
+    with pytest.raises(RuntimeError):
+        asel[np.array([[0, 2], [1, 2]])]
+
+    with pytest.raises(RuntimeError):
+        rsel[np.array([[0, 2], [1, 2]])]
+
+    with pytest.raises(RuntimeError):
+        csel[np.array([[0, 2], [1, 2]])]
+
+    assert frame.asResidues[np.array([0, 1])].size == 2
+    assert frame.asChains[np.array([0])].size == 1  # array index -> selection
+    assert frame.asChains[np.array([], dtype=int)].size == 0  # array index -> selection
+    assert frame.asChains[0].size == 20  # int index -> Chain
 
 
 test_selection_bool_indexing()
