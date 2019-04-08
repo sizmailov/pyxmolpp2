@@ -579,7 +579,9 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "index", // python predicates may alter atom, no way to prevent it
           [](AtomSelection& sel, std::function<bool(AtomRef)>& predicate) {
-            return sel.index([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); });
+            auto result = new std::vector<int>(sel.index([&](const Atom& a) { return predicate(AtomRef(const_cast<Atom&>(a))); }));
+            auto cap = py::capsule(result, [](void *v) { delete reinterpret_cast<std::vector<int>*>(v); });
+            return py::array(result->size(), result->data(), cap);
           },
           py::arg("predicate"),
           "Return indices for which predicate is true")
@@ -850,7 +852,9 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "index", // python predicates may alter atom, no way to prevent it
           [](ResidueSelection& sel, std::function<bool(ResidueRef)>& predicate) {
-            return sel.index([&](const Residue& a) { return predicate(ResidueRef(const_cast<Residue&>(a))); });
+            auto result = new std::vector<int>(sel.index([&](const Residue& a) { return predicate(ResidueRef(const_cast<Residue&>(a))); }));
+            auto cap = py::capsule(result, [](void *v) { delete reinterpret_cast<std::vector<int>*>(v); });
+            return py::array(result->size(), result->data(), cap);
           },
           py::arg("predicate"),
           "Return indices for which predicate is true")
@@ -997,7 +1001,9 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
       .def(
           "index", // python predicates may alter atom, no way to prevent it
           [](ChainSelection& sel, std::function<bool(ChainRef)>& predicate) {
-            return sel.index([&](const Chain& a) { return predicate(ChainRef(const_cast<Chain&>(a))); });
+            auto result = new std::vector<int>(sel.index([&](const Chain& a) { return predicate(ChainRef(const_cast<Chain&>(a))); }));
+            auto cap = py::capsule(result, [](void *v) { delete reinterpret_cast<std::vector<int>*>(v); });
+            return py::array(result->size(), result->data(), cap);
           },
           py::arg("predicate"),
           "Return indices for which predicate is true")

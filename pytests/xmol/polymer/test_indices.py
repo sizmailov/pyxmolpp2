@@ -53,8 +53,11 @@ def test_selection_int_indexing():
     ind = np.array([i for i, a in enumerate(asel) if a.name.str == "C"])
     ind2 = asel.index(aName == "C")
     subset = asel[ind]
+
+
     assert np.allclose(ind, ind2)
     assert subset.size == 20
+    assert asel[ind2].size == 20
 
     # Bool array size doesn't match selection size
     with pytest.raises(RuntimeError):
