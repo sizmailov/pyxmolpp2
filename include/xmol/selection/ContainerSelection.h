@@ -187,6 +187,9 @@ public:
 
   template <typename Predicate> Selection filter(Predicate&& p) const;
 
+  template <typename Predicate> std::vector<char> indicator(Predicate&& p) const;
+  template <typename Predicate> std::vector<int> index(Predicate&& p) const;
+
   template <typename Transform> Selection& for_each(Transform&& transform);
 
   template <typename Transform>
@@ -216,6 +219,19 @@ public:
 
   Selection slice(xmol::utils::optional<int> first = {}, xmol::utils::optional<int> last = {},
                   xmol::utils::optional<int> stride = {}, const SlicingScheme& = SlicingScheme::INTERPRET_NEGATIVE_INDICES) const;
+
+  template<typename CharIterator,
+      typename SFINAE = typename std::enable_if<
+          std::is_convertible<decltype(*std::declval<CharIterator>()), bool>::value
+      >::type>
+  Selection filter(CharIterator begin, CharIterator end) const;
+
+
+  template<typename Iterator,
+      typename SFINAE = typename std::enable_if<
+          std::is_convertible<decltype(*std::declval<Iterator>()), int>::value
+      >::type>
+  Selection at_index(Iterator begin, Iterator end) const;
 
   template <typename Iterator>
   explicit Selection(Iterator begin_, Iterator end_);
@@ -640,6 +656,44 @@ Selection<T> Selection<T>::slice(xmol::utils::optional<int> first, xmol::utils::
 }
 
 template <typename T>
+template <typename CharIterator, typename SFINAE>
+Selection<T> Selection<T>::filter(CharIterator begin, CharIterator end) const {
+
+  std::vector<T*> pointers;
+  auto it = this->begin();
+  auto this_end = this->end();
+  while (it != this_end && begin!=end){
+    if (*begin){
+      pointers.push_back(&(*it));
+    }
+    ++it;
+    ++begin;
+  }
+  if (begin!=end){
+    throw SelectionException<T>("Selection::filter(index_begin, index_end): index array size is too small");
+  }
+
+  if (it!=this_end){
+    throw SelectionException<T>("Selection::filter(index_begin, index_end): index array size is too large");
+  }
+
+  return Selection(pointers.begin(), pointers.end());
+}
+
+
+template <typename T>
+template <typename CharIterator, typename SFINAE>
+Selection<T> Selection<T>::at_index(CharIterator begin, CharIterator end) const {
+  std::vector<T*> pointers;
+  while (begin!=end){
+    pointers.push_back(&(*this)[*begin]);
+    ++begin;
+  }
+  return Selection(pointers.begin(), pointers.end());
+}
+
+
+template <typename T>
 template <typename Predicate>
 Selection<T>& Selection<T>::remove_if(Predicate&& p) {
   LOG_DEBUG_FUNCTION();
@@ -665,6 +719,31 @@ Selection<T> Selection<T>::filter(Predicate&& p) const {
   LOG_DEBUG_FUNCTION();
   Selection<T> result(*this);
   result.remove_if([&p](const value_type& val) { return !p(val); });
+  return result;
+}
+
+template <typename T>
+template <typename Predicate>
+std::vector<char> Selection<T>::indicator(Predicate&& p) const {
+  LOG_DEBUG_FUNCTION();
+  std::vector<char> result(this->size());
+  for (int i=0;i<this->size();i++){
+    result[i] = static_cast<char>(p((*this)[i]));
+  }
+  return result;
+}
+
+
+template <typename T>
+template <typename Predicate>
+std::vector<int> Selection<T>::index(Predicate&& p) const {
+  LOG_DEBUG_FUNCTION();
+  std::vector<int> result;
+  for (int i=0;i<this->size();i++){
+    if (p((*this)[i])){
+      result.push_back(i);
+    }
+  }
   return result;
 }
 
@@ -802,6 +881,8 @@ Selection<T>::Selection(Iterator begin_, Iterator end_) {
   auto comparator = SelectionPointerComparator<value_type>{};
   static_cast<void>(comparator);
   std::sort(this->elements.begin(), this->elements.end(), comparator);
+  auto end = std::unique(this->elements.begin(), this->elements.end());
+  this->elements.erase(end, this->elements.end());
 }
 
 template <typename T> Selection<T>::Selection(SelectionRange<T> rng) {

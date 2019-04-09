@@ -153,6 +153,107 @@ TEST_F(ConSelTests, selection_indexing) {
   EXPECT_THROW(s2[4], xmol::selection::selection_out_of_range<int_with_parent>);
 }
 
+
+TEST_F(ConSelTests, selection_array_indicator) {
+
+  C c;
+  c.emplace(1, c);
+  c.emplace(2, c);
+  c.emplace(3, c);
+  c.emplace(2, c);
+  c.emplace(1, c);
+
+  auto s = c.all();
+  {
+    auto index = s.indicator([](const V&x)->bool{return x.value%2==0;});
+    EXPECT_EQ(index.size(),s.size());
+    auto subset = s.filter(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),2);
+  }
+
+  {
+    auto index = s.indicator([](const V&x)->bool{return x.value%2!=0;});
+    EXPECT_EQ(index.size(),s.size());
+    auto subset = s.filter(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),3);
+  }
+
+  {
+    auto index = s.indicator([](const V&x)->bool{return x.value>1;});
+    EXPECT_EQ(index.size(),s.size());
+    auto subset = s.filter(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),3);
+  }
+
+  {
+    auto index = std::vector<char>{1};
+    EXPECT_THROW(s.filter(index.begin(),index.end()),SelectionException<V>);
+  }
+
+
+  {
+    auto index = std::vector<char>{1,2,3,4,5,6};
+    EXPECT_THROW(s.filter(index.begin(),index.end()),SelectionException<V>);
+  }
+
+  {
+    auto index = std::vector<char>{1,2,3,4,5};
+    EXPECT_NO_THROW(s.filter(index.begin(),index.end()));
+  }
+
+}
+
+
+TEST_F(ConSelTests, selection_array_indexing) {
+
+  C c;
+  c.emplace(1, c);
+  c.emplace(2, c);
+  c.emplace(3, c);
+  c.emplace(2, c);
+  c.emplace(1, c);
+
+  auto s = c.all();
+  {
+    auto index = s.index([](const V&x)->bool{return x.value%2==0;});
+    EXPECT_EQ(index.size(),2);
+    auto subset = s.at_index(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),2);
+  }
+
+  {
+    auto index = s.index([](const V&x)->bool{return x.value%2!=0;});
+    EXPECT_EQ(index.size(),3);
+    auto subset = s.at_index(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),3);
+  }
+
+  {
+    auto index = s.index([](const V&x)->bool{return x.value>1;});
+    EXPECT_EQ(index.size(),3);
+    auto subset = s.at_index(index.begin(),index.end());
+    EXPECT_EQ(subset.size(),3);
+  }
+
+  {
+    auto index = std::vector<int>{0};
+    EXPECT_THROW(s.filter(index.begin(),index.end()),SelectionException<V>);
+  }
+
+
+  {
+    auto index = std::vector<int>{0,0,0,0,0,0};
+    EXPECT_THROW(s.filter(index.begin(),index.end()),SelectionException<V>);
+  }
+
+  {
+    auto index = std::vector<int>{0,0,0,0,0};
+    EXPECT_NO_THROW(s.filter(index.begin(),index.end()));
+  }
+
+}
+
+
 TEST_F(ConSelTests, selection_count) {
 
   C c;

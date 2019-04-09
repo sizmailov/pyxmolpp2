@@ -11,6 +11,7 @@ void init_exceptions(py::module& geometry);
 void init_alignment(py::module& geometry);
 void init_AngleValue(py::module& geometry);
 void init_autocorrelation(py::module& geometry);
+void init_calc_sasa(py::module& geometry);
 void init_basic(py::module& geometry);
 void init_Transformation3d(py::module& geometry);
 void init_XYZ(py::module& geometry);
