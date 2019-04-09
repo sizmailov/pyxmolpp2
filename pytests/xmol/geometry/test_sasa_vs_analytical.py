@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pytest
 import numpy as np
 from pyxmolpp2.geometry import XYZ, VectorXYZ, calc_sasa
 
@@ -29,7 +30,7 @@ def test_sasa_two_spheres():
         (1000, 1e-2),  # 0.01% accuracy
         (5000, 1e-3),  # 0.001% accuracy
     ]:
-        for _ in range(1000):
+        for _ in range(100):
             a = XYZ(*(np.random.random(3) * 2 - 1))
             b = XYZ(*(np.random.random(3) * 2 - 1))
 
@@ -43,7 +44,7 @@ def test_sasa_two_spheres():
             total_area = S1 + S2
             exposed_area_exact = total_area - S1_loss - S2_loss
 
-            sasa = calc_sasa(VectorXYZ([a, b]), [r1, r2], 0, n_samples=samples)
+            sasa = calc_sasa(VectorXYZ([a, b]), np.array([r1, r2]), 0, n_samples=samples)
             exposed_area_approx = sum(sasa)
 
             exposed_area_percent_exact = exposed_area_exact / total_area * 100
@@ -62,7 +63,7 @@ def test_sasa_three_spheres():
         (1000, 1e-2),  # 0.01% accuracy
         (5000, 1e-3),  # 0.001% accuracy
     ]:
-        for _ in range(1000):
+        for _ in range(100):
             r1, r2, r3 = np.random.random(3) * 2 + 0.01
 
             a = XYZ(*(np.random.random(3) * 2 - 1))
@@ -82,7 +83,7 @@ def test_sasa_three_spheres():
             total_area = S1 + S2 + S3
             exposed_area_exact = total_area - S1_loss - S2_loss - S3_loss
 
-            sasa = calc_sasa(VectorXYZ([a, b, c]), [r1, r2, r3], 0, n_samples=samples)
+            sasa = calc_sasa(VectorXYZ([a, b, c]), np.array([r1, r2, r3]), 0, n_samples=samples)
             exposed_area_approx = sum(sasa)
 
             exposed_area_percent_exact = exposed_area_exact / total_area * 100
@@ -92,3 +93,29 @@ def test_sasa_three_spheres():
                               exposed_area_percent_approx,
                               atol=precision), (exposed_area_percent_exact,
                                                 exposed_area_percent_approx,)
+
+
+def test_sasa_errors():
+
+
+    coords = VectorXYZ.from_numpy(np.random.random((100, 3)))
+    radii = np.random.random((100,))
+    indices = np.zeros(100).astype(np.intc)
+
+    calc_sasa(coords, radii, 1.4, indices, 10)
+
+    # coords.size()!=radii.size()
+    with pytest.raises(RuntimeError):
+        calc_sasa(coords[:-1], radii, 1.4, indices, 10)
+
+    # too many indices
+    with pytest.raises(RuntimeError):
+        calc_sasa(coords[:-1], radii, 1.4, np.zeros(101).astype(np.intc), 10)
+
+    # wrong type of indices
+    with pytest.raises(RuntimeError):
+        calc_sasa(coords[:-1], radii, 1.4, np.zeros(101).astype(int), 10)
+
+    # wrong type of radii
+    with pytest.raises(RuntimeError):
+        calc_sasa(coords[:-1], radii.astype(np.half), 1.4, indices, 10)
