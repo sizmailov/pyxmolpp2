@@ -2,6 +2,8 @@
 Change log
 ----------
 
+v0.7.1:
+  - Fix :py:meth:`pyxmolpp2.geometry.Rotation3d.axis()`
 v0.7.0:
   - Add Solvent Accessible Surface Area calculation procedure :py:func:`~pyxmolpp2.geometry.calc_sasa`, see :ref:`examples.sasa_calc`
   - Allow numpy-style array indexing for selections, see :ref:`examples.array_indexing`
