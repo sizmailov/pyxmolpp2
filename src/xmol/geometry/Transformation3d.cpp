@@ -94,9 +94,9 @@ XYZ Rotation3d::axis() const {
   if (sin_theta < 1e-15) {
     return XYZ{1, 0, 0};
   }
-  return XYZ(-(m(0, 1) - m(1, 0)) * 0.5 / sin_theta,
+  return XYZ((m(2, 1) - m(1, 2)) * 0.5 / sin_theta,
              (m(0, 2) - m(2, 0)) * 0.5 / sin_theta,
-             -(m(1, 2) - m(2, 1)) * 0.5 / sin_theta);
+             (m(1, 0) - m(0, 1)) * 0.5 / sin_theta);
 }
 
 Rotation3d& Rotation3d::operator*=(const Rotation3d& rhs) {

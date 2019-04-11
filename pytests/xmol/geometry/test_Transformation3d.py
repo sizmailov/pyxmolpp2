@@ -45,4 +45,25 @@ def test_transformation_3d():
     assert v.y == 2
     assert v.z == 5
 
-    print()
+
+def test_rotation_decomposition():
+    import numpy as np
+    from pyxmolpp2.geometry import XYZ, Rotation3d,  Degrees
+
+    for ax, theta in [
+        (XYZ(0, 0, 1), Degrees(30)),
+        (XYZ(0, 0, 1), Degrees(70)),
+        (XYZ(0, 1, 0), Degrees(70)),
+        (XYZ(1, 0, 0), Degrees(70)),
+        (XYZ(1, 1, 0), Degrees(70)),
+        (XYZ(1, 1, 1), Degrees(70)),
+        (XYZ(1, 0, 1), Degrees(0)),
+        (XYZ(1, 1, 1), Degrees(0)),
+    ]:
+        R = Rotation3d(ax, theta)
+
+        ax1, theta1 = R.axis(), R.theta()
+
+        R2 = Rotation3d(ax1, theta1)
+
+        assert np.allclose(R.matrix3d(),R2.matrix3d())
