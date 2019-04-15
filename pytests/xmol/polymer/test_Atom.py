@@ -500,3 +500,34 @@ def test_bad_selection_construction_from_list():
         AtomSelection([ a for a in frame.asChains ])
     with pytest.raises(Exception):
         ChainSelection([ a for a in frame.asResidues ])
+
+
+def test_frame_buf_output():
+    from pyxmolpp2.pdb import StandardPdbRecords
+    from io import StringIO
+    frame = make_polyglycine([("A", 20)])
+    output = StringIO()
+    frame.to_pdb(output)
+    assert output.getvalue().splitlines()[-1].strip() == "TER"
+
+    output = StringIO()
+    frame.to_pdb(output, StandardPdbRecords.instance())
+    assert output.getvalue().splitlines()[-1].strip() == "TER"
+
+
+def test_frame_file_output():
+    from pyxmolpp2.pdb import StandardPdbRecords
+    frame = make_polyglycine([("A", 20)])
+
+    with open("temp.pdb", "w") as output:
+        frame.to_pdb(output)
+    with open("temp.pdb") as output:
+        assert output.readlines()[-1].strip() == "TER"
+
+    os.unlink("temp.pdb")
+
+    with open("temp.pdb", "w") as output:
+        frame.to_pdb(output, StandardPdbRecords.instance())
+    with open("temp.pdb") as output:
+        assert output.readlines()[-1].strip() == "TER"
+    os.unlink("temp.pdb")

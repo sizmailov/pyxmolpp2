@@ -12,6 +12,8 @@
 #include "xmol/geometry/alignment.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
+#include "xmol/pdb/PdbWriter.h"
+#include <pybind11/iostream.h>
 
 void pyxmolpp::polymer::init_Atom(pybind11::module& polymer) {
 
@@ -503,11 +505,32 @@ Order is preserved across manipulations with :py:class:`ChainSelection`
              return ChainRef(frame.emplace(static_cast<Chain&>(chain)));
            },
            ChainRefPolicy, py::arg("chain"), "Adds a copy of given Chain to the end of frame")
-      .def("to_pdb", [](Frame& frame, std::string& filename) { frame.to_pdb(filename); },
-           py::arg("output_filename"), "Writes frame to file using standard PDB records")
-      .def("to_pdb", [](Frame& frame, std::string& output_filename,
-                        xmol::pdb::basic_PdbRecords& db) { frame.to_pdb(output_filename, db); },
-           py::arg("output_filename"), py::arg("db"), "Writes frame to file using db as non-standard PDB records")
+      .def("to_pdb",
+          [](Frame& frame, std::string& path, xmol::pdb::basic_PdbRecords& db) {
+            frame.to_pdb(path, db);
+          },
+          py::arg("path"),
+          py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+          "Writes frame to file using `db` as non-standard PDB records"
+       )
+      .def("to_pdb",
+           [](Frame& frame, py::object fileHandle, xmol::pdb::basic_PdbRecords& db) {
+
+             if (!(py::hasattr(fileHandle,"write") &&
+                 py::hasattr(fileHandle,"flush") )){
+               throw py::type_error("Frame.to_pdb(file): incompatible function argument:  `file` must be a file-like object, but `"
+                                        +(std::string)(py::repr(fileHandle))+"` provided"
+                   );
+             }
+             py::detail::pythonbuf buf(fileHandle);
+             std::ostream stream(&buf);
+             xmol::pdb::PdbWriter writer(stream);
+             writer.write(frame, db);
+           },
+           py::arg("buf"),
+           py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+           "Writes frame to `file` using `db` as non-standard PDB records"
+      )
       .def("copy",[](Frame& frame) -> Frame{
         return frame;
       }, py::return_value_policy::move)
