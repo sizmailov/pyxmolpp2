@@ -531,3 +531,13 @@ def test_frame_file_output():
     with open("temp.pdb") as output:
         assert output.readlines()[-1].strip() == "TER"
     os.unlink("temp.pdb")
+
+
+def test_frame_buf_exceptions():
+    frame = make_polyglycine([("A", 20)])
+
+    with pytest.raises(TypeError):
+        frame.to_pdb([])
+
+    with pytest.raises(TypeError):
+        frame.to_pdb({})
