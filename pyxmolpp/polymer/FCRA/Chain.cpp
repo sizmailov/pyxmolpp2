@@ -1,7 +1,14 @@
 #include "../FCRA.h"
+#include "xmol/pdb/PdbRecord.h"
+#include "xmol/pdb/PdbWriter.h"
 #include "xmol/polymer/Atom.h"
 #include "xmol/utils/string.h"
 
+#include "xmol/polymer/exceptions.h"
+
+#include "pybind11/iostream.h"
+
+#include <fstream>
 void pyxmolpp::polymer::init_Chain(detail::FWD& fwd, pybind11::module &polymer) {
 
   using namespace xmol::polymer;
@@ -99,7 +106,37 @@ void pyxmolpp::polymer::init_Chain(detail::FWD& fwd, pybind11::module &polymer) 
       .def("delete",
            [](ChainRef& chain) { static_cast<Chain&>(chain).set_deleted(); },
            "Marks chain as deleted. Further access to deleted chain is illegal")
+      .def("to_pdb",
+           [](ChainRef& c, std::string& path, xmol::pdb::basic_PdbRecords& db) {
+             std::ofstream out(path);
+             if (out.fail()) {
+               throw IOError("Can't open file `" + path + "` for writing");
+             }
+             xmol::pdb::PdbWriter writer(out);
+             writer.write(static_cast<Chain&>(c), db);
+           },
+           py::arg("path_or_buf"),
+           py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+           "Writes chain residues to file using `db` as non-standard PDB records"
+      )
+      .def("to_pdb",
+           [](ChainRef& c, py::object fileHandle, xmol::pdb::basic_PdbRecords& db) {
 
+             if (!(py::hasattr(fileHandle,"write") &&
+                 py::hasattr(fileHandle,"flush") )){
+               throw py::type_error("Chain.to_pdb(file): incompatible function argument:  `file` must be a file-like object, but `"
+                                        +(std::string)(py::repr(fileHandle))+"` provided"
+               );
+             }
+             py::detail::pythonbuf buf(fileHandle);
+             std::ostream stream(&buf);
+             xmol::pdb::PdbWriter writer(stream);
+             writer.write(static_cast<Chain&>(c), db);
+           },
+           py::arg("path_or_buf"),
+           py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+           "Writes chain residues to `file` using `db` as non-standard PDB records"
+      )
       .def(
           "__repr__",
           [](ChainRef& chain) {

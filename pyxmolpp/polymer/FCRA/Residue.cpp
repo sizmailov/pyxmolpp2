@@ -1,7 +1,13 @@
 #include "../FCRA.h"
+#include "xmol/pdb/PdbRecord.h"
+#include "xmol/pdb/PdbWriter.h"
 #include "xmol/polymer/Atom.h"
+#include "xmol/polymer/exceptions.h"
 #include "xmol/utils/string.h"
 
+#include "pybind11/iostream.h"
+
+#include <fstream>
 void pyxmolpp::polymer::init_Residue(detail::FWD& fwd, pybind11::module &polymer) {
 
   using namespace xmol::polymer;
@@ -118,6 +124,37 @@ void pyxmolpp::polymer::init_Residue(detail::FWD& fwd, pybind11::module &polymer
           "delete",
           [](ResidueRef& residue) { static_cast<Residue&>(residue).set_deleted(); },
           "Marks residue as deleted. Further access to deleted residue is illegal"
+      )
+      .def("to_pdb",
+           [](ResidueRef& c, std::string& path, xmol::pdb::basic_PdbRecords& db) {
+             std::ofstream out(path);
+             if (out.fail()) {
+               throw IOError("Can't open file `" + path + "` for writing");
+             }
+             xmol::pdb::PdbWriter writer(out);
+             writer.write(static_cast<Residue&>(c), db);
+           },
+           py::arg("path_or_buf"),
+           py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+           "Writes residue atoms to file using `db` as non-standard PDB records"
+      )
+      .def("to_pdb",
+           [](ResidueRef& c, py::object fileHandle, xmol::pdb::basic_PdbRecords& db) {
+
+             if (!(py::hasattr(fileHandle,"write") &&
+                 py::hasattr(fileHandle,"flush") )){
+               throw py::type_error("Residue.to_pdb(file): incompatible function argument:  `file` must be a file-like object, but `"
+                                        +(std::string)(py::repr(fileHandle))+"` provided"
+               );
+             }
+             py::detail::pythonbuf buf(fileHandle);
+             std::ostream stream(&buf);
+             xmol::pdb::PdbWriter writer(stream);
+             writer.write(static_cast<Residue&>(c), db);
+           },
+           py::arg("path_or_buf"),
+           py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
+           "Writes residue atoms to `file` using `db` as non-standard PDB records"
       )
 
       .def(

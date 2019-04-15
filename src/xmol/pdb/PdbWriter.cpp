@@ -92,3 +92,42 @@ void PdbWriter::write(const xmol::polymer::Frame& frame, const xmol::pdb::basic_
     this->write(c,db);
   }
 }
+
+
+void PdbWriter::write(const xmol::polymer::ConstAtomSelection& atomSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&a: atomSelection){
+    this->write(a,db);
+  }
+}
+void PdbWriter::write(const xmol::polymer::ConstResidueSelection& residueSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&r: residueSelection){
+    this->write(r,db);
+  }
+  (*m_ostream) << ("TER\n");
+}
+
+void PdbWriter::write(const xmol::polymer::ConstChainSelection & chainSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&c: chainSelection){
+    this->write(c,db);
+  }
+}
+
+
+void PdbWriter::write(const xmol::polymer::AtomSelection& atomSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&a: atomSelection){
+    this->write(a,db);
+  }
+}
+void PdbWriter::write(const xmol::polymer::ResidueSelection& residueSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&r: residueSelection){
+    this->write(r,db);
+  }
+  (*m_ostream) << ("TER\n");
+}
+
+void PdbWriter::write(const xmol::polymer::ChainSelection & chainSelection, const xmol::pdb::basic_PdbRecords& db) {
+  for(auto&c: chainSelection){
+    this->write(c,db);
+  }
+}
+

@@ -516,21 +516,71 @@ def test_frame_buf_output():
 
 
 def test_frame_file_output():
+    frame = make_polyglycine([("A", 20)])
+
+    output = "temp.pdb"
+    frame.to_pdb(output)
+    with open("temp.pdb") as output:
+        assert output.readlines()[-1].strip() == "TER"
+
+    os.unlink("temp.pdb")
+
+    output = "temp.pdb"
+    frame.to_pdb(output)
+
+    with open("temp.pdb") as output:
+        assert output.readlines()[-1].strip() == "TER"
+    os.unlink("temp.pdb")
+
+
+def test_anything_to_pdb_file():
     from pyxmolpp2.pdb import StandardPdbRecords
     frame = make_polyglycine([("A", 20)])
 
-    with open("temp.pdb", "w") as output:
+    output="temp.pdb"
+    frame.to_pdb(output)
+
+    frame.to_pdb(output, StandardPdbRecords.instance())
+    frame.asAtoms.to_pdb(output)
+    frame.asChains.to_pdb(output)
+    frame.asResidues.to_pdb(output)
+    frame.asAtoms[0].to_pdb(output)
+    frame.asChains[0].to_pdb(output)
+    frame.asResidues[0].to_pdb(output)
+
+    frame.to_pdb(output, StandardPdbRecords.instance())
+    frame.asAtoms.to_pdb(output, StandardPdbRecords.instance())
+    frame.asChains.to_pdb(output, StandardPdbRecords.instance())
+    frame.asResidues.to_pdb(output, StandardPdbRecords.instance())
+    frame.asAtoms[0].to_pdb(output, StandardPdbRecords.instance())
+    frame.asChains[0].to_pdb(output, StandardPdbRecords.instance())
+    frame.asResidues[0].to_pdb(output, StandardPdbRecords.instance())
+    os.unlink("temp.pdb")
+
+
+def test_anything_to_pdb_buffer():
+    from pyxmolpp2.pdb import StandardPdbRecords
+    from io import StringIO
+    frame = make_polyglycine([("A", 20)])
+
+    with StringIO() as output:
         frame.to_pdb(output)
-    with open("temp.pdb") as output:
-        assert output.readlines()[-1].strip() == "TER"
 
-    os.unlink("temp.pdb")
-
-    with open("temp.pdb", "w") as output:
         frame.to_pdb(output, StandardPdbRecords.instance())
-    with open("temp.pdb") as output:
-        assert output.readlines()[-1].strip() == "TER"
-    os.unlink("temp.pdb")
+        frame.asAtoms.to_pdb(output)
+        frame.asChains.to_pdb(output)
+        frame.asResidues.to_pdb(output)
+        frame.asAtoms[0].to_pdb(output)
+        frame.asChains[0].to_pdb(output)
+        frame.asResidues[0].to_pdb(output)
+
+        frame.to_pdb(output, StandardPdbRecords.instance())
+        frame.asAtoms.to_pdb(output, StandardPdbRecords.instance())
+        frame.asChains.to_pdb(output, StandardPdbRecords.instance())
+        frame.asResidues.to_pdb(output, StandardPdbRecords.instance())
+        frame.asAtoms[0].to_pdb(output, StandardPdbRecords.instance())
+        frame.asChains[0].to_pdb(output, StandardPdbRecords.instance())
+        frame.asResidues[0].to_pdb(output, StandardPdbRecords.instance())
 
 
 def test_frame_buf_exceptions():

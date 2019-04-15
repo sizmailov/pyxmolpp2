@@ -36,7 +36,7 @@ void pyxmolpp::polymer::init_Frame(detail::FWD& fwd, pybind11::module &polymer) 
            [](Frame& frame, std::string& path, xmol::pdb::basic_PdbRecords& db) {
              frame.to_pdb(path, db);
            },
-           py::arg("path"),
+           py::arg("path_or_buf"),
            py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
            "Writes frame to file using `db` as non-standard PDB records"
       )
@@ -54,7 +54,7 @@ void pyxmolpp::polymer::init_Frame(detail::FWD& fwd, pybind11::module &polymer) 
              xmol::pdb::PdbWriter writer(stream);
              writer.write(frame, db);
            },
-           py::arg("buf"),
+           py::arg("path_or_buf"),
            py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
            "Writes frame to `file` using `db` as non-standard PDB records"
       )
