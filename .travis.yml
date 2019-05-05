@@ -28,6 +28,7 @@ matrix:
     - env:
       - COMPILER=clang++-3.6
       - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang36
         apt:
           packages:
@@ -46,6 +47,7 @@ matrix:
     - env:
         - COMPILER=clang++-3.6
         - BUILD_TYPE=Release
+        - RUN_CTESTS=true
       addons: *clang36
       python: 3.5
 
@@ -53,6 +55,7 @@ matrix:
     - env:
       - COMPILER=clang++-4.0
       - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang40
         apt:
           packages:
@@ -71,6 +74,7 @@ matrix:
     - env:
       - COMPILER=clang++-4.0
       - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *clang40
       python: 3.5
 
@@ -78,6 +82,7 @@ matrix:
     - env:
       - COMPILER=clang++-5.0
       - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang50
         apt:
           packages:
@@ -98,6 +103,7 @@ matrix:
     - env:
       - COMPILER=clang++-5.0
       - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *clang50
       python: 3.5
 
@@ -109,6 +115,7 @@ matrix:
     - env:
       - COMPILER=g++-5
       - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &gcc5
         apt:
           packages:
@@ -125,12 +132,14 @@ matrix:
     - env:
       - COMPILER=g++-5
       - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *gcc5
       python: 3.5
 
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &gcc7
         apt:
           packages:
@@ -147,6 +156,7 @@ matrix:
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Coverage
+      - RUN_CTESTS=true
       addons: *gcc7
       python: 2.7
 
@@ -154,6 +164,7 @@ matrix:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
       - RELEASE_MAKER=true
+      - RUN_CTESTS=true
       addons: *gcc7
       python: 3.5
 
@@ -174,7 +185,13 @@ script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
     - python setup.py install
     - python -m pytest pytests
-    - make -C build test
+    - if $RUN_CTESTS ; then
+        mkdir -p _build ;
+        (cd _build && cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE) ;
+        cmake --build _build --target all -- -j 2 ;
+        (cd _build && ctest) ;
+      fi ;
+
 
 after_success:
     - python -m pip install gcovr
