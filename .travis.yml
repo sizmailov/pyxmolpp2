@@ -168,7 +168,7 @@ install:
 
 before_script:
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
-    - git submodule update --init --recursive --depth=50
+    - git submodule update --init --depth=1
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
