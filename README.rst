@@ -2,9 +2,9 @@
 A tool to process MD trajectories
 #################################
 
-.. |master_build| image:: https://travis-ci.org/sizmailov/pyxmolpp2.svg?branch=master
+.. |master_build| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=master
     :alt: master status
-    :target: https://travis-ci.org/sizmailov/pyxmolpp2
+    :target: https://travis-ci.com/sizmailov/pyxmolpp2
 
 
 .. |master_coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master/graph/badge.svg
@@ -12,9 +12,9 @@ A tool to process MD trajectories
     :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master
 
 
-.. |dev_build| image:: https://travis-ci.org/sizmailov/pyxmolpp2.svg?branch=dev
+.. |dev_build| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=dev
     :alt: dev status
-    :target: https://travis-ci.org/sizmailov/pyxmolpp2
+    :target: https://travis-ci.com/sizmailov/pyxmolpp2
 
 
 .. |dev_coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/dev/graph/badge.svg
