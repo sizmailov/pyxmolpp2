@@ -196,7 +196,7 @@ script:
 after_success:
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
-        gcovr build --root=./ --delete --filter='src/.*' --filter='include/.*' --filter='pyxmolpp/.*'  --xml -o coverage.xml ;
+        gcovr _build --root=./ --delete --filter='src/.*' --filter='include/.*' --filter='pyxmolpp/.*'  --xml -o coverage.xml ;
         bash <(curl -s https://codecov.io/bash) ;
       fi;
     - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
