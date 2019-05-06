@@ -8,3 +8,4 @@ cmake-build-*
 gmon.out
 .pytest_cahce/
 __pycache__/
+.cc_token

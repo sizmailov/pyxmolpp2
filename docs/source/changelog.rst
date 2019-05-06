@@ -1,6 +1,11 @@
 ----------
 Change log
 ----------
+v0.8.0:
+  - Allow python buffers as arguments of ``.to_pdb``
+  - Add ``.to_pdb`` method to FRCA and selections
+  - Update dependencies
+  - CI: migrate to travis-ci.com, add missed gtests
 
 v0.7.1:
   - Fix :py:meth:`pyxmolpp2.geometry.Rotation3d.axis()`

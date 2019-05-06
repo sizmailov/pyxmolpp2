@@ -27,7 +27,8 @@ matrix:
     # Clang 3.6
     - env:
       - COMPILER=clang++-3.6
-      - BUILD_TYPE=Coverage
+      - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang36
         apt:
           packages:
@@ -46,84 +47,15 @@ matrix:
     - env:
         - COMPILER=clang++-3.6
         - BUILD_TYPE=Release
+        - RUN_CTESTS=true
       addons: *clang36
-      python: 2.7
-
-    - env:
-        - COMPILER=clang++-3.6
-        - BUILD_TYPE=Release
-      addons: *clang36
-      python: 3.5
-
-    # Clang 3.7
-#    - env:
-#      - COMPILER=clang++-3.7
-#      - BUILD_TYPE=Coverage
-#      addons: &clang37
-#        apt:
-#          packages:
-#            - clang-3.7
-#            - g++-5
-#          sources:
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-precise-3.7
-#
-#    - env:
-#      - COMPILER=clang++-3.7
-#      - BUILD_TYPE=Release
-#      addons: *clang37
-#
-#    # Clang 3.8
-#    - env:
-#      - COMPILER=clang++-3.8
-#      - BUILD_TYPE=Coverage
-#      addons: &clang38
-#        apt:
-#          packages:
-#            - clang-3.8
-#            - g++-5
-#          sources:
-#            - ubuntu-toolchain-r-test
-#            - llvm-toolchain-precise-3.8
-#
-#    - env:
-#      - COMPILER=clang++-3.8
-#      - BUILD_TYPE=Release
-#      addons: *clang38
-
-    # Clang 3.9
-    - env: COMPILER=clang++-3.9 BUILD_TYPE=Coverage
-      addons: &clang39
-        apt:
-          packages:
-            - clang-3.9
-            - g++-5
-            - python3.5
-            - python3.5-dev
-            - python2.7
-            - python2.7-dev
-          sources:
-            - deadsnakes
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.9
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-3.9
-      - BUILD_TYPE=Release
-      addons: *clang39
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-3.9
-      - BUILD_TYPE=Release
-      addons: *clang39
       python: 3.5
 
     # Clang 4.0
     - env:
       - COMPILER=clang++-4.0
-      - BUILD_TYPE=Coverage
+      - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang40
         apt:
           packages:
@@ -142,19 +74,15 @@ matrix:
     - env:
       - COMPILER=clang++-4.0
       - BUILD_TYPE=Release
-      addons: *clang40
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-4.0
-      - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *clang40
       python: 3.5
 
     # Clang 5.0
     - env:
       - COMPILER=clang++-5.0
-      - BUILD_TYPE=Coverage
+      - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &clang50
         apt:
           packages:
@@ -175,12 +103,7 @@ matrix:
     - env:
       - COMPILER=clang++-5.0
       - BUILD_TYPE=Release
-      addons: *clang50
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-5.0
-      - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *clang50
       python: 3.5
 
@@ -191,7 +114,8 @@ matrix:
     # GCC 5
     - env:
       - COMPILER=g++-5
-      - BUILD_TYPE=Coverage
+      - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &gcc5
         apt:
           packages:
@@ -208,34 +132,14 @@ matrix:
     - env:
       - COMPILER=g++-5
       - BUILD_TYPE=Release
-      addons: *gcc5
-      python: 2.7
-
-    - env:
-      - COMPILER=g++-5
-      - BUILD_TYPE=Release
+      - RUN_CTESTS=true
       addons: *gcc5
       python: 3.5
 
-#    # GCC 6
-#    - env:
-#      - COMPILER=g++-6
-#      - BUILD_TYPE=Coverage
-#      addons: &gcc6
-#        apt:
-#          packages: g++-6
-#          sources:
-#            - ubuntu-toolchain-r-test
-#
-#    - env:
-#      - COMPILER=g++-6
-#      - BUILD_TYPE=Release
-#      addons: *gcc6
-
-
     - env:
       - COMPILER=g++-7
-      - BUILD_TYPE=Coverage
+      - BUILD_TYPE=Release
+      - RUN_CTESTS=false
       addons: &gcc7
         apt:
           packages:
@@ -251,7 +155,8 @@ matrix:
 
     - env:
       - COMPILER=g++-7
-      - BUILD_TYPE=Release
+      - BUILD_TYPE=Coverage
+      - RUN_CTESTS=true
       addons: *gcc7
       python: 2.7
 
@@ -259,6 +164,7 @@ matrix:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
       - RELEASE_MAKER=true
+      - RUN_CTESTS=true
       addons: *gcc7
       python: 3.5
 
@@ -273,17 +179,26 @@ install:
 
 before_script:
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
-    - git submodule update --init --recursive --depth=50
+    - git submodule update --init --depth=1
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
     - python setup.py install
     - python -m pytest pytests
+    - if $RUN_CTESTS ; then
+        mkdir -p _build ;
+        (cd _build && cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE) ;
+        cmake --build _build --target all -- -j 2 ;
+        (cd _build && ctest) ;
+      fi ;
+
 
 after_success:
     - python -m pip install gcovr
-    - gcovr cmake-build-coverage --root=./ --delete --exclude='external/.*' --exclude='tests/.*' --xml -o coverage.xml
-    - bash <(curl -s https://codecov.io/bash)
+    - if [ "$BUILD_TYPE" == "Coverage" ]; then
+        gcovr _build --root=./ --delete --filter='src/.*' --filter='include/.*' --filter='pyxmolpp/.*'  --xml -o coverage.xml ;
+        bash <(curl -s https://codecov.io/bash) ;
+      fi;
     - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
         DO_GH_PAGES=true;
         DO_PYPI_RELEASE=true;
