@@ -35,3 +35,22 @@ TEST_F(Transformation3dTests,inverse){
   { auto G(T*U*R); EXPECT_LE(((G*G.inverted()).transform(r)-r).len(),1e-9);}
 
 }
+
+TEST_F(Transformation3dTests, rotation_angle){
+  auto m = Eigen::Matrix3d();
+  m << 1.000000000000000444e+00,
+      1.526556658859591229e-16,
+      6.938893903907233000e-18,
+      1.526556658859591229e-16,
+      1.000000000000000666e+00,
+      -5.551115123125786400e-17,
+      0.000000000000000000e+00,
+      -5.551115123125786400e-17,
+      1.000000000000000444e+00;
+  auto r = Rotation3d(m);
+
+  std::cout << m << std::endl;
+  std::cout << r.theta().degrees() << std::endl;
+
+  ASSERT_DOUBLE_EQ(r.theta().degrees(),0.0);
+}

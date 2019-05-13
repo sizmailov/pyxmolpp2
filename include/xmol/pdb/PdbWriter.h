@@ -25,6 +25,15 @@ public:
   void write(const xmol::polymer::Atom& atom, const basic_PdbRecords& db);
 
 
+  void write(const xmol::polymer::ConstChainSelection& chain, const basic_PdbRecords& db);
+  void write(const xmol::polymer::ConstResidueSelection& residueSelection, const basic_PdbRecords& db);
+  void write(const xmol::polymer::ConstAtomSelection& atomSelection, const basic_PdbRecords& db);
+
+  void write(const xmol::polymer::ChainSelection& chain, const basic_PdbRecords& db);
+  void write(const xmol::polymer::ResidueSelection& residueSelection, const basic_PdbRecords& db);
+  void write(const xmol::polymer::AtomSelection& atomSelection, const basic_PdbRecords& db);
+
+
 private:
   std::locale m_old_locale;
   std::ostream* m_ostream;

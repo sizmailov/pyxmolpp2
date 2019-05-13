@@ -1,17 +1,17 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = git@github.com:sizmailov/googletest.git
-  shallow = true
+    shallow = true
 	branch = master
 [submodule "external/range-v3"]
 	path = external/range-v3
 	url = git@github.com:sizmailov/range-v3.git
-  shallow = true
+    shallow = true
 	branch = master
 [submodule "external/GSL"]
 	path = external/GSL
 	url = git@github.com:sizmailov/GSL.git
-  shallow = true
+    shallow = true
 	branch = master
 [submodule "external/pybind11"]
 	path = external/pybind11
@@ -21,5 +21,5 @@
 [submodule "external/eigen-git-mirror"]
 	path = external/eigen-git-mirror
 	url = git@github.com:sizmailov/eigen-git-mirror.git
-  shallow = true
+    shallow = true
 	branch = master

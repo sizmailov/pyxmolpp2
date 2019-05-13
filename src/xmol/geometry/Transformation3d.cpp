@@ -6,6 +6,13 @@ using namespace xmol::geometry;
 
 Rotation3d::Rotation3d() { m << 1, 0, 0, 0, 1, 0, 0, 0, 1; }
 
+namespace {
+
+inline double to_domain_11(double value) {
+  return std::max(-1.0, std::min(1.0, value));
+}
+}
+
 Rotation3d::Rotation3d(XYZ u, AngleValue theta) {
   u /= u.len();
 
@@ -74,17 +81,21 @@ Rotation3d::Rotation3d(const Eigen::Matrix3d& m) : m(m) {
 }
 
 YawPitchRoll Rotation3d::yaw_pitch_roll() const {
-  return {Radians(atan2(m(1, 0), m(0, 0))), Radians(-asin(m(2, 0))),
+  return {Radians(atan2(m(1, 0), m(0, 0))), Radians(-asin(to_domain_11(m(2, 0)))),
           Radians(atan2(m(2, 1), m(2, 2)))};
 }
 
 EulerAngles Rotation3d::euler_angles() const {
-  return {Radians(atan2(m(0, 2), -m(1, 2))), Radians(acos(m(2, 2))),
+  return {Radians(atan2(m(0, 2), -m(1, 2))), Radians(acos(to_domain_11(m(2, 2)))),
           Radians(atan2(m(2, 0), m(2, 1)))};
 }
 
 AngleValue Rotation3d::theta() const {
-  return Radians(acos((m(0, 0) + m(1, 1) + m(2, 2) - 1) / 2.0));
+  return Radians(std::acos(
+      to_domain_11(
+          (m(0, 0) + m(1, 1) + m(2, 2) - 1) / 2.0
+      )
+  ));
 }
 XYZ Rotation3d::axis() const {
 
