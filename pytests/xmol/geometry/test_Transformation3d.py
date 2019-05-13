@@ -66,4 +66,38 @@ def test_rotation_decomposition():
 
         R2 = Rotation3d(ax1, theta1)
 
-        assert np.allclose(R.matrix3d(),R2.matrix3d())
+        assert np.allclose(R.matrix3d(),R2.matrix3d()), ("\n".join(map(lambda x:"%25.18e"%x, (R.matrix3d()-R2.matrix3d()).flatten())))
+
+
+def test_angle_extraction():
+    import numpy as np
+    from pyxmolpp2.geometry import Rotation3d
+
+    r = Rotation3d(np.identity(3))
+    assert np.isclose(r.theta().degrees, 0.0)
+
+    r = Rotation3d(
+        np.array(
+            [1.000000000000000444e+00,
+             1.526556658859591229e-16,
+             6.938893903907233000e-18,
+             1.526556658859591229e-16,
+             1.000000000000000666e+00,
+             -5.551115123125786400e-17,
+             0.000000000000000000e+00,
+             -5.551115123125786400e-17,
+             1.000000000000000444e+00, ]
+        ).reshape((3,3))
+    )
+    assert np.isclose(r.theta().degrees, 0.0)
+
+
+
+
+def test_bad_rotation_matrix_input():
+    import numpy as np
+    from pyxmolpp2.geometry import Rotation3d
+
+    with pytest.raises(TypeError):
+        r = Rotation3d(np.array([1,2,3]))
+
