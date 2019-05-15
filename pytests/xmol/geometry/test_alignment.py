@@ -86,6 +86,22 @@ def test_calc_inertia_tensor():
     x = calc_inertia_tensor(a ,m)
     assert np.allclose(x,np.diag([20,2,22]))
 
+
+def test_calc_inertia_tensor_off_diagonal():
+    from pyxmolpp2.geometry import calc_inertia_tensor, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees
+    import numpy as np
+
+    N = 1000
+    a = VectorXYZ.from_numpy(np.random.random((N, 3)))
+    x = calc_inertia_tensor(a)
+
+    V, _, _ = np.linalg.svd(x, full_matrices=True)
+    a.transform(Rotation3d(V.T))
+    I = calc_inertia_tensor(a)
+
+    assert np.allclose([I[0, 1], I[0, 2], I[1, 0], I[1, 2], I[2, 0], I[2, 1]], 0)
+
+
 def test_calc_mass_center():
     from pyxmolpp2.geometry import calc_mass_center, XYZ, VectorXYZ, calc_rmsd, Rotation3d, Translation3d, Degrees
     import numpy as np

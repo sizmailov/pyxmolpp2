@@ -78,9 +78,9 @@ Eigen::Matrix3d xmol::geometry::calc_inertia_tensor(const std::vector<XYZ>& coor
   }
   Eigen::Matrix3d result;
   result <<
-      xx, xy, xz,
-      xy, yy, yz,
-      xz, yz, zz;
+      xx, -xy, -xz,
+      -xy, yy, -yz,
+      -xz, -yz, zz;
   return result;
 }
 
@@ -108,9 +108,9 @@ Eigen::Matrix3d xmol::geometry::calc_inertia_tensor(const std::vector<XYZ>& coor
   }
   Eigen::Matrix3d result;
   result <<
-         xx, xy, xz,
-         xy, yy, yz,
-         xz, yz, zz;
+         xx, -xy, -xz,
+        -xy, yy, -yz,
+        -xz, -yz, zz;
   return result;
 }
 
