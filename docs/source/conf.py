@@ -238,16 +238,22 @@ def add_types_to_function(objtype, sig, docstringlines):
         aargs.append(args[begin:])
         for arg in aargs:
             if ":" in arg:
-                arg_name, arg_type = arg.split(":")
+                arg_name, arg_type_and_default = arg.split(":")
 
                 arg_name = arg_name.strip()
-                arg_type = arg_type.strip()
+                arg_type_and_default = arg_type_and_default.split("=", 1)
+                arg_type = arg_type_and_default[0].strip()
+                with_default = len(arg_type_and_default) > 1
 
                 if arg_name in args_with_type:
                     continue
 
                 if arg_name not in args_with_decs:
-                    line = ":param {}: {}".format(arg_name,"not documented yet")
+                    if with_default:
+                        default_value = arg_type_and_default[1].strip()
+                        line = ":param {}: default = :py:obj:`{}`".format(arg_name, default_value)
+                    else:
+                        line = ":param {}: {}".format(arg_name, "not documented yet")
                     docstringlines.append(line)
 
                 if "[" not in arg_type:
