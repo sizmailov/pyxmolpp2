@@ -180,11 +180,10 @@ overloaded_function_signature_regex = r"(\s*(?P<overload_number>\d+).)?" \
 
 def strip_argumet_types(app=None, what=None, name=None, obj=None, options=None, arg=None, ret=None):
     import re
-    # print(arg,ret)
-    if what in ["method","function"]:
+
+    if what in ["method", "function"] and arg is not None:
 
         arg_old = arg
-        # print(arg_old)
         arg_new = re.sub(r"\[[^\]\[]*\]","",arg_old)
         while arg_new!=arg_old:
             # print(arg_new)
@@ -209,15 +208,15 @@ def add_types_to_function(objtype, sig, docstringlines):
     args_with_decs = set(("self",))
     args_with_type = set()
     for l in docstringlines:
-        m = re.match("\s*:param\s+(?P<arg>\w+)\s*:.*",l)
+        m = re.match(r"\s*:param\s+(?P<arg>\w+)\s*:.*",l)
         if m:
             args_with_decs.add(m.group("arg"))
             continue
-        m = re.match("\s*:type\s+(?P<arg>\w+)\s*:.*",l)
+        m = re.match(r"\s*:type\s+(?P<arg>\w+)\s*:.*",l)
         if m:
             args_with_type.add(m.group("arg"))
             continue
-        m = re.match("\s*:param\s+(?P<argtype>[\w\[\]\s]+)\s+(?P<arg>\w+)\s*:.*",l)
+        m = re.match(r"\s*:param\s+(?P<argtype>[\w\[\]\s]+)\s+(?P<arg>\w+)\s*:.*",l)
         if m:
             args_with_type.add(m.group("arg"))
             args_with_decs.add(m.group("arg"))
