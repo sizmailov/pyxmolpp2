@@ -23,12 +23,11 @@ project = u'pyxmolpp2'
 copyright = u'2018, Sergei Izmailov'
 author = u'Sergei Izmailov'
 
-# The short X.Y version
-version = u''
 # The full version, including alpha/beta/rc tags
 import pyxmolpp2
 release = pyxmolpp2.version.version
-
+# The short X.Y version
+version = '.'.join(release.split('.')[:2])
 
 # -- General configuration ---------------------------------------------------
 
