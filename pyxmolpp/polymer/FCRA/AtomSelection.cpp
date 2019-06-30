@@ -142,7 +142,7 @@ void pyxmolpp::polymer::init_AtomSelection(detail::FWD& fwd, py::module& polymer
            },
            py::arg("path_or_buf"),
            py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
-           "Writes frame to file using `db` as non-standard PDB records"
+           "Writes selection to `file` using `db` as non-standard PDB records"
       )
       .def("to_pdb",
            [](AtomSelection& sel, py::object fileHandle, xmol::pdb::basic_PdbRecords& db) {
