@@ -107,7 +107,7 @@ void pyxmolpp::polymer::init_ResidueSelection(detail::FWD& fwd, py::module& poly
            },
            py::arg("path_or_buf"),
            py::arg_v("db",std::ref(xmol::pdb::StandardPdbRecords::instance()),"pyxmolpp2.pdb.StandardPdbRecords.instance()"),
-           "Writes frame to file using `db` as non-standard PDB records"
+           "Writes selection to `file` using `db` as non-standard PDB records"
       )
       .def("to_pdb",
            [](ResidueSelection& sel, py::object fileHandle, xmol::pdb::basic_PdbRecords& db) {

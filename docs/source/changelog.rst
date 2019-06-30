@@ -1,6 +1,8 @@
 ----------
 Change log
 ----------
+v0.8.2:
+  - Doc: improve doc generation, fix typos
 v0.8.1:
   - Fix: inertia tensor off diagonal elements opposite sign
 v0.8.0:

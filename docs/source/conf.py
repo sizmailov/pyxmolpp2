@@ -23,12 +23,11 @@ project = u'pyxmolpp2'
 copyright = u'2018, Sergei Izmailov'
 author = u'Sergei Izmailov'
 
-# The short X.Y version
-version = u''
 # The full version, including alpha/beta/rc tags
 import pyxmolpp2
 release = pyxmolpp2.version.version
-
+# The short X.Y version
+version = '.'.join(release.split('.')[:2])
 
 # -- General configuration ---------------------------------------------------
 
@@ -169,6 +168,16 @@ autodoc_default_flags = ['members','undoc-members', 'show-inheritance','special-
 autoclass_content = "class"
 
 
+no_parentheses = r"[^()]*"
+parentheses_one_fold = r"({nopar}(\({nopar}\))?)*".format(nopar=no_parentheses)
+parentheses_two_fold = r"({nopar}(\({par1}\))?)*".format(par1=parentheses_one_fold, nopar=no_parentheses)
+parentheses_three_fold = r"({nopar}(\({par2}\))?)*".format(par2=parentheses_two_fold, nopar=no_parentheses)
+overloaded_function_signature_regex = r"(\s*(?P<overload_number>\d+).)?" \
+                  r"\s*(?P<fname>\w+)" \
+                  r"\s*\((?P<args>{balanced_parentheses})\)" \
+                  r"\s*->\s*" \
+                  r"(?P<ret>[^()]+)\s*".format(balanced_parentheses=parentheses_three_fold)
+
 def strip_argumet_types(app=None, what=None, name=None, obj=None, options=None, arg=None, ret=None):
     import re
     # print(arg,ret)
@@ -213,8 +222,7 @@ def add_types_to_function(objtype, sig, docstringlines):
             args_with_type.add(m.group("arg"))
             args_with_decs.add(m.group("arg"))
             continue
-    m = re.match(r".*\((?P<args>[^\(\)]*)\)"
-                 r"(\s*->\s*(?P<ret>\w[\[\],\w\.\s]+))?\s*",sig)
+    m = re.match(overloaded_function_signature_regex, sig)
     if m:
         args, ret = m.group("args"), m.group("ret")
 
@@ -230,16 +238,22 @@ def add_types_to_function(objtype, sig, docstringlines):
         aargs.append(args[begin:])
         for arg in aargs:
             if ":" in arg:
-                arg_name, arg_type = arg.split(":")
+                arg_name, arg_type_and_default = arg.split(":")
 
                 arg_name = arg_name.strip()
-                arg_type = arg_type.strip()
+                arg_type_and_default = arg_type_and_default.split("=", 1)
+                arg_type = arg_type_and_default[0].strip()
+                with_default = len(arg_type_and_default) > 1
 
                 if arg_name in args_with_type:
                     continue
 
                 if arg_name not in args_with_decs:
-                    line = ":param {}: {}".format(arg_name,"not documented yet")
+                    if with_default:
+                        default_value = arg_type_and_default[1].strip()
+                        line = ":param {}: default = :py:obj:`{}`".format(arg_name, default_value)
+                    else:
+                        line = ":param {}: {}".format(arg_name, "not documented yet")
                     docstringlines.append(line)
 
                 if "[" not in arg_type:
@@ -266,8 +280,7 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
     end = len(lines)
     fname = None
     for i, l in reversed(list(enumerate(lines))):
-        m = re.match(r"\d+\.\s*(?P<fname>\w+)\s*\((?P<args>[^\(\)]*)\)"
-                 r"(\s*->\s*(?P<ret>\w[\[\],\w\.\s]+))?\s*",l)
+        m = re.match(overloaded_function_signature_regex, l)
         if m:
             args, ret = m.group("args"), m.group("ret")
             args, ret = strip_argumet_types(what="method", arg=args,ret=ret)
@@ -295,7 +308,7 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
     pass
 
 def process_docs(app, objtype, fullname, object, options, docstringlines):
-    from pybind11_stubgen import PropertyStubsGenerator
+    from pybind11_stubgen import PropertyStubsGenerator, PropertySignature
     sig = None
     try:
         sig = object.__doc__.split("\n")[0]
@@ -308,6 +321,14 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
             prop = PropertyStubsGenerator("name", object, None)
             prop.parse()
             typename = prop.signature.rtype
+            access_type_name = {
+                PropertySignature.NONE: "",
+                PropertySignature.READ_ONLY: "**Access:** `read only`",
+                PropertySignature.READ_WRITE: "**Access:** `read/write`",
+                PropertySignature.WRITE_ONLY: "**Access:** `write only`",
+            }
+            docstringlines.append(access_type_name[prop.signature.access_type])
+            docstringlines.append("")
         docstringlines.append(":type: :py:class:`{}`".format(typename))
 
     if sig:

@@ -6,4 +6,4 @@ matplotlib
 Pillow
 tabulate
 biopython
-git+https://github.com/sizmailov/pybind11-stubgen
+pybind11-stubgen>=0.0.3
