@@ -308,7 +308,7 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
     pass
 
 def process_docs(app, objtype, fullname, object, options, docstringlines):
-    from pybind11_stubgen import PropertyStubsGenerator
+    from pybind11_stubgen import PropertyStubsGenerator, PropertySignature
     sig = None
     try:
         sig = object.__doc__.split("\n")[0]
@@ -321,6 +321,14 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
             prop = PropertyStubsGenerator("name", object, None)
             prop.parse()
             typename = prop.signature.rtype
+            access_type_name = {
+                PropertySignature.NONE: "",
+                PropertySignature.READ_ONLY: "**Access:** `read only`",
+                PropertySignature.READ_WRITE: "**Access:** `read/write`",
+                PropertySignature.WRITE_ONLY: "**Access:** `write only`",
+            }
+            docstringlines.append(access_type_name[prop.signature.access_type])
+            docstringlines.append("")
         docstringlines.append(":type: :py:class:`{}`".format(typename))
 
     if sig:
