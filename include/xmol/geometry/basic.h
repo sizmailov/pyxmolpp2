@@ -14,7 +14,7 @@ inline double distance2(const XYZ& a, const XYZ& b) { return (a - b).len2(); }
 inline AngleValue angle(const XYZ& a, const XYZ& b, const XYZ& c) {
   XYZ ba = a - b;
   XYZ bc = c - b;
-  return Radians(std::acos(ba.dot(bc) / (ba.len() * bc.len())));
+  return Radians(std::acos(std::max(-1.0,std::min(1.0,ba.dot(bc) / (ba.len() * bc.len())))));
 }
 
 inline AngleValue dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c,
