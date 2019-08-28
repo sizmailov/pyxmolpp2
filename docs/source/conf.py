@@ -314,21 +314,20 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
     except (KeyError,AttributeError,IndexError):
         pass
 
-    if objtype=="attribute":
-        typename = object.__class__.__name__
-        if isinstance(object, property):
-            prop = PropertyStubsGenerator("name", object, None)
-            prop.parse()
-            typename = prop.signature.rtype
-            access_type_name = {
-                PropertySignature.NONE: "",
-                PropertySignature.READ_ONLY: "**Access:** `read only`",
-                PropertySignature.READ_WRITE: "**Access:** `read/write`",
-                PropertySignature.WRITE_ONLY: "**Access:** `write only`",
-            }
-            docstringlines.append(access_type_name[prop.signature.access_type])
+    if objtype == "property":
+        prop = PropertyStubsGenerator("name", object, None)
+        prop.parse()
+        access_type = prop.signature.access_type
+        if access_type & PropertySignature.READ_ONLY:
+            docstringlines.append(":getter: returns :py:class:`~{}`".format(prop.signature.rtype))
             docstringlines.append("")
-        docstringlines.append(":type: :py:class:`{}`".format(typename))
+        if access_type & PropertySignature.WRITE_ONLY:
+            docstringlines.append(":setter: accepts :py:class:`~{}`".format(prop.signature.setter_arg_type))
+            docstringlines.append("")
+    if objtype == "attribute":
+        typename = object.__class__.__name__
+        docstringlines.append("")
+        docstringlines.append(":type: :py:class:`~{}`".format(typename))
 
     if sig:
 
