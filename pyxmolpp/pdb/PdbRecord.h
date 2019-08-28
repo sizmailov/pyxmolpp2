@@ -10,6 +10,7 @@ namespace pdb {
 class Pybasic_PdbRecords : public xmol::pdb::basic_PdbRecords {
 public:
   using basic_PdbRecords::basic_PdbRecords;
+  virtual ~Pybasic_PdbRecords() = default ;
   virtual const xmol::pdb::PdbRecordType&
   get_record(const xmol::pdb::RecordName& string) const override {
     PYBIND11_OVERLOAD_PURE(

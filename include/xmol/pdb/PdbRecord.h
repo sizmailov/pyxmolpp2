@@ -23,6 +23,7 @@ private:
 class basic_PdbRecords {
 public:
   virtual const PdbRecordType& get_record(const RecordName& string) const = 0;
+  virtual ~basic_PdbRecords() = default;
 };
 
 class StandardPdbRecords : public basic_PdbRecords {
@@ -39,7 +40,7 @@ private:
 class AlteredPdbRecords : public basic_PdbRecords {
 public:
   explicit AlteredPdbRecords(const basic_PdbRecords& basic) : basic(&basic){};
-
+  ~AlteredPdbRecords() override = default;
   virtual const PdbRecordType&
   get_record(const RecordName& recordTypeName) const override;
 

@@ -205,7 +205,15 @@ void pyxmolpp::polymer::init_ChainSelection(detail::FWD& fwd, py::module& polyme
 
       .def(py::self *= py::self)
       .def(py::self += py::self)
+#ifdef __clang__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wself-assign-overloaded"
+#endif
       .def(py::self -= py::self)
+
+#ifdef __clang__
+#pragma GCC diagnostic pop
+#endif
       .def(py::self != py::self)
       .def(py::self == py::self)
       .def(py::self * py::self)
