@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(observable)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules/")
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,6 +13,8 @@ if (PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_DIRS})
     message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
 endif()
+
+find_package(NetCDF REQUIRED)
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
     IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -57,6 +61,9 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+
+target_link_libraries(observable_static NetCDF::NetCDF)
+target_link_libraries(observable NetCDF::NetCDF)
 
 set_target_properties(observable_static PROPERTIES SUFFIX "-${XMOL_VERSION}.a")
 set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
