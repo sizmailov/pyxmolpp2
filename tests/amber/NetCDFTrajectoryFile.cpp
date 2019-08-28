@@ -57,3 +57,22 @@ TEST_F(AmberNetCDFTrajectoryFileTests, prints) {
     NetCDFTrajectoryFile nc(nc_filename);
     nc.print_info();
 }
+
+TEST_F(AmberNetCDFTrajectoryFileTests, trajectory) {
+    NetCDFTrajectoryFile nc(nc_filename);
+    Frame ref = xmol::pdb::PdbFile(
+        pdb_filename,
+        permissibleRecords).get_frame();
+    xmol::trajectory::Trajectory traj(ref);
+    traj.push_trajectory_portion(nc);
+
+    EXPECT_EQ(traj.n_frames(), 10);
+
+//    traj.set_update_list(ref.asChains()[0].asAtoms());
+
+    for (auto& frame: traj) {
+        frame.index();
+//        std::cout << frame.index() << std::endl;
+//        frame.to_pdb("frames/"+std::to_string(frame.index())+".pdb");
+    }
+}
