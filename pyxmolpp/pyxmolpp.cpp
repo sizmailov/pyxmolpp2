@@ -16,6 +16,7 @@ PYBIND11_MODULE(pyxmolpp2, m) {
   pybind11::module pdb = m.def_submodule("pdb", "pyxmolpp2.pdb module");
   pybind11::module trajectory = m.def_submodule("trajectory", "pyxmolpp2.trajectory module");
   pybind11::module trjtool = m.def_submodule("trjtool", "pyxmolpp2.trjtool module");
+  pybind11::module amber = m.def_submodule("amber", "pyxmolpp2.amber module");
 
   pyxmolpp::init_version(version);
   pyxmolpp::init_geometry(geometry);
@@ -25,6 +26,7 @@ PYBIND11_MODULE(pyxmolpp2, m) {
   pyxmolpp::init_trajectory(trajectory);
   pyxmolpp::init_pdb(pdb);
   pyxmolpp::init_trjtool(trjtool);
+  pyxmolpp::init_amber(amber);
 
 
 }

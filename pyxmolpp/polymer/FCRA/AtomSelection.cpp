@@ -333,7 +333,14 @@ void pyxmolpp::polymer::init_AtomSelection(detail::FWD& fwd, py::module& polymer
 
       .def(py::self *= py::self)
       .def(py::self += py::self)
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall" // "-Wself-assign-overloaded"
+#endif
       .def(py::self -= py::self)
+#if __clang__
+#pragma clang diagnostic pop
+#endif
       .def(py::self != py::self)
       .def(py::self == py::self)
       .def(py::self * py::self)
