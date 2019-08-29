@@ -1,10 +1,16 @@
 ----------
 Change log
 ----------
+
+v0.9.0:
+  - Add support for netcdf (.nc) Amber trajectory files
+
 v0.8.2:
   - Doc: improve doc generation, fix typos
+
 v0.8.1:
   - Fix: inertia tensor off diagonal elements opposite sign
+
 v0.8.0:
   - Allow python buffers as arguments of ``.to_pdb``
   - Add ``.to_pdb`` method to FRCA and selections

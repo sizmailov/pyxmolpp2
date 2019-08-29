@@ -81,6 +81,18 @@ public:
   explicit Trajectory(const xmol::polymer::Frame& reference,
                       bool check_portions_to_match_reference = true);
 
+  /**
+   * Enable move-copy
+   * */
+  Trajectory(Trajectory&&) = default;
+  Trajectory& operator=(Trajectory&&) = default;
+
+  /**
+   * Disable copy from lvalue
+   * */
+  Trajectory(const Trajectory&) = delete;
+  Trajectory& operator=(const Trajectory&) = delete;
+
   template <typename T, typename... Args>
   void add_trajectory_portion(Args&&... args);
 
