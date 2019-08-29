@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 #include <xmol/pdb/PdbFile.h>
+#include <xmol/polymer/predicate_generators.h>
+#include <xmol/pdb/PdbWriter.h>
+#include <xmol/geometry/alignment.h>
 
 #include "xmol/pdb/PdbReader.h"
 #include "xmol/pdb/PdbRecord.h"
@@ -75,4 +78,49 @@ TEST_F(AmberNetCDFTrajectoryFileTests, trajectory) {
 //        std::cout << frame.index() << std::endl;
 //        frame.to_pdb("frames/"+std::to_string(frame.index())+".pdb");
     }
+}
+
+TEST_F(AmberNetCDFTrajectoryFileTests, DISABLED_real_trajectory) {
+  ;
+  Frame ref = xmol::pdb::PdbFile(
+      pdb_filename,
+      permissibleRecords).get_frame();
+  xmol::trajectory::Trajectory traj(ref);
+
+  char buffer[] = "/home/sergei/bionmr/sergei/GB1/trj/30R1/5_run/run00001.nc";
+  for (int i = 1; i < 100; i++) {
+    sprintf(buffer, "/home/sergei/bionmr/sergei/GB1/trj/30R1/5_run/run%05d.nc", i);
+    traj.push_trajectory_portion(NetCDFTrajectoryFile(buffer));
+  }
+
+
+//  EXPECT_EQ(traj.n_frames(), 4000);
+
+  auto ref_ats = ref.asChains().filter(xmol::polymer::cIndex <= 1).asAtoms();
+  traj.set_update_list(ref_ats);
+
+//  std::ofstream ostream("frames.pdb");
+//  xmol::pdb::PdbWriter out(ostream);
+  {
+    auto slice = traj.slice(0, traj.n_frames(), 1000);
+    auto it = slice.begin();
+    auto end = slice.end();
+    AtomSelection asel;
+
+    if (it != end) {
+      asel = it->asChains().filter(xmol::polymer::cIndex <= 1).asAtoms();
+    }
+
+    while (it != end) {
+      *it;
+      auto al = xmol::geometry::calc_alignment(ref_ats.toCoords(),asel.toCoords());
+      asel.for_each([&al](Atom &a) { a.set_r(al.transform(a.r())); });
+//      for (auto &a: asel) {
+//        out.write(a);
+//      }
+//      ostream << "ENDMDL\n";
+      ++it;
+    }
+  }
+//  std::cout << std::endl;
 }
