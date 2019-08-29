@@ -71,6 +71,9 @@ set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 add_dependencies(observable_static write_version_info)
 add_dependencies(observable write_version_info)
 
+#target_compile_definitions(observable_static PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
+#target_compile_definitions(observable PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_libraries(observable stdc++ m)
     target_link_libraries(observable_static stdc++ m)
