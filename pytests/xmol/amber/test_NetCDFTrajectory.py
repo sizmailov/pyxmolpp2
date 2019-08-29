@@ -9,11 +9,11 @@ def test_read_trjtool():
 
     records.alter_record(RecordName("ATOM"), FieldName("serial"), [7, 12])
 
-    frame = PdbFile("amber/GB1_F30C_MTSL/box.pdb", records).get_frame()
+    frame = PdbFile("tests_dataset/amber/GB1_F30C_MTSL/box.pdb", records).get_frame()
 
     assert frame.asAtoms.size > 0
 
-    datfile = NetCDFTrajectoryFile("amber/GB1_F30C_MTSL/GB1_F30C_MTSL_10_frames.nc")
+    datfile = NetCDFTrajectoryFile("tests_dataset/amber/GB1_F30C_MTSL/GB1_F30C_MTSL_10_frames.nc")
 
     assert datfile.n_frames == 10
     assert datfile.match(frame.asAtoms)
