@@ -1,6 +1,8 @@
 ----------
 Change log
 ----------
+v0.9.1:
+  - Add :py:func:`~pyxmolpp2.geometry.calc_autocorr_order_2_PRE()`
 
 v0.9.0:
   - Add support for netcdf (.nc) Amber trajectory files
