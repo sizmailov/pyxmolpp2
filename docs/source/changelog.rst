@@ -1,6 +1,9 @@
 ----------
 Change log
 ----------
+v0.10.1:
+  - Fix cmake module path
+
 v0.10.0:
   - Add :py:func:`~pyxmolpp2.geometry.calc_autocorr_order_2_PRE()`
 
