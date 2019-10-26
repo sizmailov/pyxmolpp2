@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(observable)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -54,7 +54,7 @@ include_directories(include)
 
 add_subdirectory(tests)
 
-include(WriteVersionInfo.cmake)
+include(cmake/WriteVersionInfo.cmake)
 
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
