@@ -188,7 +188,8 @@ before_script:
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
-    - python setup.py install
+    - python setup.py sdist
+    - python -m pip install dist/*.tar.gz
     - python -m pytest pytests
     - if $RUN_CTESTS ; then
         mkdir -p _build ;
@@ -250,6 +251,3 @@ deploy:
     on:
       branch: master
       condition: $DO_PYPI_RELEASE
-
-
-
