@@ -16,6 +16,7 @@ graft include
 graft src
 graft tests
 graft pyxmolpp
+graft cmake
 
 
 
