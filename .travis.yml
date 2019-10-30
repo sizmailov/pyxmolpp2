@@ -185,6 +185,7 @@ before_script:
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
     - python setup.py sdist
+    - rm -rf pyxmolpp2.egg-info/
     - python -m pip install dist/*.tar.gz
     - python -m pytest pytests
     - if $RUN_CTESTS ; then
