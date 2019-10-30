@@ -11,10 +11,6 @@ branches:
     - master
     - dev
 
-cache:
-  directories:
-    - ${TRAVIS_BUILD_DIR}/deps
-
 git:
     submodules: false
 
