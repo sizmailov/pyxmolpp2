@@ -1,6 +1,13 @@
 ----------
 Change log
 ----------
+
+v0.10.3:
+  - License software under MIT license
+
+v0.10.2:
+  - Fix typos in doc
+
 v0.10.1:
   - Fix cmake module path
 
