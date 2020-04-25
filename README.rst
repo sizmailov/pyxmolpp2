@@ -50,20 +50,12 @@ Well-written C++ code gives us speed. An IDE augmented with static type system s
 pythonic mistakes before script is run. Moderate functional style programming contributes to readability.
 At least it's how it was meant to be)
 
--------------
-Documentation
--------------
-
-https://sizmailov.github.io/pyxmolpp2/
-
-It includes tutorial, usage examples and python API reference.
-
 -------
 Install
 -------
 
-from PyPi package
-^^^^^^^^^^^^^^^^^
+from PyPi
+^^^^^^^^^
 
 PyPi package contains all C++ dependencies, total size is about ~4 mb.
 Install command:
@@ -73,8 +65,7 @@ Install command:
     python -m pip install pyxmolpp2
 
 
-
-from git repository
+from github
 ^^^^^^^^^^^^^^^^^^^
 
 **Caution**: Total size of repository with sub-repositories exceeds 100mb
@@ -86,8 +77,23 @@ To install from master branch run command
     python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git
 
 
+-------------
+Documentation
+-------------
+
+https://sizmailov.github.io/pyxmolpp2/
+
+It includes tutorial, usage examples and python API reference.
+
+------------
+Contribution
+------------
+
+Issues and PRs are welcome
+
 -------
-Credits
+License
 -------
 
-Written by Sergei Izmailov in BioNMR lab at SPbSU
+Sofwtare is distributed under MIT license. Other licensing options are considered upon request.
+Note that dependencies have separate licenses.
