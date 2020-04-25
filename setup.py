@@ -75,5 +75,8 @@ setup(
     packages=find_packages(),
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
-    zip_safe=False
+    zip_safe=False,
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+    ],
 )

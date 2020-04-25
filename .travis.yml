@@ -11,10 +11,6 @@ branches:
     - master
     - dev
 
-cache:
-  directories:
-    - ${TRAVIS_BUILD_DIR}/deps
-
 git:
     submodules: false
 
@@ -24,76 +20,18 @@ matrix:
     # Clang on Linux
     ##########################################################################
 
-    # Clang 3.6
-    - env:
-      - COMPILER=clang++-3.6
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=false
-      addons: &clang36
-        apt:
-          packages:
-            - clang-3.6
-            - g++-5
-            - python3.5
-            - python3.5-dev
-            - python2.7
-            - python2.7-dev
-            - libnetcdf-dev
-          sources:
-            - deadsnakes
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-      python: 2.7
-
-    - env:
-        - COMPILER=clang++-3.6
-        - BUILD_TYPE=Release
-        - RUN_CTESTS=true
-      addons: *clang36
-      python: 3.5
-
-    # Clang 4.0
-    - env:
-      - COMPILER=clang++-4.0
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=false
-      addons: &clang40
-        apt:
-          packages:
-            - clang-4.0
-            - g++-5
-            - python3.5
-            - python3.5-dev
-            - python2.7
-            - python2.7-dev
-            - libnetcdf-dev
-          sources:
-            - deadsnakes
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-4.0
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=true
-      addons: *clang40
-      python: 3.5
-
     # Clang 5.0
     - env:
       - COMPILER=clang++-5.0
       - BUILD_TYPE=Release
-      - RUN_CTESTS=false
-      addons: &clang50
+      - RUN_CTESTS=true
+      addons:
         apt:
           packages:
             - clang-5.0
             - g++-5
             - python3.5
             - python3.5-dev
-            - python2.7
-            - python2.7-dev
             - libnetcdf-dev
           sources:
             - deadsnakes
@@ -101,13 +39,6 @@ matrix:
             - llvm-toolchain-trusty-5.0
             - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-      python: 2.7
-
-    - env:
-      - COMPILER=clang++-5.0
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=true
-      addons: *clang50
       python: 3.5
 
     ##########################################################################
@@ -118,57 +49,39 @@ matrix:
     - env:
       - COMPILER=g++-5
       - BUILD_TYPE=Release
-      - RUN_CTESTS=false
-      addons: &gcc5
+      - RUN_CTESTS=true
+      addons:
         apt:
           packages:
             - g++-5
             - python3.5
             - python3.5-dev
-            - python2.7
-            - python2.7-dev
             - libnetcdf-dev
           sources:
             - deadsnakes
             - ubuntu-toolchain-r-test
-      python: 2.7
-
-    - env:
-      - COMPILER=g++-5
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=true
-      addons: *gcc5
       python: 3.5
 
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Release
-      - RUN_CTESTS=false
+      - RUN_CTESTS=true
+      - RELEASE_MAKER=true
       addons: &gcc7
         apt:
           packages:
             - g++-7
             - python3.5
             - python3.5-dev
-            - python2.7
-            - python2.7-dev
             - libnetcdf-dev
           sources:
             - deadsnakes
             - ubuntu-toolchain-r-test
-      python: 2.7
+      python: 3.5
 
     - env:
       - COMPILER=g++-7
       - BUILD_TYPE=Coverage
-      - RUN_CTESTS=true
-      addons: *gcc7
-      python: 2.7
-
-    - env:
-      - COMPILER=g++-7
-      - BUILD_TYPE=Release
-      - RELEASE_MAKER=true
       - RUN_CTESTS=true
       addons: *gcc7
       python: 3.5
