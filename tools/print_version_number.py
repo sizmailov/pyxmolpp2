@@ -1,0 +1,2 @@
+from write_version_info import print_version_number
+print_version_number()

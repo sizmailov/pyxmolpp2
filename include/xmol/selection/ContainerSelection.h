@@ -770,15 +770,18 @@ const Selection<T>& Selection<T>::for_each(Transform&& transform) const {
 
 template <typename T> void SelectionBase<T>::remove_redundant_observers() {
   std::set<container_type*> new_observers;
-  for (auto el_ptr : elements) {
+  for (auto el_ptr : this->elements) {
     new_observers.insert(el_ptr->parent());
   }
 
+  std::set<container_type*> observers_to_del;
   for (auto cs : this->observers) {
-    if (!new_observers.count(cs.first)) {
-      this->remove_observer(*cs.first);
-      cs.first->ObservableBy<SelectionBase<T>>::remove_observer(*this);
-    }
+    if (!new_observers.count(cs.first)) {observers_to_del.insert(cs.first);}
+  }
+
+  for (auto o : observers_to_del){
+    this->remove_observer(*o);
+    o->ObservableBy<SelectionBase<T>>::remove_observer(*this);
   }
 }
 

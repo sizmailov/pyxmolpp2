@@ -8,7 +8,7 @@ from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 
-from write_version_info import get_version_info
+from tools.write_version_info import get_version_info
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):

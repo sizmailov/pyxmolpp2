@@ -127,7 +127,7 @@ after_success:
       fi;
 
 before_deploy:
-  - bash build_docs.sh
+  - bash tools/build_docs.sh
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
 
