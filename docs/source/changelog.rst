@@ -2,6 +2,10 @@
 Change log
 ----------
 
+v0.10.4:
+  - Fix doc generation
+  - Remove UB in `remove_if()` function
+
 v0.10.3:
   - License software under MIT license
 
