@@ -293,8 +293,8 @@ def add_types_to_overloaded_function(objtype, f,docstringlines):
 
     for sig, args, ret, ll in overloads:
         add_types_to_function(objtype,sig,ll)
-        docstringlines.append(".. py:method:: {}({args})".format(fname,args=args))
-        docstringlines.append('')
+        docstringlines.append(".. py:method:: {}({args})".format(fname, args=args))
+        docstringlines.append('   :noindex:')
         docstringlines.extend(ll)
         docstringlines.append('')
 
@@ -338,7 +338,7 @@ def process_docs(app, objtype, fullname, object, options, docstringlines):
                 is_overloaded = True
 
         if is_overloaded:
-            add_types_to_overloaded_function(objtype,object, docstringlines)
+            add_types_to_overloaded_function(objtype, object, docstringlines)
         else:
             add_types_to_function(objtype, sig, docstringlines)
 
