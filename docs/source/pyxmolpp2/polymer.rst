@@ -3,7 +3,9 @@ pyxmolpp2.polymer
 =================
 
 .. automodule:: pyxmolpp2.polymer
-   :members:
+    :members:
+    :undoc-members:
+    :special-members:
 
 .. autodata:: aId
 .. autodata:: aName
