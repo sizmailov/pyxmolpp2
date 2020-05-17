@@ -1,9 +1,5 @@
 sphinx
-sphinx-autodoc-annotation
-sphinx-rtd-theme
-sphinx-gallery
 matplotlib
 Pillow
 tabulate
 biopython
-pybind11-stubgen

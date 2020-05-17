@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(observable)
+project(pyxmolpp2)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -59,35 +59,29 @@ include(cmake/WriteVersionInfo.cmake)
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
-add_library(observable_static STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
-add_library(observable SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
-target_link_libraries(observable_static NetCDF::NetCDF)
-target_link_libraries(observable NetCDF::NetCDF)
+target_link_libraries(xmolpp2 NetCDF::NetCDF)
 
-set_target_properties(observable_static PROPERTIES SUFFIX "-${XMOL_VERSION}.a")
-set_target_properties(observable PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
+set_target_properties(xmolpp2 PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
-add_dependencies(observable_static write_version_info)
-add_dependencies(observable write_version_info)
+add_dependencies(xmolpp2 write_version_info)
 
-#target_compile_definitions(observable_static PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
-#target_compile_definitions(observable PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
+#target_compile_definitions(xmolpp2_static PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
+#target_compile_definitions(xmolpp2 PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_libraries(observable stdc++ m)
-    target_link_libraries(observable_static stdc++ m)
+    target_link_libraries(xmolpp2 stdc++ m)
 endif()
 
 
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-        target_link_libraries(observable_static gcov)
-        target_link_libraries(observable gcov)
+        target_link_libraries(xmolpp2 gcov)
     ENDIF()
 endif()
 
 file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
 
 pybind11_add_module(pyxmolpp2 ${PYXMOL_SOURCES} )
-target_link_libraries(pyxmolpp2 PRIVATE observable)
+target_link_libraries(pyxmolpp2 PRIVATE xmolpp2)

@@ -127,7 +127,7 @@ after_success:
       fi;
 
 before_deploy:
-  - bash tools/build_docs.sh
+  - cd docs && bash build.sh
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
 
@@ -135,7 +135,7 @@ before_deploy:
 deploy:
   - provider: pages
     verbose: true
-    local-dir: docs/build/html
+    local-dir: docs/_/site/api/python
     skip-cleanup: true
     github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
     keep-history: false
