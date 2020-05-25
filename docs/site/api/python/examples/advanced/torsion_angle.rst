@@ -2,7 +2,7 @@ Torsion Angles
 ^^^^^^^^^^^^^^
 
 :ref:`TorsionAngle` represents a tuple of 4 atoms (``a-b-c-d``) that correspond to dihedral angle.
-In addition it might be able to rotate part of structure around ``b-c`` bond (`a` is static, `d` is moving).
+In addition it might be able to rotate part of structure around ``b-c`` bond (where ``a`` is static, ``d`` is moving).
 
 .. py-exec::
     :hide-code:

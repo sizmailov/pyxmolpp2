@@ -39,8 +39,9 @@ For sake of simplicity let's number them in reverse order
     print([a.id for a in frame.asAtoms])
 
 
-As you can see `atom.id` does not affect atom order.
-To change that we need to construct new Frame with desired order of atoms:
+As you can see :ref:`id <Atom.id>` does not affect atom order in selections.
+
+We can create a new Frame with altered atom order `within` residue.
 
 .. py-exec::
     :context-id: reorder_atoms
@@ -48,15 +49,23 @@ To change that we need to construct new Frame with desired order of atoms:
 
     from pyxmolpp2.polymer import Frame
 
-    new_frame = Frame(0)  # create empty frame with index=0
+    # create empty frame with index=0
+    new_frame = Frame(0)
 
     for chain in frame.asChains:
-        new_chain = new_frame.emplace(chain.name)  # create empty chain with same name
+        # create empty chain with same name
+        new_chain = new_frame.emplace(chain.name)
         for residue in frame.asResidues:
-            new_residue = new_chain.emplace(residue.name, residue.id)  # create empty residue with same name and id
+            # create empty residue with same name and id
+            new_residue = new_chain.emplace(residue.name, residue.id)
             for a in sorted(list(residue.asAtoms), key=lambda a: a.id):
                 new_atom = new_residue.emplace(a)  # create a copy of atom `a`
 
     # New frame atoms ids:
     print([a.id for a in new_frame.asAtoms])
 
+.. block-info::
+    Hierarchy defines order
+
+    Note that frame order is superior to chain order, chain order is superior to residue order,
+    residue order is superior to atom order. In other words children order follows parents order.

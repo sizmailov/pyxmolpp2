@@ -10,10 +10,9 @@ Protect yourself from missing 2pi/180.0
     import numpy as np
 
 
-To avoid accidental errors user is forced to use `pyxmolpp2.geometry.AngleValue` instead of raw float numbers
+To avoid accidental errors user is forced to use :ref:`AngleValue` instead of raw float numbers
 
-reorder_atoms`pyxmolpp2.geometry.AngleValue` can be constructed via reorder_atoms`pyxmolpp2.geometry.Degrees`
-or reorder_atoms`pyxmolpp2.geometry.Radians`:
+:ref:`AngleValue` can be constructed via :ref:`Degrees` or :ref:`Radians`:
 
 .. py-exec::
     :context-id: angles
@@ -39,7 +38,7 @@ AngleValue supports all basic arithmetic operations:
 
     print((angle_value_1*2 + angle_value_2/3).degrees)
 
-`pyxmolpp2.geometry` also defines `pyxmolpp2.geometry.cos`, `pyxmolpp2.geometry.sin`, `pyxmolpp2.geometry.tan`, `~pyxmolpp2.geometry.fabs` for convenience:
+:ref:`pyxmolpp2.geometry` also defines :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` for convenience:
 
 .. py-exec::
     :context-id: angles
