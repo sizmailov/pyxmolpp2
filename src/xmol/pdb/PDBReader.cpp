@@ -189,7 +189,6 @@ private:
   cursor begin_cursor() { return cursor{*this}; }
 
 public:
-  getPDBLines_range() = default;
   getPDBLines_range(std::istream& sin, const basic_PdbRecords& db)
       : sin_(&sin), str_{}, db(db) {
     this->next(); // prime the pump
