@@ -6,12 +6,6 @@
 #include "pybind11/functional.h"
 #include "pybind11/stl.h"
 
-namespace pybind11 {
-namespace detail {
-template <typename T> struct type_caster<xmol::utils::optional<T>> : optional_caster<xmol::utils::optional<T>> {};
-}
-}
-
 using namespace xmol::polymer;
 
 void pyxmolpp::polymer::init_TorsionAngle(pybind11::module& polymer) {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "exceptions.h"
-#include "xmol/utils/Logger.h"
 
 #include <cassert>
 #include <functional>
@@ -32,7 +31,6 @@ protected:
   template <ApplyTo apply_to = ApplyTo::ANY, typename... Args,
             typename Func = void (T::*)(Args...)>
   void notify_all(Func func, Args&&... args) const {
-    LOG_DEBUG_FUNCTION();
     for (auto& pair : observers) {
       if (pair.second == ObserverState::OK) {
         //        std::invoke(func, observable, std::forward<Args>(args)...);
@@ -41,39 +39,32 @@ protected:
       } else {
         if (GSL_UNLIKELY(apply_to == ApplyTo::ANY)) {
           throw make_SelectionException<T>("Observer already dead");
-        } else {
-          LOG_WARNING("Observable outlives its observer");
         }
       }
     }
   }
 
   void add_observer(T& ptr) const {
-    LOG_DEBUG_FUNCTION();
     observers.emplace(&ptr, ObserverState::OK);
   }
 
   void remove_observer(T& ptr) const {
-    LOG_DEBUG_FUNCTION();
     auto count = observers.erase(&ptr);
     static_cast<void>(count);
     assert(count == 1);
   }
 
   void remove_all_observers() const {
-    LOG_DEBUG_FUNCTION();
     observers.clear();
   }
 
   void mark_as_deleted(T& ptr) const {
-    LOG_DEBUG_FUNCTION();
     auto it = observers.find(&ptr);
     assert(it != observers.end());
     it->second = ObserverState::DELETED;
   }
 
   void move_observer(T& from, T& to) const {
-    LOG_DEBUG_FUNCTION();
     remove_observer(from);
     add_observer(to);
   }

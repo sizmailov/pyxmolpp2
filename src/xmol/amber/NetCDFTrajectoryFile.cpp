@@ -2,11 +2,9 @@
 #include <netcdf.h>
 
 namespace {
-inline void check_netcdf_call(int retval, int expected, const char* const nc_funciton_name,
-    const char* const caller_function_name) {
+inline void check_netcdf_call(int retval, int expected, const char* const nc_funciton_name) {
     if (retval!=expected) {
-        throw std::runtime_error(
-            std::string(caller_function_name)+": "+nc_funciton_name+" failed ("+std::to_string(retval)+")");
+        throw std::runtime_error(std::string(nc_funciton_name)+" failed ("+std::to_string(retval)+")");
     }
 }
 }
@@ -24,8 +22,7 @@ void xmol::amber::NetCDFTrajectoryFile::open() const {
     }
     check_netcdf_call(
         nc_open(m_filename.c_str(), NC_NOWRITE, &ncid), NC_NOERR,
-        "nc_open()",
-        __FUNCTION_SIGNATURE__
+        "nc_open()"
     );
     m_is_open = true;
 }
@@ -42,14 +39,12 @@ xmol::polymer::frameIndex_t xmol::amber::NetCDFTrajectoryFile::n_frames() const 
     int frames_id;
     check_netcdf_call(
         nc_inq_unlimdim(ncid, &frames_id), NC_NOERR,
-        "nc_inq_unlimdim()",
-        __FUNCTION_SIGNATURE__
+        "nc_inq_unlimdim()"
     );
     size_t nframes;
     check_netcdf_call(
         nc_inq_dimlen(ncid, frames_id, &nframes), NC_NOERR,
-        "nc_inq_dimlen()",
-        __FUNCTION_SIGNATURE__
+        "nc_inq_dimlen()"
     );
     return nframes;
 }
@@ -59,14 +54,12 @@ xmol::polymer::atomIndex_t xmol::amber::NetCDFTrajectoryFile::n_atoms_per_frame(
     int atomid;
     check_netcdf_call(
         nc_inq_dimid(ncid, "atom", &atomid), NC_NOERR,
-        "nc_inq_dimid()",
-        __FUNCTION_SIGNATURE__
+        "nc_inq_dimid()"
     );
     size_t natoms;
     check_netcdf_call(
         nc_inq_dimlen(ncid, atomid, &natoms), NC_NOERR,
-        "nc_inq_dimlen()",
-        __FUNCTION_SIGNATURE__
+        "nc_inq_dimlen()"
     );
     return natoms;
 }
@@ -79,8 +72,7 @@ void xmol::amber::NetCDFTrajectoryFile::close() {
     if (m_is_open) {
         check_netcdf_call(
             nc_close(ncid), NC_NOERR,
-            "nc_close()",
-            __FUNCTION_SIGNATURE__
+            "nc_close()"
         );
     }
     this->m_is_open = false;
@@ -106,8 +98,7 @@ void xmol::amber::NetCDFTrajectoryFile::set_coordinates(xmol::polymer::frameInde
 
     check_netcdf_call(
         nc_get_vara_float(ncid, coords_id, start, count, tmp.data()), NC_NOERR,
-        "nc_get_vara_float",
-        __FUNCTION_SIGNATURE__
+        "nc_get_vara_float"
     );
     for (auto i: update_list) {
         atoms[i].set_r(xmol::geometry::XYZ(tmp[i*3], tmp[i*3+1], tmp[i*3+2]));
@@ -135,8 +126,7 @@ std::string xmol::amber::NetCDFTrajectoryFile::read_global_string_attr(const cha
     char buffer[attr_len];
     check_netcdf_call(
         nc_get_att_text(ncid, NC_GLOBAL, name, buffer), NC_NOERR,
-        "nc_get_att_text",
-        __FUNCTION_SIGNATURE__
+        "nc_get_att_text"
     );
     return std::string(buffer, attr_len);
 }
