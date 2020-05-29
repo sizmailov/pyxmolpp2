@@ -10,28 +10,28 @@ namespace selection {
 
 template<typename T>
 class SelectionException: public xmol::BaseException {
-  static_assert(!std::is_const<T>::value,"");
+  static_assert(!std::is_const<T>::value);
 public:
   using BaseException::BaseException;
 };
 
 template<typename T>
 class dead_selection_access : public SelectionException<T> {
-  static_assert(!std::is_const<T>::value,"");
+  static_assert(!std::is_const<T>::value);
 public:
   using SelectionException<T>::SelectionException;
 };
 
 template<typename T>
 class deleted_element_access : public SelectionException<T> {
-  static_assert(!std::is_const<T>::value,"");
+  static_assert(!std::is_const<T>::value);
 public:
   using SelectionException<T>::SelectionException;
 };
 
 template<typename T>
 class selection_out_of_range: public SelectionException<T> {
-  static_assert(!std::is_const<T>::value,"");
+  static_assert(!std::is_const<T>::value);
 public:
   using SelectionException<T>::SelectionException;
 };

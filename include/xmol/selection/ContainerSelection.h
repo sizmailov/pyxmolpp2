@@ -92,8 +92,8 @@ template <typename T>
 class SelectionBase
     : public ObservableBy<typename SelectionTraits<T>::container_type> {
 public:
-  static_assert(!std::is_reference<T>::value, "");
-  static_assert(!std::is_pointer<T>::value, "");
+  static_assert(!std::is_reference<T>::value);
+  static_assert(!std::is_pointer<T>::value);
   using value_type = typename SelectionTraits<T>::value_type;
   using container_type = typename SelectionTraits<T>::container_type;
   using selection_element_type =
@@ -152,19 +152,16 @@ protected:
 template <typename T> class Selection : public SelectionBaseExtension<T> {
   static_assert(
       std::is_base_of<SelectionBase<T>, SelectionBaseExtension<T>>::value, "");
-  static_assert(std::is_default_constructible<SelectionBaseExtension<T>>::value,
-                "");
+  static_assert(std::is_default_constructible<SelectionBaseExtension<T>>::value);
   static_assert(
       std::is_constructible<SelectionBaseExtension<T>,
                             const SelectionBaseExtension<
                                 typename std::remove_const<T>::type>&>::value,
       "");
-  static_assert(std::is_copy_constructible<SelectionBaseExtension<T>>::value,
-                "");
-  static_assert(std::is_move_constructible<SelectionBaseExtension<T>>::value,
-                "");
-  static_assert(std::is_move_assignable<SelectionBaseExtension<T>>::value, "");
-  static_assert(std::is_copy_assignable<SelectionBaseExtension<T>>::value, "");
+  static_assert(std::is_copy_constructible<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_move_constructible<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_move_assignable<SelectionBaseExtension<T>>::value);
+  static_assert(std::is_copy_assignable<SelectionBaseExtension<T>>::value);
 
 public:
   using value_type = typename SelectionTraits<T>::value_type;

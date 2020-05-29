@@ -32,13 +32,13 @@ public:
 };
 
 template <typename value_type> struct SelectionPointerComparator {
-  static_assert(!std::is_const<value_type>::value,"");
+  static_assert(!std::is_const<value_type>::value);
   bool operator()(const value_type* lhs, const value_type* rhs) const;
 };
 
 template <typename T, typename SFINAE = void> struct SelectionTraits {
-  static_assert(!std::is_reference<T>::value,"");
-  static_assert(!std::is_pointer<T>::value,"");
+  static_assert(!std::is_reference<T>::value);
+  static_assert(!std::is_pointer<T>::value);
   static const bool is_const = std::is_const<T>::value;
   using value_type = typename std::remove_const<T>::type;
   using container_type =

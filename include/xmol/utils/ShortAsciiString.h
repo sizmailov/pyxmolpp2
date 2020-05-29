@@ -13,7 +13,7 @@ namespace utils {
 template <int MAX_LENGTH, bool ALLOW_CONSTRUCT_TRUNCATION=false, typename = void> class ShortAsciiString {
 
 public:
-  static_assert(MAX_LENGTH <= 8,"");
+  static_assert(MAX_LENGTH <= 8);
   using uint_type = typename std::conditional<
       MAX_LENGTH <= 4,
       typename std::conditional<

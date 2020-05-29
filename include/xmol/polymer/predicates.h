@@ -17,7 +17,7 @@ class ChainPredicate{
 public:
   template<typename Pred>
   explicit ChainPredicate(Pred&& predicate): m_predicate(std::forward<Pred>(predicate)){
-    static_assert( std::is_same<typename std::result_of<Pred(const Chain&)>::type, bool>::value,"");
+    static_assert(std::is_same<typename std::result_of<Pred(const Chain&)>::type, bool>::value);
   };
   ChainPredicate(const ChainPredicate& ) = default;
   ChainPredicate(ChainPredicate&& )= default;
@@ -63,7 +63,7 @@ class ResiduePredicate{
 public:
   template<typename Pred>
   explicit ResiduePredicate(Pred&& predicate): m_predicate(std::forward<Pred>(predicate)){
-    static_assert( std::is_same<typename std::result_of<Pred(const Residue&)>::type, bool>::value,"");
+    static_assert(std::is_same<typename std::result_of<Pred(const Residue&)>::type, bool>::value);
   };
   ResiduePredicate(const ResiduePredicate& ) = default;
   ResiduePredicate(ResiduePredicate&& )= default;
@@ -105,7 +105,7 @@ class AtomPredicate{
 public:
   template<typename Pred>
   explicit AtomPredicate(Pred&& predicate): m_predicate(std::forward<Pred>(predicate)){
-    static_assert( std::is_same<typename std::result_of<Pred(const Atom&)>::type, bool>::value,"");
+    static_assert(std::is_same<typename std::result_of<Pred(const Atom&)>::type, bool>::value);
   };
   AtomPredicate(const AtomPredicate& ) = default;
   AtomPredicate(AtomPredicate&& )= default;

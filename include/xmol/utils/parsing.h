@@ -85,9 +85,9 @@ std::pair<bool, int> parse_int(const std::string& line, int pos, int LEN) noexce
 };
 
 template <int WIDTH, int PRECISION, SpaceStrip STRIP> struct parse_fixed_precision_fn {
-  static_assert(PRECISION >= 0, "");
-  static_assert(WIDTH > 0, "");
-  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2, "");
+  static_assert(PRECISION >= 0);
+  static_assert(WIDTH > 0);
+  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2);
 
   inline std::pair<bool, double> operator()(const std::string& line, int pos) const noexcept {
 
