@@ -1,9 +1,7 @@
 language: python
 
-sudo: false
-
 os: linux
-dist: trusty
+dist: bionic
 
 # whitelist
 branches:
@@ -14,78 +12,42 @@ branches:
 git:
     submodules: false
 
-matrix:
+jobs:
   include:
-    ##########################################################################
-    # Clang on Linux
-    ##########################################################################
-
-    # Clang 5.0
-    - env:
-      - COMPILER=clang++-5.0
+    - name: Python3.8, clang-9
+      env:
+      - COMPILER=clang-9
       - BUILD_TYPE=Release
       - RUN_CTESTS=true
       addons:
         apt:
           packages:
-            - clang-5.0
-            - g++-5
-            - python3.5
-            - python3.5-dev
+            - clang++-9
+            - python3.8
+            - python3.8-dev
             - libnetcdf-dev
           sources:
             - deadsnakes
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
-            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main'
-              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-      python: 3.5
+      python: 3.8
 
-    ##########################################################################
-    # GCC on Linux
-    ##########################################################################
-
-    # GCC 5
-    - env:
-      - COMPILER=g++-5
-      - BUILD_TYPE=Release
-      - RUN_CTESTS=true
-      addons:
-        apt:
-          packages:
-            - g++-5
-            - python3.5
-            - python3.5-dev
-            - libnetcdf-dev
-          sources:
-            - deadsnakes
-            - ubuntu-toolchain-r-test
-      python: 3.5
-
-    - env:
-      - COMPILER=g++-7
+    - name: Python3.8, g++-8, docs
+      env:
+      - COMPILER=g++-8
       - BUILD_TYPE=Release
       - RUN_CTESTS=true
       - RELEASE_MAKER=true
-      addons: &gcc7
+      addons:
         apt:
           packages:
-            - g++-7
-            - python3.5
-            - python3.5-dev
+            - g++-8
+            - python3.8
+            - python3.8-dev
             - libnetcdf-dev
           sources:
             - deadsnakes
             - ubuntu-toolchain-r-test
-      python: 3.5
-
-    - env:
-      - COMPILER=g++-7
-      - BUILD_TYPE=Coverage
-      - RUN_CTESTS=true
-      addons: *gcc7
-      python: 3.5
-
+      python: 3.8
 
 before_install:
     - export CXX=$COMPILER
