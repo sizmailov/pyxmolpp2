@@ -3,11 +3,6 @@
 	url = git@github.com:sizmailov/googletest.git
     shallow = true
 	branch = master
-[submodule "external/range-v3"]
-	path = external/range-v3
-	url = git@github.com:sizmailov/range-v3.git
-    shallow = true
-	branch = master
 [submodule "external/GSL"]
 	path = external/GSL
 	url = git@github.com:sizmailov/GSL.git

@@ -6,8 +6,6 @@
 #include <xmol/geometry/basic.h>
 #include <gsl/gsl_assert>
 
-#include "range/v3/all.hpp"
-
 std::vector<double> xmol::geometry::calculate_sasa(
     const std::vector<xmol::geometry::XYZ> &coords,
     double *radii_begin,
