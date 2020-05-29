@@ -113,10 +113,10 @@ public:
 
   int count(const T&) const;
 
-  bool empty() const noexcept;
-  int size() const noexcept;
-  void clear() noexcept;
-  bool is_valid() noexcept;
+  bool empty() const ;
+  int size() const ;
+  void clear() ;
+  bool is_valid() ;
 
   SelectionRange<T> begin() const;
   SelectionRange<T> end() const;
@@ -262,8 +262,8 @@ public:
   Container& operator=(Container&& rhs) noexcept;
   Container& operator=(const Container& rhs);
 
-  int size() const noexcept;
-  bool empty() const noexcept;
+  int size() const;
+  bool empty() const;
 
   void insert(T&& value);
 
@@ -776,15 +776,15 @@ template <typename T> int SelectionBase<T>::count(const T& value) const {
              : 1;
 }
 
-template <typename T> bool SelectionBase<T>::empty() const noexcept {
+template <typename T> bool SelectionBase<T>::empty() const {
   return elements.empty();
 }
 
-template <typename T> int SelectionBase<T>::size() const noexcept {
+template <typename T> int SelectionBase<T>::size() const {
   return elements.size();
 }
 
-template <typename T> void SelectionBase<T>::clear() noexcept {
+template <typename T> void SelectionBase<T>::clear() {
   elements.clear();
   this->template notify_all<ApplyTo::ALIVE_ONLY>(
       static_cast<typename SelectionTraits<T>::on_selection_delete_type>(
@@ -794,7 +794,7 @@ template <typename T> void SelectionBase<T>::clear() noexcept {
   state = SelectionState::OK;
 }
 
-template <typename T> bool SelectionBase<T>::is_valid() noexcept {
+template <typename T> bool SelectionBase<T>::is_valid() {
   return state == SelectionState::OK;
 }
 
@@ -1008,11 +1008,11 @@ Container<T>& Container<T>::operator=(const Container<T>& rhs) {
   return *this;
 }
 
-template <typename T> int Container<T>::size() const noexcept {
+template <typename T> int Container<T>::size() const {
   return elements.size() - n_deleted;
 }
 
-template <typename T> bool Container<T>::empty() const noexcept {
+template <typename T> bool Container<T>::empty() const {
   return elements.empty() || size() == 0;
 }
 
