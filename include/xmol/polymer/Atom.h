@@ -48,15 +48,15 @@ private:
   bool m_deleted = false;
 };
 
-class Residue : public xmol::selection::Container<Atom>, public xmol::selection::ObservableBy<ElementReference<Atom>> {
+class Residue : public xmol::selection::Container<Atom>, public xmol::selection::Observable<ElementReference<Atom>> {
 public:
   Residue(const Residue& rhs);
   Residue(Residue&& rhs) noexcept;
   Residue& operator=(const Residue& rhs);
   Residue& operator=(Residue&& rhs) noexcept;
   ~Residue(){
-    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_delete);
-    ObservableBy<ElementReference<Atom>>::remove_all_observers();
+    Observable<ElementReference<Atom>>::notify(&ElementReference<Atom>::on_container_delete);
+    Observable<ElementReference<Atom>>::clear_observers();
   }
 
   const ResidueName& name() const;
@@ -102,11 +102,9 @@ private:
   friend class Chain;
   friend class ElementReference<Atom>;
 
-  void add_reference(ElementReference<Atom>& aref){
-    ObservableBy<ElementReference<Atom>>::add_observer(aref);
+  void add_reference(ElementReference<Atom>& aref){ Observable<ElementReference<Atom>>::add_observer(aref);
   }
-  void remove_reference(ElementReference<Atom>& aref){
-    ObservableBy<ElementReference<Atom>>::remove_observer(aref);
+  void remove_reference(ElementReference<Atom>& aref){ Observable<ElementReference<Atom>>::remove_observer(aref);
   }
 
   residueIndex_t pos_in_parent() const;
@@ -117,15 +115,15 @@ private:
   bool m_deleted = false;
 };
 
-class Chain : public xmol::selection::Container<Residue>, public xmol::selection::ObservableBy<ElementReference<Residue>> {
+class Chain : public xmol::selection::Container<Residue>, public xmol::selection::Observable<ElementReference<Residue>> {
 public:
   Chain(const Chain& rhs);
   Chain(Chain&& rhs) noexcept;
   Chain& operator=(const Chain& rhs);
   Chain& operator=(Chain&& rhs) noexcept;
   ~Chain(){
-    ObservableBy<ElementReference<Residue>>::notify_all(&ElementReference<Residue>::on_container_delete);
-    ObservableBy<ElementReference<Residue>>::remove_all_observers();
+    Observable<ElementReference<Residue>>::notify(&ElementReference<Residue>::on_container_delete);
+    Observable<ElementReference<Residue>>::clear_observers();
   }
   const chainIndex_t& index() const;
 
@@ -178,11 +176,10 @@ private:
   friend class ElementReference<Residue>;
 
 
-  void add_reference(ElementReference<Residue>& aref){
-    ObservableBy<ElementReference<Residue>>::add_observer(aref);
+  void add_reference(ElementReference<Residue>& aref){ Observable<ElementReference<Residue>>::add_observer(aref);
   }
   void remove_reference(ElementReference<Residue>& aref){
-    ObservableBy<ElementReference<Residue>>::remove_observer(aref);
+    Observable<ElementReference<Residue>>::remove_observer(aref);
   }
 
   chainIndex_t pos_in_parent() const;
@@ -194,7 +191,7 @@ private:
   bool m_deleted = false;
 };
 
-class Frame : public xmol::selection::Container<Chain> , public xmol::selection::ObservableBy<ElementReference<Chain>>{
+class Frame : public xmol::selection::Container<Chain> , public xmol::selection::Observable<ElementReference<Chain>>{
 public:
   explicit Frame(frameIndex_t id, int reserve = 0);
 
@@ -203,8 +200,8 @@ public:
   Frame& operator=(const Frame& rhs);
   Frame& operator=(Frame&& rhs) noexcept;
   ~Frame(){
-    ObservableBy<ElementReference<Chain>>::notify_all(&ElementReference<Chain>::on_container_delete);
-    ObservableBy<ElementReference<Chain>>::remove_all_observers();
+    Observable<ElementReference<Chain>>::notify(&ElementReference<Chain>::on_container_delete);
+    Observable<ElementReference<Chain>>::clear_observers();
   }
   const frameIndex_t& index() const;
   Frame& set_index(frameIndex_t index);
@@ -245,11 +242,9 @@ public:
 private:
   friend class Chain;
   friend class ElementReference<Chain>;
-  void add_reference(ElementReference<Chain>& aref){
-    ObservableBy<ElementReference<Chain>>::add_observer(aref);
+  void add_reference(ElementReference<Chain>& aref){ Observable<ElementReference<Chain>>::add_observer(aref);
   }
-  void remove_reference(ElementReference<Chain>& aref){
-    ObservableBy<ElementReference<Chain>>::remove_observer(aref);
+  void remove_reference(ElementReference<Chain>& aref){ Observable<ElementReference<Chain>>::remove_observer(aref);
   }
 
   std::map<ChainName, std::set<chainIndex_t>> m_lookup_table;

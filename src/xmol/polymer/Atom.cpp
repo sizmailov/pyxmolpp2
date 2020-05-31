@@ -163,7 +163,7 @@ Atom& Residue::emplace(AtomName name, atomId_t id, XYZ r) {
   auto& ref = Container<Atom>::emplace(*this, name, id, r);
   Atom* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, before, after);
+    Observable<ElementReference<Atom>>::notify(&ElementReference<Atom>::on_container_move, before, after);
   }
   return ref;
 }
@@ -173,7 +173,7 @@ Atom& Residue::emplace(const Atom& atom) {
   auto& a = Container<Atom>::emplace(Atom(atom));
   Atom* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Atom>>::notify_all(&ElementReference<Atom>::on_container_move, before, after);
+    Observable<ElementReference<Atom>>::notify(&ElementReference<Atom>::on_container_move, before, after);
   }
   a.m_residue = this;
   return a;
@@ -299,7 +299,7 @@ Residue& Chain::emplace(ResidueName name, residueId_t id, int reserve) {
   auto& ref = Container<Residue>::emplace(*this, name, id, reserve);
   Residue* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Residue>>::notify_all(&ElementReference<Residue>::on_container_move, before, after);
+    Observable<ElementReference<Residue>>::notify(&ElementReference<Residue>::on_container_move, before, after);
   }
   return ref;
 }
@@ -311,7 +311,7 @@ Residue& Chain::emplace(const Residue& residue) {
   ref.m_chain = this;
   Residue* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Residue>>::notify_all(&ElementReference<Residue>::on_container_move, before, after);
+    Observable<ElementReference<Residue>>::notify(&ElementReference<Residue>::on_container_move, before, after);
   }
   return ref;
 }
@@ -392,7 +392,7 @@ Chain& Frame::emplace(ChainName name, int reserve) {
   auto& ref = Container<Chain>::emplace(*this, name, chainIndex_t(size()), reserve);
   Chain* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Chain>>::notify_all(&ElementReference<Chain>::on_container_move, before, after);
+    Observable<ElementReference<Chain>>::notify(&ElementReference<Chain>::on_container_move, before, after);
   }
   return ref;
 }
@@ -404,7 +404,7 @@ Chain& Frame::emplace(const Chain& chain) {
   ref.m_frame = this;
   Chain* after = this->elements.data();
   if (before != after) {
-    ObservableBy<ElementReference<Chain>>::notify_all(&ElementReference<Chain>::on_container_move, before, after);
+    Observable<ElementReference<Chain>>::notify(&ElementReference<Chain>::on_container_move, before, after);
   }
   return ref;
 }

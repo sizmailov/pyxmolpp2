@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ContainerSelection_fwd.h"
-#include "Observer.h"
+#include "Observable.h"
 #include "exceptions.h"
 #include "xmol/utils/optional.h"
 
@@ -90,7 +90,7 @@ private:
 
 template <typename T>
 class SelectionBase
-    : public ObservableBy<typename SelectionTraits<T>::container_type> {
+    : public Observable<typename SelectionTraits<T>::container_type> {
 public:
   static_assert(!std::is_reference<T>::value);
   static_assert(!std::is_pointer<T>::value);
@@ -246,8 +246,8 @@ protected:
 };
 
 template <typename T>
-class Container : public ObservableBy<SelectionBase<T>>,
-                  public ObservableBy<SelectionBase<const T>> {
+class Container : public Observable<SelectionBase<T>>,
+                  public Observable<SelectionBase<const T>> {
 public:
   using value_type = typename SelectionTraits<T>::value_type;
 
@@ -469,13 +469,11 @@ template <typename T> SelectionBase<T>::~SelectionBase() {
 
 template <typename T>
 SelectionBase<T>::SelectionBase(const SelectionBase<T>& rhs)
-    : ObservableBy<container_type>(rhs),
+    : Observable<container_type>(rhs),
       elements(rhs.elements),
       state(rhs.state) {
-  this->notify_all(
-      static_cast<typename SelectionTraits<T>::on_selection_copy_type>(
-          &container_type::on_selection_copy),
-      *this);
+  this->notify(static_cast<typename SelectionTraits<T>::on_selection_copy_type>(&container_type::on_selection_copy),
+               *this);
 }
 
 template <typename T>
@@ -485,21 +483,17 @@ SelectionBase<T>::SelectionBase(
     : elements(rhs.elements.begin(), rhs.elements.end()), state(rhs.state) {
 
   this->observers.insert(rhs.observers.begin(), rhs.observers.end());
-  this->notify_all(
-      static_cast<typename SelectionTraits<U>::on_selection_copy_type>(
-          &container_type::on_selection_copy),
-      *this);
+  this->notify(static_cast<typename SelectionTraits<U>::on_selection_copy_type>(&container_type::on_selection_copy),
+               *this);
 }
 
 template <typename T>
 SelectionBase<T>::SelectionBase(SelectionBase<T>&& rhs) noexcept
-    : ObservableBy<container_type>(std::move(rhs)),
+    : Observable<container_type>(std::move(rhs)),
       elements(std::move(rhs.elements)),
       state(rhs.state) {
-  this->notify_all(
-      static_cast<typename SelectionTraits<T>::on_selection_move_type>(
-          &container_type::on_selection_move),
-      rhs, *this);
+  this->notify(static_cast<typename SelectionTraits<T>::on_selection_move_type>(&container_type::on_selection_move),
+               rhs, *this);
   rhs.state = SelectionState::OK;
 }
 template <typename T>
@@ -508,11 +502,9 @@ SelectionBase<T>& SelectionBase<T>::operator=(SelectionBase<T>&& rhs) noexcept {
     return *this;
   }
   this->clear();
-  ObservableBy<container_type>::operator=(std::move(rhs));
-  ObservableBy<container_type>::notify_all(
-      static_cast<typename SelectionTraits<T>::on_selection_move_type>(
-          &container_type::on_selection_move),
-      rhs, *this);
+  Observable<container_type>::operator=(std::move(rhs));
+  Observable<container_type>::notify(
+      static_cast<typename SelectionTraits<T>::on_selection_move_type>(&container_type::on_selection_move), rhs, *this);
   elements = std::move(rhs.elements);
   state = rhs.state;
   rhs.state = SelectionState::OK;
@@ -525,8 +517,8 @@ SelectionBase<T>& SelectionBase<T>::operator=(const SelectionBase<T>& rhs) {
     return *this;
   }
   this->clear();
-  ObservableBy<container_type>::operator=(rhs);
-  this->notify_all(&container_type::on_selection_copy, *this);
+  Observable<container_type>::operator=(rhs);
+  this->notify(&container_type::on_selection_copy, *this);
   elements = rhs.elements;
   state = rhs.state;
   return *this;
@@ -556,7 +548,7 @@ Selection<U>& Selection<T>::operator+=(const Selection<V>& rhs) {
 
   for (auto cs : rhs.observers) {
     this->add_observer(*cs.first);
-    cs.first->ObservableBy<SelectionBase<T>>::add_observer(*this);
+    cs.first->Observable<SelectionBase<T>>::add_observer(*this);
   }
 
   assert(
@@ -757,7 +749,7 @@ template <typename T> void SelectionBase<T>::remove_redundant_observers() {
 
   for (auto o : observers_to_del){
     this->remove_observer(*o);
-    o->ObservableBy<SelectionBase<T>>::remove_observer(*this);
+    o->Observable<SelectionBase<T>>::remove_observer(*this);
   }
 }
 
@@ -783,11 +775,9 @@ template <typename T> int SelectionBase<T>::size() const {
 
 template <typename T> void SelectionBase<T>::clear() {
   elements.clear();
-  this->template notify_all<ApplyTo::ALIVE_ONLY>(
-      static_cast<typename SelectionTraits<T>::on_selection_delete_type>(
-          &container_type::on_selection_delete),
-      *this);
-  this->remove_all_observers();
+  this->template notify<ObserverState::ACTIVE>(
+      static_cast<typename SelectionTraits<T>::on_selection_delete_type>(&container_type::on_selection_delete), *this);
+  this->clear_observers();
   state = SelectionState::OK;
 }
 
@@ -813,7 +803,7 @@ void SelectionBase<T>::on_container_elements_move(selection_element_type old_beg
 template <typename T>
 void SelectionBase<T>::on_container_delete(
     SelectionBase<T>::container_type& half_dead) {
-  this->mark_as_deleted(half_dead);
+  this->invalidate_observer(half_dead);
   state = SelectionState::HAS_DANGLING_REFERENCES;
 }
 
@@ -969,14 +959,11 @@ template <typename T> Container<T>::~Container() {
 
 template <typename T>
 Container<T>::Container(Container<T>&& rhs) noexcept
-    : ObservableBy<SelectionBase<T>>(std::move(rhs)),
-      ObservableBy<SelectionBase<const T>>(std::move(rhs)),
+    : Observable<SelectionBase<T>>(std::move(rhs)), Observable<SelectionBase<const T>>(std::move(rhs)),
       elements(std::move(rhs.elements)),
       n_deleted(rhs.n_deleted) {
-  ObservableBy<SelectionBase<T>>::notify_all(
-      &SelectionBase<T>::on_container_move, rhs, *this);
-  ObservableBy<SelectionBase<const T>>::notify_all(
-      &SelectionBase<const T>::on_container_move, rhs, *this);
+  Observable<SelectionBase<T>>::notify(&SelectionBase<T>::on_container_move, rhs, *this);
+  Observable<SelectionBase<const T>>::notify(&SelectionBase<const T>::on_container_move, rhs, *this);
 }
 
 template <typename T>
@@ -989,12 +976,10 @@ Container<T>& Container<T>::operator=(Container<T>&& rhs) noexcept {
   elements = std::move(rhs.elements);
   n_deleted = rhs.n_deleted;
   rhs.n_deleted = 0;
-  ObservableBy<SelectionBase<T>>::operator=(std::move(rhs));
-  ObservableBy<SelectionBase<T>>::notify_all(
-      &SelectionBase<T>::on_container_move, rhs, *this);
-  ObservableBy<SelectionBase<const T>>::operator=(std::move(rhs));
-  ObservableBy<SelectionBase<const T>>::notify_all(
-      &SelectionBase<const T>::on_container_move, rhs, *this);
+  Observable<SelectionBase<T>>::operator=(std::move(rhs));
+  Observable<SelectionBase<T>>::notify(&SelectionBase<T>::on_container_move, rhs, *this);
+  Observable<SelectionBase<const T>>::operator=(std::move(rhs));
+  Observable<SelectionBase<const T>>::notify(&SelectionBase<const T>::on_container_move, rhs, *this);
   return *this;
 }
 
@@ -1020,10 +1005,10 @@ template <typename T> void Container<T>::insert(T&& value) {
   auto new_begin = elements.data();
 
   if (old_begin != new_begin) {
-    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move, old_begin,
-                                                     old_end, new_begin);
-    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
-                                               new_begin);
+    Observable<SelectionBase<const T>>::notify(&SelectionBase<const T>::on_container_elements_move, old_begin,
+                                                 old_end, new_begin);
+    Observable<SelectionBase<T>>::notify(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
+                                           new_begin);
   }
 }
 
@@ -1037,10 +1022,10 @@ T& Container<T>::emplace(Args&&... args) {
   auto new_begin = elements.data();
 
   if (old_begin != new_begin) {
-    ObservableBy<SelectionBase<const T>>::notify_all(&SelectionBase<const T>::on_container_elements_move, old_begin,
-                                                     old_end, new_begin);
-    ObservableBy<SelectionBase<T>>::notify_all(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
-                                               new_begin);
+    Observable<SelectionBase<const T>>::notify(&SelectionBase<const T>::on_container_elements_move, old_begin,
+                                                 old_end, new_begin);
+    Observable<SelectionBase<T>>::notify(&SelectionBase<T>::on_container_elements_move, old_begin, old_end,
+                                           new_begin);
   }
   return ref;
 }
@@ -1048,12 +1033,10 @@ T& Container<T>::emplace(Args&&... args) {
 template <typename T> void Container<T>::clear() {
   elements.clear();
   n_deleted = 0;
-  ObservableBy<SelectionBase<T>>::notify_all(
-      &SelectionBase<T>::on_container_delete, *this);
-  ObservableBy<SelectionBase<const T>>::notify_all(
-      &SelectionBase<const T>::on_container_delete, *this);
-  this->ObservableBy<SelectionBase<T>>::remove_all_observers();
-  this->ObservableBy<SelectionBase<const T>>::remove_all_observers();
+  Observable<SelectionBase<T>>::notify(&SelectionBase<T>::on_container_delete, *this);
+  Observable<SelectionBase<const T>>::notify(&SelectionBase<const T>::on_container_delete, *this);
+  this->Observable<SelectionBase<T>>::clear_observers();
+  this->Observable<SelectionBase<const T>>::clear_observers();
 }
 
 template <typename T> int Container<T>::erase(const Selection<T>& to_delete) {
@@ -1071,7 +1054,7 @@ template <typename T> int Container<T>::erase(const Selection<T>& to_delete) {
 template <typename T> Selection<T> Container<T>::all() {
   Selection<T> s(*this);
   if (!s.empty()) {
-    ObservableBy<SelectionBase<T>>::add_observer(s);
+    Observable<SelectionBase<T>>::add_observer(s);
   }
   return std::move(s);
 }
@@ -1079,7 +1062,7 @@ template <typename T> Selection<T> Container<T>::all() {
 template <typename T> Selection<const T> Container<T>::all() const {
   Selection<const T> s(*this);
   if (!s.empty()) {
-    ObservableBy<SelectionBase<const T>>::add_observer(s);
+    Observable<SelectionBase<const T>>::add_observer(s);
   }
   return std::move(s);
 }
@@ -1087,34 +1070,34 @@ template <typename T> Selection<const T> Container<T>::all() const {
 template <typename T>
 void Container<T>::on_selection_move(SelectionBase<T>& from,
                                      SelectionBase<T>& to) {
-  ObservableBy<SelectionBase<T>>::move_observer(from, to);
+  Observable<SelectionBase<T>>::move_observer(from, to);
 }
 
 template <typename T>
 void Container<T>::on_selection_move(SelectionBase<const T>& from,
                                      SelectionBase<const T>& to) const {
-  ObservableBy<SelectionBase<const T>>::move_observer(from, to);
+  Observable<SelectionBase<const T>>::move_observer(from, to);
 }
 
 template <typename T>
 void Container<T>::on_selection_delete(SelectionBase<T>& half_dead) {
-  ObservableBy<SelectionBase<T>>::remove_observer(half_dead);
+  Observable<SelectionBase<T>>::remove_observer(half_dead);
 }
 
 template <typename T>
 void Container<T>::on_selection_delete(
     SelectionBase<const T>& half_dead) const {
-  ObservableBy<SelectionBase<const T>>::remove_observer(half_dead);
+  Observable<SelectionBase<const T>>::remove_observer(half_dead);
 }
 
 template <typename T>
 void Container<T>::on_selection_copy(SelectionBase<T>& copy) {
-  ObservableBy<SelectionBase<T>>::add_observer(copy);
+  Observable<SelectionBase<T>>::add_observer(copy);
 }
 
 template <typename T>
 void Container<T>::on_selection_copy(SelectionBase<const T>& copy) const {
-  ObservableBy<SelectionBase<const T>>::add_observer(copy);
+  Observable<SelectionBase<const T>>::add_observer(copy);
 }
 }
 }
