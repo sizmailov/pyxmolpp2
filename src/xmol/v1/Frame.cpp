@@ -36,14 +36,19 @@ ResidueRef Frame::add_residue(MoleculeRef& mol, const ResidueName& residueName, 
   assert(&mol.frame() == this);
   assert(m_molecule_info.data() <= mol.m_molecule_info);
   assert(mol.m_molecule_info < m_molecule_info.data() + m_molecule_info.size());
+  check_references_integrity();
   auto old_begin = m_residue_info.data();
   auto old_end = m_residue_info.data() + m_residue_info.size();
   auto old_insert_pos = mol.m_molecule_info->m_residues_info.m_end;
-  if (!old_insert_pos) {
-    old_insert_pos = old_end;
+
+  auto atoms_end = m_atom_info.data();
+  if (mol.m_molecule_info->m_residues_info.m_end && mol.m_molecule_info->m_residues_info.m_end - 1 >= m_residue_info.data()){
+    atoms_end = (mol.m_molecule_info->m_residues_info.m_end - 1)->m_atoms_info.m_end;
   }
-  auto new_inserted_it = m_residue_info.insert(m_residue_info.begin() + (old_insert_pos - old_begin),
-                                               detail::ResidueInfo{residueName, residueId, {}, mol.m_molecule_info});
+
+  auto new_inserted_it =
+      m_residue_info.insert(m_residue_info.begin() + (old_insert_pos - old_begin),
+                            detail::ResidueInfo{residueName, residueId, {atoms_end, atoms_end}, mol.m_molecule_info});
   auto new_begin = m_residue_info.data();
   auto new_inserted_pos = new_begin + (new_inserted_it - m_residue_info.begin());
   auto new_end = m_residue_info.data() + m_residue_info.size();
@@ -90,6 +95,7 @@ ResidueRef Frame::add_residue(MoleculeRef& mol, const ResidueName& residueName, 
     }
   }
 
+  check_references_integrity();
   ResidueRef result(*this, *new_inserted_pos);
   selection::Observable<ResidueRef>::add_observer(result);
   return result;
@@ -99,6 +105,7 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   assert(&residue.frame() == this);
   assert(m_residue_info.data() <= residue.m_residue_info);
   assert(residue.m_residue_info < m_residue_info.data() + m_residue_info.size());
+  check_references_integrity();
 
   auto old_begin = m_atom_info.data();
   auto old_end = m_atom_info.data() + m_atom_info.size();
@@ -107,9 +114,6 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   auto old_end_crd = m_coordinates.data() + m_coordinates.size();
 
   auto old_insert_pos = residue.m_residue_info->m_atoms_info.m_end;
-  if (!old_insert_pos) {
-    old_insert_pos = old_end;
-  }
   auto old_insert_crd_pos = old_begin_crd + (residue.m_residue_info->m_atoms_info.m_end - old_begin);
 
   auto new_inserted_it = m_atom_info.insert(m_atom_info.begin() + (old_insert_pos - old_begin),
@@ -123,15 +127,8 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   auto new_inserted_crd_pos = new_begin_crd + (new_inserted_crd_it - m_coordinates.begin());
 
   // update pointers in the residue
-  if (!residue.m_residue_info->m_atoms_info.m_begin) {
-    residue.m_residue_info->m_atoms_info.m_begin = new_inserted_pos;
-    residue.m_residue_info->m_atoms_info.m_end = new_inserted_pos + 1;
-  } else {
-    residue.m_residue_info->m_atoms_info.m_begin =
-        new_begin + (residue.m_residue_info->m_atoms_info.m_begin - old_begin);
-    residue.m_residue_info->m_atoms_info.m_end =
-        new_begin + (residue.m_residue_info->m_atoms_info.m_end - old_begin) + 1;
-  }
+  residue.m_residue_info->m_atoms_info.m_begin = new_begin + (residue.m_residue_info->m_atoms_info.m_begin - old_begin);
+  residue.m_residue_info->m_atoms_info.m_end = new_begin + (residue.m_residue_info->m_atoms_info.m_end - old_begin) + 1;
 
   if (new_begin != old_begin) {
     // update pointers in residues before the residue
@@ -154,14 +151,17 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   selection::Observable<AtomRef>::notify(&AtomRef::on_coordinates_move, old_insert_crd_pos, old_end_crd,
                                          new_inserted_crd_pos + 1);
 
+  check_references_integrity();
   AtomRef result(*this, *new_inserted_pos, *new_inserted_crd_pos);
   selection::Observable<AtomRef>::add_observer(result);
   return result;
 }
 MoleculeRef Frame::add_molecule(const ChainName& name) {
+  check_references_integrity();
   auto old_begin = m_molecule_info.data();
   auto old_end = old_begin + m_molecule_info.size();
-  m_molecule_info.emplace_back(detail::MoleculeInfo{name});
+  auto residues_end = m_residue_info.data() + m_residue_info.size();
+  m_molecule_info.emplace_back(detail::MoleculeInfo{name, {residues_end, residues_end}});
   auto new_begin = m_molecule_info.data();
 
   if (old_begin != new_begin) {
@@ -173,12 +173,13 @@ MoleculeRef Frame::add_molecule(const ChainName& name) {
       }
     }
   }
+  check_references_integrity();
   MoleculeRef result(*this, m_molecule_info.back());
   selection::Observable<MoleculeRef>::add_observer(result);
   return result;
 }
 Frame& Frame::operator=(Frame&& other) {
-  if (this == &other) {
+  if (this != &other) {
     selection::Observable<AtomRef>::operator=(std::move(other));
     selection::Observable<ResidueRef>::operator=(std::move(other));
     selection::Observable<MoleculeRef>::operator=(std::move(other));
@@ -206,6 +207,31 @@ Frame::~Frame() {
   selection::Observable<ResidueRef>::notify(&ResidueRef::on_frame_delete);
   selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_frame_delete);
 }
+void Frame::check_references_integrity() {
+  size_t res_count = 0;
+  for (auto& mol_info : m_molecule_info) {
+    assert(m_residue_info.data() <= mol_info.m_residues_info.m_begin);
+    assert(mol_info.m_residues_info.m_begin <= mol_info.m_residues_info.m_end);
+    assert(mol_info.m_residues_info.m_end <= m_residue_info.data() + m_residue_info.size());
+    for (auto it = mol_info.m_residues_info.m_begin; it != mol_info.m_residues_info.m_end; ++it) {
+      assert(it->m_molecule_info == &mol_info);
+    }
+    res_count += mol_info.m_residues_info.m_end - mol_info.m_residues_info.m_begin;
+  }
+  assert(m_residue_info.size() == res_count);
+  size_t atom_count = 0;
+  for (auto& res_info : m_residue_info) {
+    assert(m_atom_info.data() <= res_info.m_atoms_info.m_begin);
+    assert(res_info.m_atoms_info.m_begin <= res_info.m_atoms_info.m_end);
+    assert(res_info.m_atoms_info.m_end <= m_atom_info.data() + m_atom_info.size());
+    for (auto it = res_info.m_atoms_info.m_begin; it != res_info.m_atoms_info.m_end; ++it) {
+      assert(it->m_residue_info == &res_info);
+    }
+    atom_count += res_info.m_atoms_info.m_end - res_info.m_atoms_info.m_begin;
+  }
+  assert(m_atom_info.size() == atom_count);
+}
+
 void ResidueRef::on_residue_info_move(detail::ResidueInfo* from_begin, detail::ResidueInfo* from_end,
                                       detail::ResidueInfo* to_begin) {
   if (from_begin <= m_residue_info && m_residue_info < from_end) {

@@ -12,6 +12,7 @@ namespace detail {
 template <typename T> struct InfoRange {
   T* m_begin = nullptr;
   T* m_end = nullptr;
+  constexpr size_t size() const { return m_end-m_begin;};
 };
 
 struct AtomInfo;
@@ -82,8 +83,8 @@ public:
   }
 
 private:
-  AtomRef(Frame& frame, detail::AtomInfo& residue_info, XYZ& coords)
-      : FrameObserver<AtomRef>(frame), m_coords(&coords), m_atom_info(&residue_info) {}
+  AtomRef(Frame& frame, detail::AtomInfo& atom_info, XYZ& coords)
+      : FrameObserver<AtomRef>(frame), m_coords(&coords), m_atom_info(&atom_info) {}
   friend Frame;
   XYZ* m_coords;
   detail::AtomInfo* m_atom_info;
@@ -160,10 +161,19 @@ public:
   ~Frame();
 
   MoleculeRef add_molecule(const ChainName& name = ChainName());
+  [[nodiscard]] size_t n_atoms() const { return m_atom_info.size(); }
+  [[nodiscard]] size_t n_residues() const { return m_residue_info.size(); }
+  [[nodiscard]] size_t n_molecules() const { return m_molecule_info.size(); }
+
+  [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
+  [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size();}
+  [[nodiscard]] size_t n_molecule_references() const { return selection::Observable<MoleculeRef>::observers.size(); }
 
 private:
   ResidueRef add_residue(MoleculeRef& mol, const ResidueName& residueName, const ResidueId& residueId);
   AtomRef add_atom(ResidueRef& residue, const AtomName& atomName, const AtomId& atomId);
+
+  void check_references_integrity();
 
   friend AtomRef;
   friend ResidueRef;
