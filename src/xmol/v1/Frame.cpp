@@ -42,7 +42,8 @@ ResidueRef Frame::add_residue(MoleculeRef& mol, const ResidueName& residueName, 
   auto old_insert_pos = mol.m_molecule_info->m_residues_info.m_end;
 
   auto atoms_end = m_atom_info.data();
-  if (mol.m_molecule_info->m_residues_info.m_end && mol.m_molecule_info->m_residues_info.m_end - 1 >= m_residue_info.data()){
+  if (mol.m_molecule_info->m_residues_info.m_end &&
+      mol.m_molecule_info->m_residues_info.m_end - 1 >= m_residue_info.data()) {
     atoms_end = (mol.m_molecule_info->m_residues_info.m_end - 1)->m_atoms_info.m_end;
   }
 
@@ -55,43 +56,38 @@ ResidueRef Frame::add_residue(MoleculeRef& mol, const ResidueName& residueName, 
 
   // update pointers in mol
   if (!mol.m_molecule_info->m_residues_info.m_begin) {
-    mol.m_molecule_info->m_residues_info.m_begin = new_inserted_pos;
-    mol.m_molecule_info->m_residues_info.m_end = new_inserted_pos + 1;
+    mol.m_molecule_info->m_residues_info = {new_inserted_pos, new_inserted_pos + 1};
   } else {
-    mol.m_molecule_info->m_residues_info.m_begin =
-        new_begin + (mol.m_molecule_info->m_residues_info.m_begin - old_begin);
-    mol.m_molecule_info->m_residues_info.m_end =
-        new_begin + (mol.m_molecule_info->m_residues_info.m_end - old_begin) + 1;
+    mol.m_molecule_info->m_residues_info.rebase(old_begin, new_begin);
+    mol.m_molecule_info->m_residues_info.m_end++;
   }
 
   if (new_begin != old_begin) {
     // update pointers in molecules before mol
     for (auto it = m_molecule_info.data(); it != mol.m_molecule_info; ++it) {
-      it->m_residues_info.m_begin = new_begin + (it->m_residues_info.m_begin - old_begin);
-      it->m_residues_info.m_end = new_begin + (it->m_residues_info.m_end - old_begin);
+      it->m_residues_info.rebase(old_begin, new_begin);
     }
     selection::Observable<ResidueRef>::notify(&ResidueRef::on_residue_info_move, old_begin, old_insert_pos, new_begin);
 
     // update pointers in atoms
     for (auto it = new_begin; it != new_inserted_pos; ++it) {
-      for (auto ait = it->m_atoms_info.m_begin; ait != it->m_atoms_info.m_end; ++ait) {
-        ait->m_residue_info = it;
+      for (auto& ait : it->m_atoms_info) {
+        ait.m_residue_info = it;
       }
     }
   }
 
   // update pointers in molecules after mol
-  for (auto it = mol.m_molecule_info + 1; it != m_molecule_info.data() + m_molecule_info.size(); ++it) {
-    it->m_residues_info.m_begin = new_begin + (it->m_residues_info.m_begin - old_begin) + 1;
-    it->m_residues_info.m_end = new_begin + (it->m_residues_info.m_end - old_begin) + 1;
+  for (auto& it : detail::Span(mol.m_molecule_info + 1, m_molecule_info.data() + m_molecule_info.size())) {
+    it.m_residues_info.rebase(old_begin, new_begin + 1);
   }
 
   selection::Observable<ResidueRef>::notify(&ResidueRef::on_residue_info_move, old_insert_pos, old_end,
                                             new_inserted_pos + 1);
   // update pointers in atoms for shifted residues
   for (auto it = new_inserted_pos + 1; it != new_end; ++it) {
-    for (auto ait = it->m_atoms_info.m_begin; ait != it->m_atoms_info.m_end; ++ait) {
-      ait->m_residue_info = it;
+    for (auto& ait : it->m_atoms_info) {
+      ait.m_residue_info = it;
     }
   }
 
@@ -126,15 +122,14 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   auto new_inserted_pos = new_begin + (new_inserted_it - m_atom_info.begin());
   auto new_inserted_crd_pos = new_begin_crd + (new_inserted_crd_it - m_coordinates.begin());
 
-  // update pointers in the residue
-  residue.m_residue_info->m_atoms_info.m_begin = new_begin + (residue.m_residue_info->m_atoms_info.m_begin - old_begin);
-  residue.m_residue_info->m_atoms_info.m_end = new_begin + (residue.m_residue_info->m_atoms_info.m_end - old_begin) + 1;
+  // update pointers in the residue & increase size
+  residue.m_residue_info->m_atoms_info.rebase(old_begin, new_begin);
+  residue.m_residue_info->m_atoms_info.m_end++;
 
   if (new_begin != old_begin) {
     // update pointers in residues before the residue
-    for (auto it = m_residue_info.data(); it != residue.m_residue_info; ++it) {
-      it->m_atoms_info.m_begin = new_begin + (it->m_atoms_info.m_begin - old_begin);
-      it->m_atoms_info.m_end = new_begin + (it->m_atoms_info.m_end - old_begin);
+    for (auto& rInfo : detail::Span{m_residue_info.data(), residue.m_residue_info}) {
+      rInfo.m_atoms_info.rebase(old_begin, new_begin);
     }
     selection::Observable<AtomRef>::notify(&AtomRef::on_atom_info_move, old_begin, old_insert_pos, new_begin);
     selection::Observable<AtomRef>::notify(&AtomRef::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
@@ -142,9 +137,8 @@ AtomRef Frame::add_atom(ResidueRef& residue, const AtomName& atomName, const Ato
   }
 
   // update pointers in residues after the residue
-  for (auto it = residue.m_residue_info + 1; it != m_residue_info.data() + m_residue_info.size(); ++it) {
-    it->m_atoms_info.m_begin = new_begin + (it->m_atoms_info.m_begin - old_begin) + 1;
-    it->m_atoms_info.m_end = new_begin + (it->m_atoms_info.m_end - old_begin) + 1;
+  for (auto& it : detail::Span{residue.m_residue_info + 1, m_residue_info.data() + m_residue_info.size()}) {
+    it.m_atoms_info.rebase(old_begin, new_begin + 1);
   }
 
   selection::Observable<AtomRef>::notify(&AtomRef::on_atom_info_move, old_insert_pos, old_end, new_inserted_pos + 1);
@@ -167,9 +161,9 @@ MoleculeRef Frame::add_molecule(const ChainName& name) {
   if (old_begin != new_begin) {
     selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_molecule_info_move, old_begin, old_end, new_begin);
     // update pointers in residues
-    for (auto it = new_begin; it != m_molecule_info.data() + m_molecule_info.size(); ++it) {
-      for (auto rit = it->m_residues_info.m_begin; rit != it->m_residues_info.m_end; ++rit) {
-        rit->m_molecule_info = it;
+    for (auto& mol_info : detail::Span{new_begin, m_molecule_info.size()}) {
+      for (auto& info : mol_info.m_residues_info) {
+        info.m_molecule_info = &mol_info;
       }
     }
   }
@@ -213,10 +207,10 @@ void Frame::check_references_integrity() {
     assert(m_residue_info.data() <= mol_info.m_residues_info.m_begin);
     assert(mol_info.m_residues_info.m_begin <= mol_info.m_residues_info.m_end);
     assert(mol_info.m_residues_info.m_end <= m_residue_info.data() + m_residue_info.size());
-    for (auto it = mol_info.m_residues_info.m_begin; it != mol_info.m_residues_info.m_end; ++it) {
-      assert(it->m_molecule_info == &mol_info);
+    for (auto& info : mol_info.m_residues_info) {
+      assert(info.m_molecule_info == &mol_info);
     }
-    res_count += mol_info.m_residues_info.m_end - mol_info.m_residues_info.m_begin;
+    res_count += mol_info.m_residues_info.size();
   }
   assert(m_residue_info.size() == res_count);
   size_t atom_count = 0;
@@ -224,10 +218,10 @@ void Frame::check_references_integrity() {
     assert(m_atom_info.data() <= res_info.m_atoms_info.m_begin);
     assert(res_info.m_atoms_info.m_begin <= res_info.m_atoms_info.m_end);
     assert(res_info.m_atoms_info.m_end <= m_atom_info.data() + m_atom_info.size());
-    for (auto it = res_info.m_atoms_info.m_begin; it != res_info.m_atoms_info.m_end; ++it) {
-      assert(it->m_residue_info == &res_info);
+    for (auto& info : res_info.m_atoms_info) {
+      assert(info.m_residue_info == &res_info);
     }
-    atom_count += res_info.m_atoms_info.m_end - res_info.m_atoms_info.m_begin;
+    atom_count += res_info.m_atoms_info.size();
   }
   assert(m_atom_info.size() == atom_count);
 }
