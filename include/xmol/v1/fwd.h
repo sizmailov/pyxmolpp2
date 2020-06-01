@@ -18,5 +18,11 @@ using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 using ResidueId = xmol::polymer::ResidueId;
 using XYZ = xmol::geometry::XYZ;
 
+
+class AtomRef;
+class ResidueRef;
+class MoleculeRef;
+class Frame;
+
 } // namespace v1
 } // namespace xmol
