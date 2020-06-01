@@ -12,7 +12,7 @@ namespace detail {
 template <typename T> struct InfoRange {
   T* m_begin = nullptr;
   T* m_end = nullptr;
-  constexpr size_t size() const { return m_end-m_begin;};
+  constexpr size_t size() const { return m_end - m_begin; };
 };
 
 struct AtomInfo;
@@ -166,8 +166,14 @@ public:
   [[nodiscard]] size_t n_molecules() const { return m_molecule_info.size(); }
 
   [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
-  [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size();}
+  [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size(); }
   [[nodiscard]] size_t n_molecule_references() const { return selection::Observable<MoleculeRef>::observers.size(); }
+  void reserve_molecules(size_t n) { m_molecule_info.reserve(n); };
+  void reserve_atoms(size_t n) {
+    m_atom_info.reserve(n);
+    m_coordinates.reserve(n);
+  };
+  void reserve_residues(size_t n) { m_residue_info.reserve(n); };
 
 private:
   ResidueRef add_residue(MoleculeRef& mol, const ResidueName& residueName, const ResidueId& residueId);

@@ -204,7 +204,6 @@ TEST_F(FrameTests, frame_backward_construction_2) {
   ASSERT_EQ(frame.n_atoms(), n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 }
 
-
 TEST_F(FrameTests, frame_backward_construction_3) {
   Frame frame;
 
@@ -242,4 +241,30 @@ TEST_F(FrameTests, frame_backward_construction_3) {
   ASSERT_EQ(frame.n_molecules(), n_molecules);
   ASSERT_EQ(frame.n_residues(), n_molecules * n_residues_per_molecule * 2);
   ASSERT_EQ(frame.n_atoms(), n_molecules * n_residues_per_molecule * n_atoms_per_residue * 2);
+}
+
+TEST_F(FrameTests, frame_forward_construction) {
+  Frame frame;
+
+  const int n_molecules = 13;
+  const int n_residues_per_molecule = 17;
+  const int n_atoms_per_residue = 11;
+
+  frame.reserve_molecules(n_molecules);
+  frame.reserve_residues(n_molecules * n_residues_per_molecule);
+  frame.reserve_atoms(n_molecules * n_residues_per_molecule * n_atoms_per_residue);
+
+  for (int i = 0; i < n_molecules; ++i) {
+    MoleculeRef molecule = frame.add_molecule(ChainName(""));
+    for (int j = 0; j < n_residues_per_molecule; ++j) {
+      ResidueRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
+      for (int k = 0; k < n_atoms_per_residue; ++k) {
+        residue.add_atom(AtomName(""), AtomId(0));
+      }
+    }
+  }
+
+  ASSERT_EQ(frame.n_molecules(), n_molecules);
+  ASSERT_EQ(frame.n_residues(), n_molecules * n_residues_per_molecule);
+  ASSERT_EQ(frame.n_atoms(), n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 }
