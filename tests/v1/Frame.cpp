@@ -203,3 +203,43 @@ TEST_F(FrameTests, frame_backward_construction_2) {
   ASSERT_EQ(frame.n_residues(), n_molecules * n_residues_per_molecule);
   ASSERT_EQ(frame.n_atoms(), n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 }
+
+
+TEST_F(FrameTests, frame_backward_construction_3) {
+  Frame frame;
+
+  std::vector<MoleculeRef> molecules;
+  std::vector<ResidueRef> residues;
+  std::vector<AtomRef> atoms;
+
+  const int n_molecules = 13;
+  const int n_residues_per_molecule = 11;
+  const int n_atoms_per_residue = 7;
+
+  for (int i = 0; i < n_molecules; ++i) {
+    MoleculeRef molecule = frame.add_molecule(ChainName(""));
+    molecules.push_back(molecule);
+    for (int j = 0; j < n_residues_per_molecule; ++j) {
+      ResidueRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
+      for (int k = 0; k < n_atoms_per_residue; ++k) {
+        atoms.push_back(residue.add_atom(AtomName(""), AtomId(0)));
+      }
+    }
+  }
+
+  for (int i = n_molecules - 1; i >= 0; --i) {
+    for (int j = 0; j < n_residues_per_molecule; ++j) {
+      residues.push_back(molecules[i].add_residue(ResidueName(""), ResidueId(0)));
+    }
+  }
+
+  for (auto it = residues.rbegin(); it != residues.rend(); ++it) {
+    for (int j = 0; j < n_atoms_per_residue; ++j) {
+      atoms.push_back(it->add_atom(AtomName(""), AtomId(0)));
+    }
+  }
+
+  ASSERT_EQ(frame.n_molecules(), n_molecules);
+  ASSERT_EQ(frame.n_residues(), n_molecules * n_residues_per_molecule * 2);
+  ASSERT_EQ(frame.n_atoms(), n_molecules * n_residues_per_molecule * n_atoms_per_residue * 2);
+}
