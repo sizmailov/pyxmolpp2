@@ -64,6 +64,16 @@ protected:
     add_observer(to);
   }
 
+public:
+
+  void on_move(Observer& from, Observer& to) {
+    remove_observer(from);
+    add_observer(to);
+  }
+
+  void on_delete(Observer& o) { remove_observer(o); }
+  void on_copy(Observer& o) { add_observer(o); }
+
 protected:
   mutable std::map<Observer*, ObserverState> observers;
 };
