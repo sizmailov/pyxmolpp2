@@ -1,4 +1,6 @@
-#include "xmol/v1/Frame.h"
+#pragma once
+#include "Frame.h"
+#include "Frame.h"
 
 namespace xmol::v1 {
 
@@ -44,8 +46,3 @@ template <typename Observer> void FrameObserver<Observer>::on_frame_move(Frame& 
 }
 template <typename Observer> void FrameObserver<Observer>::on_frame_delete() { m_frame = nullptr; }
 } // namespace xmol::v1
-
-
-template class xmol::v1::FrameObserver<xmol::v1::AtomRef>;
-template class xmol::v1::FrameObserver<xmol::v1::ResidueRef>;
-template class xmol::v1::FrameObserver<xmol::v1::MoleculeRef>;
