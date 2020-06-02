@@ -1,23 +1,35 @@
 #pragma once
-#include <cstdlib>
 #include "xmol/v1/future/span.h"
+#include <cstdlib>
 
 namespace xmol::v1::proxy {
 
 template <typename Proxy, typename T> class ProxySpan {
 public:
-  constexpr ProxySpan() = default;
-  constexpr explicit ProxySpan(const future::Span<T>& span);
-  constexpr ProxySpan(T* b, T* e);
-  constexpr ProxySpan(T* b, size_t n);
+  class Iterator {
+  public:
+    explicit Iterator(T* ptr);
+    Proxy* operator->();
+    Proxy& operator*();
+    Iterator operator++();
+    bool operator!=(const Iterator& other);
 
-  [[nodiscard]] constexpr size_t size() const;;
+  private:
+    T* ptr;
+    Proxy p;
+  };
+  ProxySpan() = default;
+  explicit ProxySpan(const future::Span<T>& span);
+  ProxySpan(T* b, T* e);
+  ProxySpan(T* b, size_t n);
+
+  [[nodiscard]] size_t size() const;
   [[nodiscard]] size_t empty() const;
 
-  Proxy operator[](size_t i);
+  [[nodiscard]] Proxy operator[](size_t i);
 
-  Proxy begin();
-  Proxy end();
+  [[nodiscard]] Iterator begin();
+  [[nodiscard]] Iterator end();
 
 protected:
   void rebase(T* from, T* to);
@@ -27,4 +39,4 @@ private:
   T* m_end = nullptr;
 };
 
-} // namespace xmol::v1
+} // namespace xmol::v1::proxy

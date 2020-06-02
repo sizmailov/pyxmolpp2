@@ -83,3 +83,7 @@ proxy::Atom& proxy::Atom::r(const XYZ& value) {
 }
 proxy::Molecule proxy::Atom::molecule() noexcept { return proxy::Molecule(*m_atom->residue->molecule); }
 Frame& proxy::Atom::frame() noexcept { return *m_atom->residue->molecule->frame; }
+
+template class proxy::ProxySpan<proxy::Atom, BaseAtom>;
+template class proxy::ProxySpan<proxy::Residue, BaseResidue>;
+template class proxy::ProxySpan<proxy::Molecule, BaseMolecule>;

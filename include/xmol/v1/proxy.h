@@ -19,6 +19,8 @@ public:
   ProxySpan<Residue, BaseResidue> residues();
   ProxySpan<Atom, BaseAtom> atoms();
 
+  bool operator!=(const Molecule& rhs) { return m_molecule != rhs.m_molecule; }
+
 private:
   friend Atom;
   friend Residue;
@@ -27,6 +29,7 @@ private:
   friend ProxySpan<Molecule, BaseMolecule>;
   explicit Molecule(BaseMolecule& molecule);
   BaseMolecule* m_molecule;
+  Molecule() = default; // constructs object in invalid state (with nullptrs)
 };
 
 class Residue {
@@ -42,13 +45,16 @@ public:
 
   ProxySpan<Atom, BaseAtom> atoms();
 
+  bool operator!=(const Residue& rhs) { return m_residue != rhs.m_residue; }
+
 private:
   friend Atom;
   friend Frame;
   friend ResidueRef;
   friend ProxySpan<Residue, BaseResidue>;
   explicit Residue(BaseResidue& residue);
-  BaseResidue* m_residue;
+  BaseResidue* m_residue = nullptr;
+  Residue() = default; // constructs object in invalid state (with nullptrs)
 };
 
 class Atom {
@@ -71,13 +77,20 @@ public:
   Molecule molecule() noexcept;
   Frame& frame() noexcept;
 
+  bool operator!=(const Atom& rhs) {
+    return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
+  }
+
 protected:
   friend Frame;
   friend Residue;
   friend AtomRef;
   friend ProxySpan<Atom, BaseAtom>;
   explicit Atom(BaseAtom& atom);
-  XYZ* m_coords;
-  BaseAtom* m_atom;
+  XYZ* m_coords = nullptr;
+  BaseAtom* m_atom = nullptr;
+
+private:
+  Atom() = default; // constructs object in invalid state (with nullptrs)
 };
 } // namespace xmol::v1::proxy

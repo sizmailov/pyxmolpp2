@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy-span-impl.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
@@ -48,4 +47,10 @@ TEST_F(ProxyTests, span_count) {
   ASSERT_EQ(&r3.name(), &m3.residues()[1].name());
   ASSERT_EQ(&r4.name(), &m3.residues()[2].name());
 
+  for (MoleculeRef& m : std::array{m1, m2, m3, m4}) {
+    for (auto& a : m.atoms()) {
+      ASSERT_EQ(&a.molecule().name(), &m.name())
+          << a.molecule().name().str() << "." << a.residue().name().str() << "." << a.name().str() << std::endl;
+    }
+  }
 }
