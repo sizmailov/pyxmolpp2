@@ -10,7 +10,7 @@ private:
   friend Frame;
   explicit AtomRef(Atom&& atom);
   void on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin);
-  void on_atom_info_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
+  void on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
 };
 
 class ResidueRef : public proxy::Residue, public FrameObserver<ResidueRef> {
@@ -19,7 +19,7 @@ public:
 private:
   friend Frame;
   explicit ResidueRef(proxy::Residue&& res);
-  void on_residue_info_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin);
+  void on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin);
 };
 
 class MoleculeRef : public proxy::Molecule, public FrameObserver<MoleculeRef> {
@@ -28,7 +28,7 @@ public:
 private:
   friend Frame;
   explicit MoleculeRef(proxy::Molecule&& mol);
-  void on_molecule_info_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin);
+  void on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin);
 };
 } // namespace v1
 } // namespace xmol

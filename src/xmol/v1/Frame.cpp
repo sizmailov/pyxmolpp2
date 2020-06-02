@@ -45,7 +45,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
     for (auto it = molecules.data(); it != &mol; ++it) {
       it->residues.rebase(old_begin, new_begin);
     }
-    selection::Observable<ResidueRef>::notify(&ResidueRef::on_residue_info_move, old_begin, old_insert_pos, new_begin);
+    selection::Observable<ResidueRef>::notify(&ResidueRef::on_base_residues_move, old_begin, old_insert_pos, new_begin);
 
     // update pointers in atoms
     for (auto it = new_begin; it != new_inserted_pos; ++it) {
@@ -60,7 +60,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
     it.residues.rebase(old_begin, new_begin + 1);
   }
 
-  selection::Observable<ResidueRef>::notify(&ResidueRef::on_residue_info_move, old_insert_pos, old_end,
+  selection::Observable<ResidueRef>::notify(&ResidueRef::on_base_residues_move, old_insert_pos, old_end,
                                             new_inserted_pos + 1);
   // update pointers in atoms for shifted residues
   for (auto it = new_inserted_pos + 1; it != new_end; ++it) {
@@ -108,7 +108,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     for (auto& rInfo : future::Span{residues.data(), &residue}) {
       rInfo.atoms.rebase(old_begin, new_begin);
     }
-    selection::Observable<AtomRef>::notify(&AtomRef::on_atom_info_move, old_begin, old_insert_pos, new_begin);
+    selection::Observable<AtomRef>::notify(&AtomRef::on_base_atoms_move, old_begin, old_insert_pos, new_begin);
     selection::Observable<AtomRef>::notify(&AtomRef::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
                                            new_begin_crd);
   }
@@ -118,7 +118,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     it.atoms.rebase(old_begin, new_begin + 1);
   }
 
-  selection::Observable<AtomRef>::notify(&AtomRef::on_atom_info_move, old_insert_pos, old_end, new_inserted_pos + 1);
+  selection::Observable<AtomRef>::notify(&AtomRef::on_base_atoms_move, old_insert_pos, old_end, new_inserted_pos + 1);
   selection::Observable<AtomRef>::notify(&AtomRef::on_coordinates_move, old_insert_crd_pos, old_end_crd,
                                          new_inserted_crd_pos + 1);
 
@@ -144,7 +144,7 @@ BaseMolecule& Frame::add_molecule(const MoleculeName& name, Frame::base_tag) {
   auto new_begin = molecules.data();
 
   if (old_begin != new_begin) {
-    selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_molecule_info_move, old_begin, old_end, new_begin);
+    selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_base_molecules_move, old_begin, old_end, new_begin);
     // update pointers in residues
     for (auto& mol_info : future::Span{new_begin, molecules.size()}) {
       for (auto& info : mol_info.residues) {
