@@ -18,10 +18,10 @@ using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTa
 using ResidueId = xmol::polymer::ResidueId;
 using XYZ = xmol::geometry::XYZ;
 
-/// ligth-weight proxies
-class Atom;
-class Residue;
-class Molecule;
+/// data holders
+class BaseAtom;
+class BaseResidue;
+class BaseMolecule;
 
 /// ref counting proxies
 class AtomRef;
