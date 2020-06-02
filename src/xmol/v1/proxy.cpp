@@ -1,5 +1,6 @@
 #include "xmol/v1/proxy.h"
 #include "xmol/v1/Frame.h"
+#include "xmol/v1/proxy-span-impl.h"
 
 using namespace xmol::v1;
 
@@ -25,6 +26,17 @@ size_t proxy::Molecule::size() const {
 }
 proxy::Molecule::Molecule(BaseMolecule& molecule) : m_molecule(&molecule) {}
 Frame& proxy::Molecule::frame() noexcept { return *m_molecule->frame; }
+proxy::ProxySpan<proxy::Residue, BaseResidue> proxy::Molecule::residues() {
+  return proxy::ProxySpan<proxy::Residue, BaseResidue>{m_molecule->residues};
+}
+proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Molecule::atoms() {
+  if (empty())
+    return {};
+  assert(m_molecule->residues.m_begin);
+  assert(m_molecule->residues.m_end);
+  return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
+                                                 (m_molecule->residues.m_begin + size())->atoms.m_end);
+}
 
 ResidueName proxy::Residue::name() const {
   assert(m_residue);
@@ -45,6 +57,9 @@ size_t proxy::Residue::size() const {
 proxy::Residue::Residue(BaseResidue& residue) : m_residue(&residue) {}
 proxy::Molecule proxy::Residue::molecule() noexcept { return proxy::Molecule(*m_residue->molecule); }
 Frame& proxy::Residue::frame() noexcept { return *m_residue->molecule->frame; }
+proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Residue::atoms() {
+  return proxy::ProxySpan<proxy::Atom, BaseAtom>{m_residue->atoms};
+}
 
 const AtomId& proxy::Atom::id() const { return m_atom->id; }
 

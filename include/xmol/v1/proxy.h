@@ -1,5 +1,6 @@
 #pragma once
 #include "fwd.h"
+#include "proxy-span.h"
 
 namespace xmol::v1::proxy {
 
@@ -15,6 +16,8 @@ public:
   [[nodiscard]] size_t size() const;
 
   Frame& frame() noexcept;
+  ProxySpan<Residue, BaseResidue> residues();
+  ProxySpan<Atom, BaseAtom> atoms();
 
 private:
   friend Atom;
@@ -35,6 +38,8 @@ public:
 
   Molecule molecule() noexcept;
   Frame& frame() noexcept;
+
+  ProxySpan<Atom, BaseAtom> atoms();
 
 private:
   friend Atom;
