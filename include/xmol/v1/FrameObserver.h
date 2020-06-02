@@ -14,7 +14,6 @@ public:
   FrameObserver& operator=(const FrameObserver& rhs);
 
   const Frame& frame() const { return *m_frame; }
-
   Frame& frame() { return *m_frame; }
 
 protected:

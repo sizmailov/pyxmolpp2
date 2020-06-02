@@ -10,9 +10,9 @@ class FrameTests : public Test {};
 TEST_F(FrameTests, create) {
   auto frame = Frame();
 
-  auto m1 = frame.add_molecule(ChainName("A"));
-  auto m2 = frame.add_molecule(ChainName("B"));
-  auto m3 = frame.add_molecule(ChainName("C"));
+  auto m1 = frame.add_molecule(MoleculeName("A"));
+  auto m2 = frame.add_molecule(MoleculeName("B"));
+  auto m3 = frame.add_molecule(MoleculeName("C"));
 
   auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
   auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
@@ -38,9 +38,9 @@ TEST_F(FrameTests, frame_move_assignement) {
   Frame frame;
   Frame frame2;
   {
-    auto m1 = frame.add_molecule(ChainName("A"));
-    auto m2 = frame.add_molecule(ChainName("B"));
-    auto m3 = frame.add_molecule(ChainName("C"));
+    auto m1 = frame.add_molecule(MoleculeName("A"));
+    auto m2 = frame.add_molecule(MoleculeName("B"));
+    auto m3 = frame.add_molecule(MoleculeName("C"));
     {
       auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
       auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
@@ -93,9 +93,9 @@ TEST_F(FrameTests, frame_move_assignement) {
 
 TEST_F(FrameTests, frame_move_construction) {
   Frame frame;
-  auto m1 = frame.add_molecule(ChainName("A"));
-  auto m2 = frame.add_molecule(ChainName("B"));
-  auto m3 = frame.add_molecule(ChainName("C"));
+  auto m1 = frame.add_molecule(MoleculeName("A"));
+  auto m2 = frame.add_molecule(MoleculeName("B"));
+  auto m3 = frame.add_molecule(MoleculeName("C"));
   auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
   auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
   auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1));
@@ -131,11 +131,11 @@ TEST_F(FrameTests, frame_move_construction) {
 
 TEST_F(FrameTests, molecule_construction) {
   Frame frame;
-  auto mol = frame.add_molecule(ChainName("X"));
+  auto mol = frame.add_molecule(MoleculeName("X"));
   ASSERT_TRUE(mol.empty());
-  ASSERT_EQ(mol.name(), ChainName("X"));
-  mol.name(ChainName("Y"));
-  ASSERT_EQ(mol.name(), ChainName("Y"));
+  ASSERT_EQ(mol.name(), MoleculeName("X"));
+  mol.name(MoleculeName("Y"));
+  ASSERT_EQ(mol.name(), MoleculeName("Y"));
   {
     auto mol_ref_copy = mol;
     ASSERT_EQ(frame.n_molecule_references(), 2);
@@ -147,7 +147,7 @@ TEST_F(FrameTests, molecule_construction) {
 
 TEST_F(FrameTests, residue_construction) {
   Frame frame;
-  auto mol = frame.add_molecule(ChainName("X"));
+  auto mol = frame.add_molecule(MoleculeName("X"));
   auto residue = mol.add_residue(ResidueName("ABC"), ResidueId(1));
   ASSERT_TRUE(residue.empty());
   ASSERT_EQ(residue.name(), ResidueName("ABC"));
@@ -157,7 +157,7 @@ TEST_F(FrameTests, residue_construction) {
 
 TEST_F(FrameTests, frame_backward_construction_1) {
   Frame frame;
-  auto mol = frame.add_molecule(ChainName("A"));
+  auto mol = frame.add_molecule(MoleculeName("A"));
   auto res1 = mol.add_residue(ResidueName("A1"), ResidueId(1));
   auto res2 = mol.add_residue(ResidueName("A2"), ResidueId(2));
   int n = 10;
@@ -184,7 +184,7 @@ TEST_F(FrameTests, frame_backward_construction_2) {
   const int n_atoms_per_residue = 10;
 
   for (int i = 0; i < n_molecules; ++i) {
-    molecules.push_back(frame.add_molecule(ChainName("")));
+    molecules.push_back(frame.add_molecule(MoleculeName("")));
   }
 
   for (int i = n_molecules - 1; i >= 0; --i) {
@@ -216,7 +216,7 @@ TEST_F(FrameTests, frame_backward_construction_3) {
   const int n_atoms_per_residue = 7;
 
   for (int i = 0; i < n_molecules; ++i) {
-    MoleculeRef molecule = frame.add_molecule(ChainName(""));
+    MoleculeRef molecule = frame.add_molecule(MoleculeName(""));
     molecules.push_back(molecule);
     for (int j = 0; j < n_residues_per_molecule; ++j) {
       ResidueRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
@@ -255,7 +255,7 @@ TEST_F(FrameTests, frame_forward_construction) {
   frame.reserve_atoms(n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 
   for (int i = 0; i < n_molecules; ++i) {
-    MoleculeRef molecule = frame.add_molecule(ChainName(""));
+    MoleculeRef molecule = frame.add_molecule(MoleculeName(""));
     for (int j = 0; j < n_residues_per_molecule; ++j) {
       ResidueRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
       for (int k = 0; k < n_atoms_per_residue; ++k) {

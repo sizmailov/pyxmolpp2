@@ -14,14 +14,21 @@ struct ChainNameTag {};
 using AtomId = int32_t;
 using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
-using ChainName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
+using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 using ResidueId = xmol::polymer::ResidueId;
 using XYZ = xmol::geometry::XYZ;
 
+/// ligth-weight proxies
+class Atom;
+class Residue;
+class Molecule;
 
+/// ref counting proxies
 class AtomRef;
 class ResidueRef;
 class MoleculeRef;
+
+/// life holder
 class Frame;
 
 } // namespace v1

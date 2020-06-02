@@ -1,5 +1,5 @@
 #pragma once
-#include "infos.h"
+#include "base.h"
 #include "references.h"
 #include "xmol/selection/Observable.h"
 #include <vector>
@@ -19,20 +19,20 @@ public:
   Frame& operator=(Frame&& other);
   ~Frame();
 
-  MoleculeRef add_molecule(const ChainName& name = ChainName());
-  [[nodiscard]] size_t n_atoms() const { return m_atom_info.size(); }
-  [[nodiscard]] size_t n_residues() const { return m_residue_info.size(); }
-  [[nodiscard]] size_t n_molecules() const { return m_molecule_info.size(); }
+  MoleculeRef add_molecule(const MoleculeName& name = MoleculeName());
+  [[nodiscard]] size_t n_atoms() const { return atoms.size(); }
+  [[nodiscard]] size_t n_residues() const { return residues.size(); }
+  [[nodiscard]] size_t n_molecules() const { return molecules.size(); }
 
   [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
   [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size(); }
   [[nodiscard]] size_t n_molecule_references() const { return selection::Observable<MoleculeRef>::observers.size(); }
-  void reserve_molecules(size_t n) { m_molecule_info.reserve(n); };
+  void reserve_molecules(size_t n) { molecules.reserve(n); };
   void reserve_atoms(size_t n) {
-    m_atom_info.reserve(n);
-    m_coordinates.reserve(n);
+    atoms.reserve(n);
+    coordinates.reserve(n);
   };
-  void reserve_residues(size_t n) { m_residue_info.reserve(n); };
+  void reserve_residues(size_t n) { residues.reserve(n); };
 
 private:
   ResidueRef add_residue(MoleculeRef& mol, const ResidueName& residueName, const ResidueId& residueId);
@@ -43,11 +43,14 @@ private:
   friend AtomRef;
   friend ResidueRef;
   friend MoleculeRef;
+  friend Atom;
+  friend Residue;
+  friend Molecule;
 
-  std::vector<detail::AtomInfo> m_atom_info;
-  std::vector<detail::ResidueInfo> m_residue_info;
-  std::vector<detail::MoleculeInfo> m_molecule_info;
-  std::vector<XYZ> m_coordinates;
+  std::vector<BaseAtom> atoms;
+  std::vector<BaseResidue> residues{};
+  std::vector<BaseMolecule> molecules{};
+  std::vector<XYZ> coordinates;
 };
 
 } // namespace v1
