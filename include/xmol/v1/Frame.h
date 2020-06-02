@@ -48,6 +48,10 @@ private:
   friend ResidueRef;
   friend MoleculeRef;
 
+  friend proxy::Atom;
+  friend proxy::Residue;
+  friend proxy::Molecule;
+
   std::vector<BaseAtom> atoms;
   std::vector<BaseResidue> residues{};
   std::vector<BaseMolecule> molecules{};

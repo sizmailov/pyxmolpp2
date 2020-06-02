@@ -6,7 +6,7 @@
 using namespace xmol::v1;
 
 MoleculeRef Frame::add_molecule(const MoleculeName& name) {
-  MoleculeRef result(add_molecule(name, base_tag{}));
+  MoleculeRef result(proxy::Molecule(add_molecule(name, base_tag{})));
   selection::Observable<MoleculeRef>::add_observer(result);
   return result;
 }
@@ -126,12 +126,13 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   return *new_inserted_pos;
 }
 ResidueRef Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId) {
-  ResidueRef result(add_residue(mol, residueName, residueId, base_tag{}));
+  ResidueRef result(proxy::Residue(add_residue(mol, residueName, residueId, base_tag{})));
   selection::Observable<ResidueRef>::add_observer(result);
   return result;
 }
 AtomRef Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId) {
-  AtomRef result(add_atom(residue, atomName, atomId, base_tag{}));
+  auto& atom = add_atom(residue, atomName, atomId, base_tag{});
+  AtomRef result(proxy::Atom(atom, coordinates[&atom - atoms.data()]));
   selection::Observable<AtomRef>::add_observer(result);
   return result;
 }
