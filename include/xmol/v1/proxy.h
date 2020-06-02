@@ -9,7 +9,7 @@ class Residue;
 
 class Molecule {
 public:
-  [[nodiscard]] MoleculeName name() const;
+  [[nodiscard]] const MoleculeName& name() const;
   void name(const MoleculeName& name);
 
   [[nodiscard]] bool empty() const;
@@ -24,13 +24,14 @@ private:
   friend Residue;
   friend MoleculeRef;
   friend Frame;
+  friend ProxySpan<Molecule, BaseMolecule>;
   explicit Molecule(BaseMolecule& molecule);
   BaseMolecule* m_molecule;
 };
 
 class Residue {
 public:
-  [[nodiscard]] ResidueName name() const;
+  [[nodiscard]] const ResidueName& name() const;
   void name(const ResidueName& name);
 
   [[nodiscard]] bool empty() const;
@@ -45,6 +46,7 @@ private:
   friend Atom;
   friend Frame;
   friend ResidueRef;
+  friend ProxySpan<Residue, BaseResidue>;
   explicit Residue(BaseResidue& residue);
   BaseResidue* m_residue;
 };
@@ -73,6 +75,7 @@ protected:
   friend Frame;
   friend Residue;
   friend AtomRef;
+  friend ProxySpan<Atom, BaseAtom>;
   explicit Atom(BaseAtom& atom);
   XYZ* m_coords;
   BaseAtom* m_atom;

@@ -14,6 +14,8 @@ public:
   [[nodiscard]] constexpr size_t size() const;;
   [[nodiscard]] size_t empty() const;
 
+  Proxy operator[](size_t i);
+
   Proxy begin();
   Proxy end();
 

@@ -25,3 +25,7 @@ template <typename Proxy, typename T> constexpr size_t xmol::v1::proxy::ProxySpa
 template <typename Proxy, typename T> size_t xmol::v1::proxy::ProxySpan<Proxy, T>::empty() const {
   return m_end == m_begin;
 }
+template <typename Proxy, typename T> Proxy xmol::v1::proxy::ProxySpan<Proxy, T>::operator[](size_t i) {
+  assert(i < size());
+  return Proxy(*(m_begin + i));
+}

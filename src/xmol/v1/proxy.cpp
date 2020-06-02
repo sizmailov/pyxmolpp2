@@ -4,7 +4,7 @@
 
 using namespace xmol::v1;
 
-MoleculeName proxy::Molecule::name() const {
+const MoleculeName& proxy::Molecule::name() const {
   assert(m_molecule);
   assert(m_molecule->frame);
   return m_molecule->name;
@@ -35,10 +35,10 @@ proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Molecule::atoms() {
   assert(m_molecule->residues.m_begin);
   assert(m_molecule->residues.m_end);
   return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
-                                                 (m_molecule->residues.m_begin + size())->atoms.m_end);
+                                                 (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
 }
 
-ResidueName proxy::Residue::name() const {
+const ResidueName& proxy::Residue::name() const {
   assert(m_residue);
   return m_residue->name;
 }
