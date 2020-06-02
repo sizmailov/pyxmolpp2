@@ -66,8 +66,9 @@ public:
 
 protected:
   friend Frame;
+  friend Residue;
   friend AtomRef;
-  Atom(BaseAtom& atom, XYZ& coords);
+  explicit Atom(BaseAtom& atom);
   XYZ* m_coords;
   BaseAtom* m_atom;
 };

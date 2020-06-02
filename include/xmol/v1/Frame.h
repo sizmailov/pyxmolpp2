@@ -42,6 +42,8 @@ private:
   ResidueRef add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId);
   AtomRef add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId);
 
+  XYZ& crd(BaseAtom& atom);
+
   void check_references_integrity();
 
   friend AtomRef;

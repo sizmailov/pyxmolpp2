@@ -24,7 +24,7 @@ size_t proxy::Molecule::size() const {
   return m_molecule->residues.m_end - m_molecule->residues.m_begin;
 }
 proxy::Molecule::Molecule(BaseMolecule& molecule) : m_molecule(&molecule) {}
-Frame& proxy::Molecule::frame() noexcept {return *m_molecule->frame;}
+Frame& proxy::Molecule::frame() noexcept { return *m_molecule->frame; }
 
 ResidueName proxy::Residue::name() const {
   assert(m_residue);
@@ -60,7 +60,7 @@ proxy::Atom& proxy::Atom::name(const AtomName& value) {
   return *this;
 }
 
-proxy::Atom::Atom(BaseAtom& atom, XYZ& coords) : m_coords(&coords), m_atom(&atom) {}
+proxy::Atom::Atom(BaseAtom& atom) : m_coords(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 proxy::Residue proxy::Atom::residue() noexcept { return proxy::Residue(*m_atom->residue); }
 proxy::Atom& proxy::Atom::r(const XYZ& value) {
   *m_coords = value;

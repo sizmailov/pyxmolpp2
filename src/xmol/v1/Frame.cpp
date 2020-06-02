@@ -131,8 +131,7 @@ ResidueRef Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName,
   return result;
 }
 AtomRef Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId) {
-  auto& atom = add_atom(residue, atomName, atomId, base_tag{});
-  AtomRef result(proxy::Atom(atom, coordinates[&atom - atoms.data()]));
+  AtomRef result(proxy::Atom(add_atom(residue, atomName, atomId, base_tag{})));
   selection::Observable<AtomRef>::add_observer(result);
   return result;
 }
@@ -187,7 +186,7 @@ Frame::~Frame() {
 }
 void Frame::check_references_integrity() {
 #ifdef NDEBUG
-  return; // disable completely in release mode
+  return; // disables check completely in release mode
 #endif
   // disable except for smallest debug cases
   if (molecules.size() > 10 || residues.size() > 10 || atoms.size() > 10) {
@@ -224,3 +223,8 @@ void Frame::reserve_atoms(size_t n) {
   coordinates.reserve(n);
 }
 void Frame::reserve_residues(size_t n) { residues.reserve(n); }
+XYZ& Frame::crd(BaseAtom& atom) {
+  assert(atoms.data() <= &atom);
+  assert(&atom <= atoms.data() + atoms.size());
+  return coordinates[&atom - atoms.data()];
+}
