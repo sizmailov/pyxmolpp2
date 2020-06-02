@@ -25,19 +25,16 @@ public:
   [[nodiscard]] size_t n_atoms() const { return atoms.size(); }
   [[nodiscard]] size_t n_residues() const { return residues.size(); }
   [[nodiscard]] size_t n_molecules() const { return molecules.size(); }
-  [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
 
+  [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
   [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size(); }
   [[nodiscard]] size_t n_molecule_references() const { return selection::Observable<MoleculeRef>::observers.size(); }
-  void reserve_molecules(size_t n) { molecules.reserve(n); };
-  void reserve_atoms(size_t n) {
-    atoms.reserve(n);
-    coordinates.reserve(n);
-  };
-  void reserve_residues(size_t n) { residues.reserve(n); };
+
+  void reserve_molecules(size_t n);
+  void reserve_atoms(size_t n);
+  void reserve_residues(size_t n);
 
 private:
-
   BaseMolecule& add_molecule(const MoleculeName& name, base_tag);
   BaseResidue& add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId, base_tag);
   BaseAtom& add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId, base_tag);

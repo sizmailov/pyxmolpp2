@@ -185,6 +185,13 @@ Frame::~Frame() {
   selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_frame_delete);
 }
 void Frame::check_references_integrity() {
+#ifdef NDEBUG
+  return; // disable completely in release mode
+#endif
+  // disable except for smallest debug cases
+  if (molecules.size() > 10 || residues.size() > 10 || atoms.size() > 10) {
+    return;
+  }
   size_t res_count = 0;
   for (auto& mol_info : molecules) {
     assert(residues.data() <= mol_info.residues.m_begin);
@@ -208,3 +215,9 @@ void Frame::check_references_integrity() {
   }
   assert(atoms.size() == atom_count);
 }
+void Frame::reserve_molecules(size_t n) { molecules.reserve(n); }
+void Frame::reserve_atoms(size_t n) {
+  atoms.reserve(n);
+  coordinates.reserve(n);
+}
+void Frame::reserve_residues(size_t n) { residues.reserve(n); }
