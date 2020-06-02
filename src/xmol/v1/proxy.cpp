@@ -1,4 +1,4 @@
-#include "xmol/v1/proxies.h"
+#include "xmol/v1/proxy.h"
 #include "xmol/v1/Frame.h"
 
 using namespace xmol::v1;

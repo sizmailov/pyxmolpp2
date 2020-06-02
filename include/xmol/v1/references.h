@@ -1,6 +1,6 @@
 #pragma once
 #include "FrameObserver.h"
-#include "proxies.h"
+#include "proxy.h"
 
 namespace xmol {
 namespace v1 {
