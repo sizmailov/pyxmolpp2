@@ -23,6 +23,13 @@ class BaseAtom;
 class BaseResidue;
 class BaseMolecule;
 
+/// lightweight proxies
+namespace proxy {
+class Atom;
+class Residue;
+class Molecule;
+} // namespace proxy
+
 /// ref counting proxies
 class AtomRef;
 class ResidueRef;

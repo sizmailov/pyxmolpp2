@@ -199,6 +199,7 @@ void Frame::check_references_integrity() {
     assert(mol_info.residues.m_end <= residues.data() + residues.size());
     for (auto& info : mol_info.residues) {
       assert(info.molecule == &mol_info);
+      static_cast<void>(info);
     }
     res_count += mol_info.residues.size();
   }
@@ -210,6 +211,7 @@ void Frame::check_references_integrity() {
     assert(res_info.atoms.m_end <= atoms.data() + atoms.size());
     for (auto& info : res_info.atoms) {
       assert(info.residue == &res_info);
+      static_cast<void>(info);
     }
     atom_count += res_info.atoms.size();
   }
