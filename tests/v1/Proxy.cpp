@@ -47,6 +47,12 @@ TEST_F(ProxyTests, span_count) {
   ASSERT_EQ(&r3.name(), &m3.residues()[1].name());
   ASSERT_EQ(&r4.name(), &m3.residues()[2].name());
 
+  auto atoms = frame.atoms();
+  int i = 0;
+  for (auto it = atoms.begin(); it != atoms.end(); ++it, ++i) {
+    ASSERT_EQ(atoms[i], *it);
+  }
+
   for (MoleculeRef& m : std::array{m1, m2, m3, m4}) {
     for (auto& a : m.atoms()) {
       ASSERT_EQ(&a.molecule().name(), &m.name())
