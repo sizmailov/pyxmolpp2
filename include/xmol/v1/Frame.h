@@ -12,7 +12,6 @@ class Frame : public selection::Observable<AtomRef>,
               public selection::Observable<ResidueRef>,
               public selection::Observable<MoleculeRef> {
 public:
-  struct base_tag {};
   Frame() = default;
   Frame(const Frame& other) = default;
   Frame(Frame&& other);
@@ -20,11 +19,14 @@ public:
   Frame& operator=(Frame&& other);
   ~Frame();
 
-  MoleculeRef add_molecule(const MoleculeName& name = MoleculeName());
 
-  [[nodiscard]] size_t n_atoms() const { return atoms.size(); }
-  [[nodiscard]] size_t n_residues() const { return residues.size(); }
-  [[nodiscard]] size_t n_molecules() const { return molecules.size(); }
+  [[nodiscard]] size_t n_atoms() const { return m_atoms.size(); }
+  [[nodiscard]] size_t n_residues() const { return m_residues.size(); }
+  [[nodiscard]] size_t n_molecules() const { return m_molecules.size(); }
+
+  [[nodiscard]] proxy::ProxySpan<proxy::Atom, BaseAtom> atoms();
+  [[nodiscard]] proxy::ProxySpan<proxy::Residue, BaseResidue> residues();
+  [[nodiscard]] proxy::ProxySpan<proxy::Molecule, BaseMolecule> molecules();
 
   [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
   [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size(); }
@@ -34,13 +36,15 @@ public:
   void reserve_atoms(size_t n);
   void reserve_residues(size_t n);
 
+  proxy::Molecule add_molecule(const MoleculeName& name);
 private:
-  BaseMolecule& add_molecule(const MoleculeName& name, base_tag);
-  BaseResidue& add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId, base_tag);
-  BaseAtom& add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId, base_tag);
+  BaseResidue& add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId);
+  BaseAtom& add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId);
 
-  ResidueRef add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId);
-  AtomRef add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId);
+  template<typename Observer>
+  void reg(Observer& o){
+    selection::Observable<Observer>::add_observer(o);
+  }
 
   XYZ& crd(BaseAtom& atom);
 
@@ -54,9 +58,9 @@ private:
   friend proxy::Residue;
   friend proxy::Molecule;
 
-  std::vector<BaseAtom> atoms;
-  std::vector<BaseResidue> residues{};
-  std::vector<BaseMolecule> molecules{};
+  std::vector<BaseAtom> m_atoms;
+  std::vector<BaseResidue> m_residues{};
+  std::vector<BaseMolecule> m_molecules{};
   std::vector<XYZ> coordinates;
 };
 

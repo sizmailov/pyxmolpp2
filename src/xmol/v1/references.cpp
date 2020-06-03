@@ -3,7 +3,9 @@
 
 using namespace xmol::v1;
 
-AtomRef::AtomRef(Atom&& atom) : proxy::Atom(atom), FrameObserver<AtomRef>(atom.frame()) {}
+AtomRef::AtomRef(Atom&& atom) : proxy::Atom(atom), FrameObserver<AtomRef>(atom.frame()) {
+    frame().reg(*this);
+}
 void AtomRef::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
   if (from_begin <= m_coords && m_coords < from_end) {
     m_coords = to_begin + (m_coords - from_begin);
@@ -20,22 +22,22 @@ void ResidueRef::on_base_residues_move(BaseResidue* from_begin, BaseResidue* fro
     m_residue = to_begin + (m_residue - from_begin);
   }
 }
-AtomRef ResidueRef::add_atom(const AtomName& atomName, const AtomId& atomId) {
-  return m_frame->add_atom(*this->m_residue, atomName, atomId);
-}
-ResidueRef::ResidueRef(proxy::Residue&& residue)
-        : proxy::Residue(residue), FrameObserver<ResidueRef>(residue.frame()) {}
 
-ResidueRef MoleculeRef::add_residue(const ResidueName& residueName, const ResidueId& residueId) {
-  return m_frame->add_residue(*this->m_molecule, residueName, residueId);
+ResidueRef::ResidueRef(proxy::Residue&& residue)
+        : proxy::Residue(residue), FrameObserver<ResidueRef>(residue.frame()) {
+    frame().reg(*this);
 }
+
+
 void MoleculeRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin) {
   if (from_begin <= m_molecule && m_molecule < from_end) {
     m_molecule = to_begin + (m_molecule - from_begin);
   }
 }
 MoleculeRef::MoleculeRef(proxy::Molecule&& molecule)
-        : proxy::Molecule(molecule), FrameObserver<MoleculeRef>(molecule.frame()) {}
+        : proxy::Molecule(molecule), FrameObserver<MoleculeRef>(molecule.frame()) {
+  frame().reg(*this);
+}
 
 template class xmol::v1::FrameObserver<xmol::v1::AtomRef>;
 template class xmol::v1::FrameObserver<xmol::v1::ResidueRef>;

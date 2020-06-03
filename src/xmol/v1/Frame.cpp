@@ -5,32 +5,25 @@
 
 using namespace xmol::v1;
 
-MoleculeRef Frame::add_molecule(const MoleculeName& name) {
-  MoleculeRef result(proxy::Molecule(add_molecule(name, base_tag{})));
-  selection::Observable<MoleculeRef>::add_observer(result);
-  return result;
-}
-
-BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId,
-                                base_tag) {
+BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId) {
   assert(mol.frame == this);
-  assert(molecules.data() <= &mol);
-  assert(&mol < molecules.data() + molecules.size());
+  assert(m_molecules.data() <= &mol);
+  assert(&mol < m_molecules.data() + m_molecules.size());
   check_references_integrity();
-  auto old_begin = residues.data();
-  auto old_end = residues.data() + residues.size();
+  auto old_begin = m_residues.data();
+  auto old_end = m_residues.data() + m_residues.size();
   auto old_insert_pos = mol.residues.m_end;
 
-  auto atoms_end = atoms.data();
-  if (mol.residues.m_end && mol.residues.m_end - 1 >= residues.data()) {
+  auto atoms_end = m_atoms.data();
+  if (mol.residues.m_end && mol.residues.m_end - 1 >= m_residues.data()) {
     atoms_end = (mol.residues.m_end - 1)->atoms.m_end;
   }
 
-  auto new_inserted_it = residues.insert(residues.begin() + (old_insert_pos - old_begin),
-                                         BaseResidue{residueName, residueId, {atoms_end, atoms_end}, &mol});
-  auto new_begin = residues.data();
-  auto new_inserted_pos = new_begin + (new_inserted_it - residues.begin());
-  auto new_end = residues.data() + residues.size();
+  auto new_inserted_it = m_residues.insert(m_residues.begin() + (old_insert_pos - old_begin),
+                                           BaseResidue{residueName, residueId, {atoms_end, atoms_end}, &mol});
+  auto new_begin = m_residues.data();
+  auto new_inserted_pos = new_begin + (new_inserted_it - m_residues.begin());
+  auto new_end = m_residues.data() + m_residues.size();
 
   // update pointers in mol
   if (!mol.residues.m_begin) {
@@ -42,7 +35,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
 
   if (new_begin != old_begin) {
     // update pointers in molecules before mol
-    for (auto it = molecules.data(); it != &mol; ++it) {
+    for (auto it = m_molecules.data(); it != &mol; ++it) {
       it->residues.rebase(old_begin, new_begin);
     }
     selection::Observable<ResidueRef>::notify(&ResidueRef::on_base_residues_move, old_begin, old_insert_pos, new_begin);
@@ -56,7 +49,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
   }
 
   // update pointers in molecules after mol
-  for (auto& it : future::Span(&mol + 1, molecules.data() + molecules.size())) {
+  for (auto& it : future::Span(&mol + 1, m_molecules.data() + m_molecules.size())) {
     it.residues.rebase(old_begin, new_begin + 1);
   }
 
@@ -73,15 +66,15 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
   return *new_inserted_pos;
 }
 
-BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId, base_tag) {
+BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId) {
   assert(residue.molecule);
   assert(residue.molecule->frame == this);
-  assert(residues.data() <= &residue);
-  assert(&residue < residues.data() + residues.size());
+  assert(m_residues.data() <= &residue);
+  assert(&residue < m_residues.data() + m_residues.size());
   check_references_integrity();
 
-  auto old_begin = atoms.data();
-  auto old_end = atoms.data() + atoms.size();
+  auto old_begin = m_atoms.data();
+  auto old_end = m_atoms.data() + m_atoms.size();
 
   auto old_begin_crd = coordinates.data();
   auto old_end_crd = coordinates.data() + coordinates.size();
@@ -90,13 +83,13 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   auto old_insert_crd_pos = old_begin_crd + (residue.atoms.m_end - old_begin);
 
   auto new_inserted_it =
-      atoms.insert(atoms.begin() + (old_insert_pos - old_begin), BaseAtom{atomName, atomId, &residue});
+      m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{atomName, atomId, &residue});
 
   auto new_inserted_crd_it = coordinates.insert(coordinates.begin() + (old_insert_pos - old_begin), XYZ{});
 
-  auto new_begin = atoms.data();
+  auto new_begin = m_atoms.data();
   auto new_begin_crd = coordinates.data();
-  auto new_inserted_pos = new_begin + (new_inserted_it - atoms.begin());
+  auto new_inserted_pos = new_begin + (new_inserted_it - m_atoms.begin());
   auto new_inserted_crd_pos = new_begin_crd + (new_inserted_crd_it - coordinates.begin());
 
   // update pointers in the residue & increase size
@@ -105,7 +98,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
 
   if (new_begin != old_begin) {
     // update pointers in residues before the residue
-    for (auto& rInfo : future::Span{residues.data(), &residue}) {
+    for (auto& rInfo : future::Span{m_residues.data(), &residue}) {
       rInfo.atoms.rebase(old_begin, new_begin);
     }
     selection::Observable<AtomRef>::notify(&AtomRef::on_base_atoms_move, old_begin, old_insert_pos, new_begin);
@@ -114,7 +107,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   }
 
   // update pointers in residues after the residue
-  for (auto& it : future::Span{&residue + 1, residues.data() + residues.size()}) {
+  for (auto& it : future::Span{&residue + 1, m_residues.data() + m_residues.size()}) {
     it.atoms.rebase(old_begin, new_begin + 1);
   }
 
@@ -125,35 +118,26 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   check_references_integrity();
   return *new_inserted_pos;
 }
-ResidueRef Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId) {
-  ResidueRef result(proxy::Residue(add_residue(mol, residueName, residueId, base_tag{})));
-  selection::Observable<ResidueRef>::add_observer(result);
-  return result;
-}
-AtomRef Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId) {
-  AtomRef result(proxy::Atom(add_atom(residue, atomName, atomId, base_tag{})));
-  selection::Observable<AtomRef>::add_observer(result);
-  return result;
-}
-BaseMolecule& Frame::add_molecule(const MoleculeName& name, Frame::base_tag) {
+
+proxy::Molecule Frame::add_molecule(const MoleculeName& name) {
   check_references_integrity();
-  auto old_begin = molecules.data();
-  auto old_end = old_begin + molecules.size();
-  auto residues_end = residues.data() + residues.size();
-  molecules.emplace_back(BaseMolecule{this, name, {residues_end, residues_end}});
-  auto new_begin = molecules.data();
+  auto old_begin = m_molecules.data();
+  auto old_end = old_begin + m_molecules.size();
+  auto residues_end = m_residues.data() + m_residues.size();
+  m_molecules.emplace_back(BaseMolecule{this, name, {residues_end, residues_end}});
+  auto new_begin = m_molecules.data();
 
   if (old_begin != new_begin) {
     selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_base_molecules_move, old_begin, old_end, new_begin);
     // update pointers in residues
-    for (auto& mol_info : future::Span{new_begin, molecules.size()}) {
+    for (auto& mol_info : future::Span{new_begin, m_molecules.size()}) {
       for (auto& info : mol_info.residues) {
         info.molecule = &mol_info;
       }
     }
   }
   check_references_integrity();
-  return molecules.back();
+  return proxy::Molecule(m_molecules.back());
 }
 Frame& Frame::operator=(Frame&& other) {
   if (this != &other) {
@@ -163,17 +147,17 @@ Frame& Frame::operator=(Frame&& other) {
     selection::Observable<AtomRef>::notify(&AtomRef::on_frame_move, other, *this);
     selection::Observable<ResidueRef>::notify(&ResidueRef::on_frame_move, other, *this);
     selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_frame_move, other, *this);
-    atoms = std::move(other.atoms);
-    residues = std::move(other.residues);
-    molecules = std::move(other.molecules);
+    m_atoms = std::move(other.m_atoms);
+    m_residues = std::move(other.m_residues);
+    m_molecules = std::move(other.m_molecules);
     coordinates = std::move(other.coordinates);
   }
   return *this;
 }
 Frame::Frame(Frame&& other)
     : selection::Observable<AtomRef>(std::move(other)), selection::Observable<ResidueRef>(std::move(other)),
-      selection::Observable<MoleculeRef>(std::move(other)), atoms(std::move(other.atoms)),
-      residues(std::move(other.residues)), molecules(std::move(other.molecules)),
+      selection::Observable<MoleculeRef>(std::move(other)), m_atoms(std::move(other.m_atoms)),
+      m_residues(std::move(other.m_residues)), m_molecules(std::move(other.m_molecules)),
       coordinates(std::move(other.coordinates)) {
   selection::Observable<AtomRef>::notify(&AtomRef::on_frame_move, other, *this);
   selection::Observable<ResidueRef>::notify(&ResidueRef::on_frame_move, other, *this);
@@ -189,42 +173,51 @@ void Frame::check_references_integrity() {
   return; // disables check completely in release mode
 #endif
   // disable except for smallest debug cases
-  if (molecules.size() > 10 || residues.size() > 10 || atoms.size() > 10) {
+  if (m_molecules.size() > 10 || m_residues.size() > 10 || m_atoms.size() > 10) {
     return;
   }
   size_t res_count = 0;
-  for (auto& mol_info : molecules) {
-    assert(residues.data() <= mol_info.residues.m_begin);
+  for (auto& mol_info : m_molecules) {
+    assert(m_residues.data() <= mol_info.residues.m_begin);
     assert(mol_info.residues.m_begin <= mol_info.residues.m_end);
-    assert(mol_info.residues.m_end <= residues.data() + residues.size());
+    assert(mol_info.residues.m_end <= m_residues.data() + m_residues.size());
     for (auto& info : mol_info.residues) {
       assert(info.molecule == &mol_info);
       static_cast<void>(info);
     }
     res_count += mol_info.residues.size();
   }
-  assert(residues.size() == res_count);
+  assert(m_residues.size() == res_count);
   size_t atom_count = 0;
-  for (auto& res_info : residues) {
-    assert(atoms.data() <= res_info.atoms.m_begin);
+  for (auto& res_info : m_residues) {
+    assert(m_atoms.data() <= res_info.atoms.m_begin);
     assert(res_info.atoms.m_begin <= res_info.atoms.m_end);
-    assert(res_info.atoms.m_end <= atoms.data() + atoms.size());
+    assert(res_info.atoms.m_end <= m_atoms.data() + m_atoms.size());
     for (auto& info : res_info.atoms) {
       assert(info.residue == &res_info);
       static_cast<void>(info);
     }
     atom_count += res_info.atoms.size();
   }
-  assert(atoms.size() == atom_count);
+  assert(m_atoms.size() == atom_count);
 }
-void Frame::reserve_molecules(size_t n) { molecules.reserve(n); }
+void Frame::reserve_molecules(size_t n) { m_molecules.reserve(n); }
 void Frame::reserve_atoms(size_t n) {
-  atoms.reserve(n);
+  m_atoms.reserve(n);
   coordinates.reserve(n);
 }
-void Frame::reserve_residues(size_t n) { residues.reserve(n); }
+void Frame::reserve_residues(size_t n) { m_residues.reserve(n); }
 XYZ& Frame::crd(BaseAtom& atom) {
-  assert(atoms.data() <= &atom);
-  assert(&atom <= atoms.data() + atoms.size());
-  return coordinates[&atom - atoms.data()];
+  assert(m_atoms.data() <= &atom);
+  assert(&atom <= m_atoms.data() + m_atoms.size());
+  return coordinates[&atom - m_atoms.data()];
+}
+proxy::ProxySpan<proxy::Atom, BaseAtom> Frame::atoms() {
+  return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_atoms.data(), m_atoms.size());
+}
+proxy::ProxySpan<proxy::Residue, BaseResidue> Frame::residues() {
+  return proxy::ProxySpan<proxy::Residue, BaseResidue>(m_residues.data(), m_residues.size());
+}
+proxy::ProxySpan<proxy::Molecule, BaseMolecule> Frame::molecules() {
+  return proxy::ProxySpan<proxy::Molecule, BaseMolecule>(m_molecules.data(), m_molecules.size());
 }

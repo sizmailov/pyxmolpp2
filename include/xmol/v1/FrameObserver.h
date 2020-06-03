@@ -13,9 +13,6 @@ public:
   FrameObserver& operator=(FrameObserver&& rhs) noexcept;
   FrameObserver& operator=(const FrameObserver& rhs);
 
-  const Frame& frame() const { return *m_frame; }
-  Frame& frame() { return *m_frame; }
-
 protected:
   friend Frame;
   FrameObserver(Frame& frame) : m_frame(&frame) {}

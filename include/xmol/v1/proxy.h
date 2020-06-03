@@ -7,6 +7,17 @@ namespace xmol::v1::proxy {
 class Atom;
 class Residue;
 
+
+/**
+ * Molecule, Residue and Atom classes are proxies (pointer wrappers) to corresponding underlying molecular data.
+ * No ref counting/access validation actions performed. For ref counting counter parts see "references.h"
+ *
+ * Instances are invalidated on insertion/deletion of corresponding entity to parent frame.
+ * Access to invalidated instance most likely would lead to immediate SEGFAULT (if you are lucky)
+ * 
+ * */
+
+/// Molecule proxy
 class Molecule {
 public:
   [[nodiscard]] const MoleculeName& name() const;
@@ -20,7 +31,7 @@ public:
   ProxySpan<Atom, BaseAtom> atoms();
 
   bool operator!=(const Molecule& rhs) { return m_molecule != rhs.m_molecule; }
-
+  Residue add_residue(const ResidueName& residueName, const ResidueId& residueId);
 private:
   friend Atom;
   friend Residue;
@@ -32,6 +43,7 @@ private:
   Molecule() = default; // constructs object in invalid state (with nullptrs)
 };
 
+/// Residue proxy
 class Residue {
 public:
   [[nodiscard]] const ResidueName& name() const;
@@ -46,9 +58,11 @@ public:
   ProxySpan<Atom, BaseAtom> atoms();
 
   bool operator!=(const Residue& rhs) { return m_residue != rhs.m_residue; }
+  Atom add_atom(const AtomName& atomName, const AtomId& atomId);
 
 private:
   friend Atom;
+  friend Molecule;
   friend Frame;
   friend ResidueRef;
   friend ProxySpan<Residue, BaseResidue>;
@@ -57,6 +71,7 @@ private:
   Residue() = default; // constructs object in invalid state (with nullptrs)
 };
 
+/// Atom proxy
 class Atom {
 public:
   Atom(const Atom& rhs) = default;

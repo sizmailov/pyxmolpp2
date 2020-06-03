@@ -37,6 +37,9 @@ proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Molecule::atoms() {
   return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
                                                  (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
 }
+proxy::Residue proxy::Molecule::add_residue(const ResidueName& residueName, const ResidueId& residueId) {
+  return proxy::Residue(frame().add_residue(*m_molecule, residueName, residueId));
+}
 
 const ResidueName& proxy::Residue::name() const {
   assert(m_residue);
@@ -59,6 +62,9 @@ proxy::Molecule proxy::Residue::molecule() noexcept { return proxy::Molecule(*m_
 Frame& proxy::Residue::frame() noexcept { return *m_residue->molecule->frame; }
 proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Residue::atoms() {
   return proxy::ProxySpan<proxy::Atom, BaseAtom>{m_residue->atoms};
+}
+proxy::Atom proxy::Residue::add_atom(const AtomName& atomName, const AtomId& atomId) {
+  return proxy::Atom(frame().add_atom(*m_residue, atomName, atomId));
 }
 
 const AtomId& proxy::Atom::id() const { return m_atom->id; }

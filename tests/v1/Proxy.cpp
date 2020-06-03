@@ -10,21 +10,21 @@ class ProxyTests : public Test {};
 TEST_F(ProxyTests, span_count) {
   auto frame = Frame();
 
-  auto m1 = frame.add_molecule(MoleculeName("A"));
-  auto m2 = frame.add_molecule(MoleculeName("B"));
-  auto m3 = frame.add_molecule(MoleculeName("C"));
-  auto m4 = frame.add_molecule(MoleculeName("D"));
+  MoleculeRef m1 = frame.add_molecule(MoleculeName("A"));
+  MoleculeRef m2 = frame.add_molecule(MoleculeName("B"));
+  MoleculeRef m3 = frame.add_molecule(MoleculeName("C"));
+  MoleculeRef m4 = frame.add_molecule(MoleculeName("D"));
 
-  auto r2 = m3.add_residue(ResidueName("one"), ResidueId(1));
-  auto r3 = m3.add_residue(ResidueName("two"), ResidueId(2));
-  auto r4 = m3.add_residue(ResidueName("two"), ResidueId(3));
-  auto r1 = m2.add_residue(ResidueName("thr"), ResidueId(1));
-  auto r0 = m1.add_residue(ResidueName("fou"), ResidueId(1));
+  ResidueRef r2 = m3.add_residue(ResidueName("one"), ResidueId(1));
+  ResidueRef r3 = m3.add_residue(ResidueName("two"), ResidueId(2));
+  ResidueRef r4 = m3.add_residue(ResidueName("two"), ResidueId(3));
+  ResidueRef r1 = m2.add_residue(ResidueName("thr"), ResidueId(1));
+  ResidueRef r0 = m1.add_residue(ResidueName("fou"), ResidueId(1));
 
-  auto a1 = r3.add_atom(AtomName("X"), AtomId(1));
-  auto a2 = r2.add_atom(AtomName("Y"), AtomId(2));
-  auto a3 = r1.add_atom(AtomName("Z"), AtomId(2));
-  auto a4 = r0.add_atom(AtomName("W"), AtomId(2));
+  AtomRef a1 = r3.add_atom(AtomName("X"), AtomId(1));
+  AtomRef a2 = r2.add_atom(AtomName("Y"), AtomId(2));
+  AtomRef a3 = r1.add_atom(AtomName("Z"), AtomId(2));
+  AtomRef a4 = r0.add_atom(AtomName("W"), AtomId(2));
 
   ASSERT_EQ(m1.size(), 1);
   ASSERT_EQ(m1.residues().size(), 1);
