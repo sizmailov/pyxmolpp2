@@ -8,14 +8,13 @@ template <typename Proxy, typename T> class ProxySpan {
 public:
   class Iterator {
   public:
-    explicit Iterator(T* ptr);
+    Iterator(T* ptr, T* end);
     Proxy* operator->();
     Proxy& operator*();
-    Iterator operator++();
+    Iterator& operator++();
     bool operator!=(const Iterator& other);
 
   private:
-    T* ptr;
     Proxy p;
   };
   ProxySpan() = default;

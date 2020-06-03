@@ -13,12 +13,12 @@ xmol::v1::proxy::ProxySpan<Proxy, T>::ProxySpan(T* b, size_t n) : m_begin(b), m_
 
 template <typename Proxy, typename T>
 typename xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator xmol::v1::proxy::ProxySpan<Proxy, T>::begin() {
-  return Iterator(m_begin);
+  return Iterator(m_begin, m_end);
 }
 
 template <typename Proxy, typename T>
 typename xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator xmol::v1::proxy::ProxySpan<Proxy, T>::end() {
-  return Iterator(m_end);
+  return Iterator(m_end, m_end);
 }
 
 template <typename Proxy, typename T> void xmol::v1::proxy::ProxySpan<Proxy, T>::rebase(T* from, T* to) {
@@ -36,21 +36,20 @@ template <typename Proxy, typename T> Proxy xmol::v1::proxy::ProxySpan<Proxy, T>
   return Proxy(*(m_begin + i));
 }
 
-template <typename Proxy, typename T> xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::Iterator(T* ptr) : ptr(ptr) {}
+template <typename Proxy, typename T> xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::Iterator(T* ptr, T* end) : p(ptr, end) {}
 template <typename Proxy, typename T> Proxy* xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::operator->() {
-  p = Proxy(*ptr);
   return &p;
 }
 template <typename Proxy, typename T> Proxy& xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::operator*() {
-  p = Proxy(*ptr);
   return p;
 }
 template <typename Proxy, typename T>
-typename xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::operator++() {
-  return Iterator(++ptr);
+typename xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator& xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::operator++() {
+  p.advance();
+  return *this;
 }
 template <typename Proxy, typename T>
 bool xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator::operator!=(
     const xmol::v1::proxy::ProxySpan<Proxy, T>::Iterator& other) {
-  return ptr != other.ptr;
+  return p != other.p;
 }

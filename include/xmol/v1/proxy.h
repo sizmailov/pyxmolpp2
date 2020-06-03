@@ -30,7 +30,7 @@ public:
   ProxySpan<Residue, BaseResidue> residues();
   ProxySpan<Atom, BaseAtom> atoms();
 
-  bool operator!=(const Molecule& rhs) { return m_molecule != rhs.m_molecule; }
+  bool operator!=(const Molecule& rhs) const { return m_molecule != rhs.m_molecule; }
   Residue add_residue(const ResidueName& residueName, const ResidueId& residueId);
 private:
   friend Atom;
@@ -38,8 +38,10 @@ private:
   friend MoleculeRef;
   friend Frame;
   friend ProxySpan<Molecule, BaseMolecule>;
-  explicit Molecule(BaseMolecule& molecule);
   BaseMolecule* m_molecule;
+  explicit Molecule(BaseMolecule& molecule);
+  Molecule(BaseMolecule* ptr, BaseMolecule* end);
+  void advance();
   Molecule() = default; // constructs object in invalid state (with nullptrs)
 };
 
@@ -57,7 +59,7 @@ public:
 
   ProxySpan<Atom, BaseAtom> atoms();
 
-  bool operator!=(const Residue& rhs) { return m_residue != rhs.m_residue; }
+  bool operator!=(const Residue& rhs) const { return m_residue != rhs.m_residue; }
   Atom add_atom(const AtomName& atomName, const AtomId& atomId);
 
 private:
@@ -68,6 +70,8 @@ private:
   friend ProxySpan<Residue, BaseResidue>;
   explicit Residue(BaseResidue& residue);
   BaseResidue* m_residue = nullptr;
+  Residue(BaseResidue* ptr, BaseResidue* end);
+  void advance();
   Residue() = default; // constructs object in invalid state (with nullptrs)
 };
 
@@ -92,8 +96,11 @@ public:
   Molecule molecule() noexcept;
   Frame& frame() noexcept;
 
-  bool operator!=(const Atom& rhs) {
+  bool operator!=(const Atom& rhs) const {
     return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
+  }
+  bool operator==(const Atom& rhs) const {
+    return m_atom == rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
   }
 
 protected:
@@ -104,8 +111,9 @@ protected:
   explicit Atom(BaseAtom& atom);
   XYZ* m_coords = nullptr;
   BaseAtom* m_atom = nullptr;
-
 private:
+  Atom(BaseAtom* ptr, BaseAtom* end);
+  void advance();
   Atom() = default; // constructs object in invalid state (with nullptrs)
 };
 } // namespace xmol::v1::proxy

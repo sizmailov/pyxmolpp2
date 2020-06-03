@@ -40,6 +40,9 @@ proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Molecule::atoms() {
 proxy::Residue proxy::Molecule::add_residue(const ResidueName& residueName, const ResidueId& residueId) {
   return proxy::Residue(frame().add_residue(*m_molecule, residueName, residueId));
 }
+proxy::Molecule::Molecule(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr) {}
+
+void xmol::v1::proxy::Molecule::advance() { ++m_molecule; }
 
 const ResidueName& proxy::Residue::name() const {
   assert(m_residue);
@@ -66,6 +69,8 @@ proxy::ProxySpan<proxy::Atom, BaseAtom> proxy::Residue::atoms() {
 proxy::Atom proxy::Residue::add_atom(const AtomName& atomName, const AtomId& atomId) {
   return proxy::Atom(frame().add_atom(*m_residue, atomName, atomId));
 }
+xmol::v1::proxy::Residue::Residue(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr) {}
+void xmol::v1::proxy::Residue::advance() { ++m_residue; }
 
 const AtomId& proxy::Atom::id() const { return m_atom->id; }
 
@@ -89,6 +94,16 @@ proxy::Atom& proxy::Atom::r(const XYZ& value) {
 }
 proxy::Molecule proxy::Atom::molecule() noexcept { return proxy::Molecule(*m_atom->residue->molecule); }
 Frame& proxy::Atom::frame() noexcept { return *m_atom->residue->molecule->frame; }
+xmol::v1::proxy::Atom::Atom(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
+  if (ptr != end) {
+    m_coords = &ptr->residue->molecule->frame->crd(*ptr);
+  }
+}
+
+void xmol::v1::proxy::Atom::advance() {
+  ++m_atom;
+  ++m_coords;
+}
 
 template class proxy::ProxySpan<proxy::Atom, BaseAtom>;
 template class proxy::ProxySpan<proxy::Residue, BaseResidue>;
