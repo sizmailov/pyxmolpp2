@@ -39,7 +39,7 @@ protected:
 //    m_end = to + (m_end - from);
 //  }
 
-public:
+private:
   T* m_begin = nullptr;
   T* m_end = nullptr;
 };
