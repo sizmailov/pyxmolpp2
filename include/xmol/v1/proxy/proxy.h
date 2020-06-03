@@ -1,15 +1,13 @@
 #pragma once
-#include "base.h"
-#include "proxy-span.h"
+#include "../base.h"
+#include "ProxySpan.h"
 #include "Selection.h"
 
 namespace xmol::v1 {
 namespace proxy {
-class Atom;
-class Residue;
 
 /**
- * Molecule, Residue and Atom classes are proxies (pointer wrappers) to corresponding underlying molecular data.
+ * Molecule, Residue and AtomRef classes are proxies (pointer wrappers) to corresponding underlying molecular data.
  * No ref counting/access validation actions performed. For ref counting counter parts see "references.h"
  *
  * Instances are invalidated on insertion/deletion of corresponding entity to parent frame.
@@ -18,7 +16,7 @@ class Residue;
  * */
 
 /// Molecule proxy
-class Molecule {
+class MoleculeRef {
 public:
   [[nodiscard]] const MoleculeName& name() const {
     assert(m_molecule);
@@ -44,37 +42,37 @@ public:
   }
 
   Frame& frame() { return *m_molecule->frame; };
-  ProxySpan<Residue, BaseResidue> residues() {
-    return proxy::ProxySpan<proxy::Residue, BaseResidue>{m_molecule->residues};
+  ProxySpan<ResidueRef, BaseResidue> residues() {
+    return proxy::ProxySpan<proxy::ResidueRef, BaseResidue>{m_molecule->residues};
   }
-  ProxySpan<Atom, BaseAtom> atoms() {
+  ProxySpan<AtomRef, BaseAtom> atoms() {
     if (empty())
       return {};
     assert(m_molecule->residues.m_begin);
     assert(m_molecule->residues.m_end);
-    return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
+    return proxy::ProxySpan<proxy::AtomRef, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
                                                    (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
-  bool operator!=(const Molecule& rhs) const { return m_molecule != rhs.m_molecule; }
-  Residue add_residue(const ResidueName& residueName, const ResidueId& residueId);
+  bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
+  ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId);
 
 private:
-  friend Atom;
-  friend Residue;
-  friend MoleculeRef;
+  friend AtomRef;
+  friend ResidueRef;
+  friend smart::MoleculeSmartRef;
   friend Frame;
-  friend ProxySpan<Molecule, BaseMolecule>;
-  friend Selection<proxy::Molecule>::Comparator;
+  friend ProxySpan<MoleculeRef, BaseMolecule>;
+  friend Selection<MoleculeRef>::Comparator;
   BaseMolecule* m_molecule;
-  explicit Molecule(BaseMolecule& molecule) : m_molecule(&molecule){};
-  Molecule(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};
+  explicit MoleculeRef(BaseMolecule& molecule) : m_molecule(&molecule){};
+  MoleculeRef(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};
   void advance() { ++m_molecule; };
-  Molecule() = default; // constructs object in invalid state (with nullptrs)
+  MoleculeRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
 /// Residue proxy
-class Residue {
+class ResidueRef {
 public:
   [[nodiscard]] const ResidueName& name() const {
     assert(m_residue);
@@ -98,35 +96,35 @@ public:
     return m_residue->atoms.m_end - m_residue->atoms.m_begin;
   }
 
-  Molecule molecule() { return Molecule(*m_residue->molecule); }
+  MoleculeRef molecule() { return MoleculeRef(*m_residue->molecule); }
   Frame& frame() { return *m_residue->molecule->frame; }
 
-  ProxySpan<Atom, BaseAtom> atoms() { return ProxySpan<Atom, BaseAtom>{m_residue->atoms}; }
+  ProxySpan<AtomRef, BaseAtom> atoms() { return ProxySpan<AtomRef, BaseAtom>{m_residue->atoms}; }
 
-  bool operator!=(const Residue& rhs) const { return m_residue != rhs.m_residue; }
-  Atom add_atom(const AtomName& atomName, const AtomId& atomId);
+  bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
+  AtomRef add_atom(const AtomName& atomName, const AtomId& atomId);
 
 private:
-  friend Atom;
-  friend Molecule;
+  friend AtomRef;
+  friend MoleculeRef;
   friend Frame;
-  friend ResidueRef;
-  friend ProxySpan<Residue, BaseResidue>;
-  friend Selection<proxy::Residue>::Comparator;
-  explicit Residue(BaseResidue& residue) : m_residue(&residue){};
+  friend smart::ResidueSmartRef;
+  friend ProxySpan<ResidueRef, BaseResidue>;
+  friend Selection<ResidueRef>::Comparator;
+  explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
-  Residue(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
+  ResidueRef(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
   void advance() { ++m_residue; }
-  Residue() = default; // constructs object in invalid state (with nullptrs)
+  ResidueRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
-/// Atom proxy
-class Atom {
+/// AtomRef proxy
+class AtomRef {
 public:
-  Atom(const Atom& rhs) = default;
-  Atom(Atom&& rhs) noexcept = default;
-  Atom& operator=(const Atom& rhs) = default;
-  Atom& operator=(Atom&& rhs) noexcept = default;
+  AtomRef(const AtomRef& rhs) = default;
+  AtomRef(AtomRef&& rhs) noexcept = default;
+  AtomRef& operator=(const AtomRef& rhs) = default;
+  AtomRef& operator=(AtomRef&& rhs) noexcept = default;
 
   [[nodiscard]] const AtomId& id() const { return m_atom->id; };
   void id(const AtomId& value) { m_atom->id = value; }
@@ -137,54 +135,54 @@ public:
   [[nodiscard]] const XYZ& r() const { return *m_coords; }
   void r(const XYZ& value) { *m_coords = value; }
 
-  Residue residue() { return Residue(*m_atom->residue); }
-  Molecule molecule() { return Molecule(*m_atom->residue->molecule); };
+  ResidueRef residue() { return ResidueRef(*m_atom->residue); }
+  MoleculeRef molecule() { return MoleculeRef(*m_atom->residue->molecule); };
   Frame& frame() { return *m_atom->residue->molecule->frame; };
 
-  bool operator!=(const Atom& rhs) const {
+  bool operator!=(const AtomRef& rhs) const {
     return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
   }
-  bool operator==(const Atom& rhs) const {
+  bool operator==(const AtomRef& rhs) const {
     return m_atom == rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
   }
 
 protected:
   friend Frame;
-  friend Residue;
-  friend AtomRef;
-  friend ProxySpan<Atom, BaseAtom>;
-  friend Selection<proxy::Atom>::Comparator;
-  explicit Atom(BaseAtom& atom);
+  friend ResidueRef;
+  friend smart::AtomSmartRef;
+  friend ProxySpan<AtomRef, BaseAtom>;
+  friend Selection<proxy::AtomRef>::Comparator;
+  explicit AtomRef(BaseAtom& atom);
   XYZ* m_coords = nullptr;
   BaseAtom* m_atom = nullptr;
 
 private:
-  Atom(BaseAtom* ptr, BaseAtom* end);
+  AtomRef(BaseAtom* ptr, BaseAtom* end);
   void advance() {
     ++m_atom;
     ++m_coords;
   }
-  Atom() = default; // constructs object in invalid state (with nullptrs)
+  AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
 } // namespace proxy
 
 template <>
-struct Selection<proxy::Atom>::Comparator {
-  bool operator()(const proxy::Atom& p1, const proxy::Atom& p2){
+struct Selection<proxy::AtomRef>::Comparator {
+  bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2){
     return p1.m_atom < p2.m_atom;
   }
 };
 
 template <>
-struct Selection<proxy::Residue>::Comparator {
-  bool operator()(const proxy::Residue& p1, const proxy::Residue& p2){
+struct Selection<proxy::ResidueRef>::Comparator {
+  bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2){
     return p1.m_residue < p2.m_residue;
   }
 };
 
 template <>
-struct Selection<proxy::Molecule>::Comparator {
-  bool operator()(const proxy::Molecule& p1, const proxy::Molecule& p2){
+struct Selection<proxy::MoleculeRef>::Comparator {
+  bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2){
     return p1.m_molecule < p2.m_molecule;
   }
 };

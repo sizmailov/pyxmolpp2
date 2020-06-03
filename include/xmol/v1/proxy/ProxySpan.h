@@ -1,5 +1,5 @@
 #pragma once
-#include "xmol/v1/future/span.h"
+#include "../future/span.h"
 #include <cstdlib>
 
 namespace xmol::v1::proxy {

@@ -25,15 +25,18 @@ struct BaseMolecule;
 
 /// lightweight proxies
 namespace proxy {
-class Atom;
-class Residue;
-class Molecule;
-} // namespace proxy
-
-/// ref counting proxies
 class AtomRef;
 class ResidueRef;
 class MoleculeRef;
+
+namespace smart {
+/// ref counting proxies
+class AtomSmartRef;
+class ResidueSmartRef;
+class MoleculeSmartRef;
+
+} // namespace smart
+} // namespace proxy
 
 /// life holder
 class Frame;

@@ -3,28 +3,28 @@
 #include "xmol/v1/Frame.h"
 
 using ::testing::Test;
-using namespace xmol::v1;
+using namespace xmol::v1; 
 
 class ProxyTests : public Test {};
 
 TEST_F(ProxyTests, span_count) {
   auto frame = Frame();
 
-  MoleculeRef m1 = frame.add_molecule(MoleculeName("A"));
-  MoleculeRef m2 = frame.add_molecule(MoleculeName("B"));
-  MoleculeRef m3 = frame.add_molecule(MoleculeName("C"));
-  MoleculeRef m4 = frame.add_molecule(MoleculeName("D"));
+  MoleculeSmartRef m1 = frame.add_molecule(MoleculeName("A"));
+  MoleculeSmartRef m2 = frame.add_molecule(MoleculeName("B"));
+  MoleculeSmartRef m3 = frame.add_molecule(MoleculeName("C"));
+  MoleculeSmartRef m4 = frame.add_molecule(MoleculeName("D"));
 
-  ResidueRef r2 = m3.add_residue(ResidueName("one"), ResidueId(1));
-  ResidueRef r3 = m3.add_residue(ResidueName("two"), ResidueId(2));
-  ResidueRef r4 = m3.add_residue(ResidueName("two"), ResidueId(3));
-  ResidueRef r1 = m2.add_residue(ResidueName("thr"), ResidueId(1));
-  ResidueRef r0 = m1.add_residue(ResidueName("fou"), ResidueId(1));
+  ResidueSmartRef r2 = m3.add_residue(ResidueName("one"), ResidueId(1));
+  ResidueSmartRef r3 = m3.add_residue(ResidueName("two"), ResidueId(2));
+  ResidueSmartRef r4 = m3.add_residue(ResidueName("two"), ResidueId(3));
+  ResidueSmartRef r1 = m2.add_residue(ResidueName("thr"), ResidueId(1));
+  ResidueSmartRef r0 = m1.add_residue(ResidueName("fou"), ResidueId(1));
 
-  AtomRef a1 = r3.add_atom(AtomName("X"), AtomId(1));
-  AtomRef a2 = r2.add_atom(AtomName("Y"), AtomId(2));
-  AtomRef a3 = r1.add_atom(AtomName("Z"), AtomId(2));
-  AtomRef a4 = r0.add_atom(AtomName("W"), AtomId(2));
+  AtomSmartRef a1 = r3.add_atom(AtomName("X"), AtomId(1));
+  AtomSmartRef a2 = r2.add_atom(AtomName("Y"), AtomId(2));
+  AtomSmartRef a3 = r1.add_atom(AtomName("Z"), AtomId(2));
+  AtomSmartRef a4 = r0.add_atom(AtomName("W"), AtomId(2));
 
   ASSERT_EQ(m1.size(), 1);
   ASSERT_EQ(m1.residues().size(), 1);
@@ -53,7 +53,7 @@ TEST_F(ProxyTests, span_count) {
     ASSERT_EQ(atoms[i], *it);
   }
 
-  for (MoleculeRef& m : std::array{m1, m2, m3, m4}) {
+  for (MoleculeSmartRef& m : std::array{m1, m2, m3, m4}) {
     for (auto& a : m.atoms()) {
       ASSERT_EQ(&a.molecule().name(), &m.name())
           << a.molecule().name().str() << "." << a.residue().name().str() << "." << a.name().str() << std::endl;

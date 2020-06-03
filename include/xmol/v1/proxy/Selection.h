@@ -27,7 +27,7 @@ public:
   template <typename Predicate>
   [[nodiscard]] Selection filter(Predicate&& p) {
     Selection<T> result;
-    for (auto& x : *this) {
+    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
       if (p(x)) {
         result.m_data.push_back(x);
       }

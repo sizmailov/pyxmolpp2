@@ -33,16 +33,16 @@ TEST_F(SelectionTests, filter) {
   auto frame = make_polyglycines({{"A", 10}, {"B", 20}});
   auto atoms = frame.atoms();
   EXPECT_EQ(atoms.size(), 30 * 7);
-  Selection<proxy::Atom> sel(atoms.begin(), atoms.end());
+  Selection<proxy::AtomRef> sel(atoms.begin(), atoms.end());
   EXPECT_EQ(sel.size(), atoms.size());
-  auto ca = sel.filter([](proxy::Atom& atom) { return atom.name() == "CA"; });
+  auto ca = sel.filter([](proxy::AtomRef& atom) { return atom.name() == "CA"; });
   EXPECT_EQ(ca.size(), 30);
-  auto a_ca = ca.filter([](proxy::Atom& atom) { return atom.molecule().name() == "A"; });
-  auto b_ca = ca.filter([](proxy::Atom& atom) { return atom.molecule().name() == "B"; });
+  auto a_ca = ca.filter([](proxy::AtomRef& atom) { return atom.molecule().name() == "A"; });
+  auto b_ca = ca.filter([](proxy::AtomRef& atom) { return atom.molecule().name() == "B"; });
   EXPECT_EQ(a_ca.size(), 10);
   EXPECT_EQ(b_ca.size(), 20);
-  auto a_r1_ca = a_ca.filter([](proxy::Atom& atom) { return atom.residue().id() == 1; });
-  auto b_r1_ca = b_ca.filter([](proxy::Atom& atom) { return atom.residue().id() == 1; });
+  auto a_r1_ca = a_ca.filter([](proxy::AtomRef& atom) { return atom.residue().id() == 1; });
+  auto b_r1_ca = b_ca.filter([](proxy::AtomRef& atom) { return atom.residue().id() == 1; });
   EXPECT_EQ(a_r1_ca.size(), 1);
   EXPECT_EQ(b_r1_ca.size(), 0);
   

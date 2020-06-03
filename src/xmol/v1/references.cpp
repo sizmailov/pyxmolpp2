@@ -1,44 +1,45 @@
-#include "xmol/v1/references.h"
-#include "xmol/v1/FrameObserverImpl.h"
+#include "xmol/v1/proxy/smart/references.h"
+#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1;
+using namespace xmol::v1::proxy::smart;
 
-AtomRef::AtomRef(Atom&& atom) : proxy::Atom(atom), FrameObserver<AtomRef>(atom.frame()) {
-    frame().reg(*this);
+AtomSmartRef::AtomSmartRef(AtomRef&& atom) : AtomRef(atom), FrameObserver<AtomSmartRef>(atom.frame()) {
+  frame().reg(*this);
 }
-void AtomRef::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
+void AtomSmartRef::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
   if (from_begin <= m_coords && m_coords < from_end) {
     m_coords = to_begin + (m_coords - from_begin);
   }
 }
-void AtomRef::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin) {
+void AtomSmartRef::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin) {
   if (from_begin <= m_atom && m_atom < from_end) {
     m_atom = to_begin + (m_atom - from_begin);
   }
 }
 
-void ResidueRef::on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin) {
+void ResidueSmartRef::on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin) {
   if (from_begin <= m_residue && m_residue < from_end) {
     m_residue = to_begin + (m_residue - from_begin);
   }
 }
 
-ResidueRef::ResidueRef(proxy::Residue&& residue)
-        : proxy::Residue(residue), FrameObserver<ResidueRef>(residue.frame()) {
-    frame().reg(*this);
+ResidueSmartRef::ResidueSmartRef(ResidueRef&& residue)
+    : ResidueRef(residue), FrameObserver<ResidueSmartRef>(residue.frame()) {
+  frame().reg(*this);
 }
 
-
-void MoleculeRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin) {
+void MoleculeSmartRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end,
+                                              BaseMolecule* to_begin) {
   if (from_begin <= m_molecule && m_molecule < from_end) {
     m_molecule = to_begin + (m_molecule - from_begin);
   }
 }
-MoleculeRef::MoleculeRef(proxy::Molecule&& molecule)
-        : proxy::Molecule(molecule), FrameObserver<MoleculeRef>(molecule.frame()) {
+
+MoleculeSmartRef::MoleculeSmartRef(proxy::MoleculeRef&& molecule)
+    : proxy::MoleculeRef(molecule), FrameObserver<MoleculeSmartRef>(molecule.frame()) {
   frame().reg(*this);
 }
 
-template class xmol::v1::FrameObserver<xmol::v1::AtomRef>;
-template class xmol::v1::FrameObserver<xmol::v1::ResidueRef>;
-template class xmol::v1::FrameObserver<xmol::v1::MoleculeRef>;
+template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::AtomSmartRef>;
+template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::ResidueSmartRef>;
+template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::MoleculeSmartRef>;

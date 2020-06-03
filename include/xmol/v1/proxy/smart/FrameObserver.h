@@ -1,8 +1,7 @@
 #pragma once
+#include "../../fwd.h"
 
-namespace xmol::v1 {
-
-class Frame;
+namespace xmol::v1::proxy::smart {
 
 template <typename Observer> class FrameObserver {
 public:
