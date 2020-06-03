@@ -59,11 +59,14 @@ public:
 
 private:
   friend AtomRef;
-  friend ResidueRef;
-  friend smart::MoleculeSmartRef;
+  friend AtomSelection;
   friend Frame;
+  friend MoleculeSelection;
   friend ProxySpan<MoleculeRef, BaseMolecule>;
+  friend ResidueRef;
+  friend ResidueSelection;
   friend Selection<MoleculeRef>::Comparator;
+  friend smart::MoleculeSmartRef;
   BaseMolecule* m_molecule;
   explicit MoleculeRef(BaseMolecule& molecule) : m_molecule(&molecule){};
   MoleculeRef(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};
@@ -106,11 +109,14 @@ public:
 
 private:
   friend AtomRef;
-  friend MoleculeRef;
+  friend AtomSelection;
   friend Frame;
-  friend smart::ResidueSmartRef;
+  friend MoleculeRef;
+  friend MoleculeSelection;
   friend ProxySpan<ResidueRef, BaseResidue>;
+  friend ResidueSelection;
   friend Selection<ResidueRef>::Comparator;
+  friend smart::ResidueSmartRef;
   explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
   ResidueRef(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
@@ -147,11 +153,14 @@ public:
   }
 
 protected:
+  friend AtomSelection;
   friend Frame;
-  friend ResidueRef;
-  friend smart::AtomSmartRef;
+  friend MoleculeSelection;
   friend ProxySpan<AtomRef, BaseAtom>;
+  friend ResidueRef;
+  friend ResidueSelection;
   friend Selection<proxy::AtomRef>::Comparator;
+  friend smart::AtomSmartRef;
   explicit AtomRef(BaseAtom& atom);
   XYZ* m_coords = nullptr;
   BaseAtom* m_atom = nullptr;

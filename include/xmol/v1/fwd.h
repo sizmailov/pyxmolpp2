@@ -29,9 +29,9 @@ class AtomRef;
 class ResidueRef;
 class MoleculeRef;
 
-//class AtomSelection;
-//class ResidueSelection;
-//class MoleculeSelection;
+class AtomSelection;
+class ResidueSelection;
+class MoleculeSelection;
 
 class AtomRefSpan;
 class ResidueRefSpan;

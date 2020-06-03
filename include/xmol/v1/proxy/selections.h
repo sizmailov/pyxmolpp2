@@ -10,20 +10,23 @@ class MoleculeSelection;
 
 class AtomSelection : public Selection<AtomRef> {
 public:
-  ResidueRefSpan residues() {
-    if (empty()) {
-      return {};
-    }
-    return ResidueRefSpan(m_data.front().m_atom->residue, m_data.back().m_atom->residue);
-  }
-  MoleculeRefSpan molecules() {
-    if (empty()) {
-      return {};
-    }
-    return MoleculeRefSpan(m_data.front().m_atom->residue->molecule, m_data.back().m_atom->residue->molecule);
-  }
+  using Selection::Selection;
+  ResidueSelection residues();
+  MoleculeSelection molecules();
+};
 
-private:
+class ResidueSelection : public Selection<ResidueRef> {
+public:
+  using Selection::Selection;
+  AtomSelection atoms();
+  MoleculeSelection molecules();
+};
+
+class MoleculeSelection : public Selection<MoleculeRef> {
+public:
+  using Selection::Selection;
+  AtomSelection atoms();
+  ResidueSelection residues();
 };
 
 } // namespace xmol::v1::proxy
