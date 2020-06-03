@@ -19,6 +19,9 @@ public:
     }
   };
 
+  template <typename Container>
+  explicit Selection(const Container& c) : Selection(std::begin(c), std::end(c)){}
+
   [[nodiscard]] auto begin() { return m_data.begin(); }
   [[nodiscard]] auto end() { return m_data.end(); }
   [[nodiscard]] size_t size() { return m_data.size(); }
@@ -41,7 +44,7 @@ public:
 
   bool contains(const T& proxy) const;
 
-private:
+protected:
   std::vector<T> m_data;
 };
 

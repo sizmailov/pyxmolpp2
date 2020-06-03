@@ -1,6 +1,6 @@
 #pragma once
 #include "../base.h"
-#include "ProxySpan.h"
+#include "spans.h"
 #include "Selection.h"
 
 namespace xmol::v1 {
@@ -42,16 +42,16 @@ public:
   }
 
   Frame& frame() { return *m_molecule->frame; };
-  ProxySpan<ResidueRef, BaseResidue> residues() {
-    return proxy::ProxySpan<proxy::ResidueRef, BaseResidue>{m_molecule->residues};
-  }
-  ProxySpan<AtomRef, BaseAtom> atoms() {
+
+  ResidueRefSpan residues() { return ResidueRefSpan{m_molecule->residues}; }
+
+  AtomRefSpan atoms() {
     if (empty())
       return {};
     assert(m_molecule->residues.m_begin);
     assert(m_molecule->residues.m_end);
-    return proxy::ProxySpan<proxy::AtomRef, BaseAtom>(m_molecule->residues.m_begin->atoms.m_begin,
-                                                   (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
+    return AtomRefSpan(m_molecule->residues.m_begin->atoms.m_begin,
+                       (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
@@ -99,7 +99,7 @@ public:
   MoleculeRef molecule() { return MoleculeRef(*m_residue->molecule); }
   Frame& frame() { return *m_residue->molecule->frame; }
 
-  ProxySpan<AtomRef, BaseAtom> atoms() { return ProxySpan<AtomRef, BaseAtom>{m_residue->atoms}; }
+  AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
 
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
   AtomRef add_atom(const AtomName& atomName, const AtomId& atomId);
@@ -164,27 +164,19 @@ private:
   }
   AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
+
 } // namespace proxy
 
-template <>
-struct Selection<proxy::AtomRef>::Comparator {
-  bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2){
-    return p1.m_atom < p2.m_atom;
-  }
+template <> struct Selection<proxy::AtomRef>::Comparator {
+  bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2) { return p1.m_atom < p2.m_atom; }
 };
 
-template <>
-struct Selection<proxy::ResidueRef>::Comparator {
-  bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2){
-    return p1.m_residue < p2.m_residue;
-  }
+template <> struct Selection<proxy::ResidueRef>::Comparator {
+  bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2) { return p1.m_residue < p2.m_residue; }
 };
 
-template <>
-struct Selection<proxy::MoleculeRef>::Comparator {
-  bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2){
-    return p1.m_molecule < p2.m_molecule;
-  }
+template <> struct Selection<proxy::MoleculeRef>::Comparator {
+  bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
 } // namespace xmol::v1

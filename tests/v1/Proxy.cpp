@@ -3,7 +3,7 @@
 #include "xmol/v1/Frame.h"
 
 using ::testing::Test;
-using namespace xmol::v1; 
+using namespace xmol::v1;
 
 class ProxyTests : public Test {};
 
@@ -59,4 +59,69 @@ TEST_F(ProxyTests, span_count) {
           << a.molecule().name().str() << "." << a.residue().name().str() << "." << a.name().str() << std::endl;
     }
   }
+}
+
+TEST_F(ProxyTests, span_conversions) {
+  auto frame = Frame();
+
+  EXPECT_EQ(frame.molecules().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().molecules().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 0);
+
+  auto mol = frame.add_molecule({});
+
+  EXPECT_EQ(frame.molecules().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().molecules().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 0);
+
+  auto res = mol.add_residue({}, {});
+
+  EXPECT_EQ(frame.molecules().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().molecules().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 0);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 0);
+
+  res.add_atom({},{});
+
+  EXPECT_EQ(frame.molecules().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 1);
+
+
+  auto mol2 = frame.add_molecule({});
+
+  EXPECT_EQ(frame.molecules().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().molecules().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 1);
+
+  auto res2 = mol2.add_residue({}, {});
+
+  EXPECT_EQ(frame.molecules().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().molecules().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 1);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 1);
+
+  res2.add_atom({},{});
+
+  EXPECT_EQ(frame.molecules().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().atoms().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 2);
+  EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 2);
+
 }

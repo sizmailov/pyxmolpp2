@@ -24,9 +24,9 @@ public:
   [[nodiscard]] size_t n_residues() const { return m_residues.size(); }
   [[nodiscard]] size_t n_molecules() const { return m_molecules.size(); }
 
-  [[nodiscard]] proxy::ProxySpan<proxy::AtomRef, BaseAtom> atoms();
-  [[nodiscard]] proxy::ProxySpan<proxy::ResidueRef, BaseResidue> residues();
-  [[nodiscard]] proxy::ProxySpan<proxy::MoleculeRef, BaseMolecule> molecules();
+  [[nodiscard]] proxy::AtomRefSpan atoms();
+  [[nodiscard]] proxy::ResidueRefSpan residues();
+  [[nodiscard]] proxy::MoleculeRefSpan molecules();
   [[nodiscard]] future::Span<XYZ> coordinates();
 
   [[nodiscard]] size_t n_atom_references() const { return selection::Observable<proxy::smart::AtomSmartRef>::observers.size(); }

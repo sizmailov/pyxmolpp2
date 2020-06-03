@@ -1,6 +1,7 @@
 #pragma once
 #include "../future/span.h"
-#include <cstdlib>
+#include <cstddef>
+#include <iterator>
 
 namespace xmol::v1::proxy {
 
@@ -60,7 +61,7 @@ protected:
   //    m_end = to + (m_end - from);
   //  }
 
-private:
+protected:
   T* m_begin = nullptr;
   T* m_end = nullptr;
 };
