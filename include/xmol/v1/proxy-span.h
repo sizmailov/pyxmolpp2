@@ -8,11 +8,32 @@ template <typename Proxy, typename T> class ProxySpan {
 public:
   class Iterator {
   public:
+    using difference_type = ptrdiff_t;
+    using value_type = Proxy;
+    using reference = Proxy&;
+    using pointer = Proxy*;
+    using iterator_category = std::input_iterator_tag;
+
+    Iterator() = default;
+    Iterator(const Iterator&) = default;
+    Iterator& operator=(const Iterator&) = default;
     Iterator(T* ptr, T* end) : p(ptr, end){};
     Proxy* operator->() { return &p; };
     Proxy& operator*() { return p; };
-    void operator++() { p.advance(); } // doesn't return iterator
+    Iterator& operator++() {
+      p.advance();
+      return *this;
+    }
+    Iterator operator++(int) {
+      auto copy = *this;
+      p.advance();
+      return copy;
+    }; // postfix increment
+    //    Iterator& operator--() { p.advance(-1); return *this; }
+    //    Iterator operator--(int) { auto copy = *this; p.advance(-1); return copy; }; //postfix decrement
+
     bool operator!=(const Iterator& other) { return p != other.p; }
+    bool operator==(const Iterator& other) { return p == other.p; }
 
   private:
     Proxy p;
@@ -34,10 +55,10 @@ public:
   [[nodiscard]] Iterator end() { return Iterator(m_end, m_end); }
 
 protected:
-//  inline void rebase(T* from, T* to) {
-//    m_begin = to + (m_begin - from);
-//    m_end = to + (m_end - from);
-//  }
+  //  inline void rebase(T* from, T* to) {
+  //    m_begin = to + (m_begin - from);
+  //    m_end = to + (m_end - from);
+  //  }
 
 private:
   T* m_begin = nullptr;
