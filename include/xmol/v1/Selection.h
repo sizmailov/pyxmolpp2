@@ -24,6 +24,17 @@ public:
   [[nodiscard]] size_t size() { return m_data.size(); }
   [[nodiscard]] size_t empty() { return m_data.empty(); }
 
+  template <typename Predicate>
+  [[nodiscard]] Selection filter(Predicate&& p) {
+    Selection<T> result;
+    for (auto& x : *this) {
+      if (p(x)) {
+        result.m_data.push_back(x);
+      }
+    }
+    return result;
+  }
+
   Selection& operator|=(const Selection& rhs);
   Selection& operator-=(const Selection& rhs);
   Selection& operator&=(const Selection& rhs);
