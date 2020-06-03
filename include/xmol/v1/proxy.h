@@ -85,6 +85,9 @@ public:
     m_residue->name = name;
   }
 
+  [[nodiscard]] const ResidueId& id() const { return m_residue->id; };
+  void id(const ResidueId& value) { m_residue->id = value; }
+
   [[nodiscard]] bool empty() const {
     assert(m_residue);
     return m_residue->atoms.m_begin == m_residue->atoms.m_end;
