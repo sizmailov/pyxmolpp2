@@ -65,15 +65,16 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   auto v1 = create_frame_v1();
   auto t3 = std::chrono::high_resolution_clock::now();
 
-  const int w = 15;
-  std::cout << std::setw(w) << n_molecules << " molecules" << std::endl;
+  const int w1 = 25;
+  const int w = 10;
+  std::cout << std::setw(w1) << n_molecules << " molecules" << std::endl;
   std::cout << std::setw(w) << n_molecules*n_residues_per_molecule << " residues ("<< n_residues_per_molecule<<" per molecule)" << std::endl;
   std::cout << std::setw(w) << n_molecules*n_residues_per_molecule*n_atoms_per_residue << " atoms ("<< n_atoms_per_residue<<" per residue)" << std::endl;
 
-  std::cout << std::setw(w) << "" << std::setw(w) << "v0" << std::setw(w) << "v1" << std::endl;
+  std::cout << std::setw(w1) << "" << std::setw(w) << "v0" << std::setw(w) << "v1" << std::endl;
 
   std::cout
-      << std::setw(w) << "create"
+      << std::setw(w1) << "create"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -89,7 +90,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ(chains_v0.size(), chains_v1.size());
 
   std::cout
-      << std::setw(w) << "asChains"
+      << std::setw(w1) << "asChains"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -105,7 +106,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ(residues_v0.size(), residues_v1.size());
 
   std::cout
-      << std::setw(w) << "asResidues"
+      << std::setw(w1) << "asResidues"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -121,7 +122,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ(atoms_v0.size(), atoms_v1.size());
 
   std::cout
-      << std::setw(w) << "asAtoms"
+      << std::setw(w1) << "asAtoms"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -139,7 +140,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w) << "assign atom.r"
+      << std::setw(w1) << "assign atom.r"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -161,7 +162,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ((sum0-sum1).len(),0);
 
   std::cout
-      << std::setw(w) << "sum atom.r"
+      << std::setw(w1) << "sum atom.r"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -179,7 +180,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w) << "assign atom.id"
+      << std::setw(w1) << "assign atom.id"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -198,7 +199,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ((sum0-sum11).len(),0);
 
   std::cout
-      << std::setw(w) << "sum coords"
+      << std::setw(w1) << "sum coords"
       << std::setw(w) << "n/a"
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -214,7 +215,39 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w) << "assign coords"
+      << std::setw(w1) << "assign coords"
+      << std::setw(w) << "n/a"
+      << std::setw(w) << to_us(t3-t2).count()
+      << std::endl;
+
+  ///////////////
+
+  t1 = std::chrono::high_resolution_clock::now();
+  // no equivalent
+  t2 = std::chrono::high_resolution_clock::now();
+  std::vector<v1::proxy::Atom> selection;
+  selection.reserve(atoms_v1.size());
+  for (auto& a: atoms_v1){ selection.push_back(a);}
+  t3 = std::chrono::high_resolution_clock::now();
+
+  std::cout
+      << std::setw(w1) << "sel ctor baseline"
+      << std::setw(w) << "n/a"
+      << std::setw(w) << to_us(t3-t2).count()
+      << std::endl;
+
+  ///////////////
+
+  t1 = std::chrono::high_resolution_clock::now();
+  // no equivalent
+  t2 = std::chrono::high_resolution_clock::now();
+  v1::XYZ sum4;
+  for (auto& a: selection){ sum4 += a.r();}
+  t3 = std::chrono::high_resolution_clock::now();
+
+  ASSERT_EQ((sum0-sum4).len(),0);
+  std::cout
+      << std::setw(w1) << "sel atom.r sum baseline"
       << std::setw(w) << "n/a"
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
