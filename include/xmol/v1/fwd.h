@@ -19,9 +19,9 @@ using ResidueId = xmol::polymer::ResidueId;
 using XYZ = xmol::geometry::XYZ;
 
 /// data holders
-class BaseAtom;
-class BaseResidue;
-class BaseMolecule;
+struct BaseAtom;
+struct BaseResidue;
+struct BaseMolecule;
 
 /// lightweight proxies
 namespace proxy {
