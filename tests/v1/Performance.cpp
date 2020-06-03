@@ -13,9 +13,9 @@ class PerformanceTests : public Test {
   void SetUp() override {}
 
 public:
-  const int n_molecules = 130;
-  const int n_residues_per_molecule = 170;
-  const int n_atoms_per_residue = 110;
+  const int n_molecules = 1000;
+  const int n_residues_per_molecule = 100;
+  const int n_atoms_per_residue = 30;
 
   v1::Frame create_frame_v1() {
     v1::Frame frame;
@@ -139,7 +139,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w) << "set atom.r"
+      << std::setw(w) << "assign atom.r"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -161,7 +161,25 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ASSERT_EQ((sum0-sum1).len(),0);
 
   std::cout
-      << std::setw(w) << "get atom.r"
+      << std::setw(w) << "sum atom.r"
+      << std::setw(w) << to_us(t2-t1).count()
+      << std::setw(w) << to_us(t3-t2).count()
+      << std::endl;
+
+  ///////////////
+
+  t1 = std::chrono::high_resolution_clock::now();
+  for (auto& a: atoms_v0){
+    a.set_id(15);
+  }
+  t2 = std::chrono::high_resolution_clock::now();
+  for (auto& a: atoms_v1){
+    a.id(15);
+  }
+  t3 = std::chrono::high_resolution_clock::now();
+
+  std::cout
+      << std::setw(w) << "assign atom.id"
       << std::setw(w) << to_us(t2-t1).count()
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
@@ -188,18 +206,16 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   ///////////////
 
   t1 = std::chrono::high_resolution_clock::now();
-  for (auto& a: atoms_v0){
-    a.set_id(15);
-  }
+  // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
-  for (auto& a: atoms_v1){
-    a.id(15);
+  for (auto& r: v1.coordinates()){
+    r = v1::XYZ(1,2,3);
   }
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w) << "set atom.id"
-      << std::setw(w) << to_us(t2-t1).count()
+      << std::setw(w) << "assign coords"
+      << std::setw(w) << "n/a"
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;
 
