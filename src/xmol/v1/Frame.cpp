@@ -76,8 +76,8 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   auto old_begin = m_atoms.data();
   auto old_end = m_atoms.data() + m_atoms.size();
 
-  auto old_begin_crd = coordinates.data();
-  auto old_end_crd = coordinates.data() + coordinates.size();
+  auto old_begin_crd = m_coordinates.data();
+  auto old_end_crd = m_coordinates.data() + m_coordinates.size();
 
   auto old_insert_pos = residue.atoms.m_end;
   auto old_insert_crd_pos = old_begin_crd + (residue.atoms.m_end - old_begin);
@@ -85,12 +85,12 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   auto new_inserted_it =
       m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{atomName, atomId, &residue});
 
-  auto new_inserted_crd_it = coordinates.insert(coordinates.begin() + (old_insert_pos - old_begin), XYZ{});
+  auto new_inserted_crd_it = m_coordinates.insert(m_coordinates.begin() + (old_insert_pos - old_begin), XYZ{});
 
   auto new_begin = m_atoms.data();
-  auto new_begin_crd = coordinates.data();
+  auto new_begin_crd = m_coordinates.data();
   auto new_inserted_pos = new_begin + (new_inserted_it - m_atoms.begin());
-  auto new_inserted_crd_pos = new_begin_crd + (new_inserted_crd_it - coordinates.begin());
+  auto new_inserted_crd_pos = new_begin_crd + (new_inserted_crd_it - m_coordinates.begin());
 
   // update pointers in the residue & increase size
   residue.atoms.rebase(old_begin, new_begin);
@@ -150,7 +150,7 @@ Frame& Frame::operator=(Frame&& other) {
     m_atoms = std::move(other.m_atoms);
     m_residues = std::move(other.m_residues);
     m_molecules = std::move(other.m_molecules);
-    coordinates = std::move(other.coordinates);
+    m_coordinates = std::move(other.m_coordinates);
   }
   return *this;
 }
@@ -158,7 +158,7 @@ Frame::Frame(Frame&& other)
     : selection::Observable<AtomRef>(std::move(other)), selection::Observable<ResidueRef>(std::move(other)),
       selection::Observable<MoleculeRef>(std::move(other)), m_atoms(std::move(other.m_atoms)),
       m_residues(std::move(other.m_residues)), m_molecules(std::move(other.m_molecules)),
-      coordinates(std::move(other.coordinates)) {
+      m_coordinates(std::move(other.m_coordinates)) {
   selection::Observable<AtomRef>::notify(&AtomRef::on_frame_move, other, *this);
   selection::Observable<ResidueRef>::notify(&ResidueRef::on_frame_move, other, *this);
   selection::Observable<MoleculeRef>::notify(&MoleculeRef::on_frame_move, other, *this);
@@ -204,13 +204,13 @@ void Frame::check_references_integrity() {
 void Frame::reserve_molecules(size_t n) { m_molecules.reserve(n); }
 void Frame::reserve_atoms(size_t n) {
   m_atoms.reserve(n);
-  coordinates.reserve(n);
+  m_coordinates.reserve(n);
 }
 void Frame::reserve_residues(size_t n) { m_residues.reserve(n); }
 XYZ& Frame::crd(BaseAtom& atom) {
   assert(m_atoms.data() <= &atom);
   assert(&atom <= m_atoms.data() + m_atoms.size());
-  return coordinates[&atom - m_atoms.data()];
+  return m_coordinates[&atom - m_atoms.data()];
 }
 proxy::ProxySpan<proxy::Atom, BaseAtom> Frame::atoms() {
   return proxy::ProxySpan<proxy::Atom, BaseAtom>(m_atoms.data(), m_atoms.size());
@@ -221,3 +221,4 @@ proxy::ProxySpan<proxy::Residue, BaseResidue> Frame::residues() {
 proxy::ProxySpan<proxy::Molecule, BaseMolecule> Frame::molecules() {
   return proxy::ProxySpan<proxy::Molecule, BaseMolecule>(m_molecules.data(), m_molecules.size());
 }
+future::Span<XYZ> Frame::coordinates() { return future::Span<XYZ>(m_coordinates.data(), m_coordinates.size()); }

@@ -27,6 +27,7 @@ public:
   [[nodiscard]] proxy::ProxySpan<proxy::Atom, BaseAtom> atoms();
   [[nodiscard]] proxy::ProxySpan<proxy::Residue, BaseResidue> residues();
   [[nodiscard]] proxy::ProxySpan<proxy::Molecule, BaseMolecule> molecules();
+  [[nodiscard]] future::Span<XYZ> coordinates();
 
   [[nodiscard]] size_t n_atom_references() const { return selection::Observable<AtomRef>::observers.size(); }
   [[nodiscard]] size_t n_residue_references() const { return selection::Observable<ResidueRef>::observers.size(); }
@@ -61,7 +62,7 @@ private:
   std::vector<BaseAtom> m_atoms;
   std::vector<BaseResidue> m_residues{};
   std::vector<BaseMolecule> m_molecules{};
-  std::vector<XYZ> coordinates;
+  std::vector<XYZ> m_coordinates;
 };
 
 } // namespace v1
