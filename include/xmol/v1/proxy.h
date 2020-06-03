@@ -67,7 +67,7 @@ private:
   BaseMolecule* m_molecule;
   explicit Molecule(BaseMolecule& molecule): m_molecule(&molecule) {};
   Molecule(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr) {};
-  inline void advance() { ++m_molecule; };
+  void advance() { ++m_molecule; };
   Molecule() = default; // constructs object in invalid state (with nullptrs)
 };
 
@@ -110,7 +110,7 @@ private:
   explicit Residue(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
   Residue(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
-  inline void advance() { ++m_residue; }
+  void advance() { ++m_residue; }
   Residue() = default; // constructs object in invalid state (with nullptrs)
 };
 
@@ -153,7 +153,7 @@ protected:
 
 private:
   Atom(BaseAtom* ptr, BaseAtom* end);
-  inline void advance() {
+  void advance() {
     ++m_atom;
     ++m_coords;
   }
