@@ -1,9 +1,10 @@
 #pragma once
 #include "base.h"
 #include "proxy-span.h"
+#include "Selection.h"
 
-namespace xmol::v1::proxy {
-
+namespace xmol::v1 {
+namespace proxy {
 class Atom;
 class Residue;
 
@@ -19,13 +20,13 @@ class Residue;
 /// Molecule proxy
 class Molecule {
 public:
-  [[nodiscard]] const MoleculeName& name() const{
+  [[nodiscard]] const MoleculeName& name() const {
     assert(m_molecule);
     assert(m_molecule->frame);
     return m_molecule->name;
   }
 
-  void name(const MoleculeName& name){
+  void name(const MoleculeName& name) {
     assert(m_molecule);
     assert(m_molecule->frame);
     m_molecule->name = name;
@@ -36,17 +37,17 @@ public:
     assert(m_molecule->frame);
     return m_molecule->residues.m_begin == m_molecule->residues.m_end;
   }
-  [[nodiscard]] size_t size() const{
+  [[nodiscard]] size_t size() const {
     assert(m_molecule);
     assert(m_molecule->frame);
     return m_molecule->residues.m_end - m_molecule->residues.m_begin;
   }
 
   Frame& frame() { return *m_molecule->frame; };
-  ProxySpan<Residue, BaseResidue> residues(){
+  ProxySpan<Residue, BaseResidue> residues() {
     return proxy::ProxySpan<proxy::Residue, BaseResidue>{m_molecule->residues};
   }
-  ProxySpan<Atom, BaseAtom> atoms(){
+  ProxySpan<Atom, BaseAtom> atoms() {
     if (empty())
       return {};
     assert(m_molecule->residues.m_begin);
@@ -64,9 +65,10 @@ private:
   friend MoleculeRef;
   friend Frame;
   friend ProxySpan<Molecule, BaseMolecule>;
+  friend Selection<proxy::Molecule>::Comparator;
   BaseMolecule* m_molecule;
-  explicit Molecule(BaseMolecule& molecule): m_molecule(&molecule) {};
-  Molecule(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr) {};
+  explicit Molecule(BaseMolecule& molecule) : m_molecule(&molecule){};
+  Molecule(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};
   void advance() { ++m_molecule; };
   Molecule() = default; // constructs object in invalid state (with nullptrs)
 };
@@ -93,8 +95,8 @@ public:
     return m_residue->atoms.m_end - m_residue->atoms.m_begin;
   }
 
-  Molecule molecule()  { return Molecule(*m_residue->molecule); }
-  Frame& frame()  { return *m_residue->molecule->frame; }
+  Molecule molecule() { return Molecule(*m_residue->molecule); }
+  Frame& frame() { return *m_residue->molecule->frame; }
 
   ProxySpan<Atom, BaseAtom> atoms() { return ProxySpan<Atom, BaseAtom>{m_residue->atoms}; }
 
@@ -107,6 +109,7 @@ private:
   friend Frame;
   friend ResidueRef;
   friend ProxySpan<Residue, BaseResidue>;
+  friend Selection<proxy::Residue>::Comparator;
   explicit Residue(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
   Residue(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
@@ -131,9 +134,9 @@ public:
   [[nodiscard]] const XYZ& r() const { return *m_coords; }
   void r(const XYZ& value) { *m_coords = value; }
 
-  Residue residue()  { return Residue(*m_atom->residue); }
+  Residue residue() { return Residue(*m_atom->residue); }
   Molecule molecule() { return Molecule(*m_atom->residue->molecule); };
-  Frame& frame() { return *m_atom->residue->molecule->frame; } ;
+  Frame& frame() { return *m_atom->residue->molecule->frame; };
 
   bool operator!=(const Atom& rhs) const {
     return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
@@ -147,7 +150,8 @@ protected:
   friend Residue;
   friend AtomRef;
   friend ProxySpan<Atom, BaseAtom>;
-  explicit Atom(BaseAtom& atom);;
+  friend Selection<proxy::Atom>::Comparator;
+  explicit Atom(BaseAtom& atom);
   XYZ* m_coords = nullptr;
   BaseAtom* m_atom = nullptr;
 
@@ -159,4 +163,27 @@ private:
   }
   Atom() = default; // constructs object in invalid state (with nullptrs)
 };
-} // namespace xmol::v1::proxy
+} // namespace proxy
+
+template <>
+struct Selection<proxy::Atom>::Comparator {
+  bool operator()(const proxy::Atom& p1, const proxy::Atom& p2){
+    return p1.m_atom < p2.m_atom;
+  }
+};
+
+template <>
+struct Selection<proxy::Residue>::Comparator {
+  bool operator()(const proxy::Residue& p1, const proxy::Residue& p2){
+    return p1.m_residue < p2.m_residue;
+  }
+};
+
+template <>
+struct Selection<proxy::Molecule>::Comparator {
+  bool operator()(const proxy::Molecule& p1, const proxy::Molecule& p2){
+    return p1.m_molecule < p2.m_molecule;
+  }
+};
+
+} // namespace xmol::v1

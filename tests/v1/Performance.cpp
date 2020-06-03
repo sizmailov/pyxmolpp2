@@ -225,9 +225,12 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t1 = std::chrono::high_resolution_clock::now();
   // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
-  std::vector<v1::proxy::Atom> selection;
-  selection.reserve(atoms_v1.size());
-  for (auto& a: atoms_v1){ selection.push_back(a);}
+  std::vector<v1::proxy::Atom> proxy_vector;
+  proxy_vector.reserve(atoms_v1.size());
+  for (auto& a : atoms_v1) {
+    proxy_vector.push_back(a);
+  }
+
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
@@ -242,12 +245,42 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
   v1::XYZ sum4;
-  for (auto& a: selection){ sum4 += a.r();}
+  for (auto& a: proxy_vector){ sum4 += a.r();}
   t3 = std::chrono::high_resolution_clock::now();
 
   ASSERT_EQ((sum0-sum4).len(),0);
   std::cout
       << std::setw(w1) << "sel atom.r sum baseline"
+      << std::setw(w) << "n/a"
+      << std::setw(w) << to_us(t3-t2).count()
+      << std::endl;
+
+  ///////////////
+
+  t1 = std::chrono::high_resolution_clock::now();
+  // no equivalent
+  t2 = std::chrono::high_resolution_clock::now();
+  v1::Selection<v1::proxy::Atom> selection(proxy_vector.begin(), proxy_vector.end());
+  t3 = std::chrono::high_resolution_clock::now();
+
+  std::cout
+      << std::setw(w1) << "sel ctor"
+      << std::setw(w) << "n/a"
+      << std::setw(w) << to_us(t3-t2).count()
+      << std::endl;
+
+  ///////////////
+
+  t1 = std::chrono::high_resolution_clock::now();
+  // no equivalent
+  t2 = std::chrono::high_resolution_clock::now();
+  v1::XYZ sum5;
+  for (auto& a: selection){ sum5 += a.r();}
+  t3 = std::chrono::high_resolution_clock::now();
+
+  ASSERT_EQ((sum0 - sum5).len(), 0);
+  std::cout
+      << std::setw(w1) << "sel assign"
       << std::setw(w) << "n/a"
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;

@@ -1,5 +1,6 @@
 #include "xmol/v1/proxy.h"
 #include "xmol/v1/Frame.h"
+#include "xmol/v1/Selection-Impl.h"
 
 using namespace xmol::v1;
 
@@ -17,3 +18,8 @@ xmol::v1::proxy::Atom::Atom(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   }
 }
 proxy::Atom::Atom(BaseAtom& atom) : m_coords(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
+
+
+template class xmol::v1::Selection<proxy::Atom>;
+template class xmol::v1::Selection<proxy::Residue>;
+template class xmol::v1::Selection<proxy::Molecule>;
