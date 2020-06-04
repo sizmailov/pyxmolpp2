@@ -194,6 +194,10 @@ public:
   }
 
 protected:
+  XYZ* m_coords = nullptr;
+  BaseAtom* m_atom = nullptr;
+
+private:
   friend AtomSelection;
   friend Frame;
   friend MoleculeSelection;
@@ -203,10 +207,7 @@ protected:
   friend Selection<proxy::AtomRef>::LessThanComparator;
   friend smart::AtomSmartRef;
   explicit AtomRef(BaseAtom& atom);
-  XYZ* m_coords = nullptr;
-  BaseAtom* m_atom = nullptr;
 
-private:
   AtomRef(BaseAtom* ptr, BaseAtom* end);
   void advance() {
     ++m_atom;
