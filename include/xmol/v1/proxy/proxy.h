@@ -64,6 +64,7 @@ public:
                        (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
+  /// Check if references point to same data
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
 
   /// @brief Add residue to the end of the molecule
@@ -129,6 +130,7 @@ public:
   /// Atoms of the residue
   AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
 
+  /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
 
   /// @brief Add residue to the end of the molecule
@@ -186,9 +188,12 @@ public:
   /// Parent frame
   Frame& frame() { return *m_atom->residue->molecule->frame; };
 
+  /// Check if references point to same data
   bool operator!=(const AtomRef& rhs) const {
     return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
   }
+
+  /// Check if references point to same data
   bool operator==(const AtomRef& rhs) const {
     return m_atom == rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
   }
