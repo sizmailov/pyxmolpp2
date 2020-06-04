@@ -37,16 +37,12 @@ private:
 };
 } // namespace smart
 
-inline namespace aliases {
-using AtomSmartRef = smart::AtomSmartRef;
-using ResidueSmartRef = smart::ResidueSmartRef;
-using MoleculeSmartRef = smart::MoleculeSmartRef;
-} // namespace aliases
-
 } // namespace proxy
 
 inline namespace aliases {
-using namespace proxy::aliases;
+using AtomSmartRef = proxy::smart::AtomSmartRef;
+using ResidueSmartRef = proxy::smart::ResidueSmartRef;
+using MoleculeSmartRef = proxy::smart::MoleculeSmartRef;
 } // namespace aliases
 
 } // namespace xmol::v1

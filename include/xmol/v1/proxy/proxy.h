@@ -20,7 +20,6 @@ namespace proxy {
  * */
 class MoleculeRef {
 public:
-
   /// Molecule name
   [[nodiscard]] const MoleculeName& name() const {
     assert(m_molecule);
@@ -69,7 +68,8 @@ public:
 
   /// @brief Adds residue to the end of the molecule and return its reference
   ///
-  /// Invalidates all kinds of non-smart residue references including proxy::ResidueRef, proxy::ResidueRefSpan and proxy::ResidueSelection
+  /// Invalidates all kinds of non-smart residue references including proxy::ResidueRef, proxy::ResidueRefSpan and
+  /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_residues() call prevents references invalidation
   ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId);
@@ -97,7 +97,6 @@ private:
  * */
 class ResidueRef {
 public:
-
   /// Residue name
   [[nodiscard]] const ResidueName& name() const {
     assert(m_residue);
@@ -138,7 +137,8 @@ public:
 
   /// @brief Adds atom to the end of the reside and return its reference
   ///
-  /// Invalidates all kinds of non-smart atom references including proxy::ResidueRef, proxy::ResidueRefSpan and proxy::ResidueSelection
+  /// Invalidates all kinds of non-smart atom references including proxy::ResidueRef, proxy::ResidueRefSpan and
+  /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_atoms() call prevents references invalidation
   AtomRef add_atom(const AtomName& atomName, const AtomId& atomId);
@@ -226,11 +226,6 @@ private:
   }
   AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
-inline namespace aliases {
-using AtomRef = proxy::AtomRef;
-using ResidueRef = proxy::ResidueRef;
-using MoleculeRef = proxy::MoleculeRef;
-} // namespace aliases
 
 } // namespace proxy
 
@@ -246,8 +241,11 @@ template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
+/// Imports names from sibling namespaces
 inline namespace aliases {
-  using namespace proxy::aliases;
+using AtomRef = proxy::AtomRef;
+using ResidueRef = proxy::ResidueRef;
+using MoleculeRef = proxy::MoleculeRef;
 } // namespace aliases
 
 } // namespace xmol::v1

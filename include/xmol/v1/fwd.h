@@ -3,6 +3,8 @@
 #include "xmol/utils/ShortAsciiString.h"
 
 namespace xmol {
+
+/// Reworked original xmol
 namespace v1 {
 
 namespace detail {
@@ -18,13 +20,13 @@ using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTa
 using ResidueId = xmol::polymer::ResidueId;
 using XYZ = xmol::geometry::XYZ;
 
-/// data holders
 struct BaseAtom;
 struct BaseResidue;
 struct BaseMolecule;
 
-/// lightweight proxies
+/// Proxy references to frame
 namespace proxy {
+
 class AtomRef;
 class ResidueRef;
 class MoleculeRef;
@@ -37,8 +39,9 @@ class AtomRefSpan;
 class ResidueRefSpan;
 class MoleculeRefSpan;
 
+/// Reference counting (smart) proxies
 namespace smart {
-/// ref counting proxies
+
 class AtomSmartRef;
 class ResidueSmartRef;
 class MoleculeSmartRef;
