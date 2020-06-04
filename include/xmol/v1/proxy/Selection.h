@@ -1,32 +1,36 @@
 #pragma once
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 namespace xmol::v1 {
 
 template <typename T> class Selection {
 public:
-  struct Comparator {
+  struct LessThanComparator {
     /// Intentionally left unimplemented. Must be specialized individually
     bool operator()(const T& p1, const T& p2);
+  };
+  struct EqualComparator {
+    bool operator()(const T& p1, const T& p2) { return !LessThanComparator{}(p1, p2) && !LessThanComparator{}(p2, p1); }
   };
 
   Selection() = default;
   template <typename Iterator> Selection(Iterator first, Iterator last) : m_data(first, last) {
-    if (!std::is_sorted(m_data.begin(), m_data.end(), Comparator{})) {
-      std::sort(m_data.begin(), m_data.end(), Comparator{});
+    if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
+      std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
     }
-    auto it = std::unique(m_data.begin(), m_data.end(), Comparator{});
+    auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
     m_data.erase(it, m_data.end());
   };
 
-  template <typename Container> explicit Selection(const Container& c) : Selection(std::begin(c), std::end(c)) {}
+  template <typename Container> explicit Selection(Container& c) : Selection(std::begin(c), std::end(c)) {}
   explicit Selection(std::vector<T>&& data) : m_data(std::move(data)) {
-    if (!std::is_sorted(m_data.begin(), m_data.end(), Comparator{})) {
-      std::sort(m_data.begin(), m_data.end(), Comparator{});
+    if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
+      std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
     }
-    auto it = std::unique(m_data.begin(), m_data.end(), Comparator{});
+    auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
     m_data.erase(it, m_data.end());
   }
 

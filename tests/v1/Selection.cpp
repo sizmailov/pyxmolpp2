@@ -33,7 +33,7 @@ TEST_F(SelectionTests, filter) {
   auto frame = make_polyglycines({{"A", 10}, {"B", 20}});
   auto atoms = frame.atoms();
   EXPECT_EQ(atoms.size(), 30 * 7);
-  Selection<proxy::AtomRef> sel(atoms.begin(), atoms.end());
+  Selection<proxy::AtomRef> sel(atoms);
   EXPECT_EQ(sel.size(), atoms.size());
   auto ca = sel.filter([](proxy::AtomRef& atom) { return atom.name() == "CA"; });
   EXPECT_EQ(ca.size(), 30);

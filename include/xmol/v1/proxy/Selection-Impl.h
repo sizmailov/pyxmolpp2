@@ -4,7 +4,7 @@
 namespace xmol::v1 {
 
 template <typename T> Selection<T>& Selection<T>::operator|=(const Selection<T>& rhs) {
-  auto comparator = Comparator{};
+  auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
 
@@ -16,7 +16,7 @@ template <typename T> Selection<T>& Selection<T>::operator|=(const Selection<T>&
 }
 
 template <typename T> Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
-  auto comparator = Comparator{};
+  auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
   auto it = m_data.begin();
@@ -45,7 +45,7 @@ template <typename T> Selection<T>& Selection<T>::operator-=(const Selection<T>&
 }
 
 template <typename T> Selection<T>& Selection<T>::operator&=(const Selection<T>& rhs) {
-  auto comparator = Comparator{};
+  auto comparator = LessThanComparator{};
   static_cast<void>(comparator);
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
@@ -57,7 +57,7 @@ template <typename T> Selection<T>& Selection<T>::operator&=(const Selection<T>&
   return *this;
 }
 template <typename T> bool Selection<T>::contains(const T& proxy) const {
-  auto comparator = Comparator{};
+  auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   return std::binary_search(m_data.begin(), m_data.end(), proxy, comparator);
 }

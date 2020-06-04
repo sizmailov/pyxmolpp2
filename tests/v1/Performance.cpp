@@ -260,11 +260,11 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t1 = std::chrono::high_resolution_clock::now();
   // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
-  v1::Selection<v1::proxy::AtomRef> selection(proxy_vector.begin(), proxy_vector.end());
+  v1::Selection<v1::proxy::AtomRef> selection(proxy_vector);
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout
-      << std::setw(w1) << "sel ctor"
+      << std::setw(w1) << "sel copy ctor"
       << std::setw(w) << "n/a"
       << std::setw(w) << to_us(t3-t2).count()
       << std::endl;

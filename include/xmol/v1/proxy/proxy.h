@@ -65,7 +65,7 @@ private:
   friend ProxySpan<MoleculeRef, BaseMolecule>;
   friend ResidueRef;
   friend ResidueSelection;
-  friend Selection<MoleculeRef>::Comparator;
+  friend Selection<MoleculeRef>::LessThanComparator;
   friend smart::MoleculeSmartRef;
   BaseMolecule* m_molecule;
   explicit MoleculeRef(BaseMolecule& molecule) : m_molecule(&molecule){};
@@ -115,7 +115,7 @@ private:
   friend MoleculeSelection;
   friend ProxySpan<ResidueRef, BaseResidue>;
   friend ResidueSelection;
-  friend Selection<ResidueRef>::Comparator;
+  friend Selection<ResidueRef>::LessThanComparator;
   friend smart::ResidueSmartRef;
   explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
@@ -159,7 +159,7 @@ protected:
   friend ProxySpan<AtomRef, BaseAtom>;
   friend ResidueRef;
   friend ResidueSelection;
-  friend Selection<proxy::AtomRef>::Comparator;
+  friend Selection<proxy::AtomRef>::LessThanComparator;
   friend smart::AtomSmartRef;
   explicit AtomRef(BaseAtom& atom);
   XYZ* m_coords = nullptr;
@@ -176,15 +176,15 @@ private:
 
 } // namespace proxy
 
-template <> struct Selection<proxy::AtomRef>::Comparator {
+template <> struct Selection<proxy::AtomRef>::LessThanComparator {
   bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2) { return p1.m_atom < p2.m_atom; }
 };
 
-template <> struct Selection<proxy::ResidueRef>::Comparator {
+template <> struct Selection<proxy::ResidueRef>::LessThanComparator {
   bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2) { return p1.m_residue < p2.m_residue; }
 };
 
-template <> struct Selection<proxy::MoleculeRef>::Comparator {
+template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
