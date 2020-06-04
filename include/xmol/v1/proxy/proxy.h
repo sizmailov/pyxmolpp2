@@ -173,6 +173,11 @@ private:
   }
   AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
+inline namespace aliases {
+using AtomRef = proxy::AtomRef;
+using ResidueRef = proxy::ResidueRef;
+using MoleculeRef = proxy::MoleculeRef;
+} // namespace aliases
 
 } // namespace proxy
 
@@ -187,5 +192,9 @@ template <> struct Selection<proxy::ResidueRef>::LessThanComparator {
 template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
+
+inline namespace aliases {
+  using namespace proxy::aliases;
+} // namespace aliases
 
 } // namespace xmol::v1
