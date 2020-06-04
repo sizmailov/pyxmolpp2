@@ -1,6 +1,6 @@
 #include "xmol/v1/proxy/proxy.h"
 #include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/Selection-Impl.h"
+#include "xmol/v1/proxy/SelectionImpl.h"
 
 using namespace xmol::v1::proxy;
 

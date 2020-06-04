@@ -1,7 +1,7 @@
 #pragma once
 #include "../base.h"
-#include "spans.h"
 #include "Selection.h"
+#include "spans.h"
 
 namespace xmol::v1 {
 namespace proxy {

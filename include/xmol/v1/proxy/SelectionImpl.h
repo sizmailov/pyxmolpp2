@@ -3,19 +3,18 @@
 
 namespace xmol::v1 {
 
-template <typename T> Selection<T>& Selection<T>::operator|=(const Selection<T>& rhs) {
+template <typename T> void Selection<T>::unite(const Selection<T>& rhs) {
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
-
+  size_t selection_size = size();
   m_data.insert(m_data.end(), rhs.m_data.begin(), rhs.m_data.end());
-  std::inplace_merge(m_data.begin(), m_data.end(), m_data.end(), comparator);
-  auto end = std::unique(m_data.begin(), m_data.end(), comparator);
+  std::inplace_merge(m_data.begin(), m_data.begin() + selection_size, m_data.end(), comparator);
+  auto end = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
   m_data.erase(end, m_data.end());
-  return *this;
 }
 
-template <typename T> Selection<T>& Selection<T>::operator-=(const Selection<T>& rhs) {
+template <typename T> void Selection<T>::substract(const Selection<T>& rhs) {
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
@@ -41,10 +40,9 @@ template <typename T> Selection<T>& Selection<T>::operator-=(const Selection<T>&
   }
   m_data.erase(it, m_data.end());
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
-  return *this;
 }
 
-template <typename T> Selection<T>& Selection<T>::operator&=(const Selection<T>& rhs) {
+template <typename T> void Selection<T>::intersect(const Selection<T>& rhs) {
   auto comparator = LessThanComparator{};
   static_cast<void>(comparator);
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
@@ -54,8 +52,8 @@ template <typename T> Selection<T>& Selection<T>::operator&=(const Selection<T>&
                                    comparator);
   m_data.erase(end, m_data.end());
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
-  return *this;
 }
+
 template <typename T> bool Selection<T>::contains(const T& proxy) const {
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));

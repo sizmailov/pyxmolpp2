@@ -29,7 +29,7 @@ public:
   };
 
   template <typename Container>
-  explicit Selection(Container& c, bool sorted_and_unique = false)
+  explicit Selection(Container&& c, bool sorted_and_unique = false)
       : Selection(std::begin(c), std::end(c), sorted_and_unique) {}
 
   explicit Selection(std::vector<T>&& data, bool sorted_and_unique = false) : m_data(std::move(data)) {
@@ -47,23 +47,29 @@ public:
   [[nodiscard]] size_t size() { return m_data.size(); }
   [[nodiscard]] size_t empty() { return m_data.empty(); }
 
-  template <typename Predicate>[[nodiscard]] Selection filter(Predicate&& p) {
-    Selection<T> result;
-    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
-      if (p(x)) {
-        result.m_data.push_back(x);
-      }
-    }
-    return result;
+  T& operator[](int i){
+    assert(i>=0);
+    assert(i<size());
+    return m_data[i];
   }
 
-  Selection& operator|=(const Selection& rhs);
-  Selection& operator-=(const Selection& rhs);
-  Selection& operator&=(const Selection& rhs);
+  void unite(const Selection& rhs);
+  void substract(const Selection& rhs);
+  void intersect(const Selection& rhs);
 
   bool contains(const T& proxy) const;
 
 protected:
+  template <typename Predicate> [[nodiscard]]
+  std::vector<T> internal_filter(Predicate&& p) {
+    std::vector<T> result;
+    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
+      if (p(x)) {
+        result.push_back(x);
+      }
+    }
+    return result;
+  }
   std::vector<T> m_data;
 };
 

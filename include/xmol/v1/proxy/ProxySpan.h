@@ -2,6 +2,7 @@
 #include "../future/span.h"
 #include <cstddef>
 #include <iterator>
+#include <vector>
 
 namespace xmol::v1::proxy {
 
@@ -64,6 +65,17 @@ protected:
 protected:
   T* m_begin = nullptr;
   T* m_end = nullptr;
+
+  template <typename Predicate> [[nodiscard]]
+  std::vector<Proxy> internal_filter(Predicate&& p) {
+    std::vector<Proxy> result;
+    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
+      if (p(x)) {
+        result.push_back(x);
+      }
+    }
+    return result;
+  }
 };
 
 } // namespace xmol::v1::proxy
