@@ -11,7 +11,7 @@ ResidueSelection AtomSelection::residues() {
       prev = a.m_atom->residue;
     }
   }
-  return ResidueSelection(std::move(result));
+  return ResidueSelection(std::move(result), true);
 }
 MoleculeSelection AtomSelection::molecules() {
   std::vector<MoleculeRef> result;
@@ -23,7 +23,7 @@ MoleculeSelection AtomSelection::molecules() {
       prev = mol;
     }
   }
-  return MoleculeSelection(std::move(result));
+  return MoleculeSelection(std::move(result), true);
 }
 MoleculeSelection ResidueSelection::molecules() {
   std::vector<MoleculeRef> result;
@@ -34,7 +34,7 @@ MoleculeSelection ResidueSelection::molecules() {
       prev = r.m_residue->molecule;
     }
   }
-  return MoleculeSelection(std::move(result));
+  return MoleculeSelection(std::move(result), true);
 }
 AtomSelection ResidueSelection::atoms() {
   std::vector<AtomRef> result;
@@ -43,7 +43,7 @@ AtomSelection ResidueSelection::atoms() {
       result.push_back(a);
     }
   }
-  return AtomSelection(std::move(result));
+  return AtomSelection(std::move(result), true);
 }
 ResidueSelection MoleculeSelection::residues() {
   std::vector<ResidueRef> result;
@@ -52,7 +52,7 @@ ResidueSelection MoleculeSelection::residues() {
       result.push_back(r);
     }
   }
-  return ResidueSelection(std::move(result));
+  return ResidueSelection(std::move(result), true);
 }
 AtomSelection MoleculeSelection::atoms() {
   std::vector<AtomRef> result;
@@ -63,5 +63,5 @@ AtomSelection MoleculeSelection::atoms() {
       }
     }
   }
-  return AtomSelection(std::move(result));
+  return AtomSelection(std::move(result), true);
 }

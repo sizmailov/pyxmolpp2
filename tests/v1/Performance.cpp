@@ -260,7 +260,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t1 = std::chrono::high_resolution_clock::now();
   // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
-  v1::Selection<v1::proxy::AtomRef> selection(proxy_vector);
+  v1::Selection<v1::proxy::AtomRef> selection(proxy_vector, true);
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout

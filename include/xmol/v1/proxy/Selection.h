@@ -17,21 +17,29 @@ public:
   };
 
   Selection() = default;
-  template <typename Iterator> Selection(Iterator first, Iterator last) : m_data(first, last) {
-    if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
-      std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
+  template <typename Iterator>
+  Selection(Iterator first, Iterator last, bool sorted_and_unique = false) : m_data(first, last) {
+    if (!sorted_and_unique) {
+      if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
+        std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
+      }
+      auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
+      m_data.erase(it, m_data.end());
     }
-    auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
-    m_data.erase(it, m_data.end());
   };
 
-  template <typename Container> explicit Selection(Container& c) : Selection(std::begin(c), std::end(c)) {}
-  explicit Selection(std::vector<T>&& data) : m_data(std::move(data)) {
-    if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
-      std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
+  template <typename Container>
+  explicit Selection(Container& c, bool sorted_and_unique = false)
+      : Selection(std::begin(c), std::end(c), sorted_and_unique) {}
+
+  explicit Selection(std::vector<T>&& data, bool sorted_and_unique = false) : m_data(std::move(data)) {
+    if (!sorted_and_unique) {
+      if (!std::is_sorted(m_data.begin(), m_data.end(), LessThanComparator{})) {
+        std::sort(m_data.begin(), m_data.end(), LessThanComparator{});
+      }
+      auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
+      m_data.erase(it, m_data.end());
     }
-    auto it = std::unique(m_data.begin(), m_data.end(), EqualComparator{});
-    m_data.erase(it, m_data.end());
   }
 
   [[nodiscard]] auto begin() { return m_data.begin(); }
