@@ -67,8 +67,11 @@ public:
   /// Check if references point to same data
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
 
-  /// @brief Add residue to the end of the molecule
-  /// Note that returned reference will be invalidated on next add_residue call on same frame
+  /// @brief Adds residue to the end of the molecule and return its reference
+  ///
+  /// Invalidates all kinds of non-smart residue references including proxy::ResidueRef, proxy::ResidueRefSpan and proxy::ResidueSelection
+  ///
+  /// Appropriate Frame::reserve_residues() call prevents references invalidation
   ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId);
 
 private:
@@ -133,8 +136,11 @@ public:
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
 
-  /// @brief Add residue to the end of the molecule
-  /// Note that returned reference will be invalidated on next add_residue call on same frame
+  /// @brief Adds atom to the end of the reside and return its reference
+  ///
+  /// Invalidates all kinds of non-smart atom references including proxy::ResidueRef, proxy::ResidueRefSpan and proxy::ResidueSelection
+  ///
+  /// Appropriate Frame::reserve_atoms() call prevents references invalidation
   AtomRef add_atom(const AtomName& atomName, const AtomId& atomId);
 
 private:

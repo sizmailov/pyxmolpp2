@@ -65,23 +65,26 @@ public:
     return selection::Observable<proxy::smart::MoleculeSmartRef>::observers.size();
   }
 
-  /// @brief Preallocate space for n molecules
-  /// Invalidates all plain types of molecules references, including spans and selections
-  void reserve_molecules(size_t n);
-
-  /// @brief Preallocate space for n residues
-  /// Invalidates all types of plain residue references, including spans and selections
-  void reserve_residues(size_t n);
-
   /// @brief Preallocate space for n atoms
-  /// Invalidates all types of plain atom references, including spans and selections
+  ///
+  /// Invalidates all kinds of non-smart atom references including proxy::AtomRef, proxy::AtomRefSpan and proxy::AtomSelection
   void reserve_atoms(size_t n);
 
-  /// @brief Add new molecules at the end of frame
+  /// @brief Preallocate space for n residues
   ///
-  ///   Invalidates all types of plain molecule references, including spans and selections
-  ///   unless @ref reserve_molecules() was called beforehand
+  /// Invalidates all kinds of non-smart residue references proxy::ResidueRef, proxy::ResidueRefSpan and proxy::ResidueSelection
+  void reserve_residues(size_t n);
+
+  /// @brief Preallocate space for n molecules
   ///
+  /// Invalidates all kinds of non-smart molecule references including proxy::MoleculeRef, proxy::MoleculeRefSpan and proxy::MoleculeSelection
+  void reserve_molecules(size_t n);
+
+  /// @brief Add new molecules at the end of frame and return reference to it
+  ///
+  /// Invalidates all kinds of non-smart molecule references including proxy::MoleculeRef, proxy::MoleculeRefSpan and proxy::MoleculeSelection
+  ///
+  /// Appropriate reserve_molecules() call prevents references invalidation
   proxy::MoleculeRef add_molecule(const MoleculeName& name);
 
 private:
