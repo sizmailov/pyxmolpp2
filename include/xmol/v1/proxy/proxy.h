@@ -241,11 +241,4 @@ template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
-/// Imports names from sibling namespaces
-inline namespace aliases {
-using AtomRef = proxy::AtomRef;
-using ResidueRef = proxy::ResidueRef;
-using MoleculeRef = proxy::MoleculeRef;
-} // namespace aliases
-
 } // namespace xmol::v1

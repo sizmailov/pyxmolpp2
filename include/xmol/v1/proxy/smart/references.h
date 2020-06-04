@@ -4,11 +4,11 @@
 
 namespace xmol::v1 {
 
-namespace proxy {
+inline namespace proxy {
 
-namespace smart {
+inline namespace smart {
 
-class AtomSmartRef : public proxy::AtomRef, public FrameObserver<AtomSmartRef> {
+class AtomSmartRef : public AtomRef, public FrameObserver<AtomSmartRef> {
 public:
   AtomSmartRef(AtomRef&& atom);
 
@@ -18,18 +18,18 @@ private:
   void on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
 };
 
-class ResidueSmartRef : public proxy::ResidueRef, public FrameObserver<ResidueSmartRef> {
+class ResidueSmartRef : public ResidueRef, public FrameObserver<ResidueSmartRef> {
 public:
-  ResidueSmartRef(proxy::ResidueRef&& res);
+  ResidueSmartRef(ResidueRef&& res);
 
 private:
   friend Frame;
   void on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin);
 };
 
-class MoleculeSmartRef : public proxy::MoleculeRef, public FrameObserver<MoleculeSmartRef> {
+class MoleculeSmartRef : public MoleculeRef, public FrameObserver<MoleculeSmartRef> {
 public:
-  MoleculeSmartRef(proxy::MoleculeRef&& mol);
+  MoleculeSmartRef(MoleculeRef&& mol);
 
 private:
   friend Frame;
@@ -38,11 +38,5 @@ private:
 } // namespace smart
 
 } // namespace proxy
-
-inline namespace aliases {
-using AtomSmartRef = proxy::smart::AtomSmartRef;
-using ResidueSmartRef = proxy::smart::ResidueSmartRef;
-using MoleculeSmartRef = proxy::smart::MoleculeSmartRef;
-} // namespace aliases
 
 } // namespace xmol::v1

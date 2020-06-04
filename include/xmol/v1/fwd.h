@@ -25,7 +25,7 @@ struct BaseResidue;
 struct BaseMolecule;
 
 /// Proxy references to frame
-namespace proxy {
+inline namespace proxy {
 
 class AtomRef;
 class ResidueRef;
@@ -40,7 +40,7 @@ class ResidueRefSpan;
 class MoleculeRefSpan;
 
 /// Reference counting (smart) proxies
-namespace smart {
+inline namespace smart {
 
 class AtomSmartRef;
 class ResidueSmartRef;

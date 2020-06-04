@@ -4,7 +4,8 @@
 #include <iterator>
 #include <vector>
 
-namespace xmol::v1::proxy {
+namespace xmol::v1 {
+inline namespace proxy {
 
 template <typename Proxy, typename T> class ProxySpan {
 public:
@@ -66,8 +67,7 @@ protected:
   T* m_begin = nullptr;
   T* m_end = nullptr;
 
-  template <typename Predicate> [[nodiscard]]
-  std::vector<Proxy> internal_filter(Predicate&& p) {
+  template <typename Predicate>[[nodiscard]] std::vector<Proxy> internal_filter(Predicate&& p) {
     std::vector<Proxy> result;
     for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
       if (p(x)) {
@@ -78,4 +78,5 @@ protected:
   }
 };
 
-} // namespace xmol::v1::proxy
+} // namespace proxy
+} // namespace xmol::v1
