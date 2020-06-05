@@ -24,9 +24,9 @@ public:
     frame.reserve_atoms(n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 
     for (int i = 0; i < n_molecules; ++i) {
-      v1::MoleculeSmartRef molecule = frame.add_molecule(v1::MoleculeName(""));
+      v1::proxy::smart::MoleculeSmartRef molecule = frame.add_molecule(v1::MoleculeName(""));
       for (int j = 0; j < n_residues_per_molecule; ++j) {
-        v1::ResidueSmartRef residue = molecule.add_residue(v1::ResidueName(""), v1::ResidueId(0));
+        v1::proxy::smart::ResidueSmartRef residue = molecule.add_residue(v1::ResidueName(""), v1::ResidueId(0));
         for (int k = 0; k < n_atoms_per_residue; ++k) {
           residue.add_atom(v1::AtomName(""), v1::AtomId(0));
         }
@@ -260,7 +260,7 @@ TEST_F(PerformanceTests, frame_forward_construction) {
   t1 = std::chrono::high_resolution_clock::now();
   // no equivalent
   t2 = std::chrono::high_resolution_clock::now();
-  v1::Selection<v1::proxy::AtomRef> selection(proxy_vector, true);
+  v1::proxy::Selection<v1::proxy::AtomRef> selection(proxy_vector, true);
   t3 = std::chrono::high_resolution_clock::now();
 
   std::cout

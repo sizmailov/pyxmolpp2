@@ -1,7 +1,7 @@
 #pragma once
 #include "Selection.h"
 
-namespace xmol::v1 {
+namespace xmol::v1::proxy {
 
 template <typename T> void Selection<T>::unite(const Selection<T>& rhs) {
   auto comparator = LessThanComparator{};

@@ -2,11 +2,7 @@
 #include "../proxy.h"
 #include "FrameObserver.h"
 
-namespace xmol::v1 {
-
-inline namespace proxy {
-
-inline namespace smart {
+namespace xmol::v1::proxy::smart {
 
 class AtomSmartRef : public AtomRef, public FrameObserver<AtomSmartRef> {
 public:
@@ -35,8 +31,5 @@ private:
   friend Frame;
   void on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin);
 };
-} // namespace smart
 
-} // namespace proxy
-
-} // namespace xmol::v1
+} // namespace xmol::v1::proxy::smart

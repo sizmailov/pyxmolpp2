@@ -11,8 +11,7 @@
  *
  * */
 
-namespace xmol::v1 {
-namespace proxy {
+namespace xmol::v1::proxy {
 
 /** @brief Lightweight molecule reference
  *
@@ -227,8 +226,6 @@ private:
   AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
-} // namespace proxy
-
 template <> struct Selection<proxy::AtomRef>::LessThanComparator {
   bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2) { return p1.m_atom < p2.m_atom; }
 };
@@ -241,4 +238,4 @@ template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
-} // namespace xmol::v1
+} // namespace xmol::v1::proxy

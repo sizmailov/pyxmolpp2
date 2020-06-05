@@ -2,10 +2,8 @@
 #include "xmol/polymer/Atom_fwd.h"
 #include "xmol/utils/ShortAsciiString.h"
 
-namespace xmol {
-
 /// Reworked original xmol
-namespace v1 {
+namespace xmol::v1 {
 
 namespace detail {
 struct AtomNameTag {};
@@ -25,7 +23,7 @@ struct BaseResidue;
 struct BaseMolecule;
 
 /// Proxy references to frame
-inline namespace proxy {
+namespace proxy {
 
 class AtomRef;
 class ResidueRef;
@@ -40,7 +38,7 @@ class ResidueRefSpan;
 class MoleculeRefSpan;
 
 /// Reference counting (smart) proxies
-inline namespace smart {
+namespace smart {
 
 class AtomSmartRef;
 class ResidueSmartRef;
@@ -52,5 +50,4 @@ class MoleculeSmartRef;
 /// life holder
 class Frame;
 
-} // namespace v1
-} // namespace xmol
+} // namespace xmol::v1

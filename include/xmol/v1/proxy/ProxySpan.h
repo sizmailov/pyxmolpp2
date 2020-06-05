@@ -4,8 +4,7 @@
 #include <iterator>
 #include <vector>
 
-namespace xmol::v1 {
-inline namespace proxy {
+namespace xmol::v1::proxy {
 
 template <typename Proxy, typename T> class ProxySpan {
 public:
@@ -78,5 +77,4 @@ protected:
   }
 };
 
-} // namespace proxy
-} // namespace xmol::v1
+} // namespace xmol::v1::proxy

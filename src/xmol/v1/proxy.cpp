@@ -20,6 +20,6 @@ xmol::v1::proxy::AtomRef::AtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
 AtomRef::AtomRef(BaseAtom& atom) : m_coords(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
 
-template class xmol::v1::Selection<AtomRef>;
-template class xmol::v1::Selection<ResidueRef>;
-template class xmol::v1::Selection<MoleculeRef>;
+template class xmol::v1::proxy::Selection<AtomRef>;
+template class xmol::v1::proxy::Selection<ResidueRef>;
+template class xmol::v1::proxy::Selection<MoleculeRef>;

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-namespace xmol::v1 {
+namespace xmol::v1::proxy {
 
 template <typename T> class Selection {
 public:

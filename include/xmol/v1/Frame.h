@@ -7,9 +7,9 @@
 namespace xmol::v1 {
 
 /// Molecular frame, owns all molecular data
-class Frame : public selection::Observable<AtomSmartRef>,
-              public selection::Observable<ResidueSmartRef>,
-              public selection::Observable<MoleculeSmartRef> {
+class Frame : public selection::Observable<proxy::smart::AtomSmartRef>,
+              public selection::Observable<proxy::smart::ResidueSmartRef>,
+              public selection::Observable<proxy::smart::MoleculeSmartRef> {
 public:
   /// Default constructor
   Frame() = default;
@@ -39,30 +39,30 @@ public:
   [[nodiscard]] size_t n_molecules() const { return m_molecules.size(); }
 
   /// Atoms of the frame
-  [[nodiscard]] AtomRefSpan atoms();
+  [[nodiscard]] proxy::AtomRefSpan atoms();
 
   /// Residues of the frame
-  [[nodiscard]] ResidueRefSpan residues();
+  [[nodiscard]] proxy::ResidueRefSpan residues();
 
   /// Molecules of the frame
-  [[nodiscard]] MoleculeRefSpan molecules();
+  [[nodiscard]] proxy::MoleculeRefSpan molecules();
 
   /// Coordinates of the frame
   [[nodiscard]] future::Span<XYZ> coordinates();
 
   /// Current number of smart atom references
   [[nodiscard]] size_t n_atom_references() const {
-    return selection::Observable<AtomSmartRef>::observers.size();
+    return selection::Observable<proxy::smart::AtomSmartRef>::observers.size();
   }
 
   /// Current number of smart residue references
   [[nodiscard]] size_t n_residue_references() const {
-    return selection::Observable<ResidueSmartRef>::observers.size();
+    return selection::Observable<proxy::smart::ResidueSmartRef>::observers.size();
   }
 
   /// Current number of smart molecule references
   [[nodiscard]] size_t n_molecule_references() const {
-    return selection::Observable<MoleculeSmartRef>::observers.size();
+    return selection::Observable<proxy::smart::MoleculeSmartRef>::observers.size();
   }
 
   /// @brief Preallocate space for n atoms
@@ -89,7 +89,7 @@ public:
   /// MoleculeSelection
   ///
   /// Appropriate reserve_molecules() call prevents references invalidation
-  MoleculeRef add_molecule(const MoleculeName& name);
+  proxy::MoleculeRef add_molecule(const MoleculeName& name);
 
 private:
   BaseResidue& add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId);
@@ -101,13 +101,13 @@ private:
 
   void check_references_integrity();
 
-  friend AtomSmartRef;
-  friend ResidueSmartRef;
-  friend MoleculeSmartRef;
+  friend proxy::smart::AtomSmartRef;
+  friend proxy::smart::ResidueSmartRef;
+  friend proxy::smart::MoleculeSmartRef;
 
-  friend AtomRef;
-  friend ResidueRef;
-  friend MoleculeRef;
+  friend proxy::AtomRef;
+  friend proxy::ResidueRef;
+  friend proxy::MoleculeRef;
 
   std::vector<BaseAtom> m_atoms;
   std::vector<BaseResidue> m_residues{};

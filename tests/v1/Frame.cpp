@@ -4,6 +4,7 @@
 
 using ::testing::Test;
 using namespace xmol::v1;
+using namespace xmol::v1::proxy::smart;
 
 class FrameTests : public Test {};
 
