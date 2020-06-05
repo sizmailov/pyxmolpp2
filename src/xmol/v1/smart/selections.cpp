@@ -33,8 +33,8 @@ void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from
 
 xmol::v1::proxy::smart::AtomSmartSelection::AtomSmartSelection(xmol::v1::proxy::AtomSelection sel)
     : AtomSelection(std::move(sel)), FrameObserver(frame_ptr()) {
-  if (m_frame) {
-    m_frame->reg(*this);
+  if (frame_ptr()) {
+    frame_ptr()->reg(*this);
   }
 }
 

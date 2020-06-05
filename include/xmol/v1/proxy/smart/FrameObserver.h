@@ -23,11 +23,13 @@ public:
 
 protected:
   FrameObserver(Frame* frame) : m_frame(frame) {}
+  bool is_bound_to_frame() const { return m_frame; }
 
   void on_frame_move(Frame& from, Frame& to);
   void on_frame_delete();
-  Frame* m_frame;
+
 private:
+  Frame* m_frame;
   friend Frame;
 };
 } // namespace xmol::v1::proxy::smart

@@ -29,7 +29,7 @@ public:
 
 private:
   void check_precondition(const char* func_name) const override {
-    if (m_frame == nullptr && !m_data.empty()) {
+    if (!is_bound_to_frame() && !m_data.empty()) {
       throw DeadFrameAccessError(std::string("AtomSmartSelection::") + func_name);
     }
   }
