@@ -46,6 +46,9 @@ public:
   };
 };
 
+/// @breif Ordered set of @ref ResidueRef from single @ref Frame
+///
+/// Mixing references from different frames within single ResidueSelection is prohibited
 class ResidueSelection : public Selection<ResidueRef> {
 public:
   using Selection::Selection;
@@ -81,6 +84,9 @@ public:
   }
 };
 
+/// @breif Ordered set of @ref MoleculeRef from single @ref Frame
+///
+/// Mixing references from different frames within single MoleculeSelection is prohibited
 class MoleculeSelection : public Selection<MoleculeRef> {
 public:
   using Selection::Selection;
