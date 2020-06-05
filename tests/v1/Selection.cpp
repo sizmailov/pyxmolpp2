@@ -7,12 +7,18 @@
 using ::testing::Test;
 using namespace xmol::v1;
 using namespace xmol::v1::proxy;
+using namespace xmol::v1::proxy::smart;
 
 class SelectionTests : public Test {
 
 public:
   [[nodiscard]] static Frame make_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes) {
     Frame frame;
+    add_polyglycines(chain_sizes, frame);
+    return frame;
+  }
+
+  void static add_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes, Frame& frame) {
     int aid = 1;
     int rid = 1;
     for (auto& chN_S : chain_sizes) {
@@ -28,7 +34,6 @@ public:
         r.add_atom(AtomName("O"), AtomId(aid++));
       }
     }
-    return frame;
   }
 };
 
@@ -59,7 +64,7 @@ TEST_F(SelectionTests, inplace_set_operations) {
   c |= a;
   ASSERT_EQ(c.size(), a.size());
   c |= b;
-  ASSERT_EQ(c.size(), a.size()+b.size());
+  ASSERT_EQ(c.size(), a.size() + b.size());
   c &= b;
   ASSERT_EQ(c.size(), b.size());
   c -= a;
@@ -70,7 +75,7 @@ TEST_F(SelectionTests, inplace_set_operations) {
 
 TEST_F(SelectionTests, full_order) {
   auto frame = make_polyglycines({{"A", 1}, {"B", 3}, {"C", 5}});
-  auto check_ordering = [](auto&& c){
+  auto check_ordering = [](auto&& c) {
     using selection_t = std::remove_reference_t<decltype(c)>;
     auto less_than = typename selection_t::LessThanComparator{};
     for (int i = 0; i < c.size(); i++) {
@@ -88,4 +93,36 @@ TEST_F(SelectionTests, full_order) {
   check_ordering(proxy::AtomSelection(frame.atoms()));
   check_ordering(proxy::ResidueSelection(frame.residues()));
   check_ordering(proxy::MoleculeSelection(frame.molecules()));
+}
+
+TEST_F(SelectionTests, smart_atom_selection) {
+  auto frame = make_polyglycines({{"A", 1}});
+  AtomSelection plain_selection = AtomSelection(frame.atoms());
+  AtomSmartSelection atoms = plain_selection;
+  EXPECT_EQ(7, atoms.size());
+  for (int i = 1; i < 10; ++i){
+    add_polyglycines({{"A",1}}, frame);
+    for (int j = 0; j < 7; j++){
+      EXPECT_EQ(atoms[j], frame.atoms()[j]);
+    }
+  }
+  for (int j = 0; j < 7; j++){
+    EXPECT_NE(atoms[j], plain_selection[j]); // no UB, just comparing pointers
+  }
+}
+
+TEST_F(SelectionTests, smart_atom_exceptions) {
+  auto frame = make_polyglycines({{"A", 1}});
+  AtomSelection plain_selection = AtomSelection(frame.atoms());
+  AtomSmartSelection atoms = plain_selection;
+  frame = {};
+  ASSERT_THROW(atoms.residues(), DeadFrameAccessError);
+  ASSERT_THROW(atoms.molecules(), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms.empty()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms.size()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms.begin()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms.end()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms|=atoms), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms&=atoms), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms-=atoms), DeadFrameAccessError);
 }

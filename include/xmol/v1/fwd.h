@@ -1,6 +1,7 @@
 #pragma once
 #include "xmol/polymer/Atom_fwd.h"
 #include "xmol/utils/ShortAsciiString.h"
+#include <stdexcept>
 
 /// Reworked original xmol
 namespace xmol::v1 {
@@ -53,5 +54,10 @@ class MoleculeSmartSelection;
 
 /// life holder
 class Frame;
+
+class DeadFrameAccessError : public std::runtime_error {
+public:
+  using std::runtime_error::runtime_error;
+};
 
 } // namespace xmol::v1

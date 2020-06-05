@@ -154,6 +154,10 @@ proxy::MoleculeRef Frame::add_molecule(const MoleculeName& name) {
 }
 Frame& Frame::operator=(Frame&& other) {
   if (this != &other) {
+    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
+    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
+    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
     selection::Observable<AtomSmartRef>::operator=(std::move(other));
     selection::Observable<ResidueSmartRef>::operator=(std::move(other));
     selection::Observable<MoleculeSmartRef>::operator=(std::move(other));

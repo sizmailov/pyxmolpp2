@@ -3,6 +3,7 @@
 using namespace xmol::v1::proxy;
 
 ResidueSelection AtomSelection::residues() {
+  check_precondition("residues()");
   std::vector<ResidueRef> result;
   BaseResidue* prev = nullptr;
   for (auto& a : m_data) {
@@ -14,6 +15,7 @@ ResidueSelection AtomSelection::residues() {
   return ResidueSelection(std::move(result), true);
 }
 MoleculeSelection AtomSelection::molecules() {
+  check_precondition("molecules()");
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& a : m_data) {
@@ -26,6 +28,7 @@ MoleculeSelection AtomSelection::molecules() {
   return MoleculeSelection(std::move(result), true);
 }
 MoleculeSelection ResidueSelection::molecules() {
+  check_precondition("molecules()");
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& r : m_data) {
@@ -37,6 +40,7 @@ MoleculeSelection ResidueSelection::molecules() {
   return MoleculeSelection(std::move(result), true);
 }
 AtomSelection ResidueSelection::atoms() {
+  check_precondition("atoms()");
   std::vector<AtomRef> result;
   for (auto& r : m_data) {
     for (auto a : r.atoms()) {
@@ -46,6 +50,7 @@ AtomSelection ResidueSelection::atoms() {
   return AtomSelection(std::move(result), true);
 }
 ResidueSelection MoleculeSelection::residues() {
+  check_precondition("residues()");
   std::vector<ResidueRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
@@ -55,6 +60,7 @@ ResidueSelection MoleculeSelection::residues() {
   return ResidueSelection(std::move(result), true);
 }
 AtomSelection MoleculeSelection::atoms() {
+  check_precondition("atoms()");
   std::vector<AtomRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
