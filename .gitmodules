@@ -18,3 +18,6 @@
 	url = git@github.com:sizmailov/eigen-git-mirror.git
     shallow = true
 	branch = master
+[submodule "external/benchmark"]
+	path = external/benchmark
+	url = git@github.com:sizmailov/benchmark.git

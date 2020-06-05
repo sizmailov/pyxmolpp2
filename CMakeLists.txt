@@ -42,8 +42,9 @@ enable_testing()
 
 
 add_subdirectory(external/googletest)
+add_subdirectory(external/benchmark)
 include_directories(SYSTEM external/googletest/googletest/include)
-include_directories(SYSTEM external/range-v3/include)
+include_directories(SYSTEM external/benchmark/include)
 include_directories(SYSTEM external/GSL/include)
 include_directories(SYSTEM external/eigen-git-mirror)
 add_subdirectory(external/pybind11)
