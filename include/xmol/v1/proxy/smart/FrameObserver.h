@@ -22,7 +22,7 @@ public:
   FrameObserver& operator=(const FrameObserver& rhs);
 
 protected:
-  FrameObserver(Frame& frame) : m_frame(&frame) {}
+  FrameObserver(Frame* frame) : m_frame(frame) {}
 
   void on_frame_move(Frame& from, Frame& to);
   void on_frame_delete();

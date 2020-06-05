@@ -44,6 +44,11 @@ public:
     intersect(rhs);
     return *this;
   };
+private:
+  friend smart::AtomSmartSelection;
+  Frame* frame_ptr(){
+    return empty()? nullptr : &m_data[0].frame();
+  }
 };
 
 /// @breif Ordered set of @ref ResidueRef from single @ref Frame
@@ -82,6 +87,11 @@ public:
   template <typename Predicate> ResidueSelection filter(Predicate&& p) {
     return ResidueSelection(internal_filter(std::forward<Predicate>(p)));
   }
+private:
+  friend smart::ResidueSmartSelection;
+  Frame* frame_ptr(){
+    return empty()? nullptr : &m_data[0].frame();
+  }
 };
 
 /// @breif Ordered set of @ref MoleculeRef from single @ref Frame
@@ -119,6 +129,11 @@ public:
   /// Returns selection with molecules that match predicate
   template <typename Predicate> MoleculeSelection filter(Predicate&& p) {
     return MoleculeSelection(internal_filter(std::forward<Predicate>(p)));
+  }
+private:
+  friend smart::MoleculeSmartSelection;
+  Frame* frame_ptr(){
+    return empty()? nullptr : &m_data[0].frame();
   }
 };
 
