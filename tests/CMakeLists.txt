@@ -18,3 +18,5 @@ define_test_suite(geometry xmolpp2)
 define_test_suite(crystal xmolpp2)
 define_test_suite(amber xmolpp2)
 define_test_suite(v1 xmolpp2)
+
+add_subdirectory(benchmarks)
