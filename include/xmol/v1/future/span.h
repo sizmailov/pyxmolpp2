@@ -1,8 +1,10 @@
 #pragma once
 #include <cstdlib>
 
+/// Backported C++20 features
 namespace xmol::v1::future {
 
+/// Analogue of C++20 std::span
 template <typename T> struct Span {
   constexpr Span() {}
   constexpr Span(T* b, T* e) : m_begin(b), m_end(e) {}
