@@ -216,6 +216,7 @@ private:
   friend ResidueSelection;
   friend Selection<proxy::AtomRef>::LessThanComparator;
   friend smart::AtomSmartRef;
+  friend smart::AtomSmartSelection;
   explicit AtomRef(BaseAtom& atom);
 
   AtomRef(BaseAtom* ptr, BaseAtom* end);

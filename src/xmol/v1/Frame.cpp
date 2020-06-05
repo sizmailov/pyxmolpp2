@@ -39,7 +39,8 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
     for (auto it = m_molecules.data(); it != &mol; ++it) {
       it->residues.rebase(old_begin, new_begin);
     }
-    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_insert_pos, new_begin);
+    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_insert_pos,
+                                                   new_begin);
 
     // update pointers in atoms
     for (auto it = new_begin; it != new_inserted_pos; ++it) {
@@ -55,7 +56,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
   }
 
   selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_insert_pos, old_end,
-                                            new_inserted_pos + 1);
+                                                 new_inserted_pos + 1);
   // update pointers in atoms for shifted residues
   for (auto it = new_inserted_pos + 1; it != new_end; ++it) {
     for (auto& ait : it->atoms) {
@@ -102,9 +103,14 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     for (auto& rInfo : future::Span{m_residues.data(), &residue}) {
       rInfo.atoms.rebase(old_begin, new_begin);
     }
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_insert_pos, new_begin);
+    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_insert_pos,
+                                                new_begin);
     selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
-                                           new_begin_crd);
+                                                new_begin_crd);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_begin, old_insert_pos,
+                                                new_begin);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
+                                                new_begin_crd);
   }
 
   // update pointers in residues after the residue
@@ -112,9 +118,14 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     it.atoms.rebase(old_begin, new_begin + 1);
   }
 
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_insert_pos, old_end, new_inserted_pos + 1);
+  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_insert_pos, old_end,
+                                              new_inserted_pos + 1);
   selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_insert_crd_pos, old_end_crd,
-                                         new_inserted_crd_pos + 1);
+                                              new_inserted_crd_pos + 1);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_insert_pos, old_end,
+                                              new_inserted_pos + 1);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_insert_crd_pos, old_end_crd,
+                                              new_inserted_crd_pos + 1);
 
   check_references_integrity();
   return *new_inserted_pos;
@@ -129,7 +140,8 @@ proxy::MoleculeRef Frame::add_molecule(const MoleculeName& name) {
   auto new_begin = m_molecules.data();
 
   if (old_begin != new_begin) {
-    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end, new_begin);
+    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
+                                                    new_begin);
     // update pointers in residues
     for (auto& mol_info : future::Span{new_begin, m_molecules.size()}) {
       for (auto& info : mol_info.residues) {
@@ -145,9 +157,11 @@ Frame& Frame::operator=(Frame&& other) {
     selection::Observable<AtomSmartRef>::operator=(std::move(other));
     selection::Observable<ResidueSmartRef>::operator=(std::move(other));
     selection::Observable<MoleculeSmartRef>::operator=(std::move(other));
+    selection::Observable<AtomSmartSelection>::operator=(std::move(other));
     selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
     selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
     selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
     m_atoms = std::move(other.m_atoms);
     m_residues = std::move(other.m_residues);
     m_molecules = std::move(other.m_molecules);
@@ -157,17 +171,20 @@ Frame& Frame::operator=(Frame&& other) {
 }
 Frame::Frame(Frame&& other)
     : selection::Observable<AtomSmartRef>(std::move(other)), selection::Observable<ResidueSmartRef>(std::move(other)),
-      selection::Observable<MoleculeSmartRef>(std::move(other)), m_atoms(std::move(other.m_atoms)),
-      m_residues(std::move(other.m_residues)), m_molecules(std::move(other.m_molecules)),
-      m_coordinates(std::move(other.m_coordinates)) {
+      selection::Observable<MoleculeSmartRef>(std::move(other)), selection::Observable<AtomSmartSelection>(
+                                                                     std::move(other)),
+      m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
+      m_molecules(std::move(other.m_molecules)), m_coordinates(std::move(other.m_coordinates)) {
   selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
   selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
   selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
 }
 Frame::~Frame() {
   selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
   selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
   selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
 }
 void Frame::check_references_integrity() {
 #ifdef NDEBUG
@@ -213,13 +230,7 @@ XYZ& Frame::crd(BaseAtom& atom) {
   assert(&atom <= m_atoms.data() + m_atoms.size());
   return m_coordinates[&atom - m_atoms.data()];
 }
-proxy::AtomRefSpan Frame::atoms() {
-  return proxy::AtomRefSpan(m_atoms.data(), m_atoms.size());
-}
-proxy::ResidueRefSpan Frame::residues() {
-  return proxy::ResidueRefSpan(m_residues.data(), m_residues.size());
-}
-proxy::MoleculeRefSpan Frame::molecules() {
-  return proxy::MoleculeRefSpan(m_molecules.data(), m_molecules.size());
-}
+proxy::AtomRefSpan Frame::atoms() { return proxy::AtomRefSpan(m_atoms.data(), m_atoms.size()); }
+proxy::ResidueRefSpan Frame::residues() { return proxy::ResidueRefSpan(m_residues.data(), m_residues.size()); }
+proxy::MoleculeRefSpan Frame::molecules() { return proxy::MoleculeRefSpan(m_molecules.data(), m_molecules.size()); }
 future::Span<XYZ> Frame::coordinates() { return future::Span<XYZ>(m_coordinates.data(), m_coordinates.size()); }

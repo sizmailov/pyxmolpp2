@@ -6,9 +6,10 @@
 namespace xmol::v1::proxy::smart {
 
 class AtomSmartSelection : public AtomSelection, public FrameObserver<AtomSmartSelection> {
-
+  AtomSmartSelection(AtomSelection&& sel);
 private:
   friend Frame;
+  struct AtomRefLessThanComparator;
   void on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin);
   void on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
 };

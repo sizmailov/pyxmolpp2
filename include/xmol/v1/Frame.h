@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "proxy/smart/references.h"
+#include "proxy/smart/selections.h"
 #include "xmol/selection/Observable.h"
 #include <vector>
 
@@ -9,7 +10,8 @@ namespace xmol::v1 {
 /// Molecular frame, owns all molecular data
 class Frame : public selection::Observable<proxy::smart::AtomSmartRef>,
               public selection::Observable<proxy::smart::ResidueSmartRef>,
-              public selection::Observable<proxy::smart::MoleculeSmartRef> {
+              public selection::Observable<proxy::smart::MoleculeSmartRef>,
+              public selection::Observable<proxy::smart::AtomSmartSelection> {
 public:
   /// Default constructor
   Frame() = default;
@@ -101,13 +103,17 @@ private:
 
   void check_references_integrity();
 
+  friend proxy::AtomRef;
+  friend proxy::ResidueRef;
+  friend proxy::MoleculeRef;
+
   friend proxy::smart::AtomSmartRef;
   friend proxy::smart::ResidueSmartRef;
   friend proxy::smart::MoleculeSmartRef;
 
-  friend proxy::AtomRef;
-  friend proxy::ResidueRef;
-  friend proxy::MoleculeRef;
+  friend proxy::smart::AtomSmartSelection;
+  friend proxy::smart::ResidueSmartSelection;
+  friend proxy::smart::MoleculeSmartSelection;
 
   std::vector<BaseAtom> m_atoms;
   std::vector<BaseResidue> m_residues{};
