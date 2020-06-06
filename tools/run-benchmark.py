@@ -54,7 +54,7 @@ if __name__ == "__main__":
         try:
             with open(output) as f:
                 json.load(f)
-            print("benchmark results already exist, skipped")
+            print(f"benchmark {output} already exist, skipped")
             exit(0)
         except Exception as e:
             print("Corrupted json: ", type(e), e)
