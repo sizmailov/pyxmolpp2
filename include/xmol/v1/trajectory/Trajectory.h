@@ -2,10 +2,12 @@
 #include "../Frame.h"
 #include "TrajectoryFile.h"
 
+/// MD trajectory classes and utilites
 namespace xmol::v1::trajectory {
 
 using FrameId = int32_t;
 
+/// Trajectory
 class Trajectory {
   struct Position {
     size_t global_pos;  // global frame index in trajectory
@@ -25,6 +27,7 @@ public:
 
   struct Sentinel {};
 
+  /// Iterator[Trajectory::Frame] (don't confuse with Frame)
   class Iterator {
   public:
     Frame& operator*() { return m_frame; }
@@ -59,6 +62,7 @@ public:
     Frame m_frame;
   };
 
+  /// Reference to trajectory slice
   class Slice {
   public:
     Iterator begin() { return Iterator(m_traj, m_begin, m_end, m_step); }
@@ -89,6 +93,7 @@ public:
   Iterator begin() { return Iterator(*this, Position{0, 0, 0}, n_frames(), 1); }
   Sentinel end() { return {}; }
 
+  /// Slice of trajectory
   Slice slice(std::optional<size_t> begin={}, std::optional<size_t> end={}, size_t step = 1) {
     if (!end) {
       end = n_frames();
@@ -106,7 +111,10 @@ public:
     return Slice(*this, pos, *end, step);
   }
 
+  /// Total number of frames in trajectory
   [[nodiscard]] size_t n_frames() const { return m_n_frames; };
+
+  /// Number of atoms in trajectory frame
   [[nodiscard]] size_t n_atoms() const { return m_frame.n_atoms(); }
 
 protected:

@@ -4,6 +4,7 @@
 
 namespace xmol::v1::trajectory {
 
+/// 3d MD coordinates in "trjtool .dat" format
 class TrjtoolDatFile : public TrajectoryInputFile {
   struct Header {
     int32_t nitems;
