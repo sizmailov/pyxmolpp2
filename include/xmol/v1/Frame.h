@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "proxy/smart/AtomSmartSelection.h"
+#include "proxy/smart/ResidueSmartSelection.h"
 #include "proxy/smart/references.h"
 #include "xmol/selection/Observable.h"
 #include <vector>

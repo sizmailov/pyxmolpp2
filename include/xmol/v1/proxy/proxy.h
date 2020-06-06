@@ -152,6 +152,7 @@ private:
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
   friend smart::ResidueSmartRef;
+  friend smart::ResidueSmartSelection;
   explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
   BaseResidue* m_residue = nullptr;
   ResidueRef(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
