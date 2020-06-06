@@ -2,7 +2,7 @@
 #include "xmol/v1/future/span.h"
 #include "xmol/v1/fwd.h"
 
-namespace xmol::v1::traj {
+namespace xmol::v1::trajectory {
 
 class TrajectoryInputFile {
 public:

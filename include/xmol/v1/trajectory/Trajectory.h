@@ -2,7 +2,7 @@
 #include "../Frame.h"
 #include "TrajectoryFile.h"
 
-namespace xmol::v1::traj {
+namespace xmol::v1::trajectory {
 
 using FrameId = int32_t;
 
@@ -96,4 +96,4 @@ protected:
   }
 };
 
-} // namespace xmol::v1::traj
+} // namespace xmol::v1::trajectory
