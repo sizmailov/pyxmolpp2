@@ -5,6 +5,7 @@
 
 namespace xmol::v1::proxy::smart {
 
+/// MoleculeSelection with parent frame changes tracking
 class MoleculeSmartSelection : public FrameObserver<MoleculeSmartSelection> {
 public:
   MoleculeSmartSelection(MoleculeSelection sel);

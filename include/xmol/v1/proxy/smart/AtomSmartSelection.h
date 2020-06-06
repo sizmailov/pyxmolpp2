@@ -5,6 +5,7 @@
 
 namespace xmol::v1::proxy::smart {
 
+/// AtomSelection with parent frame changes tracking
 class AtomSmartSelection : public FrameObserver<AtomSmartSelection> {
 public:
   AtomSmartSelection(AtomSelection sel);
@@ -47,7 +48,7 @@ public:
   }
 
   /// Check if element in selection
-  bool contains(const AtomRef& ref) const{
+  [[nodiscard]] bool contains(const AtomRef& ref) const{
     check_precondition("filter()");
     return m_selection.contains(ref);
   }

@@ -5,6 +5,7 @@
 
 namespace xmol::v1::proxy::smart {
 
+/// ResidueSelection with parent frame changes tracking
 class ResidueSmartSelection : public FrameObserver<ResidueSmartSelection> {
 public:
   ResidueSmartSelection(ResidueSelection sel);
