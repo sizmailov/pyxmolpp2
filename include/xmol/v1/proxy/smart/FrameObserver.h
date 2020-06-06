@@ -22,8 +22,8 @@ public:
   FrameObserver& operator=(const FrameObserver& rhs);
 
 protected:
-  FrameObserver(Frame* frame) : m_frame(frame) {}
-  bool is_bound_to_frame() const { return m_frame; }
+  explicit FrameObserver(Frame* frame) : m_frame(frame) {}
+  [[nodiscard]] bool is_bound_to_frame() const { return m_frame; }
 
   void on_frame_move(Frame& from, Frame& to);
   void on_frame_delete();
