@@ -39,9 +39,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
     for (auto it = m_molecules.data(); it != &mol; ++it) {
       it->residues.rebase(old_begin, new_begin);
     }
-    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_insert_pos,
-                                                   new_begin);
-
+    notify_residues_move(old_begin, old_insert_pos, new_begin);
     // update pointers in atoms
     for (auto it = new_begin; it != new_inserted_pos; ++it) {
       for (auto& ait : it->atoms) {
@@ -55,8 +53,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
     it.residues.rebase(old_begin, new_begin + 1);
   }
 
-  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_insert_pos, old_end,
-                                                 new_inserted_pos + 1);
+  notify_residues_move(old_insert_pos, old_end, new_inserted_pos + 1);
   // update pointers in atoms for shifted residues
   for (auto it = new_inserted_pos + 1; it != new_end; ++it) {
     for (auto& ait : it->atoms) {
@@ -103,14 +100,8 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     for (auto& rInfo : future::Span{m_residues.data(), &residue}) {
       rInfo.atoms.rebase(old_begin, new_begin);
     }
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_insert_pos,
-                                                new_begin);
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
-                                                new_begin_crd);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_begin, old_insert_pos,
-                                                new_begin);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_begin_crd, old_insert_crd_pos,
-                                                new_begin_crd);
+    notify_atoms_move(old_begin, old_insert_pos, new_begin);
+    notify_coordinates_move(old_begin_crd, old_insert_crd_pos, new_begin_crd);
   }
 
   // update pointers in residues after the residue
@@ -118,14 +109,8 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
     it.atoms.rebase(old_begin, new_begin + 1);
   }
 
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_insert_pos, old_end,
-                                              new_inserted_pos + 1);
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_insert_crd_pos, old_end_crd,
-                                              new_inserted_crd_pos + 1);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_insert_pos, old_end,
-                                              new_inserted_pos + 1);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_insert_crd_pos, old_end_crd,
-                                              new_inserted_crd_pos + 1);
+  notify_atoms_move(old_insert_pos, old_end, new_inserted_pos + 1);
+  notify_coordinates_move(old_insert_crd_pos, old_end_crd, new_inserted_crd_pos + 1);
 
   check_references_integrity();
   return *new_inserted_pos;
@@ -140,8 +125,7 @@ proxy::MoleculeRef Frame::add_molecule(const MoleculeName& name) {
   auto new_begin = m_molecules.data();
 
   if (old_begin != new_begin) {
-    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
-                                                    new_begin);
+    notify_molecules_move(old_begin, old_end, new_begin);
     // update pointers in residues
     for (auto& mol_info : future::Span{new_begin, m_molecules.size()}) {
       for (auto& info : mol_info.residues) {
@@ -154,18 +138,12 @@ proxy::MoleculeRef Frame::add_molecule(const MoleculeName& name) {
 }
 Frame& Frame::operator=(Frame&& other) {
   if (this != &other) {
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
-    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
-    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
+    notify_frame_delete();
     selection::Observable<AtomSmartRef>::operator=(std::move(other));
     selection::Observable<ResidueSmartRef>::operator=(std::move(other));
     selection::Observable<MoleculeSmartRef>::operator=(std::move(other));
     selection::Observable<AtomSmartSelection>::operator=(std::move(other));
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
-    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
-    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
+    notify_frame_moved(other);
     m_atoms = std::move(other.m_atoms);
     m_residues = std::move(other.m_residues);
     m_molecules = std::move(other.m_molecules);
@@ -179,17 +157,9 @@ Frame::Frame(Frame&& other)
                                                                      std::move(other)),
       m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
       m_molecules(std::move(other.m_molecules)), m_coordinates(std::move(other.m_coordinates)) {
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
-  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
-  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
+  notify_frame_moved(other);
 }
-Frame::~Frame() {
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
-  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
-  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
-}
+Frame::~Frame() { notify_frame_delete(); }
 void Frame::check_references_integrity() {
 #ifdef NDEBUG
   return; // disables check completely in release mode
@@ -199,15 +169,15 @@ void Frame::check_references_integrity() {
     return;
   }
   size_t res_count = 0;
-  for (auto& mol_info : m_molecules) {
-    assert(m_residues.data() <= mol_info.residues.m_begin);
-    assert(mol_info.residues.m_begin <= mol_info.residues.m_end);
-    assert(mol_info.residues.m_end <= m_residues.data() + m_residues.size());
-    for (auto& info : mol_info.residues) {
-      assert(info.molecule == &mol_info);
+  for (auto& mol : m_molecules) {
+    assert(m_residues.data() <= mol.residues.m_begin);
+    assert(mol.residues.m_begin <= mol.residues.m_end);
+    assert(mol.residues.m_end <= m_residues.data() + m_residues.size());
+    for (auto& info : mol.residues) {
+      assert(info.molecule == &mol);
       static_cast<void>(info);
     }
-    res_count += mol_info.residues.size();
+    res_count += mol.residues.size();
   }
   assert(m_residues.size() == res_count);
   size_t atom_count = 0;
@@ -223,18 +193,89 @@ void Frame::check_references_integrity() {
   }
   assert(m_atoms.size() == atom_count);
 }
-void Frame::reserve_molecules(size_t n) { m_molecules.reserve(n); }
-void Frame::reserve_atoms(size_t n) {
-  m_atoms.reserve(n);
-  m_coordinates.reserve(n);
+void Frame::reserve_molecules(size_t n) {
+  auto old_begin = m_molecules.data();
+  auto old_end = m_molecules.data() + m_molecules.size();
+  m_molecules.reserve(n);
+  notify_molecules_move(old_begin, old_end, m_molecules.data());
 }
-void Frame::reserve_residues(size_t n) { m_residues.reserve(n); }
+
+void Frame::reserve_atoms(size_t n) {
+  {
+    auto old_begin = m_atoms.data();
+    auto old_end = m_atoms.data() + m_atoms.size();
+    m_atoms.reserve(n);
+    notify_atoms_move(old_begin, old_end, m_atoms.data());
+  }
+  {
+    auto old_begin = m_coordinates.data();
+    auto old_end = m_coordinates.data() + m_coordinates.size();
+    m_coordinates.reserve(n);
+    notify_coordinates_move(old_begin, old_end, m_coordinates.data());
+  }
+}
+
+void Frame::reserve_residues(size_t n) {
+  auto old_begin = m_residues.data();
+  auto old_end = m_residues.data() + m_residues.size();
+  m_residues.reserve(n);
+  notify_residues_move(old_begin, old_end, m_residues.data());
+}
+
 XYZ& Frame::crd(BaseAtom& atom) {
   assert(m_atoms.data() <= &atom);
   assert(&atom <= m_atoms.data() + m_atoms.size());
   return m_coordinates[&atom - m_atoms.data()];
 }
+
 proxy::AtomRefSpan Frame::atoms() { return proxy::AtomRefSpan(m_atoms.data(), m_atoms.size()); }
 proxy::ResidueRefSpan Frame::residues() { return proxy::ResidueRefSpan(m_residues.data(), m_residues.size()); }
 proxy::MoleculeRefSpan Frame::molecules() { return proxy::MoleculeRefSpan(m_molecules.data(), m_molecules.size()); }
 future::Span<XYZ> Frame::coordinates() { return future::Span<XYZ>(m_coordinates.data(), m_coordinates.size()); }
+
+void Frame::notify_atoms_move(BaseAtom* old_begin, BaseAtom* old_end, BaseAtom* new_begin) const {
+  if (old_begin != new_begin) {
+    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_end, new_begin);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_begin, old_end,
+                                                      new_begin);
+  }
+}
+void Frame::notify_residues_move(BaseResidue* old_begin, BaseResidue* old_end, BaseResidue* new_begin) const {
+  if (old_begin != new_begin) {
+    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_end,
+                                                   new_begin);
+    // selection::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_base_atoms_move, old_begin,
+    // old_end,
+    //                                                     new_begin);
+  }
+}
+void Frame::notify_molecules_move(BaseMolecule* old_begin, BaseMolecule* old_end, BaseMolecule* new_begin) const {
+  if (old_begin != new_begin) {
+    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
+                                                    new_begin);
+    //    selection::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_base_molecules_move,
+    //    old_begin,
+    //                                                          old_end, new_begin);
+  }
+}
+void Frame::notify_coordinates_move(XYZ* old_begin, XYZ* old_end, XYZ* new_begin) const {
+  if (old_begin != new_begin) {
+    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_begin, old_end, new_begin);
+    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_begin, old_end,
+                                                      new_begin);
+  }
+}
+
+void Frame::notify_frame_moved(Frame& other) {
+  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
+  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
+  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
+}
+
+void Frame::notify_frame_delete() const {
+  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
+  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
+  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
+  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
+}

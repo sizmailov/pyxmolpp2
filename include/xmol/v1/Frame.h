@@ -119,6 +119,13 @@ private:
   std::vector<BaseResidue> m_residues{};
   std::vector<BaseMolecule> m_molecules{};
   std::vector<XYZ> m_coordinates;
+
+  void notify_frame_moved(Frame& other);
+  void notify_frame_delete() const;
+  void notify_atoms_move(BaseAtom* old_begin, BaseAtom* old_end, BaseAtom* new_begin) const;
+  void notify_residues_move(BaseResidue* old_begin, BaseResidue* old_end, BaseResidue* new_begin) const;
+  void notify_molecules_move(BaseMolecule* old_begin, BaseMolecule* old_end, BaseMolecule* new_begin) const;
+  void notify_coordinates_move(XYZ* old_begin, XYZ* old_end, XYZ* new_begin) const;
 };
 
 } // namespace xmol::v1
