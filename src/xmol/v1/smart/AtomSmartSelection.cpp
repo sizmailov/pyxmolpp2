@@ -1,4 +1,4 @@
-#include "xmol/v1/proxy/smart/selections.h"
+#include "xmol/v1/proxy/smart/AtomSmartSelection.h"
 #include "xmol/v1/Frame.h"
 #include "xmol/v1/proxy/smart/FrameObserverImpl.h"
 
