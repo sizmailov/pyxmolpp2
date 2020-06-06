@@ -12,8 +12,10 @@ struct AtomSmartSelection::AtomRefLessThanComparator {
 };
 
 void AtomSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
-  auto it = std::lower_bound(m_data.begin(), m_data.end(), from_begin, AtomRefLessThanComparator{});
-  auto it_end = std::upper_bound(m_data.begin(), m_data.end(), from_end, AtomRefLessThanComparator{});
+  auto it =
+      std::lower_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_begin, AtomRefLessThanComparator{});
+  auto it_end =
+      std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, AtomRefLessThanComparator{});
   for (; it != it_end; ++it) {
     assert(from_begin <= it->m_coords);
     assert(it->m_coords < from_end);
@@ -22,8 +24,10 @@ void AtomSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ
 }
 
 void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin) {
-  auto it = std::lower_bound(m_data.begin(), m_data.end(), from_begin, AtomRefLessThanComparator{});
-  auto it_end = std::upper_bound(m_data.begin(), m_data.end(), from_end, AtomRefLessThanComparator{});
+  auto it =
+      std::lower_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_begin, AtomRefLessThanComparator{});
+  auto it_end =
+      std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, AtomRefLessThanComparator{});
   for (; it != it_end; ++it) {
     assert(from_begin <= it->m_atom);
     assert(it->m_atom < from_end);
@@ -32,9 +36,9 @@ void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from
 }
 
 xmol::v1::proxy::smart::AtomSmartSelection::AtomSmartSelection(xmol::v1::proxy::AtomSelection sel)
-    : AtomSelection(std::move(sel)), FrameObserver(frame_ptr()) {
-  if (frame_ptr()) {
-    frame_ptr()->reg(*this);
+    : FrameObserver(sel.frame_ptr()), m_selection(std::move(sel)) {
+  if (m_selection.frame_ptr()) {
+    m_selection.frame_ptr()->reg(*this);
   }
 }
 
