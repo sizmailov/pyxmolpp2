@@ -83,6 +83,7 @@ private:
   friend ResidueSelection;
   friend Selection<MoleculeRef>::LessThanComparator;
   friend smart::MoleculeSmartRef;
+  friend smart::MoleculeSmartSelection;
   BaseMolecule* m_molecule;
   explicit MoleculeRef(BaseMolecule& molecule) : m_molecule(&molecule){};
   MoleculeRef(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};

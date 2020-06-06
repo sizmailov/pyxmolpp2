@@ -5,69 +5,69 @@
 
 namespace xmol::v1::proxy::smart {
 
-class AtomSmartSelection : public FrameObserver<AtomSmartSelection> {
+class MoleculeSmartSelection : public FrameObserver<MoleculeSmartSelection> {
 public:
-  AtomSmartSelection(AtomSelection sel);
+  MoleculeSmartSelection(MoleculeSelection sel);
 
-  /// Parent residues
-  ResidueSelection residues() {
+  /// Children atoms
+  AtomSelection atoms() {
+    check_precondition("atoms()");
+    return m_selection.atoms();
+  };
+
+  /// Children residues
+  ResidueSelection residues(){
     check_precondition("residues()");
     return m_selection.residues();
   };
 
-  /// Parent molecules
-  MoleculeSelection molecules(){
-    check_precondition("molecules()");
-    return m_selection.molecules();
-  };
-
   /// Returns selection with atoms that match predicate
-  template <typename Predicate> AtomSelection filter(Predicate&& p) {
+  template <typename Predicate> MoleculeSelection filter(Predicate&& p) {
     check_precondition("filter()");
     return m_selection.filter(std::forward<Predicate>(p));
   }
 
   /// Inplace union
-  void unite(const AtomSelection& rhs){
+  void unite(const MoleculeSelection& rhs){
     check_precondition("unite()");
     m_selection.unite(rhs);
 
   }
 
   /// Inplace difference
-  void substract(const AtomSelection& rhs){
+  void substract(const MoleculeSelection& rhs){
     check_precondition("substract()");
     m_selection.substract(rhs);
   }
 
   /// Inplace intersection
-  void intersect(const AtomSelection& rhs){
+  void intersect(const MoleculeSelection& rhs){
     check_precondition("intersect()");
     m_selection.intersect(rhs);
   }
 
   /// Check if element in selection
-  bool contains(const AtomRef& ref) const{
+  [[nodiscard]] bool contains(const MoleculeRef& ref) const{
     check_precondition("filter()");
     return m_selection.contains(ref);
   }
 
   /// Inplace union
-  AtomSmartSelection& operator|=(const AtomSelection& rhs) {
+  MoleculeSmartSelection& operator|=(const MoleculeSelection& rhs) {
     check_precondition("operator|=()");
     m_selection |=(rhs);
     return *this;
   };
 
   /// Inplace difference
-  AtomSmartSelection& operator-=(const AtomSelection& rhs) {
+  MoleculeSmartSelection& operator-=(const MoleculeSelection& rhs) {
     check_precondition("operator-=()");
     m_selection -=(rhs);
     return *this;
   };
 
   /// Inplace intersection
-  AtomSmartSelection& operator&=(const AtomSelection& rhs) {
+  MoleculeSmartSelection& operator&=(const MoleculeSelection& rhs) {
     check_precondition("operator&=()");
     m_selection &= rhs;
     return *this;
@@ -90,32 +90,31 @@ public:
     return m_selection.empty();
   }
 
-  AtomRef& operator[](int i) {
+  MoleculeRef& operator[](int i) {
     check_precondition("operator[]()");
     return m_selection[i];
   }
 
-  operator const AtomSelection&() const {
-    check_precondition("operator const AtomSelection&()");
+  operator const MoleculeSelection&() const {
+    check_precondition("operator const MoleculeSelection&()");
     return m_selection;
   }
 
-  operator AtomSelection&() {
-    check_precondition("operator AtomSelection&()");
+  operator MoleculeSelection&() {
+    check_precondition("operator MoleculeSelection&()");
     return m_selection;
   }
 
 private:
-  AtomSelection m_selection;
+  MoleculeSelection m_selection;
   inline void check_precondition(const char* func_name) const {
     if (!is_bound_to_frame() && !m_selection.empty()) {
-      throw DeadFrameAccessError(std::string("AtomSmartSelection::") + func_name);
+      throw DeadFrameAccessError(std::string("MoleculeSmartSelection::") + func_name);
     }
   }
   friend Frame;
-  struct AtomRefLessThanComparator;
-  void on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin);
-  void on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
+  struct MoleculeRefLessThanComparator;
+  void on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin);
 };
 
 } // namespace xmol::v1::proxy::smart

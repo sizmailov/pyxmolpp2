@@ -2,6 +2,7 @@
 
 #include "xmol/v1/Frame.h"
 #include "xmol/v1/proxy/selections.h"
+#include "xmol/v1/proxy/smart/selections.h"
 #include "xmol/v1/proxy/spans-impl.h"
 
 using ::testing::Test;

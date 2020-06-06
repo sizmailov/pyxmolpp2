@@ -95,12 +95,12 @@ public:
     return m_selection[i];
   }
 
-  explicit operator const ResidueSelection&() const {
+  operator const ResidueSelection&() const {
     check_precondition("operator const ResidueSelection&()");
     return m_selection;
   }
 
-  explicit operator ResidueSelection&() {
+  operator ResidueSelection&() {
     check_precondition("operator ResidueSelection&()");
     return m_selection;
   }
