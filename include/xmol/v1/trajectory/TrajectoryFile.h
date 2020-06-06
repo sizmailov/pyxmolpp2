@@ -14,7 +14,7 @@ public:
   /// Number of atoms per frame
   [[nodiscard]] virtual size_t n_atoms() const = 0;
 
-  /** Read @p index 'th  frame into @coordinates
+  /** Read @p index 'th  frame into @p coordinates
    *
    * Precondition: @p index must match current position of internal data pointer
    * */
