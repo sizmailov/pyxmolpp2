@@ -18,3 +18,4 @@ function(benchmark_suite name dependencies)
 endfunction(benchmark_suite)
 
 benchmark_suite(v1 xmolpp2)
+benchmark_suite(v0 xmolpp2)
