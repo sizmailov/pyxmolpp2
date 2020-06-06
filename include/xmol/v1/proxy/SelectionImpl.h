@@ -4,7 +4,6 @@
 namespace xmol::v1::proxy {
 
 template <typename T> void Selection<T>::unite(const Selection<T>& rhs) {
-  check_precondition("unite()");
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
@@ -16,7 +15,6 @@ template <typename T> void Selection<T>::unite(const Selection<T>& rhs) {
 }
 
 template <typename T> void Selection<T>::substract(const Selection<T>& rhs) {
-  check_precondition("substract()");
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   assert(std::is_sorted(rhs.m_data.begin(), rhs.m_data.end(), comparator));
@@ -45,7 +43,6 @@ template <typename T> void Selection<T>::substract(const Selection<T>& rhs) {
 }
 
 template <typename T> void Selection<T>::intersect(const Selection<T>& rhs) {
-  check_precondition("intersect");
   auto comparator = LessThanComparator{};
   static_cast<void>(comparator);
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
@@ -58,7 +55,6 @@ template <typename T> void Selection<T>::intersect(const Selection<T>& rhs) {
 }
 
 template <typename T> bool Selection<T>::contains(const T& proxy) const {
-  check_precondition("contains()");
   auto comparator = LessThanComparator{};
   assert(std::is_sorted(m_data.begin(), m_data.end(), comparator));
   return std::binary_search(m_data.begin(), m_data.end(), proxy, comparator);

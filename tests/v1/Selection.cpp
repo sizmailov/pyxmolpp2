@@ -100,13 +100,13 @@ TEST_F(SelectionTests, smart_atom_selection) {
   AtomSelection plain_selection = AtomSelection(frame.atoms());
   AtomSmartSelection atoms = plain_selection;
   EXPECT_EQ(7, atoms.size());
-  for (int i = 1; i < 10; ++i){
-    add_polyglycines({{"A",1}}, frame);
-    for (int j = 0; j < 7; j++){
+  for (int i = 1; i < 10; ++i) {
+    add_polyglycines({{"A", 1}}, frame);
+    for (int j = 0; j < 7; j++) {
       EXPECT_EQ(atoms[j], frame.atoms()[j]);
     }
   }
-  for (int j = 0; j < 7; j++){
+  for (int j = 0; j < 7; j++) {
     EXPECT_NE(atoms[j], plain_selection[j]); // no UB, just comparing pointers
   }
 }
@@ -118,11 +118,15 @@ TEST_F(SelectionTests, smart_atom_exceptions) {
   frame = {};
   ASSERT_THROW(atoms.residues(), DeadFrameAccessError);
   ASSERT_THROW(atoms.molecules(), DeadFrameAccessError);
+  ASSERT_THROW(atoms.filter([](const AtomRef&) { return false; }), DeadFrameAccessError);
+  ASSERT_THROW(atoms.unite(atoms), DeadFrameAccessError);
+  ASSERT_THROW(atoms.intersect(atoms), DeadFrameAccessError);
+  ASSERT_THROW(atoms.substract(atoms), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms.empty()), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms.size()), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms.begin()), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms.end()), DeadFrameAccessError);
-  ASSERT_THROW(static_cast<void>(atoms|=atoms), DeadFrameAccessError);
-  ASSERT_THROW(static_cast<void>(atoms&=atoms), DeadFrameAccessError);
-  ASSERT_THROW(static_cast<void>(atoms-=atoms), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms |= atoms), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms &= atoms), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(atoms -= atoms), DeadFrameAccessError);
 }

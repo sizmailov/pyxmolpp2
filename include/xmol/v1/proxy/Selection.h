@@ -43,24 +43,19 @@ public:
   }
 
   [[nodiscard]] auto begin() {
-    check_precondition("begin()");
     return m_data.begin();
   }
   [[nodiscard]] auto end() {
-    check_precondition("end()");
     return m_data.end();
   }
   [[nodiscard]] size_t size() const {
-    check_precondition("size()");
     return m_data.size();
   }
   [[nodiscard]] size_t empty() const {
-    check_precondition("empty()");
     return m_data.empty();
   }
 
   T& operator[](int i) {
-    check_precondition("operator[]()");
     assert(i >= 0);
     assert(i < size());
     return m_data[i];
@@ -73,7 +68,6 @@ public:
   bool contains(const T& proxy) const;
 
 protected:
-  virtual void check_precondition(const char* func_name) const {}
 
   template <typename Predicate>[[nodiscard]] std::vector<T> internal_filter(Predicate&& p) {
     std::vector<T> result;
