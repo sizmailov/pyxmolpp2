@@ -18,7 +18,7 @@ class TrjtoolDatFile : public TrajectoryInputFile {
   };
 
 public:
-  TrjtoolDatFile(std::string filename);
+  explicit TrjtoolDatFile(std::string filename);
   [[nodiscard]] size_t n_frames() const final;
   [[nodiscard]] size_t n_atoms() const final;
   void read_coordinates(size_t index, future::Span<XYZ>& coordinates) final;
