@@ -31,7 +31,7 @@ public:
     Frame* operator->() { return &m_frame; }
     Iterator& operator++() {
       update();
-      m_traj.advance(m_pos, m_step);
+      m_traj.advance(m_pos, m_end, m_step);
       return *this;
     }
 
@@ -43,7 +43,7 @@ public:
         : m_traj(t), m_pos(begin), m_end(end), m_step(step), m_frame(t.m_frame) {
       assert(step > 0);
       if (m_pos.global_pos < m_end) {
-        m_traj.advance(m_pos, 0);
+        m_traj.advance(m_pos, m_end, 0);
         update();
       }
     }
@@ -57,6 +57,21 @@ public:
     size_t m_end;
     size_t m_step;
     Frame m_frame;
+  };
+
+  class Slice {
+  public:
+    Iterator begin() { return Iterator(m_traj, m_begin, m_end, m_step); }
+    Sentinel end() { return {}; }
+
+  private:
+    friend Trajectory;
+    Slice(Trajectory& traj, Position begin, size_t end, size_t step)
+        : m_traj(traj), m_begin(begin), m_end(end), m_step(step) {}
+    Trajectory& m_traj;
+    Position m_begin;
+    size_t m_end;
+    size_t m_step;
   };
 
   Trajectory() = delete;
@@ -74,6 +89,23 @@ public:
   Iterator begin() { return Iterator(*this, Position{0, 0, 0}, n_frames(), 1); }
   Sentinel end() { return {}; }
 
+  Slice slice(std::optional<size_t> begin={}, std::optional<size_t> end={}, size_t step = 1) {
+    if (!end) {
+      end = n_frames();
+    }
+    if (!begin) {
+      begin = 0;
+    }
+    assert(*end <= n_frames());
+    assert(step > 0);
+    Position pos{*begin, 0, *begin};
+    while (pos.pos_in_file >= m_files[pos.file]->n_frames()) {
+      pos.pos_in_file -= m_files[pos.file]->n_frames();
+      ++pos.file;
+    }
+    return Slice(*this, pos, *end, step);
+  }
+
   [[nodiscard]] size_t n_frames() const { return m_n_frames; };
   [[nodiscard]] size_t n_atoms() const { return m_frame.n_atoms(); }
 
@@ -85,9 +117,15 @@ protected:
     m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
   }
 
-  void advance(Position& position, size_t step) {
+  void advance(Position& position, size_t end, size_t step) {
     position.global_pos += step;
-    if (position.global_pos >= n_frames()) {
+    if (step==0){
+      assert(position.pos_in_file < m_files[position.file]->n_frames());
+      m_files[position.file]->advance(position.pos_in_file);
+      return;
+    }
+    if (position.global_pos >= end) {
+      m_files[position.file]->advance(m_files[position.file]->n_frames());
       return;
     }
     position.pos_in_file += step;

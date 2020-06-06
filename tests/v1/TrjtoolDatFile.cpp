@@ -44,11 +44,44 @@ TEST_F(TrjtoolDatFileTests, trajectory) {
   EXPECT_EQ(traj.n_frames(), 1000);
   traj.extend(TrjtoolDatFile(filename));
   EXPECT_EQ(traj.n_frames(), 2000);
-  int count = 0;
-  for (auto& _: traj){
-    count +=1;
-    static_cast<void>(_);
+  {
+    int count = 0;
+    for (auto& _ : traj.slice(100)) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 1900);
   }
-  EXPECT_EQ(count, 2000);
-
+  {
+    int count = 0;
+    for (auto& _ : traj) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 2000);
+  }
+  {
+    int count = 0;
+    for (auto& _ : traj) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 2000);
+  }
+  {
+    int count = 0;
+    for (auto& _ : traj.slice()) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 2000);
+  }
+  {
+    int count = 0;
+    for (auto& _ : traj.slice(100,{},2)) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 950);
+  }
 }
