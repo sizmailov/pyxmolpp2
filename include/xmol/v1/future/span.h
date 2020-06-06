@@ -15,6 +15,8 @@ template <typename T> struct Span {
   size_t empty() const { return m_end == m_begin; }
   T* begin() { return m_begin; };
   T* end() { return m_end; };
+  T& operator[](size_t i) { return m_begin[i]; };
+  const T& operator[](size_t i) const { return m_begin[i]; };
 
   void rebase(T* from, T* to) {
     m_begin = to + (m_begin - from);
