@@ -10,7 +10,23 @@ using namespace xmol::v1;
 using namespace xmol::v1::proxy::smart;
 using namespace xmol::v1::trajectory;
 
-class TrjtoolDatFileTests : public Test {};
+class TrjtoolDatFileTests : public Test {
+public:
+  static Trajectory construct_trajectory() {
+    const std::string filename("trjtool/GB1/run00001.dat");
+    Frame frame;
+    auto mol = frame.add_molecule({});
+    auto res = mol.add_residue({}, {});
+    const int n = 880;
+    for (int i = 0; i < n; ++i) {
+      res.add_atom({}, {});
+    }
+    Trajectory traj(std::move(frame));
+    traj.extend(TrjtoolDatFile(filename));
+    traj.extend(TrjtoolDatFile(filename));
+    return traj;
+  }
+};
 
 TEST_F(TrjtoolDatFileTests, read) {
   std::string filename("trjtool/GB1/run00001.dat");
@@ -28,45 +44,23 @@ TEST_F(TrjtoolDatFileTests, read) {
   EXPECT_LE((expected - actual).len(), 1e-3);
 }
 
-TEST_F(TrjtoolDatFileTests, trajectory) {
-  const std::string filename("trjtool/GB1/run00001.dat");
-
-  Frame frame;
-  auto mol = frame.add_molecule({});
-  auto res = mol.add_residue({}, {});
-  const int n = 880;
-  for (int i = 0; i < n; ++i) {
-    res.add_atom({}, {});
+TEST_F(TrjtoolDatFileTests, trajectory_traverse) {
+  Trajectory traj = construct_trajectory();
+  {
+    int count = 0;
+    for (auto& _ : traj) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 2000) << "traj";
   }
-  Trajectory traj(std::move(frame));
-  EXPECT_EQ(traj.n_atoms(), 880);
-  traj.extend(TrjtoolDatFile(filename));
-  EXPECT_EQ(traj.n_frames(), 1000);
-  traj.extend(TrjtoolDatFile(filename));
-  EXPECT_EQ(traj.n_frames(), 2000);
   {
     int count = 0;
     for (auto& _ : traj.slice(100)) {
       count += 1;
       static_cast<void>(_);
     }
-    EXPECT_EQ(count, 1900);
-  }
-  {
-    int count = 0;
-    for (auto& _ : traj) {
-      count += 1;
-      static_cast<void>(_);
-    }
-    EXPECT_EQ(count, 2000);
-  }
-  {
-    int count = 0;
-    for (auto& _ : traj) {
-      count += 1;
-      static_cast<void>(_);
-    }
-    EXPECT_EQ(count, 2000);
+    EXPECT_EQ(count, 1900) << "traj[100:]";
   }
   {
     int count = 0;
@@ -74,14 +68,53 @@ TEST_F(TrjtoolDatFileTests, trajectory) {
       count += 1;
       static_cast<void>(_);
     }
-    EXPECT_EQ(count, 2000);
+    EXPECT_EQ(count, 2000) << "traj[:]";
   }
   {
     int count = 0;
-    for (auto& _ : traj.slice(100,{},2)) {
+    for (auto& _ : traj.slice(100, {}, 2)) {
       count += 1;
       static_cast<void>(_);
     }
-    EXPECT_EQ(count, 950);
+    EXPECT_EQ(count, 950) << "traj[100::2]";
   }
+  for (int i = 0; i < 3; i++) {
+    int count = 0;
+    for (auto& _ : traj.slice(100, 200, 2)) {
+      count += 1;
+      if (count == 25) {
+        break;
+      }
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 25) << "traj[100:200:2] with break";
+  }
+
+  for (int i = 0; i < 3; i++) {
+    int count = 0;
+    try {
+      for (auto& _ : traj.slice(100, 200, 2)) {
+        count += 1;
+        if (count == 25) {
+          throw std::runtime_error("error");
+        }
+        static_cast<void>(_);
+      }
+    } catch (const std::runtime_error&) {
+    }
+    EXPECT_EQ(count, 25) << "traj[100:200:2] with throw";
+  }
+}
+
+TEST_F(TrjtoolDatFileTests, double_penetration) {
+  Trajectory traj = construct_trajectory();
+  auto dp = [&traj] {
+    for (auto& x : traj) {
+      static_cast<void>(x);
+      for (auto& y : traj) {
+        static_cast<void>(y);
+      }
+    }
+  };
+  EXPECT_THROW(dp(), TrajectoryDoubleTraverseError);
 }

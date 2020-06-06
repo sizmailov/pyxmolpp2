@@ -7,7 +7,15 @@ namespace xmol::v1::trajectory {
 
 using FrameId = int32_t;
 
-/// Trajectory
+class TrajectoryDoubleTraverseError : public std::runtime_error {
+public:
+  using std::runtime_error::runtime_error;
+};
+
+/** Forward-traversable, re-enterable MD trajectory
+ *
+ * Trajectory
+ */
 class Trajectory {
   struct Position {
     size_t global_pos;  // global frame index in trajectory
@@ -30,6 +38,12 @@ public:
   /// Iterator[Trajectory::Frame] (don't confuse with Frame)
   class Iterator {
   public:
+    ~Iterator() {
+      m_traj.m_iterator_counter--;
+      if (m_pos.global_pos < m_end) { /// handle break
+        m_traj.advance(m_pos, m_end, m_end - m_pos.global_pos);
+      }
+    }
     Frame& operator*() { return m_frame; }
     Frame* operator->() { return &m_frame; }
     Iterator& operator++() {
@@ -45,6 +59,10 @@ public:
     Iterator(Trajectory& t, Position begin, size_t end, size_t step)
         : m_traj(t), m_pos(begin), m_end(end), m_step(step), m_frame(t.m_frame) {
       assert(step > 0);
+      m_traj.m_iterator_counter++;
+      if (m_traj.m_iterator_counter > 1) {
+        throw TrajectoryDoubleTraverseError(""); // add link to doc / example
+      }
       if (m_pos.global_pos < m_end) {
         m_traj.advance(m_pos, m_end, 0);
         update();
@@ -79,13 +97,20 @@ public:
   };
 
   Trajectory() = delete;
+
+  /// Constructor
   explicit Trajectory(v1::Frame&& frame) : m_frame(std::move(frame)){};
+
+  /// Move constructor, invalidates iterators/slices
   Trajectory(Trajectory&& other) = default;
+
+  /// Move assignment, invalidates iterators/slices
   Trajectory& operator=(Trajectory&& other) = default;
 
   Trajectory(const Trajectory& other) = delete;
   Trajectory& operator=(const Trajectory& other) = delete;
 
+  /// Extend trajectory with @p input_file, invalidates iterators/slices
   template <typename InputFile> void extend(InputFile&& input_file) {
     extend_unique_ptr(std::make_unique<InputFile>(std::forward<InputFile>(input_file)));
   }
@@ -94,7 +119,7 @@ public:
   Sentinel end() { return {}; }
 
   /// Slice of trajectory
-  Slice slice(std::optional<size_t> begin={}, std::optional<size_t> end={}, size_t step = 1) {
+  Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1) {
     if (!end) {
       end = n_frames();
     }
@@ -117,17 +142,19 @@ public:
   /// Number of atoms in trajectory frame
   [[nodiscard]] size_t n_atoms() const { return m_frame.n_atoms(); }
 
-protected:
+private:
   v1::Frame m_frame;
   size_t m_n_frames = 0;
   std::vector<std::unique_ptr<TrajectoryInputFile>> m_files;
+  int m_iterator_counter = 0;
+
   void read_coordinates(Position pos, future::Span<XYZ>& coords) {
     m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
   }
 
   void advance(Position& position, size_t end, size_t step) {
     position.global_pos += step;
-    if (step==0){
+    if (step == 0) {
       assert(position.pos_in_file < m_files[position.file]->n_frames());
       m_files[position.file]->advance(position.pos_in_file);
       return;
