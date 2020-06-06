@@ -2,6 +2,7 @@
 *.pyc
 .cc_token
 .directory
+.benchmark-results
 .idea/*
 .pytest_cahce/
 __pycache__/

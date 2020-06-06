@@ -1,8 +1,8 @@
 
 add_custom_target(run-benchmarks)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/benchmark-results
-        COMMAND             ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/benchmark-results
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/.benchmark-results
+        COMMAND             ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/.benchmark-results
 )
 
 function(benchmark_suite name dependencies)
@@ -11,8 +11,8 @@ function(benchmark_suite name dependencies)
     target_link_libraries(benchmark-${name} ${dependencies} benchmark::benchmark_main)
     add_custom_target(run-benchmark-${name}
         COMMAND             ${CMAKE_COMMAND} -E env TEST_DATA_PATH=${PROJECT_SOURCE_DIR}/tests_dataset ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/run-benchmark.py --benchmark=$<TARGET_FILE:benchmark-${name}> --name=${name}
-        DEPENDS             benchmark-${name} ${CMAKE_CURRENT_BINARY_DIR}/benchmark-results
-        WORKING_DIRECTORY   ${CMAKE_CURRENT_BINARY_DIR}/benchmark-results
+        DEPENDS             benchmark-${name} ${PROJECT_SOURCE_DIR}/.benchmark-results
+        WORKING_DIRECTORY   ${PROJECT_SOURCE_DIR}/.benchmark-results
     )
     add_dependencies(run-benchmarks run-benchmark-${name})
 endfunction(benchmark_suite)
