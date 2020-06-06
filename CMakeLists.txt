@@ -7,13 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(PythonInterp REQUIRED)
-find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED )
-if (PYTHONLIBS_FOUND)
-    include_directories(${PYTHON_INCLUDE_DIRS})
-    message("Using default python version: " ${PYTHONLIBS_VERSION_STRING})
-endif()
-
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
 find_package(NetCDF REQUIRED)
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
@@ -52,7 +46,6 @@ include_directories(SYSTEM external/pybind11/include)
 
 
 include_directories(include)
-
 add_subdirectory(tests)
 
 include(cmake/WriteVersionInfo.cmake)
@@ -62,7 +55,7 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
-target_link_libraries(xmolpp2 NetCDF::NetCDF)
+target_link_libraries(xmolpp2 PUBLIC NetCDF::NetCDF Python::Module)
 
 set_target_properties(xmolpp2 PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
@@ -76,10 +69,15 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
-        target_link_libraries(xmolpp2 gcov)
-    ENDIF()
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    if(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
+        target_link_libraries(xmolpp2 PRIVATE gcov)
+    endif()
+#    if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+#        message("! Enabled address sanitizer for xmolpp2")
+#        target_compile_options(xmolpp2 PUBLIC -fsanitize=address)
+#        target_link_libraries(xmolpp2 PUBLIC asan)
+#    endif()
 endif()
 
 file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
