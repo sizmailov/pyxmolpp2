@@ -24,7 +24,7 @@ public:
   void read_coordinates(size_t index, future::Span<XYZ>& coordinates) final;
   void advance(size_t shift) final;
 
-protected:
+private:
   std::string m_filename;
   std::unique_ptr<std::istream> m_stream;
   Header m_header;
