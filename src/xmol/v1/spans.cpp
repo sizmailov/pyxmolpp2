@@ -1,43 +1,54 @@
 #include "xmol/v1/proxy/spans.h"
+#include "xmol/v1/proxy/proxy.h"
 
-xmol::v1::proxy::ResidueRefSpan xmol::v1::proxy::AtomRefSpan::residues() {
+using namespace xmol::v1::proxy;
+
+ResidueRefSpan AtomRefSpan::residues() {
   if (empty()) {
     return {};
   }
   return ResidueRefSpan(m_begin->residue, (m_begin + size() - 1)->residue + 1);
 }
 
-xmol::v1::proxy::MoleculeRefSpan xmol::v1::proxy::AtomRefSpan::molecules() {
+MoleculeRefSpan AtomRefSpan::molecules() {
   if (empty()) {
     return {};
   }
   return MoleculeRefSpan(m_begin->residue->molecule, (m_begin + size() - 1)->residue->molecule + 1);
 }
-xmol::v1::proxy::AtomRefSpan xmol::v1::proxy::ResidueRefSpan::atoms() {
+AtomRefSpan ResidueRefSpan::atoms() {
   if (empty()) {
     return {};
   }
   return AtomRefSpan(m_begin->atoms.m_begin, (m_begin + size() - 1)->atoms.m_end);
 }
-xmol::v1::proxy::MoleculeRefSpan xmol::v1::proxy::ResidueRefSpan::molecules() {
+MoleculeRefSpan ResidueRefSpan::molecules() {
   if (empty()) {
     return {};
   }
   return MoleculeRefSpan(m_begin->molecule, (m_begin + size() - 1)->molecule + 1);
 }
-xmol::v1::proxy::AtomRefSpan xmol::v1::proxy::MoleculeRefSpan::atoms() {
+AtomRefSpan MoleculeRefSpan::atoms() {
   if (empty()) {
     return {};
   }
   auto last_mol = m_begin + size() - 1;
   auto last_mol_last_residue = last_mol->residues.m_begin + last_mol->residues.size() - 1;
-  return xmol::v1::proxy::AtomRefSpan(m_begin->residues.m_begin->atoms.m_begin, last_mol_last_residue->atoms.m_end);
+  return AtomRefSpan(m_begin->residues.m_begin->atoms.m_begin, last_mol_last_residue->atoms.m_end);
 }
-xmol::v1::proxy::ResidueRefSpan xmol::v1::proxy::MoleculeRefSpan::residues() {
+ResidueRefSpan MoleculeRefSpan::residues() {
   if (empty()) {
     return {};
   }
   auto last_mol = m_begin + size() - 1;
-  return xmol::v1::proxy::ResidueRefSpan(m_begin->residues.m_begin,
+  return ResidueRefSpan(m_begin->residues.m_begin,
                                          last_mol->residues.m_begin + last_mol->residues.size());
 }
+
+
+bool AtomRefSpan::contains(const AtomRef& ref) const { return m_begin <= ref.m_atom && ref.m_atom < m_end;; }
+
+bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
+
+bool MoleculeRefSpan::contains(const MoleculeRef& ref) const { return m_begin <= ref.m_molecule && ref.m_molecule < m_end;; }
+

@@ -1,6 +1,6 @@
 #pragma once
-#include "ProxySpan.h"
 #include "../base.h"
+#include "ProxySpan.h"
 
 namespace xmol::v1::proxy {
 
@@ -10,8 +10,12 @@ public:
   ResidueRefSpan residues();
   MoleculeRefSpan molecules();
 
-  template<typename Predicate>
-  AtomSelection filter(Predicate&& p);
+  [[nodiscard]] bool contains(const AtomRef& ref) const;
+
+  template <typename Predicate> AtomSelection filter(Predicate&& p);
+
+private:
+  friend smart::AtomSmartSpan;
 };
 
 class ResidueRefSpan : public ProxySpan<ResidueRef, BaseResidue> {
@@ -20,8 +24,9 @@ public:
   AtomRefSpan atoms();
   MoleculeRefSpan molecules();
 
-  template<typename Predicate>
-  ResidueSelection filter(Predicate&& p);
+  [[nodiscard]] bool contains(const ResidueRef& ref) const;
+
+  template <typename Predicate> ResidueSelection filter(Predicate&& p);
 };
 
 class MoleculeRefSpan : public ProxySpan<MoleculeRef, BaseMolecule> {
@@ -30,9 +35,9 @@ public:
   AtomRefSpan atoms();
   ResidueRefSpan residues();
 
-  template<typename Predicate>
-  MoleculeSelection filter(Predicate&& p);
+  [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
+  template <typename Predicate> MoleculeSelection filter(Predicate&& p);
 };
 
 } // namespace xmol::v1::proxy

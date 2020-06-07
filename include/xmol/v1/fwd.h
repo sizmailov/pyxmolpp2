@@ -49,6 +49,10 @@ class AtomSmartSelection;
 class ResidueSmartSelection;
 class MoleculeSmartSelection;
 
+class AtomSmartSpan;
+class ResidueSmartSpan;
+class MoleculeSmartSpan;
+
 } // namespace smart
 } // namespace proxy
 

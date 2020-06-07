@@ -6,6 +6,12 @@
 
 namespace xmol::v1::proxy {
 
+/// Indicates span split
+class SpanSplitError : public std::runtime_error {
+public:
+  using std::runtime_error::runtime_error;
+};
+
 template <typename Proxy, typename T> class ProxySpan {
 public:
   class Iterator {
@@ -57,10 +63,10 @@ public:
   [[nodiscard]] Iterator end() { return Iterator(m_end, m_end); }
 
 protected:
-  //  inline void rebase(T* from, T* to) {
-  //    m_begin = to + (m_begin - from);
-  //    m_end = to + (m_end - from);
-  //  }
+  inline void rebase(T* from, T* to) {
+    m_begin = to + (m_begin - from);
+    m_end = to + (m_end - from);
+  }
 
 protected:
   T* m_begin = nullptr;

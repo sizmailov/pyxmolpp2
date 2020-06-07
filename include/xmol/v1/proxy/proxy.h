@@ -80,6 +80,7 @@ private:
   friend AtomRef;
   friend AtomSelection;
   friend Frame;
+  friend MoleculeRefSpan;
   friend MoleculeSelection;
   friend ProxySpan<MoleculeRef, BaseMolecule>;
   friend ResidueRef;
@@ -156,6 +157,7 @@ private:
   friend MoleculeRef;
   friend MoleculeSelection;
   friend ProxySpan<ResidueRef, BaseResidue>;
+  friend ResidueRefSpan;
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
   friend smart::ResidueSmartRef;
@@ -219,6 +221,7 @@ protected:
   BaseAtom* m_atom = nullptr;
 
 private:
+  friend AtomRefSpan;
   friend AtomSelection;
   friend Frame;
   friend MoleculeSelection;
@@ -228,6 +231,7 @@ private:
   friend Selection<proxy::AtomRef>::LessThanComparator;
   friend smart::AtomSmartRef;
   friend smart::AtomSmartSelection;
+  friend smart::AtomSmartSpan;
   explicit AtomRef(BaseAtom& atom);
 
   AtomRef(BaseAtom* ptr, BaseAtom* end);
