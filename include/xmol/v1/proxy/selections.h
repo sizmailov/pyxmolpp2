@@ -152,4 +152,16 @@ private:
   }
 };
 
+AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs);
+AtomSelection operator-(const AtomSelection& lhs, const AtomSelection& rhs);
+AtomSelection operator&(const AtomSelection& lhs, const AtomSelection& rhs);
+
+ResidueSelection operator|(const ResidueSelection& lhs, const ResidueSelection& rhs);
+ResidueSelection operator-(const ResidueSelection& lhs, const ResidueSelection& rhs);
+ResidueSelection operator&(const ResidueSelection& lhs, const ResidueSelection& rhs);
+
+MoleculeSelection operator|(const MoleculeSelection& lhs, const MoleculeSelection& rhs);
+MoleculeSelection operator-(const MoleculeSelection& lhs, const MoleculeSelection& rhs);
+MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelection& rhs);
+
 } // namespace xmol::v1::proxy

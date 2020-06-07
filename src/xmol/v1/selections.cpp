@@ -64,9 +64,36 @@ AtomSelection MoleculeSelection::atoms() {
     }
   }
   return AtomSelection(std::move(result), true);
-
 }
 
 smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::MoleculeSmartSelection(*this); }
 smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
 smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }
+
+namespace xmol::v1::proxy {
+
+AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) |= rhs; }
+AtomSelection operator-(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) -= rhs; }
+AtomSelection operator&(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) &= rhs; }
+
+ResidueSelection operator|(const ResidueSelection& lhs, const ResidueSelection& rhs) {
+  return ResidueSelection(lhs) |= rhs;
+}
+ResidueSelection operator-(const ResidueSelection& lhs, const ResidueSelection& rhs) {
+  return ResidueSelection(lhs) -= rhs;
+}
+ResidueSelection operator&(const ResidueSelection& lhs, const ResidueSelection& rhs) {
+  return ResidueSelection(lhs) &= rhs;
+}
+
+MoleculeSelection operator|(const MoleculeSelection& lhs, const MoleculeSelection& rhs) {
+  return MoleculeSelection(lhs) |= rhs;
+}
+MoleculeSelection operator-(const MoleculeSelection& lhs, const MoleculeSelection& rhs) {
+  return MoleculeSelection(lhs) -= rhs;
+}
+MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelection& rhs) {
+  return MoleculeSelection(lhs) &= rhs;
+}
+
+} // namespace xmol::v1::proxy
