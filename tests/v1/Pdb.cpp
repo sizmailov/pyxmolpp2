@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "xmol/v1/Frame.h"
-#include "xmol/v1/io/PdbFile.h"
+#include "xmol/v1/io/PdbInputFile.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
@@ -13,7 +13,7 @@ class PdbTests : public Test {};
 
 TEST_F(PdbTests, read) {
   const std::string filename("trjtool/GB1/run00001.pdb");
-  Frame frame = PdbFile(filename).read(PdbFile::Dialect::AMBER_99).frames()[0];
+  Frame frame = PdbInputFile(filename, PdbInputFile::Dialect::AMBER_99).frames()[0];
   EXPECT_EQ(frame.n_atoms(), 880);
   EXPECT_EQ(frame.n_residues(), 56);
   for (auto&& mol: frame.molecules()){

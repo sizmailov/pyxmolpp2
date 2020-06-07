@@ -1,15 +1,20 @@
-#include "xmol/v1/io/PdbFile.h"
 #include "xmol/pdb/PdbFile.h"
 #include "xmol/pdb/PdbReader.h"
 #include "xmol/pdb/PdbRecord.h"
+#include "xmol/v1/io/PdbInputFile.h"
 
 using namespace xmol::v1::io;
 
-PdbFile::PdbFile(std::string filename) : m_filename(std::move(filename)) {}
+PdbInputFile::PdbInputFile(std::string filename, Dialect dialect, bool read_now)
+    : m_filename(std::move(filename)), m_dialect(dialect) {
+  if (read_now) {
+    read();
+  }
+}
 
-PdbFile& PdbFile::read(Dialect dialect) {
+PdbInputFile& PdbInputFile::read() {
   xmol::pdb::AlteredPdbRecords alteredPdbRecords(xmol::pdb::StandardPdbRecords::instance());
-  switch (dialect) {
+  switch (m_dialect) {
   case (Dialect::AMBER_99):
     alteredPdbRecords.alter_record(xmol::pdb::RecordName("ATOM"), xmol::pdb::FieldName("serial"), {7, 12});
     break;
@@ -31,5 +36,36 @@ PdbFile& PdbFile::read(Dialect dialect) {
       }
     }
   }
+  m_n_frames = m_frames.size();
+  if (!m_frames.empty()) {
+    m_n_atoms = m_frames[0].n_atoms();
+  }
   return *this;
+}
+
+size_t PdbInputFile::n_frames() const { return m_n_frames; }
+size_t PdbInputFile::n_atoms() const { return m_n_atoms; }
+void PdbInputFile::read_coordinates(size_t index, xmol::v1::future::Span<xmol::v1::XYZ>& coordinates) {
+  assert(!m_frames.empty());
+  assert(m_current_frame == index);
+
+  Frame& frame = m_frames[index];
+  if (coordinates.size() != frame.n_atoms()) {
+    throw PdbReadError("Wrong of atoms in " + std::to_string(index) + " frame in `" + m_filename + "`. Expected " +
+                       std::to_string(coordinates.size()));
+  }
+  for (size_t i = 0; i < coordinates.size(); ++i) {
+    coordinates[i] = frame.coordinates()[i];
+  }
+}
+void PdbInputFile::advance(size_t shift) {
+  m_current_frame += shift;
+  if (m_current_frame >= n_frames()) {
+    m_frames.clear();
+    m_current_frame = 0;
+    return;
+  }
+  if (m_frames.empty()) {
+    read();
+  }
 }
