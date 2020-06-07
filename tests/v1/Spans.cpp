@@ -99,7 +99,7 @@ TEST_F(SpanTests, ref_count) {
 }
 
 TEST_F(SpanTests, split_exceptinos) {
-  auto frame = make_polyglycines({{"A", 10}});
+  auto frame = make_polyglycines({{"A", 2}, {"B", 3}});
   auto atoms = frame.atoms().smart();
   auto residues = frame.residues().smart();
   auto molecules = frame.molecules().smart();
