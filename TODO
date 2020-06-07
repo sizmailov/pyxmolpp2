@@ -1,4 +1,3 @@
-- smart spans
 - check for same frame in selections
 - selections set operations
 - set .m_frame = nullptr in selections set operations
