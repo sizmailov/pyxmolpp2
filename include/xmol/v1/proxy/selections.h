@@ -16,6 +16,7 @@ public:
   using Selection::Selection;
   /// Construct from parent
   AtomSelection(Selection&& rhs) : Selection(std::move(rhs)) {}
+  AtomSelection(AtomRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Parent residues
   ResidueSelection residues();
@@ -62,6 +63,7 @@ class ResidueSelection : public Selection<ResidueRef> {
 public:
   using Selection::Selection;
   ResidueSelection(Selection&& rhs) : Selection(std::move(rhs)) {}
+  ResidueSelection(ResidueRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Children atoms of the residues
   AtomSelection atoms();
@@ -109,6 +111,7 @@ class MoleculeSelection : public Selection<MoleculeRef> {
 public:
   using Selection::Selection;
   MoleculeSelection(Selection&& rhs) : Selection(std::move(rhs)) {}
+  MoleculeSelection(MoleculeRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Children atoms of the molecules
   AtomSelection atoms();
