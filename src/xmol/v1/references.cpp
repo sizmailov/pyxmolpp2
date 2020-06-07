@@ -30,13 +30,13 @@ ResidueSmartRef::ResidueSmartRef(ResidueRef&& residue)
 
 void MoleculeSmartRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end,
                                               BaseMolecule* to_begin) {
-  if (from_begin <= m_molecule && m_molecule < from_end) {
-    m_molecule = to_begin + (m_molecule - from_begin);
+  if (from_begin <= m_ref.m_molecule && m_ref.m_molecule < from_end) {
+    m_ref.m_molecule = to_begin + (m_ref.m_molecule - from_begin);
   }
 }
 
 MoleculeSmartRef::MoleculeSmartRef(proxy::MoleculeRef&& molecule)
-    : proxy::MoleculeRef(molecule), FrameObserver<MoleculeSmartRef>(&molecule.frame()) {
+    : FrameObserver<MoleculeSmartRef>(&molecule.frame()), m_ref(molecule) {
   frame().reg(*this);
 }
 

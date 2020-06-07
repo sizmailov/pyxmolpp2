@@ -164,12 +164,12 @@ public:
   }
 
   operator ResidueRef&() {
-    check_precondition("operator AtomRef&()");
+    check_precondition("operator ResidueRef&()");
     return m_ref;
   };
 
   operator const ResidueRef&() const {
-    check_precondition("operator const AtomRef&()");
+    check_precondition("operator const ResidueRef&()");
     return m_ref;
   };
 
@@ -186,13 +186,86 @@ private:
 };
 
 /// Smart Molecule reference proxy
-class MoleculeSmartRef : public MoleculeRef, public FrameObserver<MoleculeSmartRef> {
+class MoleculeSmartRef : public FrameObserver<MoleculeSmartRef> {
 public:
   MoleculeSmartRef(MoleculeRef&& mol);
+  /// Molecule name
+  [[nodiscard]] const MoleculeName& name() const {
+    check_precondition("name()");
+    return m_ref.name();
+  }
+
+  void name(const MoleculeName& name) {
+    check_precondition("name()");
+    m_ref.name(name);
+  }
+
+  /// Check if molecule has no residues
+  [[nodiscard]] bool empty() const {
+    check_precondition("empty()");
+    return m_ref.empty();
+  }
+
+  /// Number of residues in molecule
+  [[nodiscard]] size_t size() const {
+    check_precondition("size()");
+    return m_ref.size();
+  }
+
+  /// Parent frame
+  Frame& frame() {
+    check_precondition("frame()");
+    return m_ref.frame();
+  };
+
+  /// Residues of the molecule
+  ResidueRefSpan residues() {
+    check_precondition("residues()");
+    return m_ref.residues();
+  }
+
+  /// Atoms of the molecule
+  AtomRefSpan atoms() {
+    check_precondition("atoms()");
+    return m_ref.atoms();
+  }
+
+  /// Check if references point to same data
+  bool operator!=(const MoleculeRef& rhs) const {
+    check_precondition("operator!=()");
+    return m_ref != rhs;
+  }
+
+  /// @brief Adds residue to the end of the molecule and return its reference
+  ///
+  /// Invalidates all kinds of non-smart residue references including proxy::ResidueRef, proxy::ResidueRefSpan and
+  /// proxy::ResidueSelection
+  ///
+  /// Appropriate Frame::reserve_residues() call prevents references invalidation
+  ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId) {
+    check_precondition("add_residue()");
+    return m_ref.add_residue(residueName, residueId);
+  }
+
+  operator MoleculeRef&() {
+    check_precondition("operator MoleculeRef&()");
+    return m_ref;
+  };
+
+  operator const MoleculeRef&() const {
+    check_precondition("operator const MoleculeRef&()");
+    return m_ref;
+  };
 
 private:
+  MoleculeRef m_ref;
   friend Frame;
   void on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end, BaseMolecule* to_begin);
+  inline void check_precondition(const char* func_name) const {
+    if (!is_bound_to_frame()) {
+      throw DeadFrameAccessError(std::string("MoleculeSmartRef::") + func_name);
+    }
+  }
 };
 
 } // namespace xmol::v1::proxy::smart
