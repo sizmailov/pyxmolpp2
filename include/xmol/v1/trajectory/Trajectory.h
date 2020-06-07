@@ -99,7 +99,7 @@ public:
   Trajectory() = delete;
 
   /// Constructor
-  explicit Trajectory(v1::Frame&& frame) : m_frame(std::move(frame)){};
+  explicit Trajectory(v1::Frame frame) : m_frame(std::move(frame)){};
 
   /// Move constructor, invalidates iterators/slices
   Trajectory(Trajectory&& other) = default;
