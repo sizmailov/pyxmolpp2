@@ -1,0 +1,11 @@
+- smart spans
+- return this from setters to enable chained initialization sequences, e.g.:
+        auto atom = residue.add_atom().id(10).r({1,2,3}).name({"A"}).smart();
+
+- organize headers for convenient includes by users
+- v1 geometry
+- v1 crystal
+- netcdf format
+- xtc format
+- pseudo trajectory adapter
+- trajectory from layout
