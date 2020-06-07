@@ -7,9 +7,9 @@
 namespace xmol::v1 {
 
 namespace detail {
-struct AtomNameTag {};
-struct ResidueNameTag {};
-struct ChainNameTag {};
+using AtomNameTag = xmol::polymer::detail::AtomNameTag;
+using ResidueNameTag = xmol::polymer::detail::ResidueNameTag;
+using ChainNameTag = xmol::polymer::detail::ChainNameTag;
 } // namespace detail
 
 using AtomId = int32_t;
