@@ -9,9 +9,17 @@ public:
   using std::runtime_error::runtime_error;
 };
 
+/// PDB file
 class PdbFile {
+public:
+  /// PDB file dialect
+  enum class Dialect {
+    STANDARD_V3, /// PDB v3.3 standard (http://www.wwpdb.org/documentation/file-format-content/format33/v3.3.html)
+    AMBER_99     /// compatibility with AMBER tools
+  };
+
   PdbFile(std::string filename);
-  PdbFile& read();
+  PdbFile& read(Dialect dialect = Dialect::STANDARD_V3);
   const std::vector<Frame>& frames() const { return m_frames; }
 
 private:
