@@ -35,13 +35,13 @@ endif()
 enable_testing()
 
 
-add_subdirectory(external/googletest)
-add_subdirectory(external/benchmark)
+add_subdirectory(external/googletest EXCLUDE_FROM_ALL)
+add_subdirectory(external/benchmark EXCLUDE_FROM_ALL)
 include_directories(SYSTEM external/googletest/googletest/include)
 include_directories(SYSTEM external/benchmark/include)
 include_directories(SYSTEM external/GSL/include)
 include_directories(SYSTEM external/eigen-git-mirror)
-add_subdirectory(external/pybind11)
+add_subdirectory(external/pybind11 EXCLUDE_FROM_ALL)
 include_directories(SYSTEM external/pybind11/include)
 
 
