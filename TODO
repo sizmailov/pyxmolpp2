@@ -1,4 +1,3 @@
-- check for same frame in selections
 - set .m_frame = nullptr in selections set operations
 
 - increase test coverage
