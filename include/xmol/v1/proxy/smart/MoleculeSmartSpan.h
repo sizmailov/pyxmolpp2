@@ -51,7 +51,7 @@ public:
     return m_span.empty();
   }
 
-  MoleculeRef operator[](int i) {
+  MoleculeRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];
   }

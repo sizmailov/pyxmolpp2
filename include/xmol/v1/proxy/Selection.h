@@ -55,7 +55,7 @@ public:
     return m_data.empty();
   }
 
-  T& operator[](int i) {
+  T& operator[](size_t i) {
     assert(i >= 0);
     assert(i < size());
     return m_data[i];

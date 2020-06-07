@@ -50,7 +50,7 @@ public:
     return m_span.empty();
   }
 
-  AtomRef operator[](int i) {
+  AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];
   }

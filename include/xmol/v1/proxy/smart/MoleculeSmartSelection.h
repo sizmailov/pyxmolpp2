@@ -91,7 +91,7 @@ public:
     return m_selection.empty();
   }
 
-  MoleculeRef& operator[](int i) {
+  MoleculeRef& operator[](size_t i) {
     check_precondition("operator[]()");
     return m_selection[i];
   }

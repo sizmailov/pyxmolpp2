@@ -36,20 +36,97 @@ public:
   }
 };
 
-TEST_F(SpanTests, filter) {
+TEST_F(SpanTests, ref_count) {
   auto frame = make_polyglycines({{"A", 10}, {"B", 20}});
-  auto atoms = frame.atoms();
-  EXPECT_EQ(atoms.size(), 30 * 7);
-  proxy::AtomSelection sel = atoms;
-  EXPECT_EQ(sel.size(), atoms.size());
-  auto ca = sel.filter([](proxy::AtomRef& atom) { return atom.name() == "CA"; });
-  EXPECT_EQ(ca.size(), 30);
-  auto a_ca = ca.filter([](proxy::AtomRef& atom) { return atom.molecule().name() == "A"; });
-  auto b_ca = ca.filter([](proxy::AtomRef& atom) { return atom.molecule().name() == "B"; });
-  EXPECT_EQ(a_ca.size(), 10);
-  EXPECT_EQ(b_ca.size(), 20);
-  auto a_r1_ca = a_ca.filter([](proxy::AtomRef& atom) { return atom.residue().id() == 1; });
-  auto b_r1_ca = b_ca.filter([](proxy::AtomRef& atom) { return atom.residue().id() == 1; });
-  EXPECT_EQ(a_r1_ca.size(), 1);
-  EXPECT_EQ(b_r1_ca.size(), 0);
+
+  auto n_mol_refs = [&] { return frame.n_references<MoleculeSmartSpan>(); };
+  auto n_atom_refs = [&] { return frame.n_references<MoleculeSmartSpan>(); };
+  auto n_res_refs = [&] { return frame.n_references<MoleculeSmartSpan>(); };
+
+  ASSERT_EQ(n_mol_refs(), 0);
+  ASSERT_EQ(n_res_refs(), 0);
+  ASSERT_EQ(n_atom_refs(), 0);
+  {
+    auto atoms = frame.atoms().smart();
+    auto residues = frame.residues().smart();
+    auto molecules = frame.molecules().smart();
+
+    ASSERT_EQ(n_mol_refs(), 1);
+    ASSERT_EQ(n_res_refs(), 1);
+    ASSERT_EQ(n_atom_refs(), 1);
+    {
+      auto atoms2 = atoms;
+      auto residues2 = residues;
+      auto molecules2 = molecules;
+
+      ASSERT_EQ(n_mol_refs(), 2);
+      ASSERT_EQ(n_res_refs(), 2);
+      ASSERT_EQ(n_atom_refs(), 2);
+
+      {
+        auto atoms3 = molecules.atoms().smart();
+        auto residues3 = molecules.residues().smart();
+        auto molecule3 = residues.molecules().smart();
+
+        ASSERT_EQ(n_mol_refs(), 3);
+        ASSERT_EQ(n_res_refs(), 3);
+        ASSERT_EQ(n_atom_refs(), 3);
+        {
+
+          auto atoms4 = residues.atoms().smart();
+          auto residues4 = atoms.residues().smart();
+          auto molecule4 = atoms.molecules().smart();
+
+          ASSERT_EQ(n_mol_refs(), 4);
+          ASSERT_EQ(n_res_refs(), 4);
+          ASSERT_EQ(n_atom_refs(), 4);
+        }
+        ASSERT_EQ(n_mol_refs(), 3);
+        ASSERT_EQ(n_res_refs(), 3);
+        ASSERT_EQ(n_atom_refs(), 3);
+      }
+      ASSERT_EQ(n_mol_refs(), 2);
+      ASSERT_EQ(n_res_refs(), 2);
+      ASSERT_EQ(n_atom_refs(), 2);
+    }
+    ASSERT_EQ(n_mol_refs(), 1);
+    ASSERT_EQ(n_res_refs(), 1);
+    ASSERT_EQ(n_atom_refs(), 1);
+  }
+  ASSERT_EQ(n_mol_refs(), 0);
+  ASSERT_EQ(n_res_refs(), 0);
+  ASSERT_EQ(n_atom_refs(), 0);
+}
+
+TEST_F(SpanTests, split_exceptinos) {
+  auto frame = make_polyglycines({{"A", 10}});
+  auto atoms = frame.atoms().smart();
+  auto residues = frame.residues().smart();
+  auto molecules = frame.molecules().smart();
+
+  residues[residues.size()-1].add_atom({},{});
+  molecules[molecules.size()-1].add_residue({},{});
+  frame.add_molecule({});
+  EXPECT_NO_THROW(static_cast<void>(atoms.size()));
+  EXPECT_NO_THROW(static_cast<void>(residues.size()));
+  EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+
+  residues[0].add_atom({},{});
+  EXPECT_THROW(static_cast<void>(atoms.size()), SpanSplitError);
+  EXPECT_NO_THROW(static_cast<void>(residues.size()));
+  EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+
+  atoms = frame.atoms(); // restore to check that residues creation doesn't affect atoms
+
+  molecules[0].add_residue({},{});
+  EXPECT_THROW(static_cast<void>(residues.size()), SpanSplitError);
+  EXPECT_NO_THROW(static_cast<void>(atoms.size()));
+  EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+
+  residues = frame.residues();
+
+  EXPECT_NO_THROW(static_cast<void>(atoms.size()));
+  EXPECT_NO_THROW(static_cast<void>(residues.size()));
+  EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+
 }
