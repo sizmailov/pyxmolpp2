@@ -57,18 +57,10 @@ public:
   [[nodiscard]] future::Span<XYZ> coordinates();
 
   /// Current number of smart atom references
-  [[nodiscard]] size_t n_atom_references() const {
-    return selection::Observable<proxy::smart::AtomSmartRef>::observers.size();
-  }
-
-  /// Current number of smart residue references
-  [[nodiscard]] size_t n_residue_references() const {
-    return selection::Observable<proxy::smart::ResidueSmartRef>::observers.size();
-  }
-
-  /// Current number of smart molecule references
-  [[nodiscard]] size_t n_molecule_references() const {
-    return selection::Observable<proxy::smart::MoleculeSmartRef>::observers.size();
+  template<typename Smart>
+  [[nodiscard]] size_t n_references() const {
+    static_assert(std::is_base_of_v<selection::Observable<Smart>,Frame>);
+    return selection::Observable<Smart>::observers.size();
   }
 
   /// @brief Preallocate space for n atoms
