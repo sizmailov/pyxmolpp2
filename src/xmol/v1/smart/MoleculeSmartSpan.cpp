@@ -13,3 +13,5 @@ void xmol::v1::proxy::smart::MoleculeSmartSpan::on_base_molecules_move(BaseMolec
     m_is_split = true;
   }
 }
+
+template class xmol::v1::proxy::smart::FrameObserver<MoleculeSmartSpan>;

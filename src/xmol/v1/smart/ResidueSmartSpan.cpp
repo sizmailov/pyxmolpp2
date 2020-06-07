@@ -13,3 +13,5 @@ void xmol::v1::proxy::smart::ResidueSmartSpan::on_base_residues_move(BaseResidue
     m_is_split = true;
   }
 }
+
+template class xmol::v1::proxy::smart::FrameObserver<ResidueSmartSpan>;

@@ -14,3 +14,5 @@ void xmol::v1::proxy::smart::AtomSmartSpan::on_base_atoms_move(xmol::v1::BaseAto
     m_is_split = true;
   }
 }
+
+template class xmol::v1::proxy::smart::FrameObserver<AtomSmartSpan>;
