@@ -55,7 +55,7 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 
-target_link_libraries(xmolpp2 PUBLIC NetCDF::NetCDF Python::Module)
+target_link_libraries(xmolpp2 PUBLIC NetCDF::NetCDF)
 
 set_target_properties(xmolpp2 PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
