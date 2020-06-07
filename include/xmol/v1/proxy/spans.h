@@ -14,6 +14,9 @@ public:
 
   template <typename Predicate> AtomSelection filter(Predicate&& p);
 
+  /// Make smart span from this
+  smart::AtomSmartSpan smart();
+
 private:
   friend smart::AtomSmartSpan;
 };
@@ -28,6 +31,9 @@ public:
 
   template <typename Predicate> ResidueSelection filter(Predicate&& p);
 
+  /// Make smart span from this
+  smart::ResidueSmartSpan smart();
+
 private:
   friend smart::ResidueSmartSpan;
 };
@@ -41,6 +47,9 @@ public:
   [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
   template <typename Predicate> MoleculeSelection filter(Predicate&& p);
+
+  /// Make smart span from this
+  smart::MoleculeSmartSpan smart();
 
 private:
   friend smart::MoleculeSmartSpan;

@@ -1,5 +1,4 @@
-#include "xmol/v1/proxy/spans.h"
-#include "xmol/v1/proxy/proxy.h"
+#include "xmol/v1/proxy/smart/spans.h"
 
 using namespace xmol::v1::proxy;
 
@@ -41,14 +40,21 @@ ResidueRefSpan MoleculeRefSpan::residues() {
     return {};
   }
   auto last_mol = m_begin + size() - 1;
-  return ResidueRefSpan(m_begin->residues.m_begin,
-                                         last_mol->residues.m_begin + last_mol->residues.size());
+  return ResidueRefSpan(m_begin->residues.m_begin, last_mol->residues.m_begin + last_mol->residues.size());
 }
 
+bool AtomRefSpan::contains(const AtomRef& ref) const {
+  return m_begin <= ref.m_atom && ref.m_atom < m_end;
+  ;
+}
 
-bool AtomRefSpan::contains(const AtomRef& ref) const { return m_begin <= ref.m_atom && ref.m_atom < m_end;; }
+smart::AtomSmartSpan AtomRefSpan::smart() { return *this; }
 
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
+smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
 
-bool MoleculeRefSpan::contains(const MoleculeRef& ref) const { return m_begin <= ref.m_molecule && ref.m_molecule < m_end;; }
-
+bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
+  return m_begin <= ref.m_molecule && ref.m_molecule < m_end;
+  ;
+}
+smart::MoleculeSmartSpan MoleculeRefSpan::smart() { return *this; }
