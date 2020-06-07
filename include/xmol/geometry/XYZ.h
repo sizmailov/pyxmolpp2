@@ -1,5 +1,6 @@
 #pragma once
 #include "Eigen/Dense"
+#include <iomanip>
 
 namespace xmol {
 namespace geometry {
@@ -104,5 +105,12 @@ inline XYZ operator*(double t, const XYZ& a) {
   result *= t;
   return result;
 }
-}
+
+std::ostream& operator<<(std::ostream& out, const XYZ& r);
+
+XYZ upper_bound(const XYZ& a, const XYZ& b);
+
+XYZ lower_bound(const XYZ& a, const XYZ& b);
+
+} // namespace geometry
 }
