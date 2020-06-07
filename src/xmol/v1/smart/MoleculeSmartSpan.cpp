@@ -1,4 +1,5 @@
 #include "xmol/v1/proxy/smart/MoleculeSmartSpan.h"
+#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
 
 using namespace xmol::v1::proxy::smart;
 
@@ -13,5 +14,13 @@ void xmol::v1::proxy::smart::MoleculeSmartSpan::on_base_molecules_move(BaseMolec
     m_is_split = true;
   }
 }
+
+xmol::v1::proxy::smart::MoleculeSmartSpan::MoleculeSmartSpan(xmol::v1::proxy::MoleculeRefSpan sel)
+    : FrameObserver(sel.frame_ptr()), m_span(sel) {
+  if (m_span.frame_ptr()) {
+    m_span.frame_ptr()->reg(*this);
+  }
+}
+
 
 template class xmol::v1::proxy::smart::FrameObserver<MoleculeSmartSpan>;

@@ -119,6 +119,10 @@ private:
   friend proxy::smart::ResidueSmartSelection;
   friend proxy::smart::MoleculeSmartSelection;
 
+  friend proxy::smart::AtomSmartSpan;
+  friend proxy::smart::ResidueSmartSpan;
+  friend proxy::smart::MoleculeSmartSpan;
+
   std::vector<BaseAtom> m_atoms;
   std::vector<BaseResidue> m_residues{};
   std::vector<BaseMolecule> m_molecules{};

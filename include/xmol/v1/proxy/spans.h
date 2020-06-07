@@ -17,6 +17,9 @@ public:
   /// Make smart span from this
   smart::AtomSmartSpan smart();
 
+protected:
+  Frame* frame_ptr() { return empty() ? nullptr : m_begin->residue->molecule->frame; }
+
 private:
   friend smart::AtomSmartSpan;
 };
@@ -34,6 +37,9 @@ public:
   /// Make smart span from this
   smart::ResidueSmartSpan smart();
 
+protected:
+  Frame* frame_ptr() { return empty() ? nullptr : m_begin->molecule->frame; }
+
 private:
   friend smart::ResidueSmartSpan;
 };
@@ -50,6 +56,9 @@ public:
 
   /// Make smart span from this
   smart::MoleculeSmartSpan smart();
+
+protected:
+  Frame* frame_ptr() { return empty() ? nullptr : m_begin->frame; }
 
 private:
   friend smart::MoleculeSmartSpan;

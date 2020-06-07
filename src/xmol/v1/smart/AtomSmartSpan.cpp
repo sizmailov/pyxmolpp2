@@ -1,4 +1,5 @@
 #include "xmol/v1/proxy/smart/AtomSmartSpan.h"
+#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
 
 using namespace xmol::v1::proxy::smart;
 
@@ -12,6 +13,13 @@ void xmol::v1::proxy::smart::AtomSmartSpan::on_base_atoms_move(xmol::v1::BaseAto
     m_span.rebase(from_begin, to_begin);
   } else {
     m_is_split = true;
+  }
+}
+
+xmol::v1::proxy::smart::AtomSmartSpan::AtomSmartSpan(xmol::v1::proxy::AtomRefSpan sel)
+    : FrameObserver(sel.frame_ptr()), m_span(sel) {
+  if (m_span.frame_ptr()) {
+    m_span.frame_ptr()->reg(*this);
   }
 }
 

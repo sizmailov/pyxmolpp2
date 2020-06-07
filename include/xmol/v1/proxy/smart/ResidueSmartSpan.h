@@ -8,7 +8,7 @@ namespace xmol::v1::proxy::smart {
 /// ResidueSpan with parent frame changes tracking
 class ResidueSmartSpan : public FrameObserver<ResidueSmartSpan> {
 public:
-  ResidueSmartSpan(ResidueRefSpan sel);
+  ResidueSmartSpan(ResidueRefSpan span);
 
   /// Child atoms
   AtomRefSpan atoms() {
