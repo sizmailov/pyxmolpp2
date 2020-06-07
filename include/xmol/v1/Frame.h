@@ -1,6 +1,6 @@
 #pragma once
 #include "base.h"
-#include "proxy/smart/references.h"
+#include "proxy/smart/references.h" // <- can be moved to .cpp
 #include "xmol/selection/Observable.h"
 #include <vector>
 
@@ -12,7 +12,10 @@ class Frame : public selection::Observable<proxy::smart::AtomSmartRef>,
               public selection::Observable<proxy::smart::MoleculeSmartRef>,
               public selection::Observable<proxy::smart::AtomSmartSelection>,
               public selection::Observable<proxy::smart::ResidueSmartSelection>,
-              public selection::Observable<proxy::smart::MoleculeSmartSelection> {
+              public selection::Observable<proxy::smart::MoleculeSmartSelection>,
+              public selection::Observable<proxy::smart::AtomSmartSpan>,
+              public selection::Observable<proxy::smart::ResidueSmartSpan>,
+              public selection::Observable<proxy::smart::MoleculeSmartSpan> {
 public:
   /// Default constructor
   Frame() = default;
