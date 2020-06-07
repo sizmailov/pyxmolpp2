@@ -11,19 +11,19 @@ class FrameTests : public Test {};
 TEST_F(FrameTests, create) {
   auto frame = Frame();
 
-  MoleculeSmartRef m1 = frame.add_molecule(MoleculeName("A"));
-  MoleculeSmartRef m2 = frame.add_molecule(MoleculeName("B"));
-  MoleculeSmartRef m3 = frame.add_molecule(MoleculeName("C"));
+  auto m1 = frame.add_molecule(MoleculeName("A")).smart();
+  auto m2 = frame.add_molecule(MoleculeName("B")).smart();
+  auto m3 = frame.add_molecule(MoleculeName("C")).smart();
 
-  ResidueSmartRef r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
-  ResidueSmartRef r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
-  ResidueSmartRef r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1));
-  ResidueSmartRef r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1));
+  auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
+  auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
 
-  AtomSmartRef a1 = r4.add_atom(AtomName("H"), AtomId(1));
-  AtomSmartRef a2 = r3.add_atom(AtomName("H"), AtomId(2));
-  AtomSmartRef a3 = r2.add_atom(AtomName("H"), AtomId(2));
-  AtomSmartRef a4 = r1.add_atom(AtomName("H"), AtomId(2));
+  auto a1 = r4.add_atom(AtomName("H"), AtomId(1)).smart();
+  auto a2 = r3.add_atom(AtomName("H"), AtomId(2)).smart();
+  auto a3 = r2.add_atom(AtomName("H"), AtomId(2)).smart();
+  auto a4 = r1.add_atom(AtomName("H"), AtomId(2)).smart();
 
   ASSERT_EQ(m1.size(), 1);
   ASSERT_EQ(m2.size(), 1);
@@ -38,26 +38,25 @@ TEST_F(FrameTests, create) {
   ASSERT_EQ(a2.name(), AtomName("H"));
   ASSERT_EQ(a3.name(), AtomName("H"));
   ASSERT_EQ(a4.name(), AtomName("H"));
-
 }
 
 TEST_F(FrameTests, frame_move_assignement) {
   Frame frame;
   Frame frame2;
   {
-    MoleculeSmartRef m1 = frame.add_molecule(MoleculeName("A"));
-    MoleculeSmartRef m2 = frame.add_molecule(MoleculeName("B"));
-    MoleculeSmartRef m3 = frame.add_molecule(MoleculeName("C"));
+    auto m1 = frame.add_molecule(MoleculeName("A")).smart();
+    auto m2 = frame.add_molecule(MoleculeName("B")).smart();
+    auto m3 = frame.add_molecule(MoleculeName("C")).smart();
     {
-      ResidueSmartRef r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
-      ResidueSmartRef r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
-      ResidueSmartRef r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1));
-      ResidueSmartRef r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1));
+      auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+      auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
+      auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+      auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
       {
-        AtomSmartRef a1 = r4.add_atom(AtomName("X"), AtomId(1));
-        AtomSmartRef a2 = r3.add_atom(AtomName("Y"), AtomId(2));
-        AtomSmartRef a3 = r2.add_atom(AtomName("Z"), AtomId(2));
-        AtomSmartRef a4 = r1.add_atom(AtomName("W"), AtomId(2));
+        auto a1 = r4.add_atom(AtomName("X"), AtomId(1)).smart();
+        auto a2 = r3.add_atom(AtomName("Y"), AtomId(2)).smart();
+        auto a3 = r2.add_atom(AtomName("Z"), AtomId(2)).smart();
+        auto a4 = r1.add_atom(AtomName("W"), AtomId(2)).smart();
 
         frame2 = std::move(frame);
 
@@ -100,17 +99,17 @@ TEST_F(FrameTests, frame_move_assignement) {
 
 TEST_F(FrameTests, frame_move_construction) {
   Frame frame;
-  MoleculeSmartRef m1 = frame.add_molecule(MoleculeName("A"));
-  MoleculeSmartRef m2 = frame.add_molecule(MoleculeName("B"));
-  MoleculeSmartRef m3 = frame.add_molecule(MoleculeName("C"));
-  ResidueSmartRef r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1));
-  ResidueSmartRef r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2));
-  ResidueSmartRef r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1));
-  ResidueSmartRef r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1));
-  AtomSmartRef a1 = r4.add_atom(AtomName("X"), AtomId(1));
-  AtomSmartRef a2 = r3.add_atom(AtomName("Y"), AtomId(2));
-  AtomSmartRef a3 = r2.add_atom(AtomName("Z"), AtomId(2));
-  AtomSmartRef a4 = r1.add_atom(AtomName("W"), AtomId(2));
+  auto m1 = frame.add_molecule(MoleculeName("A")).smart();
+  auto m2 = frame.add_molecule(MoleculeName("B")).smart();
+  auto m3 = frame.add_molecule(MoleculeName("C")).smart();
+  auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
+  auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto a1 = r4.add_atom(AtomName("X"), AtomId(1)).smart();
+  auto a2 = r3.add_atom(AtomName("Y"), AtomId(2)).smart();
+  auto a3 = r2.add_atom(AtomName("Z"), AtomId(2)).smart();
+  auto a4 = r1.add_atom(AtomName("W"), AtomId(2)).smart();
 
   auto frame2 = std::move(frame);
 
@@ -138,15 +137,15 @@ TEST_F(FrameTests, frame_move_construction) {
 
 TEST_F(FrameTests, molecule_construction) {
   Frame frame;
-  MoleculeSmartRef mol = frame.add_molecule(MoleculeName("X"));
+  auto mol = frame.add_molecule(MoleculeName("X")).smart();
   ASSERT_TRUE(mol.empty());
   ASSERT_EQ(mol.name(), MoleculeName("X"));
   mol.name(MoleculeName("Y"));
   ASSERT_EQ(mol.name(), MoleculeName("Y"));
   {
-    MoleculeSmartRef mol_ref_copy = mol;
+    auto mol_ref_copy = mol;
     ASSERT_EQ(frame.n_molecule_references(), 2);
-    MoleculeSmartRef mol_ref_moved = std::move(mol);
+    auto mol_ref_moved = std::move(mol);
     ASSERT_EQ(frame.n_molecule_references(), 2);
     static_cast<void>(mol_ref_copy);
     static_cast<void>(mol_ref_moved);
@@ -156,8 +155,8 @@ TEST_F(FrameTests, molecule_construction) {
 
 TEST_F(FrameTests, residue_construction) {
   Frame frame;
-  MoleculeSmartRef mol = frame.add_molecule(MoleculeName("X"));
-  ResidueSmartRef residue = mol.add_residue(ResidueName("ABC"), ResidueId(1));
+  auto mol = frame.add_molecule(MoleculeName("X"));
+  auto residue = mol.add_residue(ResidueName("ABC"), ResidueId(1));
   ASSERT_TRUE(residue.empty());
   ASSERT_EQ(residue.name(), ResidueName("ABC"));
   residue.name(ResidueName("ZYX"));
@@ -166,9 +165,9 @@ TEST_F(FrameTests, residue_construction) {
 
 TEST_F(FrameTests, frame_backward_construction_1) {
   Frame frame;
-  MoleculeSmartRef mol = frame.add_molecule(MoleculeName("A"));
-  ResidueSmartRef res1 = mol.add_residue(ResidueName("A1"), ResidueId(1));
-  ResidueSmartRef res2 = mol.add_residue(ResidueName("A2"), ResidueId(2));
+  auto mol = frame.add_molecule(MoleculeName("A")).smart();
+  auto res1 = mol.add_residue(ResidueName("A1"), ResidueId(1)).smart();
+  auto res2 = mol.add_residue(ResidueName("A2"), ResidueId(2)).smart();
   int n = 10;
   for (int i = 0; i < n; ++i)
     res2.add_atom(AtomName("R1"), AtomId(1));
@@ -225,10 +224,10 @@ TEST_F(FrameTests, frame_backward_construction_3) {
   const int n_atoms_per_residue = 7;
 
   for (int i = 0; i < n_molecules; ++i) {
-    MoleculeSmartRef molecule = frame.add_molecule(MoleculeName(""));
+    auto molecule = frame.add_molecule(MoleculeName("")).smart();
     molecules.push_back(molecule);
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      ResidueSmartRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
+      auto residue = molecule.add_residue(ResidueName(""), ResidueId(0)).smart();
       for (int k = 0; k < n_atoms_per_residue; ++k) {
         atoms.emplace_back(residue.add_atom(AtomName(""), AtomId(0)));
       }
@@ -264,9 +263,9 @@ TEST_F(FrameTests, frame_forward_construction) {
   frame.reserve_atoms(n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 
   for (int i = 0; i < n_molecules; ++i) {
-    MoleculeSmartRef molecule = frame.add_molecule(MoleculeName(""));
+    auto molecule = frame.add_molecule(MoleculeName("")).smart();
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      ResidueSmartRef residue = molecule.add_residue(ResidueName(""), ResidueId(0));
+      auto residue = molecule.add_residue(ResidueName(""), ResidueId(0)).smart();
       for (int k = 0; k < n_atoms_per_residue; ++k) {
         residue.add_atom(AtomName(""), AtomId(0));
       }

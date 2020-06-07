@@ -7,7 +7,7 @@ namespace xmol::v1::proxy::smart {
 /// Smart Atom reference proxy
 class AtomSmartRef : public FrameObserver<AtomSmartRef> {
 public:
-  AtomSmartRef(AtomRef&& atom);
+  AtomSmartRef(AtomRef atom);
 
   /// Atom id
   [[nodiscard]] const AtomId& id() const {
@@ -94,7 +94,7 @@ private:
 /// Smart Residue reference proxy
 class ResidueSmartRef : public FrameObserver<ResidueSmartRef> {
 public:
-  ResidueSmartRef(ResidueRef&& res);
+  ResidueSmartRef(ResidueRef res);
 
   /// Residue name
   [[nodiscard]] const ResidueName& name() const {
@@ -188,7 +188,7 @@ private:
 /// Smart Molecule reference proxy
 class MoleculeSmartRef : public FrameObserver<MoleculeSmartRef> {
 public:
-  MoleculeSmartRef(MoleculeRef&& mol);
+  MoleculeSmartRef(MoleculeRef mol);
   /// Molecule name
   [[nodiscard]] const MoleculeName& name() const {
     check_precondition("name()");

@@ -1,4 +1,4 @@
-#include "xmol/v1/proxy/selections.h"
+#include "xmol/v1/proxy/smart/selections.h"
 
 using namespace xmol::v1::proxy;
 
@@ -64,4 +64,9 @@ AtomSelection MoleculeSelection::atoms() {
     }
   }
   return AtomSelection(std::move(result), true);
+
 }
+
+smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::MoleculeSmartSelection(*this); }
+smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
+smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }

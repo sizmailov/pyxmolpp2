@@ -19,6 +19,9 @@ xmol::v1::proxy::AtomRef::AtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
 }
 AtomRef::AtomRef(BaseAtom& atom) : m_coords(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
+smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
+smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
+smart::AtomSmartRef AtomRef::smart() { return smart::AtomSmartRef(*this); }
 
 template class xmol::v1::proxy::Selection<AtomRef>;
 template class xmol::v1::proxy::Selection<ResidueRef>;

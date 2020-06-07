@@ -62,6 +62,9 @@ public:
                        (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
+  /// Create smart reference from this
+  smart::MoleculeSmartRef smart();
+
   /// Check if references point to same data
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
 
@@ -132,6 +135,9 @@ public:
   /// Atoms of the residue
   AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
 
+  /// Create smart reference from this
+  smart::ResidueSmartRef smart();
+
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
 
@@ -194,6 +200,9 @@ public:
 
   /// Parent frame
   Frame& frame() { return *m_atom->residue->molecule->frame; };
+
+  /// Create smart reference from this
+  smart::AtomSmartRef smart();
 
   /// Check if references point to same data
   bool operator!=(const AtomRef& rhs) const {

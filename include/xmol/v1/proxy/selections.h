@@ -44,6 +44,10 @@ public:
     intersect(rhs);
     return *this;
   };
+
+  /// Create smart selection from this
+  smart::AtomSmartSelection smart();
+
 private:
   friend smart::AtomSmartSelection;
   Frame* frame_ptr(){
@@ -87,6 +91,10 @@ public:
   template <typename Predicate> ResidueSelection filter(Predicate&& p) {
     return ResidueSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  /// Create smart selection from this
+  smart::ResidueSmartSelection smart();
+
 private:
   friend smart::ResidueSmartSelection;
   Frame* frame_ptr(){
@@ -130,6 +138,10 @@ public:
   template <typename Predicate> MoleculeSelection filter(Predicate&& p) {
     return MoleculeSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  /// Create smart selection from this
+  smart::MoleculeSmartSelection smart();
+
 private:
   friend smart::MoleculeSmartSelection;
   Frame* frame_ptr(){
