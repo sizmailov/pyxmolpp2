@@ -27,6 +27,9 @@ public:
   [[nodiscard]] bool contains(const ResidueRef& ref) const;
 
   template <typename Predicate> ResidueSelection filter(Predicate&& p);
+
+private:
+  friend smart::ResidueSmartSpan;
 };
 
 class MoleculeRefSpan : public ProxySpan<MoleculeRef, BaseMolecule> {
@@ -38,6 +41,9 @@ public:
   [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
   template <typename Predicate> MoleculeSelection filter(Predicate&& p);
+
+private:
+  friend smart::MoleculeSmartSpan;
 };
 
 } // namespace xmol::v1::proxy
