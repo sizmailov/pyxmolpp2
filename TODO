@@ -1,5 +1,3 @@
-- set .m_frame = nullptr in selections set operations
-
 - increase test coverage
 - return this from setters to enable chained initialization sequences, e.g.:
         auto atom = residue.add_atom().id(10).r({1,2,3}).name({"A"}).smart();

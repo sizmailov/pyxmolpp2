@@ -32,18 +32,23 @@ public:
   void unite(const AtomSelection& rhs){
     check_precondition("unite()");
     m_selection.unite(rhs);
-
   }
 
   /// Inplace difference
   void substract(const AtomSelection& rhs){
     check_precondition("substract()");
+    if (empty()) {
+      *this = AtomSelection{};
+    }
     m_selection.substract(rhs);
   }
 
   /// Inplace intersection
   void intersect(const AtomSelection& rhs){
     check_precondition("intersect()");
+    if (empty()) {
+      *this = AtomSelection{};
+    }
     m_selection.intersect(rhs);
   }
 
@@ -64,6 +69,9 @@ public:
   AtomSmartSelection& operator-=(const AtomSelection& rhs) {
     check_precondition("operator-=()");
     m_selection -=(rhs);
+    if (empty()) {
+      *this = AtomSelection{};
+    }
     return *this;
   };
 
@@ -71,6 +79,9 @@ public:
   AtomSmartSelection& operator&=(const AtomSelection& rhs) {
     check_precondition("operator&=()");
     m_selection &= rhs;
+    if (empty()) {
+      *this = AtomSelection{};
+    }
     return *this;
   };
 

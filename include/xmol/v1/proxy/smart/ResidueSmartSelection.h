@@ -32,18 +32,23 @@ public:
   void unite(const ResidueSelection& rhs){
     check_precondition("unite()");
     m_selection.unite(rhs);
-
   }
 
   /// Inplace difference
-  void substract(const ResidueSelection& rhs){
+  void substract(const ResidueSelection& rhs) {
     check_precondition("substract()");
+    if (empty()) {
+      *this = ResidueSelection{};
+    }
     m_selection.substract(rhs);
   }
 
   /// Inplace intersection
-  void intersect(const ResidueSelection& rhs){
+  void intersect(const ResidueSelection& rhs) {
     check_precondition("intersect()");
+    if (empty()) {
+      *this = ResidueSelection{};
+    }
     m_selection.intersect(rhs);
   }
 
@@ -63,7 +68,10 @@ public:
   /// Inplace difference
   ResidueSmartSelection& operator-=(const ResidueSelection& rhs) {
     check_precondition("operator-=()");
-    m_selection -=(rhs);
+    m_selection -= (rhs);
+    if (empty()) {
+      *this = ResidueSelection{};
+    }
     return *this;
   };
 
@@ -71,6 +79,9 @@ public:
   ResidueSmartSelection& operator&=(const ResidueSelection& rhs) {
     check_precondition("operator&=()");
     m_selection &= rhs;
+    if (empty()) {
+      *this = ResidueSelection{};
+    }
     return *this;
   };
 

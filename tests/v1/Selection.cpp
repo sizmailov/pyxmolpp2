@@ -3,6 +3,7 @@
 #include "xmol/v1/Frame.h"
 #include "xmol/v1/proxy/selections.h"
 #include "xmol/v1/proxy/smart/selections.h"
+#include "xmol/v1/proxy/smart/spans.h"
 #include "xmol/v1/proxy/spans-impl.h"
 
 using ::testing::Test;
@@ -130,4 +131,25 @@ TEST_F(SelectionTests, smart_atom_exceptions) {
   ASSERT_THROW(static_cast<void>(atoms |= atoms), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms &= atoms), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms -= atoms), DeadFrameAccessError);
+}
+
+TEST_F(SelectionTests, smart_atom_ref_count) {
+  auto frame = make_polyglycines({{"A", 1}});
+  auto atoms = AtomSelection(frame.atoms()).smart();
+  EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 1);
+  atoms = atoms - atoms;
+  EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 0);
+  atoms = AtomSelection(frame.atoms()).smart();
+  EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 1);
+  atoms = atoms & AtomSelection{};
+  EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 0);
+}
+
+TEST_F(SelectionTests, smart_atom_multiple_frames) {
+  auto frame = make_polyglycines({{"A", 1}});
+  auto frame2 = make_polyglycines({{"A", 1}});
+
+  EXPECT_THROW(frame.atoms() | frame2.atoms(), MultipleFramesSelectionError);
+  EXPECT_THROW(frame.atoms() - frame2.atoms(), MultipleFramesSelectionError);
+  EXPECT_THROW(frame.atoms() & frame2.atoms(), MultipleFramesSelectionError);
 }
