@@ -3,7 +3,7 @@
 
 using namespace xmol::v1::proxy::smart;
 
-AtomSmartRef::AtomSmartRef(AtomRef&& atom) : FrameObserver<AtomSmartRef>(&atom.frame()) , m_ref(atom) {
+AtomSmartRef::AtomSmartRef(AtomRef&& atom) : FrameObserver<AtomSmartRef>(&atom.frame()), m_ref(atom) {
   frame().reg(*this);
 }
 void AtomSmartRef::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
@@ -18,13 +18,13 @@ void AtomSmartRef::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, 
 }
 
 void ResidueSmartRef::on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin) {
-  if (from_begin <= m_residue && m_residue < from_end) {
-    m_residue = to_begin + (m_residue - from_begin);
+  if (from_begin <= m_ref.m_residue && m_ref.m_residue < from_end) {
+    m_ref.m_residue = to_begin + (m_ref.m_residue - from_begin);
   }
 }
 
 ResidueSmartRef::ResidueSmartRef(ResidueRef&& residue)
-    : ResidueRef(residue), FrameObserver<ResidueSmartRef>(&residue.frame()) {
+    : FrameObserver<ResidueSmartRef>(&residue.frame()), m_ref(residue) {
   frame().reg(*this);
 }
 

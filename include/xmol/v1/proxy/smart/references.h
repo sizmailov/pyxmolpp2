@@ -86,19 +86,103 @@ private:
 
   inline void check_precondition(const char* func_name) const {
     if (!is_bound_to_frame()) {
-      throw DeadFrameAccessError(std::string("AtomRef::") + func_name);
+      throw DeadFrameAccessError(std::string("AtomSmartRef::") + func_name);
     }
   }
 };
 
 /// Smart Residue reference proxy
-class ResidueSmartRef : public ResidueRef, public FrameObserver<ResidueSmartRef> {
+class ResidueSmartRef : public FrameObserver<ResidueSmartRef> {
 public:
   ResidueSmartRef(ResidueRef&& res);
 
+  /// Residue name
+  [[nodiscard]] const ResidueName& name() const {
+    check_precondition("name()");
+    return m_ref.name();
+  }
+  void name(const ResidueName& name) {
+    check_precondition("name()");
+    m_ref.name(name);
+  }
+
+  /// Residue id
+  [[nodiscard]] const ResidueId& id() const {
+    check_precondition("id()");
+    return m_ref.id();
+  };
+  void id(const ResidueId& value) {
+    check_precondition("id()");
+    m_ref.id(value);
+  }
+
+  /// Check if residue has no atoms
+  [[nodiscard]] bool empty() const {
+    check_precondition("empty()");
+    return m_ref.empty();
+  }
+
+  /// Number of atoms in the residue
+  [[nodiscard]] size_t size() const {
+    check_precondition("size()");
+    return m_ref.size();
+  }
+
+  /// Parent molecule
+  MoleculeRef molecule() {
+    check_precondition("molecule()");
+    return m_ref.molecule();
+  }
+
+  /// Parent frame
+  Frame& frame() {
+    check_precondition("frame()");
+    return m_ref.frame();
+  }
+
+  /// Atoms of the residue
+  AtomRefSpan atoms() {
+    check_precondition("atoms()");
+    return m_ref.atoms();
+  }
+
+  /// Check if references point to same data
+  bool operator!=(const ResidueRef& rhs) const {
+    check_precondition("operator!=()");
+    return m_ref != rhs;
+  }
+
+  /// @brief Adds atom to the end of the reside and return its reference
+  ///
+  /// Invalidates all kinds of non-smart atom references including proxy::ResidueRef, proxy::ResidueRefSpan and
+  /// proxy::ResidueSelection
+  ///
+  /// Appropriate Frame::reserve_atoms() call prevents references invalidation
+  AtomRef add_atom(const AtomName& atomName, const AtomId& atomId) {
+    check_precondition("add_atom()");
+    return m_ref.add_atom(atomName, atomId);
+  }
+
+  operator ResidueRef&() {
+    check_precondition("operator AtomRef&()");
+    return m_ref;
+  };
+
+  operator const ResidueRef&() const {
+    check_precondition("operator const AtomRef&()");
+    return m_ref;
+  };
+
 private:
+  ResidueRef m_ref;
   friend Frame;
   void on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin);
+
+  inline void check_precondition(const char* func_name) const {
+    if (!is_bound_to_frame()) {
+      throw DeadFrameAccessError(std::string("ResidueSmartRef::") + func_name);
+    }
+  }
 };
 
 /// Smart Molecule reference proxy
