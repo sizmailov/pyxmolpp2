@@ -3,7 +3,7 @@
 #include "common.h"
 #include "xmol/v1/io/PdbInputFile.h"
 #include "xmol/v1/trajectory/Trajectory.h"
-#include "xmol/v1/trajectory/TrjtoolDatFile.h"
+#include "xmol/v1/io/TrjtoolDatFile.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -22,8 +22,8 @@ public:
     Frame frame = PdbInputFile(pdb_filename, PdbInputFile::Dialect::AMBER_99).frames()[0];
 
     trj_ptr = std::make_unique<Trajectory>(std::move(frame));
-    trj_ptr->extend(TrjtoolDatFile(filename));
-    trj_ptr->extend(TrjtoolDatFile(filename));
+    trj_ptr->extend(io::TrjtoolDatFile(filename));
+    trj_ptr->extend(io::TrjtoolDatFile(filename));
   }
 
   void TearDown(const ::benchmark::State& state) { trj_ptr = {}; }

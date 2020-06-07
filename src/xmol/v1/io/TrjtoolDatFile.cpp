@@ -1,8 +1,8 @@
-#include "xmol/v1/trajectory/TrjtoolDatFile.h"
+#include "xmol/v1/io/TrjtoolDatFile.h"
 
 #include <utility>
 
-using namespace xmol::v1::trajectory;
+using namespace xmol::v1::io;
 
 namespace {
 

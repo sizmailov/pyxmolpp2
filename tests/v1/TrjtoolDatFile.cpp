@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "xmol/v1/trajectory/Trajectory.h"
-#include "xmol/v1/trajectory/TrjtoolDatFile.h"
+#include "xmol/v1/io/TrjtoolDatFile.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
@@ -22,15 +22,15 @@ public:
       res.add_atom({}, {});
     }
     Trajectory traj(std::move(frame));
-    traj.extend(TrjtoolDatFile(filename));
-    traj.extend(TrjtoolDatFile(filename));
+    traj.extend(io::TrjtoolDatFile(filename));
+    traj.extend(io::TrjtoolDatFile(filename));
     return traj;
   }
 };
 
 TEST_F(TrjtoolDatFileTests, read) {
   std::string filename("trjtool/GB1/run00001.dat");
-  TrjtoolDatFile dat_file(filename);
+  io::TrjtoolDatFile dat_file(filename);
 
   EXPECT_EQ(dat_file.n_frames(), 1000);
   EXPECT_EQ(dat_file.n_atoms(), 880);

@@ -1,11 +1,11 @@
 #pragma once
-#include "TrajectoryFile.h"
+#include "xmol/v1/trajectory/TrajectoryFile.h"
 #include <fstream>
 
-namespace xmol::v1::trajectory {
+namespace xmol::v1::io {
 
 /// 3d MD coordinates in "trjtool .dat" format
-class TrjtoolDatFile : public TrajectoryInputFile {
+class TrjtoolDatFile : public trajectory::TrajectoryInputFile {
   struct Header {
     int32_t nitems;
     int32_t ndim;
