@@ -49,6 +49,9 @@ public:
   /// Parent frame
   Frame& frame() { return *m_molecule->frame; };
 
+  /// Parent frame
+  const Frame& frame() const { return *m_molecule->frame; };
+
   /// Residues of the molecule
   ResidueRefSpan residues() { return ResidueRefSpan{m_molecule->residues}; }
 
@@ -133,6 +136,9 @@ public:
   /// Parent frame
   Frame& frame() { return *m_residue->molecule->frame; }
 
+  /// Parent frame
+  const Frame& frame() const { return *m_residue->molecule->frame; }
+
   /// Atoms of the residue
   AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
 
@@ -202,6 +208,9 @@ public:
 
   /// Parent frame
   Frame& frame() { return *m_atom->residue->molecule->frame; };
+
+  /// Parent frame
+  const Frame& frame() const { return *m_atom->residue->molecule->frame; }
 
   /// Create smart reference from this
   smart::AtomSmartRef smart();
