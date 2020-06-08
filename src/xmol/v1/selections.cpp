@@ -5,6 +5,26 @@
 
 using namespace xmol::v1::proxy;
 
+
+xmol::v1::CoordEigenMatrix CoordSelection::_eigen() {
+  CoordEigenMatrix matrix (3, size());
+  size_t i=0;
+  for (auto&x: *this){
+    matrix(Eigen::all, i++) = x._eigen();
+  }
+  return matrix;
+}
+
+void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
+  if (size()!=matrix.outerSize()){
+    throw CoordSelectionSizeMismatchError("Selection size must match matrix");
+  }
+  size_t i=0;
+  for (auto&x: *this){
+    x._eigen() = matrix(Eigen::all, i++);
+  }
+}
+
 CoordSelection AtomSelection::coords() {
   std::vector<CoordRef> result;
   for (auto& a : m_data) {

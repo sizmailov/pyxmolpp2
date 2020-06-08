@@ -13,6 +13,12 @@ public:
   using std::runtime_error::runtime_error;
 };
 
+class CoordSelectionSizeMismatchError : public std::runtime_error {
+public:
+  using std::runtime_error::runtime_error;
+};
+
+
 /// Ordered set of atomic coordinates
 ///
 /// Unlike other selections this one does NOT support set operations
@@ -28,6 +34,12 @@ public:
   template <typename Predicate> CoordSelection filter(Predicate&& p) {
     return CoordSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  /// Copy of seleciton coordinates
+  CoordEigenMatrix _eigen();
+
+  /// Assign selection coordinates
+  void _eigen(const CoordEigenMatrix& matrix);
 
   smart::CoordSmartSelection smart();
 

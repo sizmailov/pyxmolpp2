@@ -145,7 +145,12 @@ TEST_F(SelectionTests, smart_atom_ref_count) {
   atoms = atoms - atoms;
   EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 0);
   atoms = AtomSelection(frame.atoms()).smart();
-  EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 1);
+  {
+    auto coords = atoms.coords().smart();
+    EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 1);
+    EXPECT_EQ(frame.n_references<CoordSmartSelection>(), 1);
+  }
+  EXPECT_EQ(frame.n_references<CoordSmartSelection>(), 0);
   atoms = atoms & AtomSelection{};
   EXPECT_EQ(frame.n_references<AtomSmartSelection>(), 0);
 }
@@ -157,4 +162,17 @@ TEST_F(SelectionTests, smart_atom_multiple_frames) {
   EXPECT_THROW(frame.atoms() | frame2.atoms(), MultipleFramesSelectionError);
   EXPECT_THROW(frame.atoms() - frame2.atoms(), MultipleFramesSelectionError);
   EXPECT_THROW(frame.atoms() & frame2.atoms(), MultipleFramesSelectionError);
+}
+
+TEST_F(SelectionTests, smart_coords_eigen) {
+  auto frame = make_polyglycines({{"A", 1}});
+  auto coords = CoordSelection(frame.coords()).smart();
+  auto matrix = coords._eigen();
+  EXPECT_EQ(matrix.innerSize(), 3);
+  EXPECT_EQ(matrix.outerSize(), frame.n_atoms());
+  matrix.colwise() = XYZ(1,2,3)._eigen();
+  matrix.col(2) = XYZ(3,2,1)._eigen();
+  coords._eigen(matrix);
+  EXPECT_DOUBLE_EQ(coords[0].distance(XYZ(1,2,3)), 0);
+  EXPECT_DOUBLE_EQ(coords[2].distance(XYZ(3,2,1)), 0);
 }

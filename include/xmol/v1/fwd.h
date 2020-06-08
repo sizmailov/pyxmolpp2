@@ -18,7 +18,9 @@ using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameT
 using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 using ResidueId = xmol::polymer::ResidueId;
 using ResidueInsertionCode = xmol::polymer::ResidueInsertionCode;
-using XYZ = xmol::geometry::XYZ;
+using XYZ = xmol::v1::geom::XYZ;
+using CoordEigenVector = XYZ::Vector_t;
+using CoordEigenMatrix = Eigen::Matrix<double, 3, Eigen::Dynamic>;
 
 struct BaseAtom;
 struct BaseResidue;

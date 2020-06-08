@@ -48,6 +48,16 @@ public:
     return m_selection;
   }
 
+  CoordEigenMatrix _eigen() {
+    check_precondition("_eigen()");
+    return m_selection._eigen();
+  }
+
+  void _eigen(const CoordEigenMatrix& matrix) {
+    check_precondition("_eigen()");
+    m_selection._eigen(matrix);
+  }
+
 private:
   CoordSelection m_selection;
   inline void check_precondition(const char* func_name) const {
