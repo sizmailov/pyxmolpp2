@@ -15,11 +15,11 @@ public:
   static Trajectory construct_trajectory() {
     const std::string filename("trjtool/GB1/run00001.dat");
     Frame frame;
-    auto mol = frame.add_molecule({});
-    auto res = mol.add_residue({}, {});
+    auto mol = frame.add_molecule();
+    auto res = mol.add_residue();
     const int n = 880;
     for (int i = 0; i < n; ++i) {
-      res.add_atom({}, {});
+      res.add_atom();
     }
     Trajectory traj(std::move(frame));
     traj.extend(io::TrjtoolDatFile(filename));

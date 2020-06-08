@@ -87,11 +87,11 @@ public:
   /// MoleculeSelection
   ///
   /// Appropriate reserve_molecules() call prevents references invalidation
-  proxy::MoleculeRef add_molecule(const MoleculeName& name);
+  proxy::MoleculeRef add_molecule();
 
 private:
-  BaseResidue& add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId);
-  BaseAtom& add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId);
+  BaseResidue& add_residue(BaseMolecule& mol);
+  BaseAtom& add_atom(BaseResidue& residue);
 
   template <typename Observer> void reg(Observer& o) { selection::Observable<Observer>::add_observer(o); }
 

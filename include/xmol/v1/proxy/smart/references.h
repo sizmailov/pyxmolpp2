@@ -14,9 +14,9 @@ public:
     check_precondition("id()");
     return m_ref.id();
   };
-  void id(const AtomId& value) {
+  AtomRef& id(const AtomId& value) {
     check_precondition("id()");
-    m_ref.id(value);
+    return m_ref.id(value);
   }
 
   /// Atom name
@@ -24,9 +24,9 @@ public:
     check_precondition("name()");
     return m_ref.name();
   };
-  void name(const AtomName& value) {
+  AtomRef& name(const AtomName& value) {
     check_precondition("name()");
-    m_ref.name(value);
+    return m_ref.name(value);
   }
 
   /// Atom coordinates
@@ -34,9 +34,9 @@ public:
     check_precondition("r()");
     return m_ref.r();
   }
-  void r(const XYZ& value) {
+  AtomRef& r(const XYZ& value) {
     check_precondition("r()");
-    m_ref.r(value);
+    return m_ref.r(value);
   }
 
   /// Parent residue
@@ -101,9 +101,9 @@ public:
     check_precondition("name()");
     return m_ref.name();
   }
-  void name(const ResidueName& name) {
+  ResidueRef& name(const ResidueName& name) {
     check_precondition("name()");
-    m_ref.name(name);
+    return m_ref.name(name);
   }
 
   /// Residue id
@@ -111,9 +111,9 @@ public:
     check_precondition("id()");
     return m_ref.id();
   };
-  void id(const ResidueId& value) {
+  ResidueRef& id(const ResidueId& value) {
     check_precondition("id()");
-    m_ref.id(value);
+    return m_ref.id(value);
   }
 
   /// Check if residue has no atoms
@@ -158,9 +158,9 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_atoms() call prevents references invalidation
-  AtomRef add_atom(const AtomName& atomName, const AtomId& atomId) {
+  AtomRef add_atom() {
     check_precondition("add_atom()");
-    return m_ref.add_atom(atomName, atomId);
+    return m_ref.add_atom();
   }
 
   operator ResidueRef&() {
@@ -195,9 +195,9 @@ public:
     return m_ref.name();
   }
 
-  void name(const MoleculeName& name) {
+  MoleculeRef& name(const MoleculeName& name) {
     check_precondition("name()");
-    m_ref.name(name);
+    return m_ref.name(name);
   }
 
   /// Check if molecule has no residues
@@ -242,9 +242,9 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_residues() call prevents references invalidation
-  ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId) {
+  ResidueRef add_residue() {
     check_precondition("add_residue()");
-    return m_ref.add_residue(residueName, residueId);
+    return m_ref.add_residue();
   }
 
   operator MoleculeRef&() {

@@ -26,10 +26,25 @@ public:
     return m_molecule->name;
   }
 
-  void name(const MoleculeName& name) {
+  MoleculeRef& name(const MoleculeName& name) {
     assert(m_molecule);
     assert(m_molecule->frame);
     m_molecule->name = name;
+    return *this;
+  }
+
+  MoleculeRef& name(const char* name) {
+    assert(m_molecule);
+    assert(m_molecule->frame);
+    m_molecule->name = MoleculeName(name);
+    return *this;
+  }
+
+  MoleculeRef& name(const std::string& name) {
+    assert(m_molecule);
+    assert(m_molecule->frame);
+    m_molecule->name = MoleculeName(name);
+    return *this;
   }
 
   /// Check if molecule has no residues
@@ -77,7 +92,7 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_residues() call prevents references invalidation
-  ResidueRef add_residue(const ResidueName& residueName, const ResidueId& residueId);
+  ResidueRef add_residue();
 
 private:
   friend AtomRef;
@@ -109,14 +124,29 @@ public:
     assert(m_residue);
     return m_residue->name;
   }
-  void name(const ResidueName& name) {
+  ResidueRef& name(const ResidueName& name) {
     assert(m_residue);
     m_residue->name = name;
+    return *this;
+  }
+
+  ResidueRef& name(const char* name) {
+    assert(m_residue);
+    m_residue->name = ResidueName(name);
+    return *this;
   }
 
   /// Residue id
   [[nodiscard]] const ResidueId& id() const { return m_residue->id; };
-  void id(const ResidueId& value) { m_residue->id = value; }
+  ResidueRef& id(const ResidueId& value) {
+    m_residue->id = value;
+    return *this;
+  }
+
+  ResidueRef& id(int serial) {
+    m_residue->id = serial;
+    return *this;
+  }
 
   /// Check if residue has no atoms
   [[nodiscard]] bool empty() const {
@@ -154,7 +184,7 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_atoms() call prevents references invalidation
-  AtomRef add_atom(const AtomName& atomName, const AtomId& atomId);
+  AtomRef add_atom();
 
 private:
   friend AtomRef;
@@ -190,15 +220,34 @@ public:
 
   /// Atom id
   [[nodiscard]] const AtomId& id() const { return m_atom->id; };
-  void id(const AtomId& value) { m_atom->id = value; }
+  AtomRef& id(const AtomId& value) {
+    m_atom->id = value;
+    return *this;
+  }
 
   /// Atom name
   [[nodiscard]] const AtomName& name() const { return m_atom->name; };
-  void name(const AtomName& value) { m_atom->name = value; }
+  AtomRef& name(const AtomName& value) {
+    m_atom->name = value;
+    return *this;
+  }
+
+  AtomRef& name(const char* value) {
+    m_atom->name = AtomName(value);
+    return *this;
+  }
+
+  AtomRef& name(const std::string& value) {
+    m_atom->name = AtomName(value);
+    return *this;
+  }
 
   /// Atom coordinates
   [[nodiscard]] const XYZ& r() const { return *m_coords; }
-  void r(const XYZ& value) { *m_coords = value; }
+  AtomRef& r(const XYZ& value) {
+    *m_coords = value;
+    return *this;
+  }
 
   /// Parent residue
   ResidueRef residue() { return ResidueRef(*m_atom->residue); }

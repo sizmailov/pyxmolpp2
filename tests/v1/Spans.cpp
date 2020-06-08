@@ -21,16 +21,16 @@ public:
     int aid = 1;
     int rid = 1;
     for (auto& chN_S : chain_sizes) {
-      auto c = frame.add_molecule(MoleculeName(chN_S.first));
+      auto c = frame.add_molecule().name(chN_S.first);
       for (int i = 0; i < chN_S.second; i++) {
-        auto r = c.add_residue(ResidueName("GLY"), ResidueId(rid++));
-        r.add_atom(AtomName("N"), AtomId(aid++));
-        r.add_atom(AtomName("H"), AtomId(aid++));
-        r.add_atom(AtomName("CA"), AtomId(aid++));
-        r.add_atom(AtomName("HA2"), AtomId(aid++));
-        r.add_atom(AtomName("HA3"), AtomId(aid++));
-        r.add_atom(AtomName("C"), AtomId(aid++));
-        r.add_atom(AtomName("O"), AtomId(aid++));
+        auto r = c.add_residue().name("GLY").id(rid++);
+        r.add_atom().name("N").id(aid++);
+        r.add_atom().name("H").id(aid++);
+        r.add_atom().name("CA").id(aid++);
+        r.add_atom().name("HA2").id(aid++);
+        r.add_atom().name("HA3").id(aid++);
+        r.add_atom().name("C").id(aid++);
+        r.add_atom().name("O").id(aid++);
       }
     }
   }
@@ -104,21 +104,21 @@ TEST_F(SpanTests, split_exceptinos) {
   auto residues = frame.residues().smart();
   auto molecules = frame.molecules().smart();
 
-  residues[residues.size()-1].add_atom({},{});
-  molecules[molecules.size()-1].add_residue({},{});
-  frame.add_molecule({});
+  residues[residues.size()-1].add_atom();
+  molecules[molecules.size()-1].add_residue();
+  frame.add_molecule();
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
 
-  residues[0].add_atom({},{});
+  residues[0].add_atom();
   EXPECT_THROW(static_cast<void>(atoms.size()), SpanSplitError);
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
 
   atoms = frame.atoms(); // restore to check that residues creation doesn't affect atoms
 
-  molecules[0].add_residue({},{});
+  molecules[0].add_residue();
   EXPECT_THROW(static_cast<void>(residues.size()), SpanSplitError);
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));

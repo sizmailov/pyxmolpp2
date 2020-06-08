@@ -1,6 +1,6 @@
+- integration with eigen
+- coordinates selection
 - increase test coverage
-- return this from setters to enable chained initialization sequences, e.g.:
-        auto atom = residue.add_atom().id(10).r({1,2,3}).name({"A"}).smart();
 
 - organize headers for convenient includes by users
 - v1 geometry
@@ -11,3 +11,4 @@
 - trajectory from layout
 
 - erasure of elements
+- prmtop topology

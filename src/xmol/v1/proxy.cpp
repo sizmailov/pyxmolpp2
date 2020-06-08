@@ -4,13 +4,9 @@
 
 using namespace xmol::v1::proxy;
 
-ResidueRef MoleculeRef::add_residue(const ResidueName& residueName, const ResidueId& residueId) {
-  return ResidueRef(frame().add_residue(*m_molecule, residueName, residueId));
-}
+ResidueRef MoleculeRef::add_residue() { return ResidueRef(frame().add_residue(*m_molecule)); }
 
-AtomRef ResidueRef::add_atom(const AtomName& atomName, const AtomId& atomId) {
-  return proxy::AtomRef(frame().add_atom(*m_residue, atomName, atomId));
-}
+AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*m_residue)); }
 
 xmol::v1::proxy::AtomRef::AtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {

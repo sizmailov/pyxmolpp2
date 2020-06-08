@@ -17,6 +17,7 @@ using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
 using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
 using ResidueId = xmol::polymer::ResidueId;
+using ResidueInsertionCode = xmol::polymer::ResidueInsertionCode;
 using XYZ = xmol::geometry::XYZ;
 
 struct BaseAtom;

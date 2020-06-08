@@ -29,12 +29,12 @@ void pyxmolpp::polymer::init_ResidueId(detail::FWD& fwd, py::module& polymer) {
       .def(residueSerial_t{}>=py::self)
       .def(residueSerial_t{}<py::self)
       .def(residueSerial_t{}>py::self)
-      .def_readwrite("serial", &ResidueId::serial)
-      .def_readwrite("iCode", &ResidueId::iCode)
-      .def("__str__", [](ResidueId& rid) { return std::to_string(rid.serial) + rid.iCode.str(); })
+      .def_readwrite("serial", &ResidueId::m_serial)
+      .def_readwrite("iCode", &ResidueId::m_iCode)
+      .def("__str__", [](ResidueId& rid) { return std::to_string(rid.m_serial) + rid.m_iCode.str(); })
       .def("__hash__", [](ResidueId& rid) { return std::hash<ResidueId>()(rid); })
       .def("__repr__", [](ResidueId& rid) {
-        return "<pyxmolpp2.polymer.ResidueId\"" + std::to_string(rid.serial) + rid.iCode.str() + "\" at 0x" +
+        return "<pyxmolpp2.polymer.ResidueId\"" + std::to_string(rid.m_serial) + rid.m_iCode.str() + "\" at 0x" +
             xmol::utils::string::int2hex((uint64_t)(std::addressof(rid))) + ">";
       });
 }

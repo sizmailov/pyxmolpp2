@@ -6,7 +6,7 @@
 using namespace xmol::v1;
 using namespace xmol::v1::proxy::smart;
 
-BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueName, const ResidueId& residueId) {
+BaseResidue& Frame::add_residue(BaseMolecule& mol) {
   assert(mol.frame == this);
   assert(m_molecules.data() <= &mol);
   assert(&mol < m_molecules.data() + m_molecules.size());
@@ -21,7 +21,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
   }
 
   auto new_inserted_it = m_residues.insert(m_residues.begin() + (old_insert_pos - old_begin),
-                                           BaseResidue{residueName, residueId, {atoms_end, atoms_end}, &mol});
+                                           BaseResidue{{}, {}, {atoms_end, atoms_end}, &mol});
   auto new_begin = m_residues.data();
   auto new_inserted_pos = new_begin + (new_inserted_it - m_residues.begin());
   auto new_end = m_residues.data() + m_residues.size();
@@ -65,7 +65,7 @@ BaseResidue& Frame::add_residue(BaseMolecule& mol, const ResidueName& residueNam
   return *new_inserted_pos;
 }
 
-BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const AtomId& atomId) {
+BaseAtom& Frame::add_atom(BaseResidue& residue) {
   assert(residue.molecule);
   assert(residue.molecule->frame == this);
   assert(m_residues.data() <= &residue);
@@ -81,8 +81,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   auto old_insert_pos = residue.atoms.m_end;
   auto old_insert_crd_pos = old_begin_crd + (residue.atoms.m_end - old_begin);
 
-  auto new_inserted_it =
-      m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{atomName, atomId, &residue});
+  auto new_inserted_it = m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{{}, {}, &residue});
 
   auto new_inserted_crd_it = m_coordinates.insert(m_coordinates.begin() + (old_insert_pos - old_begin), XYZ{});
 
@@ -116,12 +115,12 @@ BaseAtom& Frame::add_atom(BaseResidue& residue, const AtomName& atomName, const 
   return *new_inserted_pos;
 }
 
-proxy::MoleculeRef Frame::add_molecule(const MoleculeName& name) {
+proxy::MoleculeRef Frame::add_molecule() {
   check_references_integrity();
   auto old_begin = m_molecules.data();
   auto old_end = old_begin + m_molecules.size();
   auto residues_end = m_residues.data() + m_residues.size();
-  m_molecules.emplace_back(BaseMolecule{this, name, {residues_end, residues_end}});
+  m_molecules.emplace_back(BaseMolecule{this, {}, {residues_end, residues_end}});
   auto new_begin = m_molecules.data();
 
   if (old_begin != new_begin) {

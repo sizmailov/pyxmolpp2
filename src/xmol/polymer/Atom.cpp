@@ -319,7 +319,7 @@ Residue& Chain::emplace(const Residue& residue) {
 const Residue& Chain::operator[](const residueId_t& residueId) const {
   auto it = m_lookup_table.find(residueId);
   if (it == m_lookup_table.end() || it->second.empty()) {
-    throw OutOfRangeChain("Chain has no residue with id `" + std::to_string(residueId.serial) + residueId.iCode.str() +
+    throw OutOfRangeChain("Chain has no residue with id `" + std::to_string(residueId.m_serial) + residueId.m_iCode.str() +
                           "`");
   }
   return this->elements[*it->second.begin()];
@@ -328,7 +328,7 @@ const Residue& Chain::operator[](const residueId_t& residueId) const {
 Residue& Chain::operator[](const residueId_t& residueId) {
   auto it = m_lookup_table.find(residueId);
   if (it == m_lookup_table.end() || it->second.empty()) {
-    throw OutOfRangeChain("Chain has no residue with id `" + std::to_string(residueId.serial) + residueId.iCode.str() +
+    throw OutOfRangeChain("Chain has no residue with id `" + std::to_string(residueId.m_serial) + residueId.m_iCode.str() +
                           "`");
   }
   return this->elements[*it->second.begin()];

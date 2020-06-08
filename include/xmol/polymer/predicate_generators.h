@@ -262,7 +262,7 @@ public:
   }
 
   ResiduePredicate is_in(const std::set<residueSerial_t>& ids) const {
-    return ResiduePredicate([ids](const Residue& r){ return r.id().iCode.value()==0 && ids.count(r.id().serial)==1 ;});
+    return ResiduePredicate([ids](const Residue& r){ return r.id().m_iCode.value()==0 && ids.count(r.id().m_serial)==1 ;});
   }
 
 };

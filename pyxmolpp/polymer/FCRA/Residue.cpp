@@ -162,8 +162,8 @@ void pyxmolpp::polymer::init_Residue(detail::FWD& fwd, pybind11::module &polymer
           [](ResidueRef& residue) {
             auto& r = static_cast<Residue&>(residue);
             return "<pyxmolpp2.polymer.Residue id="
-                + std::to_string(r.id().serial)
-                + r.id().iCode.str()
+                + std::to_string(r.id().m_serial)
+                + r.id().m_iCode.str()
                 + " name=\""
                 + r.name().str()
                 + "\" at 0x"

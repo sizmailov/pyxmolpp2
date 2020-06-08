@@ -12,19 +12,19 @@ class FrameTests : public Test {};
 TEST_F(FrameTests, create) {
   auto frame = Frame();
 
-  auto m1 = frame.add_molecule(MoleculeName("A")).smart();
-  auto m2 = frame.add_molecule(MoleculeName("B")).smart();
-  auto m3 = frame.add_molecule(MoleculeName("C")).smart();
+  auto m1 = frame.add_molecule().name("A").smart();
+  auto m2 = frame.add_molecule().name("B").smart();
+  auto m3 = frame.add_molecule().name("C").smart();
 
-  auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-  auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
-  auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-  auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+  auto r3 = m3.add_residue().name("GLY").id(1).smart();
+  auto r4 = m3.add_residue().name("GLY").id(2).smart();
+  auto r2 = m2.add_residue().name("GLY").id(1).smart();
+  auto r1 = m1.add_residue().name("GLY").id(1).smart();
 
-  auto a1 = r4.add_atom(AtomName("H"), AtomId(1)).smart();
-  auto a2 = r3.add_atom(AtomName("H"), AtomId(2)).smart();
-  auto a3 = r2.add_atom(AtomName("H"), AtomId(2)).smart();
-  auto a4 = r1.add_atom(AtomName("H"), AtomId(2)).smart();
+  auto a1 = r4.add_atom().name("H").id(1).smart();
+  auto a2 = r3.add_atom().name("H").id(2).smart();
+  auto a3 = r2.add_atom().name("H").id(2).smart();
+  auto a4 = r1.add_atom().name("H").id(2).smart();
 
   ASSERT_EQ(m1.size(), 1);
   ASSERT_EQ(m2.size(), 1);
@@ -45,19 +45,19 @@ TEST_F(FrameTests, frame_move_assignement) {
   Frame frame;
   Frame frame2;
   {
-    auto m1 = frame.add_molecule(MoleculeName("A")).smart();
-    auto m2 = frame.add_molecule(MoleculeName("B")).smart();
-    auto m3 = frame.add_molecule(MoleculeName("C")).smart();
+    auto m1 = frame.add_molecule().name("A").smart();
+    auto m2 = frame.add_molecule().name("B").smart();
+    auto m3 = frame.add_molecule().name("C").smart();
     {
-      auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-      auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
-      auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-      auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
+      auto r3 = m3.add_residue().name("GLY").id(1).smart();
+      auto r4 = m3.add_residue().name("GLY").id(2).smart();
+      auto r2 = m2.add_residue().name("GLY").id(1).smart();
+      auto r1 = m1.add_residue().name("GLY").id(1).smart();
       {
-        auto a1 = r4.add_atom(AtomName("X"), AtomId(1)).smart();
-        auto a2 = r3.add_atom(AtomName("Y"), AtomId(2)).smart();
-        auto a3 = r2.add_atom(AtomName("Z"), AtomId(2)).smart();
-        auto a4 = r1.add_atom(AtomName("W"), AtomId(2)).smart();
+        auto a1 = r4.add_atom().name("X").id(1).smart();
+        auto a2 = r3.add_atom().name("Y").id(2).smart();
+        auto a3 = r2.add_atom().name("Z").id(2).smart();
+        auto a4 = r1.add_atom().name("W").id(2).smart();
 
         frame2 = std::move(frame);
 
@@ -100,17 +100,17 @@ TEST_F(FrameTests, frame_move_assignement) {
 
 TEST_F(FrameTests, frame_move_construction) {
   Frame frame;
-  auto m1 = frame.add_molecule(MoleculeName("A")).smart();
-  auto m2 = frame.add_molecule(MoleculeName("B")).smart();
-  auto m3 = frame.add_molecule(MoleculeName("C")).smart();
-  auto r3 = m3.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-  auto r4 = m3.add_residue(ResidueName("GLY"), ResidueId(2)).smart();
-  auto r2 = m2.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-  auto r1 = m1.add_residue(ResidueName("GLY"), ResidueId(1)).smart();
-  auto a1 = r4.add_atom(AtomName("X"), AtomId(1)).smart();
-  auto a2 = r3.add_atom(AtomName("Y"), AtomId(2)).smart();
-  auto a3 = r2.add_atom(AtomName("Z"), AtomId(2)).smart();
-  auto a4 = r1.add_atom(AtomName("W"), AtomId(2)).smart();
+  auto m1 = frame.add_molecule().name("A").smart();
+  auto m2 = frame.add_molecule().name("B").smart();
+  auto m3 = frame.add_molecule().name("C").smart();
+  auto r3 = m3.add_residue().name("GLY").id(1).smart();
+  auto r4 = m3.add_residue().name("GLY").id(2).smart();
+  auto r2 = m2.add_residue().name("GLY").id(1).smart();
+  auto r1 = m1.add_residue().name("GLY").id(1).smart();
+  auto a1 = r4.add_atom().name("X").id(1).smart();
+  auto a2 = r3.add_atom().name("Y").id(2).smart();
+  auto a3 = r2.add_atom().name("Z").id(2).smart();
+  auto a4 = r1.add_atom().name("W").id(2).smart();
 
   auto frame2 = std::move(frame);
 
@@ -138,7 +138,7 @@ TEST_F(FrameTests, frame_move_construction) {
 
 TEST_F(FrameTests, molecule_construction) {
   Frame frame;
-  auto mol = frame.add_molecule(MoleculeName("X")).smart();
+  auto mol = frame.add_molecule().name("X").smart();
   ASSERT_TRUE(mol.empty());
   ASSERT_EQ(mol.name(), MoleculeName("X"));
   mol.name(MoleculeName("Y"));
@@ -156,8 +156,8 @@ TEST_F(FrameTests, molecule_construction) {
 
 TEST_F(FrameTests, residue_construction) {
   Frame frame;
-  auto mol = frame.add_molecule(MoleculeName("X"));
-  auto residue = mol.add_residue(ResidueName("ABC"), ResidueId(1));
+  auto mol = frame.add_molecule();
+  auto residue = mol.add_residue().name("ABC").id(1);
   ASSERT_TRUE(residue.empty());
   ASSERT_EQ(residue.name(), ResidueName("ABC"));
   residue.name(ResidueName("ZYX"));
@@ -166,15 +166,15 @@ TEST_F(FrameTests, residue_construction) {
 
 TEST_F(FrameTests, frame_backward_construction_1) {
   Frame frame;
-  auto mol = frame.add_molecule(MoleculeName("A")).smart();
-  auto res1 = mol.add_residue(ResidueName("A1"), ResidueId(1)).smart();
-  auto res2 = mol.add_residue(ResidueName("A2"), ResidueId(2)).smart();
+  auto mol = frame.add_molecule().name("A").smart();
+  auto res1 = mol.add_residue().name("A1").id(1).smart();
+  auto res2 = mol.add_residue().name("A2").id(2).smart();
   int n = 10;
   for (int i = 0; i < n; ++i)
-    res2.add_atom(AtomName("R1"), AtomId(1));
-  mol.add_residue(ResidueName("A3"), ResidueId(2));
+    res2.add_atom().name("R1").id(1);
+  mol.add_residue().name("A3").id(2);
   for (int i = 0; i < n; ++i)
-    res1.add_atom(AtomName("R2"), AtomId(1));
+    res1.add_atom().name("R2").id(1);
 
   ASSERT_EQ(frame.n_atoms(), n * 2);
   ASSERT_EQ(frame.n_residues(), 3);
@@ -193,18 +193,18 @@ TEST_F(FrameTests, frame_backward_construction_2) {
   const int n_atoms_per_residue = 10;
 
   for (int i = 0; i < n_molecules; ++i) {
-    molecules.emplace_back(frame.add_molecule(MoleculeName("")));
+    molecules.emplace_back(frame.add_molecule());
   }
 
   for (int i = n_molecules - 1; i >= 0; --i) {
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      residues.emplace_back(molecules[i].add_residue(ResidueName(""), ResidueId(0)));
+      residues.emplace_back(molecules[i].add_residue());
     }
   }
 
   for (auto it = residues.rbegin(); it != residues.rend(); ++it) {
     for (int j = 0; j < n_atoms_per_residue; ++j) {
-      atoms.emplace_back(it->add_atom(AtomName(""), AtomId(0)));
+      atoms.emplace_back(it->add_atom());
     }
   }
 
@@ -225,25 +225,25 @@ TEST_F(FrameTests, frame_backward_construction_3) {
   const int n_atoms_per_residue = 7;
 
   for (int i = 0; i < n_molecules; ++i) {
-    auto molecule = frame.add_molecule(MoleculeName("")).smart();
+    auto molecule = frame.add_molecule().smart();
     molecules.push_back(molecule);
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      auto residue = molecule.add_residue(ResidueName(""), ResidueId(0)).smart();
+      auto residue = molecule.add_residue().smart();
       for (int k = 0; k < n_atoms_per_residue; ++k) {
-        atoms.emplace_back(residue.add_atom(AtomName(""), AtomId(0)));
+        atoms.emplace_back(residue.add_atom());
       }
     }
   }
 
   for (int i = n_molecules - 1; i >= 0; --i) {
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      residues.emplace_back(molecules[i].add_residue(ResidueName(""), ResidueId(0)));
+      residues.emplace_back(molecules[i].add_residue());
     }
   }
 
   for (auto it = residues.rbegin(); it != residues.rend(); ++it) {
     for (int j = 0; j < n_atoms_per_residue; ++j) {
-      atoms.emplace_back(it->add_atom(AtomName(""), AtomId(0)));
+      atoms.emplace_back(it->add_atom());
     }
   }
 
@@ -264,11 +264,11 @@ TEST_F(FrameTests, frame_forward_construction) {
   frame.reserve_atoms(n_molecules * n_residues_per_molecule * n_atoms_per_residue);
 
   for (int i = 0; i < n_molecules; ++i) {
-    auto molecule = frame.add_molecule(MoleculeName("")).smart();
+    auto molecule = frame.add_molecule().smart();
     for (int j = 0; j < n_residues_per_molecule; ++j) {
-      auto residue = molecule.add_residue(ResidueName(""), ResidueId(0)).smart();
+      auto residue = molecule.add_residue().smart();
       for (int k = 0; k < n_atoms_per_residue; ++k) {
-        residue.add_atom(AtomName(""), AtomId(0));
+        residue.add_atom();
       }
     }
   }
