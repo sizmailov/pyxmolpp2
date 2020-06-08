@@ -32,10 +32,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 endif()
 
-enable_testing()
-
 
 add_subdirectory(external/googletest EXCLUDE_FROM_ALL)
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/benchmark EXCLUDE_FROM_ALL)
 include_directories(SYSTEM external/googletest/googletest/include)
 include_directories(SYSTEM external/benchmark/include)
@@ -45,6 +44,7 @@ add_subdirectory(external/pybind11 EXCLUDE_FROM_ALL)
 include_directories(SYSTEM external/pybind11/include)
 
 
+enable_testing()
 include_directories(include)
 add_subdirectory(tests)
 
