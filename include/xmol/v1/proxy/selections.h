@@ -18,21 +18,27 @@ public:
 /// Unlike other selections this one does NOT support set operations
 /// Once created, the selection cannot be altered
 class CoordSelection : public Selection<CoordRef> {
+public:
   CoordSelection(CoordSpan rhs) : Selection(rhs.begin(), rhs.end()), m_frame(empty() ? nullptr : rhs.m_frame) {}
 
   template <typename Container>
-  CoordSelection(Frame& frame, Container&& container)
-      : Selection(std::forward<Container>(container)), m_frame(empty() ? nullptr : &frame) {}
+  CoordSelection(Frame& frame, Container&& container, bool sorted_and_unique = false)
+      : Selection(std::forward<Container>(container), sorted_and_unique), m_frame(empty() ? nullptr : &frame) {}
 
   template <typename Predicate> CoordSelection filter(Predicate&& p) {
     return CoordSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  smart::CoordSmartSelection smart();
 
 protected:
   Frame* m_frame = nullptr;
 
 private:
   friend CoordSpan;
+  friend AtomSelection;
+  friend ResidueSelection;
+  friend MoleculeSelection;
   friend smart::CoordSmartSelection;
 };
 
@@ -46,6 +52,8 @@ public:
   AtomSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
   AtomSelection(AtomRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
+  /// Coordinates
+  CoordSelection coords();
   /// Parent residues
   ResidueSelection residues();
   /// Parent molecules
@@ -103,6 +111,9 @@ public:
   using Selection::Selection;
   ResidueSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
   ResidueSelection(ResidueRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
+
+  /// Coordinates
+  CoordSelection coords();
 
   /// Children atoms of the residues
   AtomSelection atoms();
@@ -162,6 +173,9 @@ public:
   using Selection::Selection;
   MoleculeSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
   MoleculeSelection(MoleculeRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
+
+  /// Coordinates
+  CoordSelection coords();
 
   /// Children atoms of the molecules
   AtomSelection atoms();

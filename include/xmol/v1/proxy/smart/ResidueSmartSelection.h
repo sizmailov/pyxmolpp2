@@ -10,6 +10,12 @@ class ResidueSmartSelection : public FrameObserver<ResidueSmartSelection> {
 public:
   ResidueSmartSelection(ResidueSelection sel);
 
+  /// Coordinates
+  CoordSelection coords() {
+    check_precondition("coords()");
+    return m_selection.coords();
+  };
+
   /// Child atoms
   AtomSelection atoms() {
     check_precondition("atoms()");

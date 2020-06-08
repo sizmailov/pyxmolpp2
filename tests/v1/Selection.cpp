@@ -115,8 +115,8 @@ TEST_F(SelectionTests, smart_atom_selection) {
 
 TEST_F(SelectionTests, smart_atom_exceptions) {
   auto frame = make_polyglycines({{"A", 1}});
-  AtomSelection plain_selection = AtomSelection(frame.atoms());
-  AtomSmartSelection atoms = plain_selection;
+  auto atoms = AtomSelection(frame.atoms()).smart();
+  auto coords = atoms.coords().smart();
   frame = {};
   ASSERT_THROW(atoms.residues(), DeadFrameAccessError);
   ASSERT_THROW(atoms.molecules(), DeadFrameAccessError);
@@ -131,6 +131,11 @@ TEST_F(SelectionTests, smart_atom_exceptions) {
   ASSERT_THROW(static_cast<void>(atoms |= atoms), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms &= atoms), DeadFrameAccessError);
   ASSERT_THROW(static_cast<void>(atoms -= atoms), DeadFrameAccessError);
+
+  ASSERT_THROW(static_cast<void>(coords.empty()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(coords.size()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(coords.begin()), DeadFrameAccessError);
+  ASSERT_THROW(static_cast<void>(coords.end()), DeadFrameAccessError);
 }
 
 TEST_F(SelectionTests, smart_atom_ref_count) {

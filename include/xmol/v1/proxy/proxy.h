@@ -92,8 +92,12 @@ protected:
   XYZ* m_coord = nullptr;
 
 private:
+  friend AtomSelection;
   friend Frame;
+  friend MoleculeSelection;
   friend ProxySpan<CoordRef, XYZ>;
+  friend ResidueSelection;
+  friend Selection<CoordRef>;
   friend smart::CoordSmartSelection;
   explicit CoordRef(XYZ& coord);
 
@@ -332,9 +336,9 @@ public:
   }
 
   /// Atom coordinates
-  [[nodiscard]] const XYZ& r() const { return *m_coords; }
+  [[nodiscard]] const XYZ& r() const { return *m_coord; }
   AtomRef& r(const XYZ& value) {
-    *m_coords = value;
+    *m_coord = value;
     return *this;
   }
 
@@ -364,7 +368,7 @@ public:
   }
 
 protected:
-  XYZ* m_coords = nullptr;
+  XYZ* m_coord = nullptr;
   BaseAtom* m_atom = nullptr;
 
 private:
@@ -384,9 +388,13 @@ private:
   AtomRef(BaseAtom* ptr, BaseAtom* end);
   void advance() {
     ++m_atom;
-    ++m_coords;
+    ++m_coord;
   }
   AtomRef() = default; // constructs object in invalid state (with nullptrs)
+};
+
+template <> struct Selection<proxy::CoordRef>::LessThanComparator {
+  bool operator()(const proxy::CoordRef& p1, const proxy::CoordRef& p2) { return p1.m_coord < p2.m_coord; }
 };
 
 template <> struct Selection<proxy::AtomRef>::LessThanComparator {

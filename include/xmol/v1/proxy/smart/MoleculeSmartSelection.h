@@ -10,6 +10,12 @@ class MoleculeSmartSelection : public FrameObserver<MoleculeSmartSelection> {
 public:
   MoleculeSmartSelection(MoleculeSelection sel);
 
+  /// Coordinates
+  CoordSelection coords() {
+    check_precondition("coords()");
+    return m_selection.coords();
+  };
+
   /// Children atoms
   AtomSelection atoms() {
     check_precondition("atoms()");

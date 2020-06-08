@@ -1,7 +1,17 @@
+
+#include <xmol/v1/proxy/selections.h>
+
 #include "xmol/v1/proxy/smart/selections.h"
 
 using namespace xmol::v1::proxy;
 
+CoordSelection AtomSelection::coords() {
+  std::vector<CoordRef> result;
+  for (auto& a : m_data) {
+    result.push_back(CoordRef(*a.m_coord));
+  }
+  return CoordSelection(*frame_ptr(), std::move(result), true);
+}
 ResidueSelection AtomSelection::residues() {
   std::vector<ResidueRef> result;
   BaseResidue* prev = nullptr;
@@ -36,6 +46,15 @@ MoleculeSelection ResidueSelection::molecules() {
   }
   return MoleculeSelection(std::move(result), true);
 }
+CoordSelection ResidueSelection::coords() {
+  std::vector<CoordRef> result;
+  for (auto& r : m_data) {
+    for (auto a : r.atoms()) {
+      result.push_back(CoordRef(*a.m_coord));
+    }
+  }
+  return CoordSelection(*frame_ptr(), std::move(result), true);
+}
 AtomSelection ResidueSelection::atoms() {
   std::vector<AtomRef> result;
   for (auto& r : m_data) {
@@ -54,11 +73,23 @@ ResidueSelection MoleculeSelection::residues() {
   }
   return ResidueSelection(std::move(result), true);
 }
+
+CoordSelection MoleculeSelection::coords() {
+  std::vector<CoordRef> result;
+  for (auto& m : m_data) {
+    for (auto& r : m.residues()) {
+      for (auto& a : r.atoms()) {
+        result.push_back(CoordRef(*a.m_coord));
+      }
+    }
+  }
+  return CoordSelection(*frame_ptr(), std::move(result), true);
+}
 AtomSelection MoleculeSelection::atoms() {
   std::vector<AtomRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
-      for (auto& a: r.atoms()){
+      for (auto& a : r.atoms()) {
         result.push_back(a);
       }
     }
@@ -96,4 +127,5 @@ MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelectio
   return MoleculeSelection(lhs) &= rhs;
 }
 
+smart::CoordSmartSelection CoordSelection::smart() { return smart::CoordSmartSelection(*this); }
 } // namespace xmol::v1::proxy
