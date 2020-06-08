@@ -5,6 +5,7 @@
 #include "xmol/utils/ShortAsciiString.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace xmol {
@@ -18,25 +19,26 @@ using ResidueInsertionCode = xmol::utils::ShortAsciiString<1, false, detail::Ins
 using residueSerial_t = int32_t;
 struct ResidueId {
   ResidueId() : ResidueId(0, ResidueInsertionCode("")) {}
-  explicit ResidueId(residueSerial_t serial) : serial(serial) {}
-  ResidueId(residueSerial_t serial, const ResidueInsertionCode& iCode) : serial(serial), iCode(iCode) {}
+  explicit ResidueId(residueSerial_t serial) : m_serial(serial) {}
+  ResidueId(residueSerial_t serial, ResidueInsertionCode iCode) : m_serial(serial), m_iCode(std::move(iCode)) {}
 
   ResidueId(const ResidueId& other) = default;
   ResidueId(ResidueId&& other) = default;
 
   ResidueId& operator=(const ResidueId& other) = default;
   ResidueId& operator=(ResidueId&& other) = default;
-  ResidueId& operator=(const residueSerial_t& serial) { this->serial=serial; iCode=ResidueInsertionCode{}; return *this;};
+  ResidueId& operator=(const residueSerial_t& serial) { this->m_serial =serial;
+    m_iCode =ResidueInsertionCode{}; return *this;};
 
-  inline bool operator<(const ResidueId& other) const { return std::tie(serial, iCode) < std::tie(other.serial, other.iCode); }
-  inline bool operator>(const ResidueId& other) const { return std::tie(serial, iCode) > std::tie(other.serial, other.iCode); }
-  inline bool operator==(const ResidueId& other) const { return std::tie(serial, iCode) == std::tie(other.serial, other.iCode); }
-  inline bool operator!=(const ResidueId& other) const { return std::tie(serial, iCode) != std::tie(other.serial, other.iCode); }
-  inline bool operator<=(const ResidueId& other) const { return std::tie(serial, iCode) <= std::tie(other.serial, other.iCode); }
-  inline bool operator>=(const ResidueId& other) const { return std::tie(serial, iCode) >= std::tie(other.serial, other.iCode); }
+  inline bool operator<(const ResidueId& other) const { return std::tie(m_serial, m_iCode) < std::tie(other.m_serial, other.m_iCode); }
+  inline bool operator>(const ResidueId& other) const { return std::tie(m_serial, m_iCode) > std::tie(other.m_serial, other.m_iCode); }
+  inline bool operator==(const ResidueId& other) const { return std::tie(m_serial, m_iCode) == std::tie(other.m_serial, other.m_iCode); }
+  inline bool operator!=(const ResidueId& other) const { return std::tie(m_serial, m_iCode) != std::tie(other.m_serial, other.m_iCode); }
+  inline bool operator<=(const ResidueId& other) const { return std::tie(m_serial, m_iCode) <= std::tie(other.m_serial, other.m_iCode); }
+  inline bool operator>=(const ResidueId& other) const { return std::tie(m_serial, m_iCode) >= std::tie(other.m_serial, other.m_iCode); }
 
-  residueSerial_t serial;
-  ResidueInsertionCode iCode;
+  residueSerial_t m_serial;
+  ResidueInsertionCode m_iCode;
 };
 
 inline bool operator< (const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <  ResidueId(rhs); }
@@ -260,8 +262,8 @@ struct hash<xmol::polymer::ResidueId> {
   using result_type = size_t;
 
   result_type operator()(argument_type const& s) const {
-    size_t seed = static_cast<size_t>(s.serial);
-    seed ^= std::hash<decltype(s.iCode)>()(s.iCode) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    size_t seed = static_cast<size_t>(s.m_serial);
+    seed ^= std::hash<decltype(s.m_iCode)>()(s.m_iCode) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     return seed;
   }
 };
