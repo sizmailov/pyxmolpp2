@@ -32,6 +32,7 @@ class AtomRef;
 class ResidueRef;
 class MoleculeRef;
 
+class CoordSelection;
 class AtomSelection;
 class ResidueSelection;
 class MoleculeSelection;
@@ -48,10 +49,12 @@ class AtomSmartRef;
 class ResidueSmartRef;
 class MoleculeSmartRef;
 
+class CoordSmartSelection;
 class AtomSmartSelection;
 class ResidueSmartSelection;
 class MoleculeSmartSelection;
 
+class CoordSmartSpan;
 class AtomSmartSpan;
 class ResidueSmartSpan;
 class MoleculeSmartSpan;

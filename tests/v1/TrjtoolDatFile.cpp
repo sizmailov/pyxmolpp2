@@ -4,6 +4,7 @@
 
 #include "xmol/v1/trajectory/Trajectory.h"
 #include "xmol/v1/io/TrjtoolDatFile.h"
+#include "xmol/v1/io/PdbInputFile.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
@@ -36,7 +37,8 @@ TEST_F(TrjtoolDatFileTests, read) {
   EXPECT_EQ(dat_file.n_atoms(), 880);
 
   std::vector<XYZ> coords(dat_file.n_atoms());
-  auto xyz_span = proxy::CoordSpan(coords.data(), coords.size());
+  Frame frame = io::PdbInputFile("trjtool/GB1/run00001.pdb", io::PdbInputFile::Dialect::AMBER_99).frames()[0];
+  auto xyz_span = frame.coords();
   dat_file.advance(0);
   dat_file.read_coordinates(0, xyz_span);
   XYZ expected = {8.9505224227905273, -9.4666690826416016, -3.2724499702453613};

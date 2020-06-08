@@ -94,6 +94,7 @@ protected:
 private:
   friend Frame;
   friend ProxySpan<CoordRef, XYZ>;
+  friend smart::CoordSmartSelection;
   explicit CoordRef(XYZ& coord);
 
   CoordRef(XYZ* ptr, XYZ*);

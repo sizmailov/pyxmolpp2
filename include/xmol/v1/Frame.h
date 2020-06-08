@@ -15,7 +15,9 @@ class Frame : public selection::Observable<proxy::smart::AtomSmartRef>,
               public selection::Observable<proxy::smart::MoleculeSmartSelection>,
               public selection::Observable<proxy::smart::AtomSmartSpan>,
               public selection::Observable<proxy::smart::ResidueSmartSpan>,
-              public selection::Observable<proxy::smart::MoleculeSmartSpan> {
+              public selection::Observable<proxy::smart::MoleculeSmartSpan>,
+              public selection::Observable<proxy::smart::CoordSmartSpan>,
+              public selection::Observable<proxy::smart::CoordSmartSelection> {
 public:
   /// Default constructor
   Frame() = default;
@@ -107,10 +109,12 @@ private:
   friend proxy::smart::ResidueSmartRef;
   friend proxy::smart::MoleculeSmartRef;
 
+  friend proxy::smart::CoordSmartSelection;
   friend proxy::smart::AtomSmartSelection;
   friend proxy::smart::ResidueSmartSelection;
   friend proxy::smart::MoleculeSmartSelection;
 
+  friend proxy::smart::CoordSmartSpan;
   friend proxy::smart::AtomSmartSpan;
   friend proxy::smart::ResidueSmartSpan;
   friend proxy::smart::MoleculeSmartSpan;

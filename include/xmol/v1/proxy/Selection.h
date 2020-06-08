@@ -61,13 +61,13 @@ public:
     return m_data[i];
   }
 
+protected:
+
   void unite(const Selection& rhs);
   void substract(const Selection& rhs);
   void intersect(const Selection& rhs);
 
   bool contains(const T& proxy) const;
-
-protected:
 
   template <typename Predicate>[[nodiscard]] std::vector<T> internal_filter(Predicate&& p) {
     std::vector<T> result;

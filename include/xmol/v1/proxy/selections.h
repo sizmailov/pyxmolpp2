@@ -13,6 +13,29 @@ public:
   using std::runtime_error::runtime_error;
 };
 
+/// Ordered set of atomic coordinates
+///
+/// Unlike other selections this one does NOT support set operations
+/// Once created, the selection cannot be altered
+class CoordSelection : public Selection<CoordRef> {
+  CoordSelection(CoordSpan rhs) : Selection(rhs.begin(), rhs.end()), m_frame(empty() ? nullptr : rhs.m_frame) {}
+
+  template <typename Container>
+  CoordSelection(Frame& frame, Container&& container)
+      : Selection(std::forward<Container>(container)), m_frame(empty() ? nullptr : &frame) {}
+
+  template <typename Predicate> CoordSelection filter(Predicate&& p) {
+    return CoordSelection(internal_filter(std::forward<Predicate>(p)));
+  }
+
+protected:
+  Frame* m_frame = nullptr;
+
+private:
+  friend CoordSpan;
+  friend smart::CoordSmartSelection;
+};
+
 /// @breif Ordered set of @ref AtomRef from single @ref Frame
 ///
 /// Mixing references from different frames within single AtomSelection is prohibited

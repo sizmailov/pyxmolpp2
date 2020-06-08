@@ -1,4 +1,5 @@
 #include "xmol/v1/proxy/smart/spans.h"
+#include "xmol/v1/proxy/selections.h"
 
 using namespace xmol::v1::proxy;
 

@@ -7,13 +7,20 @@ namespace xmol::v1::proxy {
 class CoordSpan : public ProxySpan<CoordRef, XYZ> {
 public:
   using Matrix_t = Eigen::Matrix<double, 3, Eigen::Dynamic>;
-  using ProxySpan::ProxySpan;
-
   auto _eigen() { return Eigen::Map<Matrix_t>(empty() ? nullptr : m_begin->_eigen().data(), 3, size()); }
 
+  template <typename Predicate> CoordSelection filter(Predicate&& p);
+
 protected:
+  CoordSpan(Frame& frame, future::Span<XYZ>& span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};
+  CoordSpan(Frame& frame, XYZ* b, XYZ* e) : ProxySpan(b, e), m_frame(&frame){};
+  CoordSpan(Frame& frame, XYZ* b, size_t n) : ProxySpan<CoordRef, XYZ>(b, n), m_frame(&frame){};
+
 private:
   friend Frame;
+  friend CoordSelection;
+  friend smart::CoordSmartSpan;
+//  friend smart::CoordSmartSelection;
   Frame* m_frame = nullptr;
   friend smart::MoleculeSmartSpan;
 };

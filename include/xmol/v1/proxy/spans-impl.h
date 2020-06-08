@@ -4,6 +4,10 @@
 
 namespace xmol::v1::proxy {
 
+template <typename Predicate> CoordSelection CoordSpan::filter(Predicate&& p) {
+    return CoordSelection(*m_frame, internal_filter(std::forward<Predicate>(p)));
+}
+
 template <typename Predicate> AtomSelection AtomRefSpan::filter(Predicate&& p) {
   return AtomSelection(internal_filter(std::forward<Predicate>(p)));
 }
