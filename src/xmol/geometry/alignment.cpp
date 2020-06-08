@@ -1,6 +1,5 @@
 #include "xmol/geometry/alignment.h"
 #include "gsl/gsl_assert"
-#include "xmol/geometry/exceptions.h"
 
 #include <iostream>
 
@@ -10,12 +9,12 @@ Transformation3d xmol::geometry::calc_alignment(
     const std::vector<xmol::geometry::XYZ>& reference,
     const std::vector<xmol::geometry::XYZ>& variable) {
   if (GSL_UNLIKELY(reference.size() != variable.size())) {
-    throw AlignmentError("reference.size(" + std::to_string(reference.size()) +
+    throw GeomError("reference.size(" + std::to_string(reference.size()) +
                          ") != variable.size (=" +
                          std::to_string(variable.size()) + ")");
   }
   if (GSL_UNLIKELY(reference.size() < 3)) {
-    throw AlignmentError("reference.size(" + std::to_string(reference.size()) +
+    throw GeomError("reference.size(" + std::to_string(reference.size()) +
                          ") < 3");
   }
 
@@ -118,13 +117,13 @@ Eigen::Matrix3d xmol::geometry::calc_inertia_tensor(const std::vector<XYZ>& coor
 XYZ xmol::geometry::calc_mass_center(
     const std::vector<xmol::geometry::XYZ>& coordinates, const std::vector<double>& mass) {
   if (GSL_UNLIKELY(coordinates.size()!=mass.size())) {
-    throw GeometryException(
+    throw GeomError(
         "coordinates.size(" + std::to_string(coordinates.size()) + ") "
         + "!= "
         + "mass.size(" + std::to_string(mass.size()) + ") " );
   }
   if (GSL_UNLIKELY(coordinates.empty())) {
-    throw GeometryException("coordinates.size(" +
+    throw GeomError("coordinates.size(" +
         std::to_string(coordinates.size()) + ") == 0");
   }
   XYZ c;
@@ -139,7 +138,7 @@ XYZ xmol::geometry::calc_mass_center(
 XYZ xmol::geometry::calc_geom_center(
     const std::vector<xmol::geometry::XYZ>& coordinates) {
   if (GSL_UNLIKELY(coordinates.empty())) {
-    throw GeometryException("reference.size(" +
+    throw GeomError("reference.size(" +
                             std::to_string(coordinates.size()) + ") == 0");
   }
   XYZ c;
@@ -153,12 +152,12 @@ double
 xmol::geometry::calc_rmsd(const std::vector<xmol::geometry::XYZ>& reference,
                           const std::vector<xmol::geometry::XYZ>& variable) {
   if (GSL_UNLIKELY(reference.size() != variable.size())) {
-    throw GeometryException(
+    throw GeomError(
         "reference.size(" + std::to_string(reference.size()) +
         ") != variable.size (=" + std::to_string(variable.size()) + ")");
   }
   if (GSL_UNLIKELY(reference.empty())) {
-    throw GeometryException("reference.size(" +
+    throw GeomError("reference.size(" +
                             std::to_string(reference.size()) + ") == 0");
   }
   double sum = 0;
@@ -173,12 +172,12 @@ xmol::geometry::calc_rmsd(const std::vector<xmol::geometry::XYZ>& reference,
                           const std::vector<xmol::geometry::XYZ>& variable,
                           const xmol::geometry::Transformation3d& alignment) {
   if (GSL_UNLIKELY(reference.size() != variable.size())) {
-    throw GeometryException(
+    throw GeomError(
         "reference.size(" + std::to_string(reference.size()) +
         ") != variable.size (=" + std::to_string(variable.size()) + ")");
   }
   if (GSL_UNLIKELY(reference.empty())) {
-    throw GeometryException("reference.size(" +
+    throw GeomError("reference.size(" +
                             std::to_string(reference.size()) + ") == 0");
   }
   double sum = 0;

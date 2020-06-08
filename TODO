@@ -10,5 +10,6 @@
 - pseudo trajectory adapter
 - trajectory from layout
 
-- erasure of elements
+- update bindings to v1
+- support erasure of elements
 - prmtop topology
