@@ -5,8 +5,11 @@
 namespace xmol::v1::proxy {
 
 class CoordSpan : public ProxySpan<CoordRef, XYZ> {
+  using XYZMatrix = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
 public:
   using ProxySpan::ProxySpan;
+
+  auto _eigen() { return Eigen::Map<XYZMatrix>(empty() ? m_begin->_eigen().data() : nullptr, size(), 3); }
 
 protected:
 private:
