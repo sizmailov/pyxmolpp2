@@ -12,6 +12,7 @@ public:
   template <typename Predicate> CoordSelection filter(Predicate&& p);
 
 protected:
+  CoordSpan() = default;
   CoordSpan(Frame& frame, future::Span<XYZ>& span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};
   CoordSpan(Frame& frame, XYZ* b, XYZ* e) : ProxySpan(b, e), m_frame(&frame){};
   CoordSpan(Frame& frame, XYZ* b, size_t n) : ProxySpan<CoordRef, XYZ>(b, n), m_frame(&frame){};
@@ -19,6 +20,7 @@ protected:
 private:
   friend Frame;
   friend CoordSelection;
+  friend AtomRefSpan;
   friend smart::CoordSmartSpan;
 //  friend smart::CoordSmartSelection;
   Frame* m_frame = nullptr;
@@ -28,6 +30,7 @@ private:
 class AtomRefSpan : public ProxySpan<AtomRef, BaseAtom> {
 public:
   using ProxySpan::ProxySpan;
+
   CoordSpan coords();
   ResidueRefSpan residues();
   MoleculeRefSpan molecules();
@@ -49,6 +52,8 @@ private:
 class ResidueRefSpan : public ProxySpan<ResidueRef, BaseResidue> {
 public:
   using ProxySpan::ProxySpan;
+
+  CoordSpan coords();
   AtomRefSpan atoms();
   MoleculeRefSpan molecules();
 
@@ -69,6 +74,8 @@ private:
 class MoleculeRefSpan : public ProxySpan<MoleculeRef, BaseMolecule> {
 public:
   using ProxySpan::ProxySpan;
+
+  CoordSpan coords();
   AtomRefSpan atoms();
   ResidueRefSpan residues();
 

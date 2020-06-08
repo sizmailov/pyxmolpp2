@@ -10,6 +10,12 @@ class MoleculeSmartSpan : public FrameObserver<MoleculeSmartSpan> {
 public:
   MoleculeSmartSpan(MoleculeRefSpan sel);
 
+  /// Coordinates
+  CoordSpan coords() {
+    check_precondition("coords()");
+    return m_span.coords();
+  };
+
   /// Children atoms
   AtomRefSpan atoms() {
     check_precondition("atoms()");

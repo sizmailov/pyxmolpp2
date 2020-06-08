@@ -9,6 +9,12 @@ class AtomSmartSpan : public FrameObserver<AtomSmartSpan> {
 public:
   AtomSmartSpan(AtomRefSpan sel);
 
+  /// Coordinates
+  CoordSpan coords() {
+    check_precondition("coords()");
+    return m_span.coords();
+  };
+
   /// Parent residues
   ResidueRefSpan residues() {
     check_precondition("residues()");

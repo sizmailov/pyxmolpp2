@@ -3,6 +3,13 @@
 
 using namespace xmol::v1::proxy;
 
+CoordSpan AtomRefSpan::coords() {
+  if (empty()) {
+    return {};
+  }
+  return {begin()->frame(), begin()->m_coord, size()};
+}
+
 ResidueRefSpan AtomRefSpan::residues() {
   if (empty()) {
     return {};
@@ -16,6 +23,9 @@ MoleculeRefSpan AtomRefSpan::molecules() {
   }
   return MoleculeRefSpan(m_begin->residue->molecule, (m_begin + size() - 1)->residue->molecule + 1);
 }
+
+CoordSpan ResidueRefSpan::coords() { return atoms().coords(); }
+
 AtomRefSpan ResidueRefSpan::atoms() {
   if (empty()) {
     return {};
@@ -28,6 +38,9 @@ MoleculeRefSpan ResidueRefSpan::molecules() {
   }
   return MoleculeRefSpan(m_begin->molecule, (m_begin + size() - 1)->molecule + 1);
 }
+
+CoordSpan MoleculeRefSpan::coords() { return atoms().coords(); }
+
 AtomRefSpan MoleculeRefSpan::atoms() {
   if (empty()) {
     return {};
