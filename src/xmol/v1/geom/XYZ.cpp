@@ -1,4 +1,6 @@
 #include "xmol/geometry/XYZ.h"
+#include "xmol/geometry/AngleValue.h"
+
 
 using namespace xmol::v1::geom;
 
@@ -14,4 +16,8 @@ XYZ xmol::v1::geom::lower_bound(const XYZ& a, const XYZ& b) {
 
 XYZ xmol::v1::geom::upper_bound(const XYZ& a, const XYZ& b) {
   return XYZ(std::max(a.x(), b.x()), std::max(a.y(), b.y()), std::min(a.z(), b.z()));
+}
+
+AngleValue XYZ::angle(const XYZ & other) const {
+    return Radians(std::acos(dot(other)));
 }

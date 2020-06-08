@@ -71,8 +71,8 @@ public:
 
   inline XYZ cross(const XYZ& b) const { return XYZ(m_coord->cross(b)); }
 
-  inline double distance(const XYZ& b) const { return XYZ(*m_coord - b).len(); }
-  inline double distance2(const XYZ& b) const { return XYZ(*m_coord - b).len(); }
+  inline double distance(const XYZ& b) const { return m_coord->distance(b); }
+  inline double distance2(const XYZ& b) const { return m_coord->distance2(b); }
 
   /// Check if references point to same data
   bool operator!=(const CoordRef& rhs) const {

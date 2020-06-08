@@ -5,6 +5,8 @@
 
 namespace xmol::v1::geom {
 
+inline XYZ operator-(const XYZ& a, const XYZ& b);
+
 class XYZ {
 public:
   using Vector_t = Eigen::Vector3d;
@@ -69,8 +71,12 @@ public:
     return *this;
   }
 
-  inline const Vector_t& _eigen() const { return m_v; }
+  inline double distance(const XYZ& other) const { return (*this - other).len(); }
+  inline double distance2(const XYZ& other) const { return (*this - other).len2(); }
 
+  AngleValue angle(const XYZ& other) const;
+
+  inline const Vector_t& _eigen() const { return m_v; }
   inline Vector_t& _eigen() { return m_v; }
 
 private:
