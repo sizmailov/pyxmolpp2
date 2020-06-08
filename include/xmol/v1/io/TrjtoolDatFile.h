@@ -21,7 +21,7 @@ public:
   explicit TrjtoolDatFile(std::string filename);
   [[nodiscard]] size_t n_frames() const final;
   [[nodiscard]] size_t n_atoms() const final;
-  void read_coordinates(size_t index, future::Span<XYZ>& coordinates) final;
+  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
   void advance(size_t shift) final;
 
 private:

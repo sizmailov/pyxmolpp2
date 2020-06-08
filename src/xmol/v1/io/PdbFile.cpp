@@ -45,7 +45,7 @@ PdbInputFile& PdbInputFile::read() {
 
 size_t PdbInputFile::n_frames() const { return m_n_frames; }
 size_t PdbInputFile::n_atoms() const { return m_n_atoms; }
-void PdbInputFile::read_coordinates(size_t index, xmol::v1::future::Span<xmol::v1::XYZ>& coordinates) {
+void PdbInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
   assert(!m_frames.empty());
   assert(m_current_frame == index);
 

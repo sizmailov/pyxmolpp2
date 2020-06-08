@@ -148,7 +148,7 @@ private:
   std::vector<std::unique_ptr<TrajectoryInputFile>> m_files;
   int m_iterator_counter = 0;
 
-  void read_coordinates(Position pos, future::Span<XYZ>& coords) {
+  void read_coordinates(Position pos, proxy::CoordSpan& coords) {
     m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
   }
 

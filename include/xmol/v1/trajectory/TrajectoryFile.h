@@ -1,5 +1,5 @@
 #pragma once
-#include "xmol/v1/future/span.h"
+#include "xmol/v1/proxy/spans.h"
 #include "xmol/v1/fwd.h"
 
 namespace xmol::v1::trajectory {
@@ -18,7 +18,7 @@ public:
    *
    * Precondition: @p index must match current position of internal data pointer
    * */
-  virtual void read_coordinates(size_t index, future::Span<XYZ>& coordinates) = 0;
+  virtual void read_coordinates(size_t index, xmol::v1::proxy::CoordSpan& coordinates) = 0;
 
   /** Advance internal data pointer by @p shift frames and be prepared to read coordinates
    *

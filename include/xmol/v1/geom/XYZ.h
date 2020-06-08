@@ -68,9 +68,9 @@ public:
     return *this;
   }
 
-  inline const Eigen::Vector3d& get_underlying_vector() const { return m_v; }
+  inline const Eigen::Vector3d& _eigen() const { return m_v; }
 
-  inline Eigen::Vector3d& get_underlying_vector() { return m_v; }
+  inline Eigen::Vector3d& _eigen() { return m_v; }
 
 private:
   Eigen::Vector3d m_v;

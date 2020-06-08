@@ -27,6 +27,7 @@ struct BaseMolecule;
 /// Proxy references to frame
 namespace proxy {
 
+class CoordRef;
 class AtomRef;
 class ResidueRef;
 class MoleculeRef;
@@ -35,6 +36,7 @@ class AtomSelection;
 class ResidueSelection;
 class MoleculeSelection;
 
+class CoordSpan;
 class AtomRefSpan;
 class ResidueRefSpan;
 class MoleculeRefSpan;

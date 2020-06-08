@@ -1,4 +1,5 @@
 #include "xmol/v1/io/TrjtoolDatFile.h"
+#include "xmol/v1/proxy/proxy.h"
 
 #include <utility>
 
@@ -23,14 +24,14 @@ TrjtoolDatFile::TrjtoolDatFile(std::string filename) : m_filename(std::move(file
 }
 size_t TrjtoolDatFile::n_frames() const { return m_n_frames; }
 size_t TrjtoolDatFile::n_atoms() const { return m_header.nitems; }
-void TrjtoolDatFile::read_coordinates(size_t index, future::Span<XYZ>& coordinates) {
+void TrjtoolDatFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
   assert(m_stream);
   assert(m_current_frame == index);
 
   for (auto& r : coordinates) {
     FromRawBytes<XYZf> xyzf{};
     m_stream->read(xyzf.bytes, sizeof(xyzf)); /// todo: properly handle endianness
-    r = {xyzf.value.x, xyzf.value.y, xyzf.value.z};
+    r.set({xyzf.value.x, xyzf.value.y, xyzf.value.z});
   }
 }
 void TrjtoolDatFile::read_header() {

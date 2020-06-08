@@ -54,7 +54,7 @@ public:
   [[nodiscard]] proxy::MoleculeRefSpan molecules();
 
   /// Coordinates of the frame
-  [[nodiscard]] future::Span<XYZ> coordinates();
+  [[nodiscard]] proxy::CoordSpan coordinates();
 
   /// Current number of smart atom references
   template<typename Smart>

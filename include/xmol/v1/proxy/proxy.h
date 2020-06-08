@@ -13,6 +13,63 @@
 
 namespace xmol::v1::proxy {
 
+/** @brief Lightweight XYZ reference
+ * */
+class CoordRef {
+public:
+  CoordRef(const CoordRef& rhs) = default;
+  CoordRef(CoordRef&& rhs) noexcept = default;
+  CoordRef& operator=(const CoordRef& rhs) = default;
+  CoordRef& operator=(CoordRef&& rhs) noexcept = default;
+
+  CoordRef& set(const XYZ& value) {
+    *m_coords = value;
+    return *this;
+  }
+
+  [[nodiscard]] double x() const { return m_coords->x(); };
+  CoordRef& x(double value) {
+    m_coords->set_x(value);
+    return *this;
+  }
+  [[nodiscard]] double y() const { return m_coords->y(); };
+  CoordRef& y(double value) {
+    m_coords->set_y(value);
+    return *this;
+  }
+  [[nodiscard]] double z() const { return m_coords->z(); };
+  CoordRef& z(double value) {
+    m_coords->set_z(value);
+    return *this;
+  }
+
+  /// Check if references point to same data
+  bool operator!=(const CoordRef& rhs) const {
+    return m_coords != rhs.m_coords; // comparing only one pair of pointers since they always must be in sync
+  }
+
+  /// Check if references point to same data
+  bool operator==(const CoordRef& rhs) const {
+    return m_coords == rhs.m_coords; // comparing only one pair of pointers since they always must be in sync
+  }
+
+  operator const XYZ&() const { return *m_coords; }
+  const Eigen::Vector3d& _eigen() const { return m_coords->_eigen(); }
+  Eigen::Vector3d& _eigen() { return m_coords->_eigen(); }
+
+protected:
+  XYZ* m_coords = nullptr;
+
+private:
+  friend Frame;
+  friend ProxySpan<CoordRef, XYZ>;
+  explicit CoordRef(XYZ& coord);
+
+  CoordRef(XYZ* ptr, XYZ*);
+  void advance() { ++m_coords; }
+  CoordRef() = default; // constructs object in invalid state (with nullptrs)
+};
+
 /** @brief Lightweight molecule reference
  *
  * For ref-counting reference see @ref smart::MoleculeSmartRef

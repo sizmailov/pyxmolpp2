@@ -25,7 +25,7 @@ public:
 
   size_t n_frames() const override;
   size_t n_atoms() const override;
-  void read_coordinates(size_t index, future::Span<XYZ>& coordinates) override;
+  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) override;
   void advance(size_t shift) override;
 
 private:

@@ -4,9 +4,21 @@
 
 namespace xmol::v1::proxy {
 
+class CoordSpan : public ProxySpan<CoordRef, XYZ> {
+public:
+  using ProxySpan::ProxySpan;
+
+protected:
+private:
+  friend Frame;
+  Frame* m_frame = nullptr;
+  friend smart::MoleculeSmartSpan;
+};
+
 class AtomRefSpan : public ProxySpan<AtomRef, BaseAtom> {
 public:
   using ProxySpan::ProxySpan;
+  CoordSpan coords();
   ResidueRefSpan residues();
   MoleculeRefSpan molecules();
 
