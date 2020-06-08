@@ -22,5 +22,5 @@ smart::AtomSmartRef AtomRef::smart() { return smart::AtomSmartRef(*this); }
 template class xmol::v1::proxy::Selection<AtomRef>;
 template class xmol::v1::proxy::Selection<ResidueRef>;
 template class xmol::v1::proxy::Selection<MoleculeRef>;
-CoordRef::CoordRef(XYZ& coord) : m_coords(&coord) {}
-CoordRef::CoordRef(xmol::v1::XYZ* ptr, xmol::v1::XYZ*) : m_coords(ptr) {}
+CoordRef::CoordRef(XYZ& coord) : m_coord(&coord) {}
+CoordRef::CoordRef(xmol::v1::XYZ* ptr, xmol::v1::XYZ*) : m_coord(ptr) {}

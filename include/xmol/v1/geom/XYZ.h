@@ -7,7 +7,8 @@ namespace xmol::v1::geom {
 
 class XYZ {
 public:
-  explicit inline XYZ(const Eigen::Vector3d& v) : m_v(v) {}
+  using Vector_t = Eigen::Vector3d;
+  explicit inline XYZ(const Vector_t& v) : m_v(v) {}
 
   inline XYZ(double x, double y, double z) : m_v(x, y, z) {}
 
@@ -68,12 +69,12 @@ public:
     return *this;
   }
 
-  inline const Eigen::Vector3d& _eigen() const { return m_v; }
+  inline const Vector_t& _eigen() const { return m_v; }
 
-  inline Eigen::Vector3d& _eigen() { return m_v; }
+  inline Vector_t& _eigen() { return m_v; }
 
 private:
-  Eigen::Vector3d m_v;
+  Vector_t m_v;
 };
 
 inline XYZ operator-(const XYZ& a, const XYZ& b) {

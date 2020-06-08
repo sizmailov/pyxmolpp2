@@ -128,5 +128,18 @@ TEST_F(SpanTests, split_exceptinos) {
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+}
 
+TEST_F(SpanTests, coordinate_span_to_eigen) {
+  auto frame = make_polyglycines({{"A", 1}});
+  auto coords = frame.coords();
+  coords[0].set({1, 2, 3});
+  size_t last = coords.size() - 1;
+  coords[last].set({4, 5, 6});
+
+  auto matrix_ref = coords._eigen();
+  matrix_ref.row(1).setConstant(1.0); // set all y values to 1
+
+  EXPECT_DOUBLE_EQ(coords[0].distance({1, 1, 3}), 0);
+  EXPECT_DOUBLE_EQ(coords[last].distance({4, 1, 6}), 0);
 }

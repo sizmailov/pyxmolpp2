@@ -55,7 +55,7 @@ void PdbInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates)
                        std::to_string(coordinates.size()));
   }
   for (size_t i = 0; i < coordinates.size(); ++i) {
-    coordinates[i] = frame.coordinates()[i];
+    coordinates[i] = frame.coords()[i];
   }
 }
 void PdbInputFile::advance(size_t shift) {

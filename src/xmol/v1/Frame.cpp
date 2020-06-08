@@ -241,7 +241,7 @@ XYZ& Frame::crd(BaseAtom& atom) {
 proxy::AtomRefSpan Frame::atoms() { return proxy::AtomRefSpan(m_atoms.data(), m_atoms.size()); }
 proxy::ResidueRefSpan Frame::residues() { return proxy::ResidueRefSpan(m_residues.data(), m_residues.size()); }
 proxy::MoleculeRefSpan Frame::molecules() { return proxy::MoleculeRefSpan(m_molecules.data(), m_molecules.size()); }
-proxy::CoordSpan Frame::coordinates() { return proxy::CoordSpan(m_coordinates.data(), m_coordinates.size()); }
+proxy::CoordSpan Frame::coords() { return proxy::CoordSpan(m_coordinates.data(), m_coordinates.size()); }
 
 void Frame::notify_atoms_move(BaseAtom* old_begin, BaseAtom* old_end, BaseAtom* new_begin) const {
   if (old_begin != new_begin) {

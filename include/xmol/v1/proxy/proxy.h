@@ -23,42 +23,73 @@ public:
   CoordRef& operator=(CoordRef&& rhs) noexcept = default;
 
   CoordRef& set(const XYZ& value) {
-    *m_coords = value;
+    *m_coord = value;
     return *this;
   }
 
-  [[nodiscard]] double x() const { return m_coords->x(); };
+  [[nodiscard]] double x() const { return m_coord->x(); };
   CoordRef& x(double value) {
-    m_coords->set_x(value);
+    m_coord->set_x(value);
     return *this;
   }
-  [[nodiscard]] double y() const { return m_coords->y(); };
+  [[nodiscard]] double y() const { return m_coord->y(); };
   CoordRef& y(double value) {
-    m_coords->set_y(value);
+    m_coord->set_y(value);
     return *this;
   }
-  [[nodiscard]] double z() const { return m_coords->z(); };
+  [[nodiscard]] double z() const { return m_coord->z(); };
   CoordRef& z(double value) {
-    m_coords->set_z(value);
+    m_coord->set_z(value);
     return *this;
   }
+
+  inline CoordRef& operator+=(const XYZ& rhs) {
+    m_coord->operator+=(rhs);
+    return *this;
+  }
+
+  inline CoordRef& operator-=(const XYZ& rhs) {
+    m_coord->operator-=(rhs);
+    return *this;
+  }
+
+  inline CoordRef& operator*=(double rhs) {
+    m_coord->operator*=(rhs);
+    return *this;
+  }
+
+  inline CoordRef& operator/=(double rhs) {
+    m_coord->operator/=(rhs);
+    return *this;
+  }
+
+  inline double len2() const { return m_coord->len2(); }
+
+  inline double len() const { return m_coord->len(); }
+
+  inline double dot(const XYZ& b) const { return m_coord->dot(b); }
+
+  inline XYZ cross(const XYZ& b) const { return XYZ(m_coord->cross(b)); }
+
+  inline double distance(const XYZ& b) const { return XYZ(*m_coord - b).len(); }
+  inline double distance2(const XYZ& b) const { return XYZ(*m_coord - b).len(); }
 
   /// Check if references point to same data
   bool operator!=(const CoordRef& rhs) const {
-    return m_coords != rhs.m_coords; // comparing only one pair of pointers since they always must be in sync
+    return m_coord != rhs.m_coord; // comparing only one pair of pointers since they always must be in sync
   }
 
   /// Check if references point to same data
   bool operator==(const CoordRef& rhs) const {
-    return m_coords == rhs.m_coords; // comparing only one pair of pointers since they always must be in sync
+    return m_coord == rhs.m_coord; // comparing only one pair of pointers since they always must be in sync
   }
 
-  operator const XYZ&() const { return *m_coords; }
-  const Eigen::Vector3d& _eigen() const { return m_coords->_eigen(); }
-  Eigen::Vector3d& _eigen() { return m_coords->_eigen(); }
+  operator const XYZ&() const { return *m_coord; }
+  const XYZ::Vector_t& _eigen() const { return m_coord->_eigen(); }
+  XYZ::Vector_t& _eigen() { return m_coord->_eigen(); }
 
 protected:
-  XYZ* m_coords = nullptr;
+  XYZ* m_coord = nullptr;
 
 private:
   friend Frame;
@@ -66,7 +97,7 @@ private:
   explicit CoordRef(XYZ& coord);
 
   CoordRef(XYZ* ptr, XYZ*);
-  void advance() { ++m_coords; }
+  void advance() { ++m_coord; }
   CoordRef() = default; // constructs object in invalid state (with nullptrs)
 };
 

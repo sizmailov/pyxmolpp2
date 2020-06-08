@@ -69,7 +69,7 @@ public:
       }
     }
     void update() {
-      auto coords = m_frame.coordinates();
+      auto coords = m_frame.coords();
       m_traj.read_coordinates(m_pos, coords);
       m_frame.id = m_pos.global_pos;
     }
