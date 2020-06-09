@@ -31,3 +31,22 @@ double xmol::v1::geom::calc_rmsd(proxy::CoordSelection& reference, proxy::CoordS
 double xmol::v1::geom::calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSelection& variable) {
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
+
+Eigen::Matrix3d xmol::v1::geom::calc_inertia_tensor(xmol::v1::proxy::CoordSelection& coords) {
+  return calc_inertia_tensor_impl(coords._eigen());
+}
+
+Eigen::Matrix3d xmol::v1::geom::calc_inertia_tensor(xmol::v1::proxy::CoordSpan& coords) {
+  return calc_inertia_tensor_impl(coords._eigen());
+}
+Eigen::Matrix3d xmol::v1::geom::calc_inertia_tensor(xmol::v1::proxy::CoordSelection& coords,
+                                                    const future::Span<double>& mass) {
+  Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>> mass_map(mass.m_begin, 1, mass.size());
+  return calc_inertia_tensor_impl(coords._eigen(), mass_map);
+}
+
+Eigen::Matrix3d xmol::v1::geom::calc_inertia_tensor(xmol::v1::proxy::CoordSpan& coords,
+                                                    const future::Span<double>& mass) {
+  Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>> mass_map(mass.m_begin, 1, mass.size());
+  return calc_inertia_tensor_impl(coords._eigen(), mass_map);
+}

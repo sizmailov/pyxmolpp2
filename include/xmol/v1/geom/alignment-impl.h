@@ -1,5 +1,4 @@
 #pragma once
-
 #include "alignment.h"
 
 
@@ -37,6 +36,42 @@ affine::Transformation3d calc_alignment_impl(const MatrixA& X, const MatrixB& Y)
 
 template <typename MatrixA, typename MatrixB> double calc_rmsd_impl(const MatrixA& reference, const MatrixB& variable) {
   return (reference - variable).array().square().rowwise().sum().sqrt().mean();
+}
+
+template <typename MatrixA> Eigen::Matrix3d calc_inertia_tensor_impl(const MatrixA& coords) {
+  CoordEigenVector center(coords.rowwise().mean());
+  const int X=0,Y=1,Z=2;
+  double x2 = coords.row(X).array().square().sum();
+  double y2 = coords.row(Y).array().square().sum();
+  double z2 = coords.row(Z).array().square().sum();
+  double xx = y2 + z2;
+  double yy = x2+z2;
+  double zz = y2+x2;
+  double xy = - ((coords.row(X).array() - center(X))*(coords.row(Y).array() - center(Y))).sum();
+  double xz = - ((coords.row(X).array() - center(X))*(coords.row(Z).array() - center(Z))).sum();
+  double yz = - ((coords.row(Y).array() - center(Y))*(coords.row(Z).array() - center(Z))).sum();
+
+  Eigen::Matrix3d result;
+  result << xx, xy, xz, xy, yy, yz, xz, yz, zz;
+  return result;
+}
+
+template <typename CoordMatrix, typename MassMatrix> Eigen::Matrix3d calc_inertia_tensor_impl(const CoordMatrix& coords, const MassMatrix& mass) {
+  CoordEigenVector center(coords.rowwise().mean());
+  const int X=0,Y=1,Z=2;
+  double x2 = (coords.row(X).array().square().array() * mass.array()).sum();
+  double y2 = (coords.row(Y).array().square().array() * mass.array()).sum();
+  double z2 = (coords.row(Z).array().square().array() * mass.array()).sum();
+  double xx = y2 + z2;
+  double yy = x2 + z2;
+  double zz = y2 + x2;
+  double xy = - (((coords.row(X).array() - center(X))*(coords.row(Y).array() - center(Y))).array() * mass.array()).sum();
+  double xz = - (((coords.row(X).array() - center(X))*(coords.row(Z).array() - center(Z))).array() * mass.array()).sum();
+  double yz = - (((coords.row(Y).array() - center(Y))*(coords.row(Z).array() - center(Z))).array() * mass.array()).sum();
+
+  Eigen::Matrix3d result;
+  result << xx, xy, xz, xy, yy, yz, xz, yz, zz;
+  return result;
 }
 
 } // namespace xmol::v1::geom
