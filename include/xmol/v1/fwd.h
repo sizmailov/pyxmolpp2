@@ -21,6 +21,7 @@ using ResidueInsertionCode = xmol::polymer::ResidueInsertionCode;
 using XYZ = xmol::v1::geom::XYZ;
 using CoordEigenVector = XYZ::Vector_t;
 using CoordEigenMatrix = Eigen::Matrix<double, 3, Eigen::Dynamic>;
+using CoordEigenMatrixMap = Eigen::Map<Eigen::Matrix<double, 3, Eigen::Dynamic>>;
 
 struct BaseAtom;
 struct BaseResidue;
