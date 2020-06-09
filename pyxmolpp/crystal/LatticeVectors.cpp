@@ -1,8 +1,8 @@
 #include "init.h"
 
-#include "xmol/crystal/LatticeVectors.h"
+//#include "xmol/crystal/LatticeVectors.h"
 
-using namespace xmol::crystal;
+//using namespace xmol::crystal;
 //using namespace xmol::geometry;
 
 void pyxmolpp::crystal::init_lattice_vectors(py::module& crystal) {
