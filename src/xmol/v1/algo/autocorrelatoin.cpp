@@ -1,4 +1,4 @@
-#include "xmol/geometry/autocorrelation.h"
+#include "xmol/v1/algo/vector-correlation.h"
 
 #include "unsupported/Eigen/FFT"
 #include <iostream>
@@ -7,7 +7,7 @@ using namespace xmol::geometry;
 
 namespace {
 
-void calc_Y22(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out) {
+void calc_Y22(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = 1.0 / 4.0 * std::sqrt(15.0 / 2.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
@@ -15,14 +15,14 @@ void calc_Y22(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out)
   }
 }
 
-void calc_Y21(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out) {
+void calc_Y21(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = -1.0 / 2.0 * std::sqrt(15.0 / 2.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
     out[i] = coeff * std::complex<double>(r.x(), r.y()) * r.z();
   }
 }
-void calc_Y20(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out) {
+void calc_Y20(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = 1.0 / 4.0 * std::sqrt(5.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
@@ -30,30 +30,27 @@ void calc_Y20(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out)
   }
 }
 
-void divide_by_cube(const std::vector<XYZ> &v, std::vector<std::complex<double>> &out){
+void divide_by_cube(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
   for (size_t i = 0; i < v.size(); ++i) {
     double d = v[i].len();
     out[i] /= (d * d * d);
   }
 }
 
-void autocorr(std::vector<std::complex<double>> &series, std::vector<std::complex<double>> &tmp) {
+void autocorr(std::vector<std::complex<double>>& series, std::vector<std::complex<double>>& tmp) {
 
   Eigen::FFT<double> fft;
 
   fft.fwd(tmp, series);
-  for (auto &x : tmp) {
+  for (auto& x : tmp) {
     x *= std::conj(x);
   }
   fft.inv(series, tmp);
-
 }
 
-}
-std::vector<double> xmol::geometry::calc_autocorr_order_2(const std::vector<xmol::geometry::XYZ> &v,
-                                                          long long int limit,
-                                                          const AutoCorrelationMode &mode
-) {
+} // namespace
+std::vector<double> xmol::v1::algo::calc_autocorr_order_2(const std::vector<xmol::geometry::XYZ>& v,
+                                                          long long int limit, const AutoCorrelationMode& mode) {
 
   long long N = v.size();
   if (limit < 0 || limit > v.size()) {
@@ -69,7 +66,7 @@ std::vector<double> xmol::geometry::calc_autocorr_order_2(const std::vector<xmol
 
   ::calc_Y20(v, Y);
   if (mode == AutoCorrelationMode::NORMALIZE_AND_DIVIDE_BY_CUBE) {
-    divide_by_cube(v,Y);
+    divide_by_cube(v, Y);
   }
   ::autocorr(Y, tmp);
 
@@ -80,7 +77,7 @@ std::vector<double> xmol::geometry::calc_autocorr_order_2(const std::vector<xmol
   std::fill(Y.begin() + N, Y.end(), 0);
   ::calc_Y21(v, Y);
   if (mode == AutoCorrelationMode::NORMALIZE_AND_DIVIDE_BY_CUBE) {
-    divide_by_cube(v,Y);
+    divide_by_cube(v, Y);
   }
   ::autocorr(Y, tmp);
 
@@ -91,7 +88,7 @@ std::vector<double> xmol::geometry::calc_autocorr_order_2(const std::vector<xmol
   std::fill(Y.begin() + N, Y.end(), 0);
   ::calc_Y22(v, Y);
   if (mode == AutoCorrelationMode::NORMALIZE_AND_DIVIDE_BY_CUBE) {
-    divide_by_cube(v,Y);
+    divide_by_cube(v, Y);
   }
   ::autocorr(Y, tmp);
 

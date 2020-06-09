@@ -1,7 +1,6 @@
 - increase test coverage
 
 - organize headers for convenient includes by users
-- v1 geometry
 - netcdf format
 - xtc format
 - pseudo trajectory adapter

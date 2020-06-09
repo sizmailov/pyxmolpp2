@@ -1,11 +1,7 @@
 #pragma once
+#include "../fwd.h"
 
-#include "XYZ.h"
-#include <complex>
-#include <vector>
-
-namespace xmol {
-namespace geometry {
+namespace xmol::v1::algo {
 
 enum class AutoCorrelationMode {
   NORMALIZE_VECTORS,
@@ -18,5 +14,4 @@ std::vector<double> calc_autocorr_order_2(
     const AutoCorrelationMode &mode = AutoCorrelationMode::NORMALIZE_VECTORS
 );
 
-}
-}
+} // namespace xmol::v1::geom
