@@ -1,11 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "xmol/v1/Frame.h"
-#include "xmol/v1/geom/alignment-impl.h"
+#include "xmol/v1/algo/alignment-impl.h"
 #include "xmol/v1/geom/UnitCell.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
+using namespace xmol::v1::algo;
 using namespace xmol::v1::geom;
 using namespace xmol::v1::geom::affine;
 
