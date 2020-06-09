@@ -4,7 +4,7 @@
 #include <numeric>
 #include <gsl/gsl_assert>
 
-std::vector<double> xmol::v1::algo::calculate_sasa(const std::vector<geom::XYZ>& coords,
+std::vector<double> xmol::v1::algo::calc_sasa(const std::vector<geom::XYZ>& coords,
                                                    future::Span<double> coord_radii, double solvent_radii,
                                                    int n_samples, const future::Span<int>& sasa_points_indices) {
   if (coords.size() != coord_radii.size()) {
