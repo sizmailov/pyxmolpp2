@@ -1,10 +1,7 @@
-- integration with eigen
-- coordinates selection
 - increase test coverage
 
 - organize headers for convenient includes by users
 - v1 geometry
-- v1 crystal
 - netcdf format
 - xtc format
 - pseudo trajectory adapter
