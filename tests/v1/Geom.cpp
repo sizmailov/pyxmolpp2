@@ -2,6 +2,7 @@
 
 #include "xmol/v1/Frame.h"
 #include "xmol/v1/geom/alignment-impl.h"
+#include "xmol/v1/geom/UnitCell.h"
 
 using ::testing::Test;
 using namespace xmol::v1;
@@ -66,4 +67,66 @@ TEST_F(GeomTests, calc_intertia_tensor) {
     Eigen::Matrix3d expected = XYZ(20, 2, 22)._eigen().asDiagonal();
     EXPECT_DOUBLE_EQ((tensor - expected).array().abs().maxCoeff(), 0);
   }
+}
+
+
+TEST_F(GeomTests, construction) {
+  UnitCell cell(1, 1, 1, Degrees(90), Degrees(90), Degrees(90));
+
+  EXPECT_DOUBLE_EQ(cell[0].x(), 1);
+  EXPECT_DOUBLE_EQ(cell[1].y(), 1);
+  EXPECT_DOUBLE_EQ(cell[2].z(), 1);
+
+  cell.scale_by(10);
+
+  EXPECT_DOUBLE_EQ(cell[0].x(), 10);
+  EXPECT_DOUBLE_EQ(cell[1].y(), 10);
+  EXPECT_DOUBLE_EQ(cell[2].z(), 10);
+
+  UnitCell cell2(XYZ(1, 0, 0), XYZ(0, 1, 0), XYZ(0, 0, 1));
+}
+
+TEST_F(GeomTests, best_shift) {
+  UnitCell cell(XYZ(1, 0, 0), XYZ(0, 1, 0), XYZ(0, 0, 1));
+
+  auto ref = XYZ(0, 0, 0);
+  auto var = XYZ(1, 2, 3);
+
+  auto image = cell.closest_image_to(ref, var);
+
+  EXPECT_DOUBLE_EQ(image.distance, 0);
+  EXPECT_DOUBLE_EQ(-1, image.shift.x());
+  EXPECT_DOUBLE_EQ(-2, image.shift.y());
+  EXPECT_DOUBLE_EQ(-3, image.shift.z());
+}
+
+TEST_F(GeomTests, best_shift2) {
+
+  UnitCell cell(XYZ(1, 4, 1), XYZ(5, 1, 1), XYZ(7, 1, 4));
+
+  auto ref = XYZ(0, 0, 0);
+  auto var = ref + cell.translation_vector(6, -1, 4);
+
+  auto image = cell.closest_image_to(ref, var);
+
+  EXPECT_DOUBLE_EQ(image.distance, 0);
+  EXPECT_DOUBLE_EQ(ref.x(), image.pos.x());
+  EXPECT_DOUBLE_EQ(ref.y(), image.pos.y());
+  EXPECT_DOUBLE_EQ(ref.z(), image.pos.z());
+}
+
+TEST_F(GeomTests, best_shift3){
+  UnitCell cell(XYZ(1, 0, 0), XYZ(0, 1, 0), XYZ(0, 0, 1));
+
+  cell.scale_by(1.5);
+
+  auto ref = XYZ(0, 0, 0);
+  auto var = ref + cell.translation_vector(1, 2, 3);
+
+  auto image = cell.closest_image_to(ref, var);
+
+  EXPECT_DOUBLE_EQ(image.distance, 0);
+  EXPECT_DOUBLE_EQ(-1.5, image.shift.x());
+  EXPECT_DOUBLE_EQ(-3.0, image.shift.y());
+  EXPECT_DOUBLE_EQ(-4.5, image.shift.z());
 }
