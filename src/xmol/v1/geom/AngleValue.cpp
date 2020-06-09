@@ -1,4 +1,5 @@
 #include "xmol/geometry/AngleValue.h"
+#include "xmol/geometry/XYZ.h"
 
 using namespace xmol::v1::geom;
 
@@ -24,4 +25,13 @@ double xmol::v1::geom::tan(const AngleValue& angle) {
 
 AngleValue xmol::v1::geom::fabs(const AngleValue& angle) {
   return Radians(std::fabs(angle.radians()));
+}
+
+AngleValue xmol::v1::geom::dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c, const XYZ& d) {
+    XYZ ba = a - b;
+    XYZ bc = c - b;
+    XYZ cd = d - c;
+    XYZ abc = -ba.cross(bc);
+    XYZ bcd = bc.cross(cd);
+    return Radians(std::atan2(abc.cross(bcd).dot(bc) / bc.len(), abc.dot(bcd)));
 }

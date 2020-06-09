@@ -75,6 +75,7 @@ public:
   inline double distance2(const XYZ& other) const { return (*this - other).len2(); }
 
   AngleValue angle(const XYZ& other) const;
+  AngleValue angle_between(const XYZ& a, const XYZ& c) const;
 
   inline const Vector_t& _eigen() const { return m_v; }
   inline Vector_t& _eigen() { return m_v; }

@@ -83,6 +83,8 @@ double cos(const AngleValue& angle);
 double tan(const AngleValue& angle);
 AngleValue fabs(const AngleValue& angle);
 
+AngleValue dihedral_angle(const XYZ& a, const XYZ& b, const XYZ& c, const XYZ& d);
+
 inline namespace literals {
 Degrees operator"" _deg(long double value);
 Radians operator"" _rad(long double value);
