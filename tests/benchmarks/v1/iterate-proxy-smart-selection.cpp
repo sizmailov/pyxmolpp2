@@ -1,5 +1,5 @@
 #include "iterate-proxy.h"
-#include "xmol/v1/proxy/smart/selections.h"
+#include "xmol/proxy/smart/selections.h"
 
 BENCHMARK_DEFINE_F(BM_ProxyIterate, AtomSmartSelection)(benchmark::State& state) {
   for (auto _ : state) {

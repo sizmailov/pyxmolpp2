@@ -1,6 +1,6 @@
-#include "xmol/v1/io/pdb/PdbRecord.h"
+#include "xmol/io/pdb/PdbRecord.h"
 
-using namespace xmol::v1::io::pdb;
+using namespace xmol::io::pdb;
 
 std::map<RecordName,PdbRecordType> detail::get_bundled_records() {
 

@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/io/PdbInputFile.h"
-#include "xmol/v1/io/pdb/PdbReader.h"
+#include "xmol/io/PdbInputFile.h"
+#include "xmol/io/pdb/PdbReader.h"
 
 using ::testing::Test;
-using namespace xmol::v1::io;
-using namespace xmol::v1;
+using namespace xmol::io;
+using namespace xmol;
 
 class PdbFileTests : public Test {
 public:

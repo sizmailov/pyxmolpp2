@@ -1,7 +1,7 @@
-#include "xmol/v1/proxy/smart/spans.h"
-#include "xmol/v1/proxy/selections.h"
+#include "xmol/proxy/smart/spans.h"
+#include "xmol/proxy/selections.h"
 
-using namespace xmol::v1::proxy;
+using namespace xmol::proxy;
 
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {

@@ -1,9 +1,9 @@
-#include "xmol/v1/io/TrjtoolDatFile.h"
-#include "xmol/v1/proxy/proxy.h"
+#include "xmol/io/TrjtoolDatFile.h"
+#include "xmol/proxy/proxy.h"
 
 #include <utility>
 
-using namespace xmol::v1::io;
+using namespace xmol::io;
 
 namespace {
 

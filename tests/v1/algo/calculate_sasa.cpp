@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/algo/sasa.h"
-#include "xmol/v1/io/PdbInputFile.h"
+#include "xmol/algo/sasa.h"
+#include "xmol/io/PdbInputFile.h"
 #include <chrono>
 #include <numeric>
 
 using ::testing::Test;
-using namespace xmol::v1::geom;
-using namespace xmol::v1::io;
-using namespace xmol::v1::algo;
-using namespace xmol::v1::future;
+using namespace xmol::geom;
+using namespace xmol::io;
+using namespace xmol::algo;
+using namespace xmol::future;
 
 class calculate_sasa_Tests : public Test {
 public:

@@ -1,14 +1,14 @@
-#include "xmol/v1/io/pdb/PdbLine.h"
-#include "xmol/v1/io/pdb/PdbRecord.h"
-#include "xmol/v1/io/pdb/exceptions.h"
-#include "xmol/v1/utils/parsing.h"
-#include "xmol/v1/utils/string.h"
+#include "xmol/io/pdb/PdbLine.h"
+#include "xmol/io/pdb/PdbRecord.h"
+#include "xmol/io/pdb/exceptions.h"
+#include "xmol/utils/parsing.h"
+#include "xmol/utils/string.h"
 #include <algorithm>
 #include <iostream>
 
-using namespace xmol::v1::io::pdb;
-using namespace xmol::v1::utils;
-using xmol::v1::utils::rtrim;
+using namespace xmol::io::pdb;
+using namespace xmol::utils;
+using xmol::utils::rtrim;
 
 PdbLine::PdbLine() : line(nullptr), pdbRecordType(nullptr) {}
 

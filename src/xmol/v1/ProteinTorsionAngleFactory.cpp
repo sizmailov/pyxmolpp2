@@ -1,10 +1,10 @@
-#include "xmol/v1/ProteinTorsionAngleFactory.h"
-#include "xmol/v1/proxy/smart/selections.h"
-#include "xmol/v1/proxy/spans-impl.h"
+#include "xmol/ProteinTorsionAngleFactory.h"
+#include "xmol/proxy/smart/selections.h"
+#include "xmol/proxy/spans-impl.h"
 #include <tuple>
 
-using namespace xmol::v1;
-using namespace xmol::v1::proxy;
+using namespace xmol;
+using namespace xmol::proxy;
 
 TorsionAngleFactory& TorsionAngleFactory::instance() {
   static TorsionAngleFactory _instance;
@@ -138,7 +138,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
   }
 }
 
-void TorsionAngleFactory::define_protein_side_chain_angle(xmol::v1::ResidueName residueName,
+void TorsionAngleFactory::define_protein_side_chain_angle(xmol::ResidueName residueName,
                                                           TorsionAngleName torsionAngleName,
                                                           const std::array<AtomName, 4>& names,
                                                           const std::set<AtomName>& affected_atoms) {

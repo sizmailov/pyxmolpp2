@@ -1,9 +1,9 @@
-#include "xmol/v1/geom/affine/Transformation3d.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "gsl/gsl_assert"
 #include <iostream>
 
-using namespace xmol::v1::geom;
-using namespace xmol::v1::geom::affine;
+using namespace xmol::geom;
+using namespace xmol::geom::affine;
 
 Rotation3d::Rotation3d() { m << 1, 0, 0, 0, 1, 0, 0, 0, 1; }
 
@@ -126,43 +126,43 @@ Transformation3d::Transformation3d()
     : m(Eigen::Matrix3d::Identity()), dr(0, 0, 0) {}
 
 Transformation3d::Transformation3d(
-    const xmol::v1::geom::affine::Translation3d& translation3d)
+    const xmol::geom::affine::Translation3d& translation3d)
     : m(Eigen::Matrix3d::Identity()), dr(translation3d.dr()) {}
 
-Transformation3d::Transformation3d(const xmol::v1::geom::affine::Rotation3d& rotation3d)
+Transformation3d::Transformation3d(const xmol::geom::affine::Rotation3d& rotation3d)
     : m(rotation3d.get_underlying_matrix()), dr(0, 0, 0) {}
 
 Transformation3d::Transformation3d(
-    const xmol::v1::geom::affine::Rotation3d& rotation3d,
-    const xmol::v1::geom::affine::Translation3d& translation3d)
+    const xmol::geom::affine::Rotation3d& rotation3d,
+    const xmol::geom::affine::Translation3d& translation3d)
     : m(rotation3d.get_underlying_matrix()), dr(translation3d.dr()) {}
 
 Transformation3d& Transformation3d::
-operator*=(const xmol::v1::geom::affine::Translation3d& rhs) {
+operator*=(const xmol::geom::affine::Translation3d& rhs) {
   dr += rhs.dr();
   return *this;
 }
 Transformation3d& Transformation3d::
-operator*=(const xmol::v1::geom::affine::UniformScale3d& rhs) {
+operator*=(const xmol::geom::affine::UniformScale3d& rhs) {
   m *= rhs.scale();
   return *this;
 }
 Transformation3d& Transformation3d::
-operator*=(const xmol::v1::geom::affine::Rotation3d& rhs) {
+operator*=(const xmol::geom::affine::Rotation3d& rhs) {
   auto& m2 = rhs.get_underlying_matrix();
   this->m *= m2;
   return *this;
 }
 
 Transformation3d& Transformation3d::
-operator*=(const xmol::v1::geom::affine::Transformation3d& M1) {
+operator*=(const xmol::geom::affine::Transformation3d& M1) {
   auto& m1 = M1.m;
   dr = dr + XYZ(m * M1.dr._eigen());
   m *= m1;
   return *this;
 }
 
-XYZ Transformation3d::transform(const xmol::v1::geom::XYZ& r) const {
+XYZ Transformation3d::transform(const xmol::geom::XYZ& r) const {
   return XYZ(m * r._eigen()) + dr;
 }
 
@@ -180,104 +180,104 @@ Transformation3d Transformation3d::inverted() const {
 }
 
 Transformation3d::Transformation3d(
-    const xmol::v1::geom::affine::UniformScale3d& uniformScale3d)
+    const xmol::geom::affine::UniformScale3d& uniformScale3d)
     : m(Eigen::Matrix3d::Identity() * uniformScale3d.scale()), dr(0, 0, 0) {}
 
 XYZ Rotation3d::transform(const XYZ& r) const {
   return XYZ(Eigen::Vector3d(m * r._eigen()));
 }
 
-Rotation3d xmol::v1::geom::affine::operator*(const Rotation3d& lhs,
+Rotation3d xmol::geom::affine::operator*(const Rotation3d& lhs,
                                      const Rotation3d& rhs) {
   Rotation3d result(lhs);
   result *= rhs;
   return result;
 }
-UniformScale3d xmol::v1::geom::affine::operator*(const UniformScale3d& lhs,
+UniformScale3d xmol::geom::affine::operator*(const UniformScale3d& lhs,
                                          const UniformScale3d& rhs) {
   UniformScale3d result(lhs);
   result *= rhs;
   return result;
 }
-Translation3d xmol::v1::geom::affine::operator*(const Translation3d& lhs,
+Translation3d xmol::geom::affine::operator*(const Translation3d& lhs,
                                         const Translation3d& rhs) {
   Translation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Transformation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Transformation3d& lhs,
                                            const Translation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Transformation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Transformation3d& lhs,
                                            const UniformScale3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Transformation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Transformation3d& lhs,
                                            const Rotation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Transformation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Transformation3d& lhs,
                                            const Transformation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Translation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Translation3d& lhs,
                                            const UniformScale3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Translation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Translation3d& lhs,
                                            const Rotation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Translation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Translation3d& lhs,
                                            const Transformation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const UniformScale3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const UniformScale3d& lhs,
                                            const Translation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const UniformScale3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const UniformScale3d& lhs,
                                            const Rotation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const UniformScale3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const UniformScale3d& lhs,
                                            const Transformation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Rotation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Rotation3d& lhs,
                                            const Translation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Rotation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Rotation3d& lhs,
                                            const UniformScale3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;
   return result;
 }
-Transformation3d xmol::v1::geom::affine::operator*(const Rotation3d& lhs,
+Transformation3d xmol::geom::affine::operator*(const Rotation3d& lhs,
                                            const Transformation3d& rhs) {
   Transformation3d result(lhs);
   result *= rhs;

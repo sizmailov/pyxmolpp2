@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/ProteinTorsionAngleFactory.h"
-#include "xmol/v1/TorsionAngle.h"
-#include "xmol/v1/io/PdbInputFile.h"
-#include "xmol/v1/proxy/selections.h"
+#include "xmol/ProteinTorsionAngleFactory.h"
+#include "xmol/TorsionAngle.h"
+#include "xmol/io/PdbInputFile.h"
+#include "xmol/proxy/selections.h"
 #include <cmath>
 
 using ::testing::Test;
-using namespace xmol::v1::proxy;
-using namespace xmol::v1::geom;
-using namespace xmol::v1::io;
-using namespace xmol::v1;
+using namespace xmol::proxy;
+using namespace xmol::geom;
+using namespace xmol::io;
+using namespace xmol;
 
 class TorsionAngleTests : public Test {
 public:

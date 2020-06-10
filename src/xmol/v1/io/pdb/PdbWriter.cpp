@@ -1,12 +1,12 @@
-#include "xmol/v1/io/pdb/PdbWriter.h"
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/io/pdb/PdbRecord.h"
-#include "xmol/v1/proxy/selections.h"
+#include "xmol/io/pdb/PdbWriter.h"
+#include "xmol/Frame.h"
+#include "xmol/io/pdb/PdbRecord.h"
+#include "xmol/proxy/selections.h"
 
-using namespace xmol::v1::io::pdb;
-using namespace xmol::v1::io;
-using namespace xmol::v1;
-using namespace xmol::v1::proxy;
+using namespace xmol::io::pdb;
+using namespace xmol::io;
+using namespace xmol;
+using namespace xmol::proxy;
 
 void PdbWriter::write(AtomRef& atom) { this->write(atom, StandardPdbRecords::instance()); }
 

@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/io/AmberNetCDF.h"
-#include "xmol/v1/io/PdbInputFile.h"
-#include "xmol/v1/trajectory/Trajectory.h"
+#include "xmol/io/AmberNetCDF.h"
+#include "xmol/io/PdbInputFile.h"
+#include "xmol/trajectory/Trajectory.h"
 
 using ::testing::Test;
-using namespace xmol::v1::io;
-using namespace xmol::v1;
+using namespace xmol::io;
+using namespace xmol;
 
 class AmberNetCDFTrajectoryFileTests : public Test {
 public:

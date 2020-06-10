@@ -1,8 +1,8 @@
-#include "xmol/v1/proxy/smart/ResidueSmartSelection.h"
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/smart/ResidueSmartSelection.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1::proxy::smart;
+using namespace xmol::proxy::smart;
 
 struct ResidueSmartSelection::ResidueRefLessThanComparator {
   bool operator()(ResidueRef& a, BaseResidue* ptr) { return a.m_residue < ptr; }
@@ -21,11 +21,11 @@ void ResidueSmartSelection::on_base_residues_move(BaseResidue *from_begin, BaseR
   }
 }
 
-xmol::v1::proxy::smart::ResidueSmartSelection::ResidueSmartSelection(xmol::v1::proxy::ResidueSelection sel)
+xmol::proxy::smart::ResidueSmartSelection::ResidueSmartSelection(xmol::proxy::ResidueSelection sel)
     : FrameObserver(sel.frame_ptr()), m_selection(std::move(sel)) {
   if (m_selection.frame_ptr()) {
     m_selection.frame_ptr()->reg(*this);
   }
 }
 
-template class xmol::v1::proxy::smart::FrameObserver<ResidueSmartSelection>;
+template class xmol::proxy::smart::FrameObserver<ResidueSmartSelection>;

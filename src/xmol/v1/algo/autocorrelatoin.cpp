@@ -1,10 +1,10 @@
-#include "xmol/v1/algo/vector-correlation.h"
+#include "xmol/algo/vector-correlation.h"
 
 #include "unsupported/Eigen/FFT"
 #include <iostream>
 
-using namespace xmol::v1::geom;
-using namespace xmol::v1::algo;
+using namespace xmol::geom;
+using namespace xmol::algo;
 
 namespace {
 
@@ -50,7 +50,7 @@ void autocorr(std::vector<std::complex<double>>& series, std::vector<std::comple
 }
 
 } // namespace
-std::vector<double> xmol::v1::algo::calc_autocorr_order_2(const std::vector<XYZ>& v,
+std::vector<double> xmol::algo::calc_autocorr_order_2(const std::vector<XYZ>& v,
                                                           long long int limit, const AutoCorrelationMode& mode) {
 
   long long N = v.size();

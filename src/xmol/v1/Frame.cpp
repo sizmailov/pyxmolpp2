@@ -1,10 +1,10 @@
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/references.h"
-#include "xmol/v1/proxy/smart/selections.h"
-#include "xmol/v1/proxy/smart/spans.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/references.h"
+#include "xmol/proxy/smart/selections.h"
+#include "xmol/proxy/smart/spans.h"
 
-using namespace xmol::v1;
-using namespace xmol::v1::proxy::smart;
+using namespace xmol;
+using namespace xmol::proxy::smart;
 
 BaseResidue& Frame::add_residue(BaseMolecule& mol) {
   assert(mol.frame == this);

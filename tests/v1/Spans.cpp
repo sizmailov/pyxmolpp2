@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/spans.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/spans.h"
 
 using ::testing::Test;
-using namespace xmol::v1;
-using namespace xmol::v1::proxy;
-using namespace xmol::v1::proxy::smart;
+using namespace xmol;
+using namespace xmol::proxy;
+using namespace xmol::proxy::smart;
 
 class SpanTests : public Test {
 

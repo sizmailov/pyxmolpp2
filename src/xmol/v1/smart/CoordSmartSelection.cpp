@@ -1,8 +1,8 @@
-#include "xmol/v1/proxy/smart/CoordSmartSelection.h"
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/smart/CoordSmartSelection.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1::proxy::smart;
+using namespace xmol::proxy::smart;
 
 struct CoordSmartSelection::CoordRefLessThanComparator {
   bool operator()(CoordRef& a, XYZ* ptr) { return a.m_coord < ptr; }
@@ -22,11 +22,11 @@ void CoordSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XY
   }
 }
 
-xmol::v1::proxy::smart::CoordSmartSelection::CoordSmartSelection(xmol::v1::proxy::CoordSelection sel)
+xmol::proxy::smart::CoordSmartSelection::CoordSmartSelection(xmol::proxy::CoordSelection sel)
     : FrameObserver(sel.m_frame), m_selection(std::move(sel)) {
   if (m_selection.m_frame) {
     m_selection.m_frame->reg(*this);
   }
 }
 
-template class xmol::v1::proxy::smart::FrameObserver<CoordSmartSelection>;
+template class xmol::proxy::smart::FrameObserver<CoordSmartSelection>;

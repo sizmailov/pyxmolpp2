@@ -1,10 +1,10 @@
-#include "xmol/v1/TorsionAngle.h"
-#include "xmol/v1/geom/affine/Transformation3d.h"
-#include "xmol/v1/proxy/smart/selections.h"
+#include "xmol/TorsionAngle.h"
+#include "xmol/geom/affine/Transformation3d.h"
+#include "xmol/proxy/smart/selections.h"
 
-using namespace xmol::v1;
-using namespace xmol::v1::geom;
-using namespace xmol::v1::geom::affine;
+using namespace xmol;
+using namespace xmol::geom;
+using namespace xmol::geom::affine;
 
 TorsionAngle::TorsionAngle(TorsionAngle::ARef a, TorsionAngle::ARef b, TorsionAngle::ARef c, TorsionAngle::ARef d)
     : a(a), b(b), c(c), d(d) {}
@@ -25,7 +25,7 @@ TorsionAngle::TorsionAngle(TorsionAngle::ARef a, TorsionAngle::ARef b, TorsionAn
 
 AngleValue TorsionAngle::value() const { return dihedral_angle(a.r(), b.r(), c.r(), d.r()); }
 
-void TorsionAngle::set(const xmol::v1::geom::AngleValue& value, xmol::v1::geom::AngleValue noop_tolerance) {
+void TorsionAngle::set(const xmol::geom::AngleValue& value, xmol::geom::AngleValue noop_tolerance) {
   if (!m_affected_atoms) {
     throw GeomError("TorsionAngle: affected AtomSelection are not set");
   }

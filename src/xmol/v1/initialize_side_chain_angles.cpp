@@ -1,13 +1,13 @@
-#include "xmol/v1/ProteinTorsionAngleFactory.h"
-#include "xmol/v1/proxy/proxy.h"
-#include "xmol/v1/proxy/selections.h"
-#include "xmol/v1/proxy/spans-impl.h"
+#include "xmol/ProteinTorsionAngleFactory.h"
+#include "xmol/proxy/proxy.h"
+#include "xmol/proxy/selections.h"
+#include "xmol/proxy/spans-impl.h"
 
 #include <functional>
 #include <utility>
 
-using namespace xmol::v1::geom;
-using namespace xmol::v1;
+using namespace xmol::geom;
+using namespace xmol;
 
 namespace {
 std::pair<ResidueName, TorsionAngleName> make_key(const char* rname, const char* angle_name) {

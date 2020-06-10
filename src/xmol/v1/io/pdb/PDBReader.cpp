@@ -1,11 +1,11 @@
-#include "xmol/v1/io/pdb/PdbReader.h"
-#include "xmol/v1/io/pdb/PdbLine.h"
-#include "xmol/v1/io/pdb/PdbRecord.h"
-#include "xmol/v1/io/pdb/exceptions.h"
-#include "xmol/v1/utils/string.h"
+#include "xmol/io/pdb/PdbReader.h"
+#include "xmol/io/pdb/PdbLine.h"
+#include "xmol/io/pdb/PdbRecord.h"
+#include "xmol/io/pdb/exceptions.h"
+#include "xmol/utils/string.h"
 
-using namespace xmol::v1::io::pdb;
-using namespace xmol::v1;
+using namespace xmol::io::pdb;
+using namespace xmol;
 
 namespace {
 
@@ -44,7 +44,7 @@ public:
 };
 
 template <typename Iterator> ResidueId to_resid(const Iterator& it) {
-  using xmol::v1::utils::trim;
+  using xmol::utils::trim;
   return ResidueId(it->getInt(FieldName("resSeq")), ResidueInsertionCode(trim(it->getString(FieldName("iCode")))));
 }
 
@@ -77,7 +77,7 @@ template <typename Iterator> AtomStub& readAtom(ResidueStub& res, Iterator& it) 
   assert(it != PdbLineSentinel{});
   assert(it->getRecordName() == RecordName("ATOM") || it->getRecordName() == RecordName("HETATM") ||
          it->getRecordName() == RecordName("ANISOU"));
-  using xmol::v1::utils::trim;
+  using xmol::utils::trim;
   res.atoms.emplace_back(
       AtomName(trim(it->getString(FieldName("name")))), it->getInt(FieldName("serial")),
       XYZ{it->getDouble(FieldName("x")), it->getDouble(FieldName("y")), it->getDouble(FieldName("z"))});
@@ -99,7 +99,7 @@ template <typename Iterator> ResidueStub& readResidue(ChainStub& c, Iterator& it
   assert(it->getRecordName() == RecordName("ATOM") || it->getRecordName() == RecordName("HETATM") ||
          it->getRecordName() == RecordName("ANISOU"));
 
-  using xmol::v1::utils::trim;
+  using xmol::utils::trim;
 
   auto residueId = to_resid(it);
   int chainName = it->getChar(FieldName("chainID"));

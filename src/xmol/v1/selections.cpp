@@ -1,15 +1,13 @@
 
-#include <xmol/v1/proxy/selections.h>
+#include "xmol/proxy/selections.h"
+#include "xmol/proxy/smart/selections.h"
 
-#include "xmol/v1/proxy/smart/selections.h"
+using namespace xmol::proxy;
 
-using namespace xmol::v1::proxy;
-
-
-xmol::v1::CoordEigenMatrix CoordSelection::_eigen() {
-  CoordEigenMatrix matrix (3, size());
-  size_t i=0;
-  for (auto&x: *this){
+xmol::CoordEigenMatrix CoordSelection::_eigen() {
+  CoordEigenMatrix matrix(3, size());
+  size_t i = 0;
+  for (auto& x : *this) {
     matrix(Eigen::all, i++) = x._eigen();
   }
   return matrix;
@@ -121,7 +119,7 @@ smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::Molecul
 smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
 smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }
 
-namespace xmol::v1::proxy {
+namespace xmol::proxy {
 
 AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) |= rhs; }
 AtomSelection operator-(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) -= rhs; }
@@ -148,4 +146,4 @@ MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelectio
 }
 
 smart::CoordSmartSelection CoordSelection::smart() { return smart::CoordSmartSelection(*this); }
-} // namespace xmol::v1::proxy
+} // namespace xmol::proxy

@@ -1,6 +1,6 @@
-#include "xmol/v1/predicates/predicates.h"
+#include "xmol/predicates/predicates.h"
 
-using namespace xmol::v1::predicates;
+using namespace xmol::predicates;
 
 
 

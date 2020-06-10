@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/geom/affine/Transformation3d.h"
+#include "xmol/geom/affine/Transformation3d.h"
 
 
 using ::testing::Test;
-using namespace xmol::v1::geom::affine;
-using namespace xmol::v1::geom;
+using namespace xmol::geom::affine;
+using namespace xmol::geom;
 
 class Transformation3dTests : public Test{
 public:

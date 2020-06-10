@@ -1,7 +1,7 @@
-#include "xmol/v1/proxy/smart/references.h"
-#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/smart/references.h"
+#include "xmol/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1::proxy::smart;
+using namespace xmol::proxy::smart;
 
 AtomSmartRef::AtomSmartRef(AtomRef atom) : FrameObserver<AtomSmartRef>(&atom.frame()), m_ref(atom) {
   frame().reg(*this);
@@ -40,6 +40,6 @@ MoleculeSmartRef::MoleculeSmartRef(proxy::MoleculeRef molecule)
   frame().reg(*this);
 }
 
-template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::AtomSmartRef>;
-template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::ResidueSmartRef>;
-template class xmol::v1::proxy::smart::FrameObserver<xmol::v1::proxy::smart::MoleculeSmartRef>;
+template class xmol::proxy::smart::FrameObserver<xmol::proxy::smart::AtomSmartRef>;
+template class xmol::proxy::smart::FrameObserver<xmol::proxy::smart::ResidueSmartRef>;
+template class xmol::proxy::smart::FrameObserver<xmol::proxy::smart::MoleculeSmartRef>;

@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/io/PdbInputFile.h"
+#include "xmol/Frame.h"
+#include "xmol/io/PdbInputFile.h"
 
 using ::testing::Test;
-using namespace xmol::v1;
-using namespace xmol::v1::proxy;
-using namespace xmol::v1::proxy::smart;
-using namespace xmol::v1::io;
+using namespace xmol;
+using namespace xmol::proxy;
+using namespace xmol::proxy::smart;
+using namespace xmol::io;
 
 class PdbTests : public Test {};
 

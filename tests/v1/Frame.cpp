@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/Frame.h"
+#include "xmol/Frame.h"
 
 using ::testing::Test;
-using namespace xmol::v1;
-using namespace xmol::v1::proxy;
-using namespace xmol::v1::proxy::smart;
+using namespace xmol;
+using namespace xmol::proxy;
+using namespace xmol::proxy::smart;
 
 class FrameTests : public Test {};
 

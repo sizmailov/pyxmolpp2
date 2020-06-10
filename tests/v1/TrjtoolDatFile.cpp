@@ -2,14 +2,14 @@
 
 #include <memory>
 
-#include "xmol/v1/trajectory/Trajectory.h"
-#include "xmol/v1/io/TrjtoolDatFile.h"
-#include "xmol/v1/io/PdbInputFile.h"
+#include "xmol/trajectory/Trajectory.h"
+#include "xmol/io/TrjtoolDatFile.h"
+#include "xmol/io/PdbInputFile.h"
 
 using ::testing::Test;
-using namespace xmol::v1;
-using namespace xmol::v1::proxy::smart;
-using namespace xmol::v1::trajectory;
+using namespace xmol;
+using namespace xmol::proxy::smart;
+using namespace xmol::trajectory;
 
 class TrjtoolDatFileTests : public Test {
 public:

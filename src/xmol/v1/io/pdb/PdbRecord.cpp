@@ -1,10 +1,10 @@
-#include "xmol/v1/io/pdb/PdbRecord.h"
-#include "xmol/v1/io/pdb/exceptions.h"
+#include "xmol/io/pdb/PdbRecord.h"
+#include "xmol/io/pdb/exceptions.h"
 
 #include <fstream>
 
-using namespace xmol::v1::io;
-using namespace xmol::v1::io::pdb;
+using namespace xmol::io;
+using namespace xmol::io::pdb;
 
 const std::vector<int>&
 PdbRecordType::getFieldColons(const FieldName& fieldName) const {

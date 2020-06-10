@@ -1,8 +1,8 @@
-#include "xmol/v1/proxy/smart/MoleculeSmartSelection.h"
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/smart/MoleculeSmartSelection.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1::proxy::smart;
+using namespace xmol::proxy::smart;
 
 struct MoleculeSmartSelection::MoleculeRefLessThanComparator {
   bool operator()(MoleculeRef& a, BaseMolecule* ptr) { return a.m_molecule < ptr; }
@@ -21,11 +21,11 @@ void MoleculeSmartSelection::on_base_molecules_move(BaseMolecule *from_begin, Ba
   }
 }
 
-xmol::v1::proxy::smart::MoleculeSmartSelection::MoleculeSmartSelection(xmol::v1::proxy::MoleculeSelection sel)
+xmol::proxy::smart::MoleculeSmartSelection::MoleculeSmartSelection(xmol::proxy::MoleculeSelection sel)
     : FrameObserver(sel.frame_ptr()), m_selection(std::move(sel)) {
   if (m_selection.frame_ptr()) {
     m_selection.frame_ptr()->reg(*this);
   }
 }
 
-template class xmol::v1::proxy::smart::FrameObserver<MoleculeSmartSelection>;
+template class xmol::proxy::smart::FrameObserver<MoleculeSmartSelection>;

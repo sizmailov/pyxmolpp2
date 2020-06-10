@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "xmol/v1/io/pdb/PdbReader.h"
+#include "xmol/io/pdb/PdbReader.h"
 
 
 using ::testing::Test;
-using namespace xmol::v1::io::pdb;
-using namespace xmol::v1;
+using namespace xmol::io::pdb;
+using namespace xmol;
 
 
 

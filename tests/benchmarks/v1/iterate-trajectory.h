@@ -1,9 +1,9 @@
 #pragma once
 
 #include "common.h"
-#include "xmol/v1/io/PdbInputFile.h"
-#include "xmol/v1/trajectory/Trajectory.h"
-#include "xmol/v1/io/TrjtoolDatFile.h"
+#include "xmol/io/PdbInputFile.h"
+#include "xmol/trajectory/Trajectory.h"
+#include "xmol/io/TrjtoolDatFile.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -13,7 +13,7 @@ using namespace trajectory;
 class BM_TrajectoryTrjtool : public benchmark::Fixture {
 public:
   void SetUp(const ::benchmark::State& state) {
-    using xmol::v1::io::PdbInputFile;
+    using xmol::io::PdbInputFile;
     char* data_path = std::getenv("TEST_DATA_PATH");
     assert(data_path);
     const std::string filename = std::string(data_path) + "/trjtool/GB1/run00001.dat";

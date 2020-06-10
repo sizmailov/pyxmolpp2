@@ -1,8 +1,8 @@
-#include "xmol/v1/proxy/smart/AtomSmartSelection.h"
-#include "xmol/v1/Frame.h"
-#include "xmol/v1/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/smart/AtomSmartSelection.h"
+#include "xmol/Frame.h"
+#include "xmol/proxy/smart/FrameObserverImpl.h"
 
-using namespace xmol::v1::proxy::smart;
+using namespace xmol::proxy::smart;
 
 struct AtomSmartSelection::AtomRefLessThanComparator {
   bool operator()(AtomRef& a, XYZ* ptr) { return a.m_coord < ptr; }
@@ -35,11 +35,11 @@ void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from
   }
 }
 
-xmol::v1::proxy::smart::AtomSmartSelection::AtomSmartSelection(xmol::v1::proxy::AtomSelection sel)
+xmol::proxy::smart::AtomSmartSelection::AtomSmartSelection(xmol::proxy::AtomSelection sel)
     : FrameObserver(sel.frame_ptr()), m_selection(std::move(sel)) {
   if (m_selection.frame_ptr()) {
     m_selection.frame_ptr()->reg(*this);
   }
 }
 
-template class xmol::v1::proxy::smart::FrameObserver<AtomSmartSelection>;
+template class xmol::proxy::smart::FrameObserver<AtomSmartSelection>;

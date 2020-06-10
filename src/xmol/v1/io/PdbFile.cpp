@@ -1,10 +1,10 @@
-#include "xmol/v1/io/pdb/PdbReader.h"
-#include "xmol/v1/io/pdb/PdbRecord.h"
-#include "xmol/v1/io/PdbInputFile.h"
+#include "xmol/io/pdb/PdbReader.h"
+#include "xmol/io/pdb/PdbRecord.h"
+#include "xmol/io/PdbInputFile.h"
 #include <fstream>
 
-using namespace xmol::v1::io;
-using namespace xmol::v1::io::pdb;
+using namespace xmol::io;
+using namespace xmol::io::pdb;
 
 PdbInputFile::PdbInputFile(std::string filename, Dialect dialect, bool read_now)
     : m_filename(std::move(filename)), m_dialect(dialect) {

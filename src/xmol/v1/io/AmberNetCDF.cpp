@@ -1,8 +1,8 @@
-#include "xmol/v1/io/AmberNetCDF.h"
+#include "xmol/io/AmberNetCDF.h"
 #include <iostream>
 #include <netcdf.h>
 
-using namespace xmol::v1::io;
+using namespace xmol::io;
 
 namespace {
 inline void check_netcdf_call(int retval, int expected, const char* const nc_funciton_name) {
@@ -61,9 +61,9 @@ std::string AmberNetCDF::read_global_string_attr(const char* name) {
   return std::string(buffer, attr_len);
 }
 
-size_t xmol::v1::io::AmberNetCDF::n_frames() const { return m_n_frames; }
-size_t xmol::v1::io::AmberNetCDF::n_atoms() const { return m_n_atoms; }
-void xmol::v1::io::AmberNetCDF::read_coordinates(size_t index, xmol::v1::proxy::CoordSpan& coordinates) {
+size_t xmol::io::AmberNetCDF::n_frames() const { return m_n_frames; }
+size_t xmol::io::AmberNetCDF::n_atoms() const { return m_n_atoms; }
+void xmol::io::AmberNetCDF::read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) {
   this->open();
   m_buffer.resize(n_atoms() * 3);
 
@@ -79,7 +79,7 @@ void xmol::v1::io::AmberNetCDF::read_coordinates(size_t index, xmol::v1::proxy::
   coordinates._eigen() = buffer_map.cast<double>();
 }
 
-void xmol::v1::io::AmberNetCDF::advance(size_t shift) {
+void xmol::io::AmberNetCDF::advance(size_t shift) {
   m_current_frame += shift;
 
   if (m_current_frame >= n_frames()) {

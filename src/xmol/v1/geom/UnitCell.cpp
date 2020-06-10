@@ -1,6 +1,6 @@
-#include "xmol/v1/geom/UnitCell.h"
+#include "xmol/geom/UnitCell.h"
 
-using namespace xmol::v1::geom;
+using namespace xmol::geom;
 
 UnitCell::ClosestImage UnitCell::closest_image_to(const XYZ& ref, const XYZ& var) const {
   if (!A_inv) {
