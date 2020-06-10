@@ -80,7 +80,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 #    endif()
 endif()
 
-file(GLOB_RECURSE PYXMOL_SOURCES pyxmolpp/**.cpp pyxmolpp/**.h )
-
-pybind11_add_module(pyxmolpp2 ${PYXMOL_SOURCES} )
+#add_subdirectory(pyxmolpp)
+file(GLOB_RECURSE PYXMOLPP_SOURCES
+        pyxmolpp/pyxmolpp.cpp
+        pyxmolpp/pyxmolpp.h
+        pyxmolpp/v1/**.cpp
+        pyxmolpp/v1/**.h
+        )
+pybind11_add_module(pyxmolpp2 ${PYXMOLPP_SOURCES})
+target_include_directories(pyxmolpp2 PRIVATE ${CMAKE_CURRENT_LIST_DIR}/pyxmolpp)
 target_link_libraries(pyxmolpp2 PRIVATE xmolpp2)
