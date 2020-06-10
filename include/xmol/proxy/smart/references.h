@@ -165,7 +165,7 @@ public:
   }
 
   /// Get children atom by name
-  std::optional<AtomRef> operator[](const char* name){
+  std::optional<AtomRef> operator[](const char* name) {
     check_precondition("operator[]()");
     return m_ref[name];
   }
@@ -174,6 +174,12 @@ public:
   bool operator!=(const ResidueRef& rhs) const {
     check_precondition("operator!=()");
     return m_ref != rhs;
+  }
+
+  /// Check if references point to same data
+  bool operator==(const ResidueRef& rhs) const {
+    check_precondition("operator==()");
+    return m_ref == rhs;
   }
 
   /// @brief Adds atom to the end of the reside and return its reference
@@ -258,6 +264,12 @@ public:
   bool operator!=(const MoleculeRef& rhs) const {
     check_precondition("operator!=()");
     return m_ref != rhs;
+  }
+
+  /// Check if references point to same data
+  bool operator==(const MoleculeRef& rhs) const {
+    check_precondition("operator!=()");
+    return m_ref == rhs;
   }
 
   /// @brief Adds residue to the end of the molecule and return its reference

@@ -6,6 +6,7 @@
 #include "xmol/proxy/spans-impl.h"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 
 namespace py = pybind11;
 using namespace xmol;

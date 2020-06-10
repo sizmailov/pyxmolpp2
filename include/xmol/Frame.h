@@ -91,6 +91,9 @@ public:
   /// Appropriate reserve_molecules() call prevents references invalidation
   proxy::MoleculeRef add_molecule();
 
+  bool operator==(const Frame& rhs) const { return this == &rhs; }
+  bool operator!=(const Frame& rhs) const { return this != &rhs; }
+
 private:
   BaseResidue& add_residue(BaseMolecule& mol);
   BaseAtom& add_atom(BaseResidue& residue);
