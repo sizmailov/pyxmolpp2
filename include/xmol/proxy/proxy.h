@@ -178,6 +178,7 @@ public:
 
   /// Check if references point to same data
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
+  bool operator==(const MoleculeRef& rhs) const { return m_molecule == rhs.m_molecule; }
 
   /// @brief Adds residue to the end of the molecule and return its reference
   ///
@@ -292,6 +293,7 @@ public:
 
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
+  bool operator==(const ResidueRef& rhs) const { return m_residue == rhs.m_residue; }
 
   /// @brief Adds atom to the end of the reside and return its reference
   ///

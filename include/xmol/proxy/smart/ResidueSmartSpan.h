@@ -29,7 +29,7 @@ public:
   };
 
   /// Returns selection with atoms that match predicate
-  template <typename Predicate> ResidueRefSpan filter(Predicate&& p) {
+  template <typename Predicate> ResidueSelection filter(Predicate&& p) {
     check_precondition("filter()");
     return m_span.filter(std::forward<Predicate>(p));
   }

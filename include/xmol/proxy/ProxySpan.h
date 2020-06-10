@@ -40,8 +40,8 @@ public:
     //    Iterator& operator--() { p.advance(-1); return *this; }
     //    Iterator operator--(int) { auto copy = *this; p.advance(-1); return copy; }; //postfix decrement
 
-    bool operator!=(const Iterator& other) { return p != other.p; }
-    bool operator==(const Iterator& other) { return p == other.p; }
+    bool operator!=(const Iterator& other) const { return p != other.p; }
+    bool operator==(const Iterator& other) const { return p == other.p; }
 
   private:
     Proxy p;

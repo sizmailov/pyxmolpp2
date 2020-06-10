@@ -29,7 +29,7 @@ public:
   };
 
   /// Returns selection with atoms that match predicate
-  template <typename Predicate> MoleculeRefSpan filter(Predicate&& p) {
+  template <typename Predicate> MoleculeSelection filter(Predicate&& p) {
     check_precondition("filter()");
     return m_span.filter(std::forward<Predicate>(p));
   }
