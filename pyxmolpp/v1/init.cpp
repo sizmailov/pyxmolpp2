@@ -7,6 +7,7 @@
 #include "v1/proxy/spans.h"
 #include "v1/proxy/selections.h"
 #include "v1/geom/XYZ.h"
+#include "v1/geom/AngleValue.h"
 #include "v1/geom/Transformation3d.h"
 
 namespace py = pybind11;
@@ -19,6 +20,7 @@ using namespace xmol::proxy::smart;
 void pyxmolpp::v1::init(pybind11::module& v1) {
 
   auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ");
+  auto&& pyAngleValue = py::class_<AngleValue>(v1, "AngleValue");
 
   auto pyAtomName = py::class_<AtomName>(v1, "AtomName");
   auto pyResidueName = py::class_<ResidueName>(v1, "ResidueName");
@@ -47,6 +49,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyTransformation = py::class_<Transformation3d>(v1, "Transformation");
 
   populate(pyXYZ);
+  populate(pyAngleValue);
 
   populate(pyAtom);
   populate(pyResidue);
