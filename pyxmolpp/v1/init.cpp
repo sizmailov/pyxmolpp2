@@ -3,6 +3,7 @@
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 
+#include "v1/base.h"
 #include "v1/proxy/references.h"
 #include "v1/proxy/spans.h"
 #include "v1/proxy/selections.h"
@@ -25,11 +26,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ");
   auto&& pyAngleValue = py::class_<AngleValue>(v1, "AngleValue");
 
-  auto pyAtomName = py::class_<AtomName>(v1, "AtomName");
-  auto pyResidueName = py::class_<ResidueName>(v1, "ResidueName");
   auto pyResidueId = py::class_<ResidueId>(v1, "ResidueId");
-  auto pyResidueInsertionCode = py::class_<ResidueInsertionCode>(v1, "ResidueInsertionCode");
-  auto pyMoleculeName = py::class_<MoleculeName>(v1, "MoleculeName");
 
   auto pyAtom = py::class_<AtomSmartRef>(v1, "Atom");
   auto pyResidue = py::class_<ResidueSmartRef>(v1, "Residue");
@@ -56,6 +53,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile");
   auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile");
+
+  populate(pyResidueId);
 
   populate(pyXYZ);
   populate(pyAngleValue);
