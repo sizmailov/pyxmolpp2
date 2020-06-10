@@ -6,14 +6,14 @@ using namespace xmol::v1;
 using namespace xmol::v1::geom;
 using namespace xmol::v1::geom::affine;
 
-TorsionAngle::TorsionAngle(TorsionAngle::ARef& a, TorsionAngle::ARef& b, TorsionAngle::ARef& c, TorsionAngle::ARef& d)
+TorsionAngle::TorsionAngle(TorsionAngle::ARef a, TorsionAngle::ARef b, TorsionAngle::ARef c, TorsionAngle::ARef d)
     : a(a), b(b), c(c), d(d) {}
 
-TorsionAngle::TorsionAngle(TorsionAngle::ARef& a, TorsionAngle::ARef& b, TorsionAngle::ARef& c, TorsionAngle::ARef& d,
+TorsionAngle::TorsionAngle(TorsionAngle::ARef a, TorsionAngle::ARef b, TorsionAngle::ARef c, TorsionAngle::ARef d,
                            TorsionAngle::AffectedAtomsSelector affected_atoms_selector)
     : a(a), b(b), c(c), d(d), m_affected_atoms(std::move(affected_atoms_selector)) {
   if (this->m_affected_atoms) {
-    auto atoms = this->m_affected_atoms(a, b, c, d);
+    auto atoms = m_affected_atoms(a, b, c, d);
     if (atoms.contains(a)) {
       throw GeomError("TorsionAngle: `a` atom MUST NOT be in rotated atoms");
     }
