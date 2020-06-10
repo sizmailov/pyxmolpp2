@@ -1,8 +1,3 @@
-- indexation support
-   operator []
-   optional<ResidueRef> ResidueRef.next()
-   optional<ResidueRef> ResidueRef.prev()
-
 - increase test coverage
 
 - organize headers for convenient includes by users
