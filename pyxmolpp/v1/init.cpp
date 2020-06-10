@@ -5,6 +5,7 @@
 
 #include "v1/proxy/references.h"
 #include "v1/proxy/spans.h"
+#include "v1/proxy/selections.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -46,5 +47,10 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyAtomSpan);
   populate(pyResidueSpan);
   populate(pyMoleculeSpan);
+
+  populate(pyCoordSelection);
+  populate(pyAtomSelection);
+  populate(pyResidueSelection);
+  populate(pyMoleculeSelection);
 
 }

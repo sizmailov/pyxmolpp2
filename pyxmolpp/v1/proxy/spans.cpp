@@ -1,5 +1,5 @@
 #include "spans.h"
-#include "common.h"
+#include "smart-iterators.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"

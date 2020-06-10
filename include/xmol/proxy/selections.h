@@ -25,6 +25,7 @@ public:
 /// Once created, the selection cannot be altered
 class CoordSelection : public Selection<CoordRef> {
 public:
+  CoordSelection() = default;
   CoordSelection(CoordSpan rhs) : Selection(rhs.begin(), rhs.end()), m_frame(empty() ? nullptr : rhs.m_frame) {}
 
   template <typename Container>
@@ -32,7 +33,10 @@ public:
       : Selection(std::forward<Container>(container), sorted_and_unique), m_frame(empty() ? nullptr : &frame) {}
 
   template <typename Predicate> CoordSelection filter(Predicate&& p) {
-    return CoordSelection(internal_filter(std::forward<Predicate>(p)));
+    if (empty()) {
+      return {};
+    }
+    return CoordSelection(*m_frame, internal_filter(std::forward<Predicate>(p)));
   }
 
   /// Copy of seleciton coordinates
