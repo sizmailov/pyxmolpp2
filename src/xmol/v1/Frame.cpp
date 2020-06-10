@@ -157,6 +157,43 @@ Frame& Frame::operator=(Frame&& other) {
   }
   return *this;
 }
+
+Frame& Frame::operator=(const Frame& other) {
+  if (this != &other) {
+    notify_frame_delete();
+    m_atoms = other.m_atoms;
+    m_residues = other.m_residues;
+    m_molecules = other.m_molecules;
+    m_coordinates = other.m_coordinates;
+    for (auto& mol : m_molecules) {
+      mol.frame = this;
+    }
+    for (auto& res : m_residues) {
+      res.molecule = m_molecules.data() + (res.molecule - other.m_molecules.data());
+      res.atoms.rebase(other.m_atoms.data(), m_atoms.data());
+    }
+    for (auto& atom : m_atoms) {
+      atom.residue = m_residues.data() + (atom.residue - other.m_residues.data());
+    }
+  }
+  return *this;
+}
+
+Frame::Frame(const Frame& other)
+    : m_atoms(other.m_atoms), m_residues(other.m_residues), m_molecules(other.m_molecules),
+      m_coordinates(other.m_coordinates) {
+  for (auto& mol : m_molecules) {
+    mol.frame = this;
+  }
+  for (auto& res : m_residues) {
+    res.molecule = m_molecules.data() + (res.molecule - other.m_molecules.data());
+    res.atoms.rebase(other.m_atoms.data(), m_atoms.data());
+  }
+  for (auto& atom : m_atoms) {
+    atom.residue = m_residues.data() + (atom.residue - other.m_residues.data());
+  }
+}
+
 Frame::Frame(Frame&& other)
     : utils::Observable<AtomSmartRef>(std::move(other)),
       utils::Observable<ResidueSmartRef>(std::move(other)),

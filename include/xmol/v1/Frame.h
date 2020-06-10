@@ -23,13 +23,13 @@ public:
   Frame() = default;
 
   /// Copy constructor
-  Frame(const Frame& other) = default;
+  Frame(const Frame& other);
 
   /// Move constructor
   Frame(Frame&& other);
 
   /// Copy assignment
-  Frame& operator=(const Frame& other) = default;
+  Frame& operator=(const Frame& other);
 
   /// Move assignment
   Frame& operator=(Frame&& other);
