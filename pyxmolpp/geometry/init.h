@@ -2,8 +2,6 @@
 #include "../pyxmolpp.h"
 #include "xmol/geometry/XYZ.h"
 
-PYBIND11_MAKE_OPAQUE(std::vector<xmol::geometry::XYZ>);
-
 namespace pyxmolpp {
 namespace geometry {
 
