@@ -2,7 +2,7 @@ import pytest
 
 
 def test_calc_sasa():
-    from pyxmolpp2.pdb import PdbFile
+    from pyxmolpp2.v1 import PdbFile
     from pyxmolpp2.geometry import calc_sasa
     from timeit import default_timer as timer
     import numpy as np
