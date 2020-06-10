@@ -37,7 +37,7 @@ public:
     return m_span[i];
   }
 
-  operator CoordSpan() {
+  operator CoordSpan& () {
     check_precondition("operator CoordRefSpan()");
     return m_span;
   }
