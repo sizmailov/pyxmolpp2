@@ -1,27 +1,9 @@
 #pragma once
-#include "xmol/polymer/Atom_fwd.h"
-#include "xmol/utils/ShortAsciiString.h"
+#include "xmol/v1/utils/ShortAsciiString.h"
 #include <stdexcept>
 
 /// Reworked original xmol
 namespace xmol::v1 {
-
-namespace detail {
-using AtomNameTag = xmol::polymer::detail::AtomNameTag;
-using ResidueNameTag = xmol::polymer::detail::ResidueNameTag;
-using ChainNameTag = xmol::polymer::detail::ChainNameTag;
-} // namespace detail
-
-using AtomId = int32_t;
-using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
-using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
-using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
-using ResidueId = xmol::polymer::ResidueId;
-using ResidueInsertionCode = xmol::polymer::ResidueInsertionCode;
-using XYZ = xmol::v1::geom::XYZ;
-using CoordEigenVector = XYZ::Vector_t;
-using CoordEigenMatrix = Eigen::Matrix<double, 3, Eigen::Dynamic>;
-using CoordEigenMatrixMap = Eigen::Map<Eigen::Matrix<double, 3, Eigen::Dynamic>>;
 
 struct BaseAtom;
 struct BaseResidue;

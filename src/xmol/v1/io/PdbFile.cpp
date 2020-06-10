@@ -1,9 +1,10 @@
-#include "xmol/pdb/PdbFile.h"
-#include "xmol/pdb/PdbReader.h"
-#include "xmol/pdb/PdbRecord.h"
+#include "xmol/v1/io/pdb/PdbReader.h"
+#include "xmol/v1/io/pdb/PdbRecord.h"
 #include "xmol/v1/io/PdbInputFile.h"
+#include <fstream>
 
 using namespace xmol::v1::io;
+using namespace xmol::v1::io::pdb;
 
 PdbInputFile::PdbInputFile(std::string filename, Dialect dialect, bool read_now)
     : m_filename(std::move(filename)), m_dialect(dialect) {
@@ -13,29 +14,18 @@ PdbInputFile::PdbInputFile(std::string filename, Dialect dialect, bool read_now)
 }
 
 PdbInputFile& PdbInputFile::read() {
-  xmol::pdb::AlteredPdbRecords alteredPdbRecords(xmol::pdb::StandardPdbRecords::instance());
+  AlteredPdbRecords alteredPdbRecords(StandardPdbRecords::instance());
   switch (m_dialect) {
   case (Dialect::AMBER_99):
-    alteredPdbRecords.alter_record(xmol::pdb::RecordName("ATOM"), xmol::pdb::FieldName("serial"), {7, 12});
+    alteredPdbRecords.alter_record(pdb::RecordName("ATOM"), pdb::FieldName("serial"), {7, 12});
     break;
   case (Dialect::STANDARD_V3):
     break;
   }
 
-  auto v0_frames = xmol::pdb::PdbFile(m_filename, alteredPdbRecords).get_frames(); // todo: construct v1 frames inplace
-  for (auto& frame0 : v0_frames) {
-    Frame& frame1 = m_frames.emplace_back();
-    for (auto& chain : frame0) {
-      auto mol = frame1.add_molecule().name(MoleculeName{chain.name().str()});
-      for (auto& residue0 : chain) {
-        auto res = mol.add_residue().id(residue0.id()).name(residue0.name());
-        for (auto& atom0 : residue0) {
-          auto atom = res.add_atom().name(atom0.name()).id(atom0.id());
-          atom.r(atom0.r());
-        }
-      }
-    }
-  }
+  std::fstream in(m_filename);
+  m_frames = PdbReader(in).read_frames(alteredPdbRecords);
+
   m_n_frames = m_frames.size();
   if (!m_frames.empty()) {
     m_n_atoms = m_frames[0].n_atoms();

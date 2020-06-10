@@ -4,14 +4,16 @@
 #include <numeric>
 #include <gsl/gsl_assert>
 
+using namespace xmol::v1::geom;
+
 std::vector<double> xmol::v1::algo::calc_sasa(const std::vector<geom::XYZ>& coords,
                                                    future::Span<double> coord_radii, double solvent_radii,
                                                    int n_samples, const future::Span<int>& sasa_points_indices) {
   if (coords.size() != coord_radii.size()) {
-    throw xmol::geometry::GeomError("xmol::algo::calculate_sasa: coords.size() != radii.size()");
+    throw GeomError("xmol::algo::calculate_sasa: coords.size() != radii.size()");
   }
   if (!sasa_points_indices.empty() && coords.size() < sasa_points_indices.size()) {
-    throw xmol::geometry::GeomError("xmol::algo::calculate_sasa: coords.size() < sasa_points_indices.size()");
+    throw GeomError("xmol::algo::calculate_sasa: coords.size() < sasa_points_indices.size()");
   }
   const double max_radii = std::accumulate(coord_radii.begin(), coord_radii.end(), 0.0,
                                            [](const double& a, const double& b) { return std::max(a, b); });
@@ -65,7 +67,7 @@ std::vector<double> xmol::v1::algo::calc_sasa(const std::vector<geom::XYZ>& coor
   for (int i1 = 0; i1 < limit; ++i1) {
     int n = sasa_points_indices.empty() ? i1 : sasa_points_indices[i1];
     if (GSL_UNLIKELY(n < 0 && n >= coords.size())) {
-      throw xmol::geometry::GeomError("xmol::geometry::calculate_sasa: invalid index `" + std::to_string(n) + "`");
+      throw GeomError("xmol::geometry::calculate_sasa: invalid index `" + std::to_string(n) + "`");
     }
 
     double Rn = coord_radii[n] + solvent_radii;

@@ -10,12 +10,6 @@ function(define_test_suite name dependencies)
 endfunction(define_test_suite)
 
 
-define_test_suite(selection xmolpp2)
-define_test_suite(polymer xmolpp2)
-define_test_suite(pdb xmolpp2)
-define_test_suite(trjtool xmolpp2)
-define_test_suite(geometry xmolpp2)
-define_test_suite(amber xmolpp2)
 define_test_suite(v1 xmolpp2)
 
 add_subdirectory(benchmarks)

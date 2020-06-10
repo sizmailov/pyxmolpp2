@@ -1,8 +1,5 @@
-
-#include <xmol/v1/geom/XYZ.h>
-
-#include "xmol/geometry/AngleValue.h"
-#include "xmol/geometry/XYZ.h"
+#include "xmol/v1/geom/XYZ.h"
+#include "xmol/v1/geom/AngleValue.h"
 
 using namespace xmol::v1::geom;
 

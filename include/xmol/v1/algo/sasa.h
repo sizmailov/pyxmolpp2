@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../fwd.h"
 #include "xmol/v1/future/span.h"
+#include "xmol/v1/fwd.h"
+#include "xmol/v1/geom/XYZ.h"
+#include <vector>
 
 namespace xmol::v1::algo {
 

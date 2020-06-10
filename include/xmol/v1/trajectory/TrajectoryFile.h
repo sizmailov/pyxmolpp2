@@ -7,7 +7,7 @@ namespace xmol::v1::trajectory {
 /// Forward read-only re-enterable trajectory coordinate file
 class TrajectoryInputFile {
 public:
-
+  virtual ~TrajectoryInputFile() = default;
   /// Number of frames
   [[nodiscard]] virtual size_t n_frames() const = 0;
 

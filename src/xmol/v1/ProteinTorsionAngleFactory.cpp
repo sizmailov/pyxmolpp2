@@ -63,7 +63,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
   //          current = current->next();
   //        }
   //      }
-  //      return AtomSelection(result.begin(), result.end(), xmol::selection::NoSortTag{});
+  //      return AtomSelection(result.begin(), result.end(), xmol::utils::NoSortTag{});
   //    };
   //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("phi")), std::make_pair(atom_refs_maker,
   //    selector));
@@ -92,7 +92,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
   //        }
   //        current = current->next();
   //      }
-  //      return AtomSelection(result.begin(), result.end(), selection::NoSortTag{});
+  //      return AtomSelection(result.begin(), result.end(), utils::NoSortTag{});
   //    };
   //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("psi")), std::make_pair(atom_refs_maker,
   //    selector));
@@ -122,14 +122,14 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
   //        }
   //        current = current->next();
   //      }
-  //      return AtomSelection(result.begin(), result.end(), selection::NoSortTag{});
+  //      return AtomSelection(result.begin(), result.end(), utils::NoSortTag{});
   //    };
   //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("omega")), std::make_pair(atom_refs_maker,
   //    selector));
   //  }
 }
 
-void TorsionAngleFactory::define_protein_side_chain_angle(xmol::polymer::ResidueName residueName,
+void TorsionAngleFactory::define_protein_side_chain_angle(xmol::v1::ResidueName residueName,
                                                           TorsionAngleName torsionAngleName,
                                                           const std::array<AtomName, 4>& names,
                                                           const std::set<AtomName>& affected_atoms) {

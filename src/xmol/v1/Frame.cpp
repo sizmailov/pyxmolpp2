@@ -138,17 +138,17 @@ proxy::MoleculeRef Frame::add_molecule() {
 Frame& Frame::operator=(Frame&& other) {
   if (this != &other) {
     notify_frame_delete();
-    selection::Observable<AtomSmartRef>::operator=(std::move(other));
-    selection::Observable<ResidueSmartRef>::operator=(std::move(other));
-    selection::Observable<MoleculeSmartRef>::operator=(std::move(other));
-    selection::Observable<AtomSmartSelection>::operator=(std::move(other));
-    selection::Observable<ResidueSmartSelection>::operator=(std::move(other));
-    selection::Observable<MoleculeSmartSelection>::operator=(std::move(other));
-    selection::Observable<AtomSmartSpan>::operator=(std::move(other));
-    selection::Observable<ResidueSmartSpan>::operator=(std::move(other));
-    selection::Observable<MoleculeSmartSpan>::operator=(std::move(other));
-    selection::Observable<CoordSmartSpan>::operator=(std::move(other));
-    selection::Observable<CoordSmartSelection>::operator=(std::move(other));
+    utils::Observable<AtomSmartRef>::operator=(std::move(other));
+    utils::Observable<ResidueSmartRef>::operator=(std::move(other));
+    utils::Observable<MoleculeSmartRef>::operator=(std::move(other));
+    utils::Observable<AtomSmartSelection>::operator=(std::move(other));
+    utils::Observable<ResidueSmartSelection>::operator=(std::move(other));
+    utils::Observable<MoleculeSmartSelection>::operator=(std::move(other));
+    utils::Observable<AtomSmartSpan>::operator=(std::move(other));
+    utils::Observable<ResidueSmartSpan>::operator=(std::move(other));
+    utils::Observable<MoleculeSmartSpan>::operator=(std::move(other));
+    utils::Observable<CoordSmartSpan>::operator=(std::move(other));
+    utils::Observable<CoordSmartSelection>::operator=(std::move(other));
     notify_frame_moved(other);
     m_atoms = std::move(other.m_atoms);
     m_residues = std::move(other.m_residues);
@@ -158,17 +158,17 @@ Frame& Frame::operator=(Frame&& other) {
   return *this;
 }
 Frame::Frame(Frame&& other)
-    : selection::Observable<AtomSmartRef>(std::move(other)),
-      selection::Observable<ResidueSmartRef>(std::move(other)),
-      selection::Observable<MoleculeSmartRef>(std::move(other)),
-      selection::Observable<AtomSmartSelection>(std::move(other)),
-      selection::Observable<ResidueSmartSelection>(std::move(other)),
-      selection::Observable<MoleculeSmartSelection>(std::move(other)),
-      selection::Observable<AtomSmartSpan>(std::move(other)),
-      selection::Observable<ResidueSmartSpan>(std::move(other)),
-      selection::Observable<MoleculeSmartSpan>(std::move(other)),
-      selection::Observable<CoordSmartSpan>(std::move(other)),
-      selection::Observable<CoordSmartSelection>(std::move(other)),
+    : utils::Observable<AtomSmartRef>(std::move(other)),
+      utils::Observable<ResidueSmartRef>(std::move(other)),
+      utils::Observable<MoleculeSmartRef>(std::move(other)),
+      utils::Observable<AtomSmartSelection>(std::move(other)),
+      utils::Observable<ResidueSmartSelection>(std::move(other)),
+      utils::Observable<MoleculeSmartSelection>(std::move(other)),
+      utils::Observable<AtomSmartSpan>(std::move(other)),
+      utils::Observable<ResidueSmartSpan>(std::move(other)),
+      utils::Observable<MoleculeSmartSpan>(std::move(other)),
+      utils::Observable<CoordSmartSpan>(std::move(other)),
+      utils::Observable<CoordSmartSelection>(std::move(other)),
       m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
       m_molecules(std::move(other.m_molecules)), m_coordinates(std::move(other.m_coordinates)) {
   notify_frame_moved(other);
@@ -249,68 +249,68 @@ proxy::CoordSpan Frame::coords() { return proxy::CoordSpan(*this, m_coordinates.
 
 void Frame::notify_atoms_move(BaseAtom* old_begin, BaseAtom* old_end, BaseAtom* new_begin) const {
   if (old_begin != new_begin) {
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_end, new_begin);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_begin, old_end,
+    utils::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_base_atoms_move, old_begin, old_end, new_begin);
+    utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_base_atoms_move, old_begin, old_end,
                                                       new_begin);
-    selection::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_base_atoms_move, old_begin, old_end, new_begin);
+    utils::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_base_atoms_move, old_begin, old_end, new_begin);
   }
 }
 void Frame::notify_residues_move(BaseResidue* old_begin, BaseResidue* old_end, BaseResidue* new_begin) const {
   if (old_begin != new_begin) {
-    selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_end,
+    utils::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_base_residues_move, old_begin, old_end,
                                                    new_begin);
-    selection::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_base_residues_move, old_begin,
+    utils::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_base_residues_move, old_begin,
                                                          old_end, new_begin);
-    selection::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_base_residues_move, old_begin, old_end,
+    utils::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_base_residues_move, old_begin, old_end,
                                                     new_begin);
   }
 }
 void Frame::notify_molecules_move(BaseMolecule* old_begin, BaseMolecule* old_end, BaseMolecule* new_begin) const {
   if (old_begin != new_begin) {
-    selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
+    utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
                                                     new_begin);
-    selection::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_base_molecules_move, old_begin,
+    utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_base_molecules_move, old_begin,
                                                           old_end, new_begin);
-    selection::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_base_molecules_move, old_begin, old_end,
+    utils::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_base_molecules_move, old_begin, old_end,
                                                      new_begin);
   }
 }
 void Frame::notify_coordinates_move(XYZ* old_begin, XYZ* old_end, XYZ* new_begin) const {
   if (old_begin != new_begin) {
-    selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_begin, old_end, new_begin);
-    selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_begin, old_end,
+    utils::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_coordinates_move, old_begin, old_end, new_begin);
+    utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_coordinates_move, old_begin, old_end,
                                                       new_begin);
     // AtomSmartSpan doesn't store coordinate references, nothing to update
-    selection::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_coordinates_move, old_begin, old_end, new_begin);
-    selection::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_coordinates_move, old_begin, old_end,
+    utils::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_coordinates_move, old_begin, old_end, new_begin);
+    utils::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_coordinates_move, old_begin, old_end,
                                                        new_begin);
   }
 }
 
 void Frame::notify_frame_moved(Frame& other) {
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
-  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
-  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
-  selection::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_move, other, *this);
-  selection::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_move, other, *this);
-  selection::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_frame_move, other, *this);
-  selection::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_frame_move, other, *this);
-  selection::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_frame_move, other, *this);
-  selection::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_frame_move, other, *this);
-  selection::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_frame_move, other, *this);
+  utils::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_move, other, *this);
+  utils::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_move, other, *this);
+  utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
+  utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
+  utils::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_move, other, *this);
+  utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_move, other, *this);
+  utils::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_frame_move, other, *this);
+  utils::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_frame_move, other, *this);
+  utils::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_frame_move, other, *this);
+  utils::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_frame_move, other, *this);
+  utils::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_frame_move, other, *this);
 }
 
 void Frame::notify_frame_delete() const {
-  selection::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
-  selection::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
-  selection::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
-  selection::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
-  selection::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_delete);
-  selection::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_delete);
-  selection::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_frame_delete);
-  selection::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_frame_delete);
-  selection::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_frame_delete);
-  selection::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_frame_delete);
-  selection::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_frame_delete);
+  utils::Observable<AtomSmartRef>::notify(&AtomSmartRef::on_frame_delete);
+  utils::Observable<ResidueSmartRef>::notify(&ResidueSmartRef::on_frame_delete);
+  utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
+  utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
+  utils::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_delete);
+  utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_delete);
+  utils::Observable<AtomSmartSpan>::notify(&AtomSmartSpan::on_frame_delete);
+  utils::Observable<ResidueSmartSpan>::notify(&ResidueSmartSpan::on_frame_delete);
+  utils::Observable<MoleculeSmartSpan>::notify(&MoleculeSmartSpan::on_frame_delete);
+  utils::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_frame_delete);
+  utils::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_frame_delete);
 }

@@ -3,7 +3,8 @@
 #include "unsupported/Eigen/FFT"
 #include <iostream>
 
-using namespace xmol::geometry;
+using namespace xmol::v1::geom;
+using namespace xmol::v1::algo;
 
 namespace {
 
@@ -49,7 +50,7 @@ void autocorr(std::vector<std::complex<double>>& series, std::vector<std::comple
 }
 
 } // namespace
-std::vector<double> xmol::v1::algo::calc_autocorr_order_2(const std::vector<xmol::geometry::XYZ>& v,
+std::vector<double> xmol::v1::algo::calc_autocorr_order_2(const std::vector<XYZ>& v,
                                                           long long int limit, const AutoCorrelationMode& mode) {
 
   long long N = v.size();

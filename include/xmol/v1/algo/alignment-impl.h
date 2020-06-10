@@ -1,5 +1,6 @@
 #pragma once
 #include "alignment.h"
+#include "xmol/v1/base.h"
 
 namespace xmol::v1::algo {
 

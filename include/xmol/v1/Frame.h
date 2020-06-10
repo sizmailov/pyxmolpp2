@@ -1,23 +1,23 @@
 #pragma once
 #include "base.h"
 #include "proxy/smart/references.h" // <- can be moved to .cpp
-#include "xmol/selection/Observable.h"
+#include "xmol/v1/utils/Observable.h"
 #include <vector>
 
 namespace xmol::v1 {
 
 /// Molecular frame, owns all molecular data
-class Frame : public selection::Observable<proxy::smart::AtomSmartRef>,
-              public selection::Observable<proxy::smart::ResidueSmartRef>,
-              public selection::Observable<proxy::smart::MoleculeSmartRef>,
-              public selection::Observable<proxy::smart::AtomSmartSelection>,
-              public selection::Observable<proxy::smart::ResidueSmartSelection>,
-              public selection::Observable<proxy::smart::MoleculeSmartSelection>,
-              public selection::Observable<proxy::smart::AtomSmartSpan>,
-              public selection::Observable<proxy::smart::ResidueSmartSpan>,
-              public selection::Observable<proxy::smart::MoleculeSmartSpan>,
-              public selection::Observable<proxy::smart::CoordSmartSpan>,
-              public selection::Observable<proxy::smart::CoordSmartSelection> {
+class Frame : public utils::Observable<proxy::smart::AtomSmartRef>,
+              public utils::Observable<proxy::smart::ResidueSmartRef>,
+              public utils::Observable<proxy::smart::MoleculeSmartRef>,
+              public utils::Observable<proxy::smart::AtomSmartSelection>,
+              public utils::Observable<proxy::smart::ResidueSmartSelection>,
+              public utils::Observable<proxy::smart::MoleculeSmartSelection>,
+              public utils::Observable<proxy::smart::AtomSmartSpan>,
+              public utils::Observable<proxy::smart::ResidueSmartSpan>,
+              public utils::Observable<proxy::smart::MoleculeSmartSpan>,
+              public utils::Observable<proxy::smart::CoordSmartSpan>,
+              public utils::Observable<proxy::smart::CoordSmartSelection> {
 public:
   /// Default constructor
   Frame() = default;
@@ -61,8 +61,8 @@ public:
   /// Current number of smart atom references
   template<typename Smart>
   [[nodiscard]] size_t n_references() const {
-    static_assert(std::is_base_of_v<selection::Observable<Smart>,Frame>);
-    return selection::Observable<Smart>::observers.size();
+    static_assert(std::is_base_of_v<utils::Observable<Smart>,Frame>);
+    return utils::Observable<Smart>::observers.size();
   }
 
   /// @brief Preallocate space for n atoms
@@ -95,7 +95,7 @@ private:
   BaseResidue& add_residue(BaseMolecule& mol);
   BaseAtom& add_atom(BaseResidue& residue);
 
-  template <typename Observer> void reg(Observer& o) { selection::Observable<Observer>::add_observer(o); }
+  template <typename Observer> void reg(Observer& o) { utils::Observable<Observer>::add_observer(o); }
 
   XYZ& crd(BaseAtom& atom);
 
