@@ -63,7 +63,7 @@ TEST_F(TorsionAngleTests, test1) {
 
   EXPECT_THROW(t4.set(Degrees(10)), GeomError);
 }
-TEST_F(TorsionAngleTests, DISABLED_test_backbone_angles) { // todo: re-enable tests
+TEST_F(TorsionAngleTests, test_backbone_angles) {
 
   auto files = {
       "pdb/rcsb/1PGB.pdb",

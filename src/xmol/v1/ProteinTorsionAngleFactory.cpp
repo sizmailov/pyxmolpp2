@@ -1,6 +1,10 @@
 #include "xmol/v1/ProteinTorsionAngleFactory.h"
+#include "xmol/v1/proxy/smart/selections.h"
+#include "xmol/v1/proxy/spans-impl.h"
+#include <tuple>
 
 using namespace xmol::v1;
+using namespace xmol::v1::proxy;
 
 TorsionAngleFactory& TorsionAngleFactory::instance() {
   static TorsionAngleFactory _instance;
@@ -37,130 +41,136 @@ void TorsionAngleFactory::define_protein_backbone_angles(ResidueName residueName
 }
 
 void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueName) {
-  //  { // phi
-  //    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
-  //      Residue* prev = r.prev();
-  //      if (!prev) {
-  //        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
-  //      }
-  //      return std::make_tuple(&prev->operator[](AtomName("C")), &r[AtomName("N")], &r[AtomName("CA")],
-  //                             &r[AtomName("C")]);
-  //    };
-  //    TorsionAngle::AffectedAtomsSelector selector = [](Atom& /*prev_c*/, Atom& n, Atom& /*ca*/, Atom& c) {
-  //      std::vector<Atom*> result;
-  //      n.residue()
-  //          .asAtoms()
-  //          .filter([](const Atom& a) {
-  //            return a.name() != AtomName("NH") && a.name() != AtomName("N") && a.name() != AtomName("CA");
-  //          })
-  //          .for_each([&result](Atom& a) { result.push_back(&a); });
-  //      {
-  //        Residue* current = c.residue().next();
-  //        while (current != nullptr) {
-  //          for (auto& a : *current) {
-  //            result.push_back(&a);
-  //          }
-  //          current = current->next();
-  //        }
-  //      }
-  //      return AtomSelection(result.begin(), result.end(), xmol::utils::NoSortTag{});
-  //    };
-  //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("phi")), std::make_pair(atom_refs_maker,
-  //    selector));
-  //  }
-  //  { // psi
-  //    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
-  //      Residue* next = r.next();
-  //      if (!next) {
-  //        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
-  //      }
-  //      return std::make_tuple(&r[AtomName("N")], &r[AtomName("CA")], &r[AtomName("C")],
-  //                             &next->operator[](AtomName("N")));
-  //    };
-  //    TorsionAngle::AffectedAtomsSelector selector = [](Atom& n, Atom& /*ca*/, Atom& c, Atom& /*next_n*/) {
-  //      std::vector<Atom*> result;
-  //
-  //      for (auto& a : n.residue()) {
-  //        if (a.name() == AtomName("O")) {
-  //          result.push_back(&a);
-  //        }
-  //      }
-  //      Residue* current = c.residue().next();
-  //      while (current != nullptr) {
-  //        for (auto& a : *current) {
-  //          result.push_back(&a);
-  //        }
-  //        current = current->next();
-  //      }
-  //      return AtomSelection(result.begin(), result.end(), utils::NoSortTag{});
-  //    };
-  //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("psi")), std::make_pair(atom_refs_maker,
-  //    selector));
-  //  }
-  //  { // omega
-  //    residue_to_atoms atom_refs_maker = [](Residue& r) -> std::tuple<Atom*, Atom*, Atom*, Atom*> {
-  //      Residue* prev = r.prev();
-  //      if (!prev) {
-  //        return std::tuple<Atom*, Atom*, Atom*, Atom*>(nullptr, nullptr, nullptr, nullptr);
-  //      }
-  //      return std::make_tuple(&prev->operator[](AtomName("CA")), &prev->operator[](AtomName("C")), &r[AtomName("N")],
-  //                             &r[AtomName("CA")]);
-  //    };
-  //    TorsionAngle::AffectedAtomsSelector selector = [](Atom& /*prev_ca*/, Atom& /*prev_c*/, Atom& n, Atom& /*ca*/) {
-  //      std::vector<Atom*> result;
-  //
-  //      for (auto& a : n.residue()) {
-  //        if (a.name() != AtomName("N")) {
-  //          result.push_back(&a);
-  //        }
-  //      }
-  //
-  //      Residue* current = n.residue().next();
-  //      while (current != nullptr) {
-  //        for (auto& a : *current) {
-  //          result.push_back(&a);
-  //        }
-  //        current = current->next();
-  //      }
-  //      return AtomSelection(result.begin(), result.end(), utils::NoSortTag{});
-  //    };
-  //    bindings.emplace(std::make_pair(residueName, TorsionAngleName("omega")), std::make_pair(atom_refs_maker,
-  //    selector));
-  //  }
+  { // phi
+    auto atom_refs_maker = [](ResidueRef& r) {
+      auto opt_prev = r.prev();
+      if (opt_prev) {
+        ResidueRef prev = *opt_prev;
+        auto [a, b, c, d] = std::make_tuple(prev["C"], r["N"], r["CA"], r["C"]);
+        if (a && b && c && d) {
+          return std::optional<four_atoms>(std::make_tuple(*a, *b, *c, *d));
+        }
+      }
+      return std::optional<four_atoms>{};
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& /*prev_c*/, AtomRef& n, AtomRef& /*ca*/, AtomRef& c) {
+      std::vector<AtomRef> result;
+      for (auto&& a : n.residue().atoms()) {
+        if (a.name() != AtomName("NH") && a.name() != AtomName("N") && a.name() != AtomName("CA")) {
+          result.push_back(a);
+        }
+      }
+      {
+        auto current = c.residue().next();
+        while (current) {
+          for (auto& a : current->atoms()) {
+            result.push_back(a);
+          }
+          current = current->next();
+        }
+      }
+      return AtomSelection(result);
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("phi")), std::make_pair(atom_refs_maker, selector));
+  }
+  { // psi
+    residue_to_atoms atom_refs_maker = [](ResidueRef& r) {
+      auto opt_next = r.next();
+      if (opt_next) {
+        ResidueRef next = *opt_next;
+        auto [a, b, c, d] = std::make_tuple(r["N"], r["CA"], r["C"], next["N"]);
+        if (a && b && c && d) {
+          return std::optional<four_atoms>(std::make_tuple(*a, *b, *c, *d));
+        }
+      }
+      return std::optional<four_atoms>{};
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& n, AtomRef& /*ca*/, AtomRef& c, AtomRef& /*next_n*/) {
+      std::vector<AtomRef> result;
+      for (auto& a : n.residue().atoms()) {
+        if (a.name() == AtomName("O")) {
+          result.push_back(a);
+        }
+      }
+      auto current = c.residue().next();
+      while (current) {
+        for (auto& a : current->atoms()) {
+          result.push_back(a);
+        }
+        current = current->next();
+      }
+      return AtomSelection(result);
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("psi")), std::make_pair(atom_refs_maker, selector));
+  }
+  { // omega
+    residue_to_atoms atom_refs_maker = [](ResidueRef& r) {
+      auto opt_prev = r.prev();
+      if (opt_prev) {
+        ResidueRef prev = *opt_prev;
+        auto [a, b, c, d] = std::make_tuple(prev["CA"], prev["C"], r["N"], r["CA"]);
+        if (a && b && c && d) {
+          return std::optional<four_atoms>(std::make_tuple(*a, *b, *c, *d));
+        }
+      }
+      return std::optional<four_atoms>{};
+    };
+    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& /*prev_ca*/, AtomRef& /*prev_c*/, AtomRef& n,
+                                                      AtomRef& /*ca*/) {
+      std::vector<AtomRef> result;
+
+      for (auto& a : n.residue().atoms()) {
+        if (a.name() != AtomName("N")) {
+          result.push_back(a);
+        }
+      }
+
+      auto current = n.residue().next();
+      while (current) {
+        for (auto& a : current->atoms()) {
+          result.push_back(a);
+        }
+        current = current->next();
+      }
+      return AtomSelection(result);
+    };
+    bindings.emplace(std::make_pair(residueName, TorsionAngleName("omega")), std::make_pair(atom_refs_maker, selector));
+  }
 }
 
 void TorsionAngleFactory::define_protein_side_chain_angle(xmol::v1::ResidueName residueName,
                                                           TorsionAngleName torsionAngleName,
                                                           const std::array<AtomName, 4>& names,
                                                           const std::set<AtomName>& affected_atoms) {
-  //
-  //  residue_to_atoms atom_refs_maker = [names](Residue& r) {
-  //    return std::make_tuple(&r[names[0]], &r[names[1]], &r[names[2]], &r[names[3]]);
-  //  };
-  //  TorsionAngle::AffectedAtomsSelector selector = [affected_atoms](Atom& a, Atom&, Atom&, Atom&) {
-  //    return a.residue().asAtoms().filter(
-  //        [&affected_atoms](const Atom& x) { return affected_atoms.count(x.name()) == 1; });
-  //  };
-  //  instance().bindings.emplace(std::make_pair(residueName, torsionAngleName), std::make_pair(atom_refs_maker,
-  //  selector));
+
+  residue_to_atoms atom_refs_maker = [names](ResidueRef& r) {
+    auto [a,b,c,d] = std::make_tuple(r[names[0]], r[names[1]], r[names[2]], r[names[3]]);
+    if (a && b && c && d) {
+      return std::optional<four_atoms>(std::make_tuple(*a, *b, *c, *d));
+    }
+    return std::optional<four_atoms>{};
+  };
+  TorsionAngle::AffectedAtomsSelector selector = [affected_atoms](AtomRef& a, AtomRef&, AtomRef&, AtomRef&) {
+    return a.residue().atoms().filter(
+        [&affected_atoms](const AtomRef& x) { return affected_atoms.count(x.name()) == 1; });
+  };
+  instance().bindings.emplace(std::make_pair(residueName, torsionAngleName), std::make_pair(atom_refs_maker, selector));
 }
 
 std::optional<TorsionAngle> TorsionAngleFactory::get(proxy::ResidueRef& residue, const TorsionAngleName& angleName) {
-  //  return instance()._get(residue, angleName);
-  return {};
+  return instance()._get(residue, angleName);
 }
 
 std::optional<TorsionAngle> TorsionAngleFactory::_get(proxy::ResidueRef& r, const TorsionAngleName& angle_name) {
-  return {};
-//  auto it = bindings.find(std::make_pair(r.name(), angle_name));
-//  if (it == bindings.end()) {
-//    return std::optional<TorsionAngle>{};
-//  }
-//  auto& funcs = it->second;
-//  auto atoms = funcs.first(r);
-//  if (!std::get<0>(atoms) || !std::get<1>(atoms) || !std::get<2>(atoms) || !std::get<3>(atoms)) {
-//    return std::optional<TorsionAngle>{};
-//  }
-//  return std::optional<TorsionAngle>(
-//      TorsionAngle(*std::get<0>(atoms), *std::get<1>(atoms), *std::get<2>(atoms), *std::get<3>(atoms), funcs.second));
+  auto it = bindings.find(std::make_pair(r.name(), angle_name));
+  if (it == bindings.end()) {
+    return std::optional<TorsionAngle>{};
+  }
+  auto& funcs = it->second;
+  auto atoms = funcs.first(r);
+  if (!atoms) {
+    return std::optional<TorsionAngle>{};
+  }
+  return std::optional<TorsionAngle>(
+      TorsionAngle(std::get<0>(*atoms), std::get<1>(*atoms), std::get<2>(*atoms), std::get<3>(*atoms), funcs.second));
 }

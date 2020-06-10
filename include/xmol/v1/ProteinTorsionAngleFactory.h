@@ -26,11 +26,13 @@ public:
                                               const std::set<AtomName>& affected_atoms);
   static std::optional<TorsionAngle> get(proxy::ResidueRef& residue, const TorsionAngleName& angleName);
 
-  using residue_to_atoms = std::function<std::optional<std::tuple<proxy::AtomRef, proxy::AtomRef, proxy::AtomRef, proxy::AtomRef>>(proxy::ResidueRef&)>;
+  using four_atoms = std::tuple<proxy::AtomRef, proxy::AtomRef, proxy::AtomRef, proxy::AtomRef>;
+  using residue_to_atoms =  std::function<std::optional<four_atoms>(proxy::ResidueRef&)>;
+
 private:
   using ARef = proxy::AtomRef;
   using KeyType = std::pair<ResidueName, TorsionAngleName>;
-  using ValueType = std::pair<std::optional<residue_to_atoms>, TorsionAngle::AffectedAtomsSelector>;
+  using ValueType = std::pair<residue_to_atoms, TorsionAngle::AffectedAtomsSelector>;
   std::map<KeyType, ValueType> bindings;
 
   static TorsionAngleFactory& instance();

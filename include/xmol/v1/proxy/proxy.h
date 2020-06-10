@@ -265,6 +265,28 @@ public:
   /// Atoms of the residue
   AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
 
+  /// Next residue in the molecule
+  std::optional<ResidueRef> next() {
+    if (m_residue + 1 < m_residue->molecule->residues.begin() + molecule().size()) {
+      return ResidueRef(*(m_residue + 1));
+    }
+    return {};
+  }
+
+  /// Previous residue in the molecule
+  std::optional<ResidueRef> prev() {
+    if (m_residue - 1 >= m_residue->molecule->residues.begin()) {
+      return ResidueRef(*(m_residue - 1));
+    }
+    return {};
+  }
+
+  /// Get children atom by name
+  std::optional<AtomRef> operator[](const AtomName& name);
+
+  /// Get children atom by name
+  std::optional<AtomRef> operator[](const char* name);
+
   /// Create smart reference from this
   smart::ResidueSmartRef smart();
 

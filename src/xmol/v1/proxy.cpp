@@ -17,6 +17,19 @@ AtomRef::AtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(a
 
 smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
 smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
+std::optional<AtomRef> ResidueRef::operator[](const xmol::v1::AtomName& name) {
+  for (auto& a : atoms()) {
+    if (a.name() == name) {
+      return a;
+    }
+  }
+  return {};
+}
+
+std::optional<AtomRef> ResidueRef::operator[](const char* name) {
+  return operator[](AtomName(name));
+}
+
 smart::AtomSmartRef AtomRef::smart() { return smart::AtomSmartRef(*this); }
 
 template class xmol::v1::proxy::Selection<CoordRef>;

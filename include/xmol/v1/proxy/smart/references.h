@@ -146,6 +146,30 @@ public:
     return m_ref.atoms();
   }
 
+  /// Next residue in the molecule
+  std::optional<ResidueRef> next() {
+    check_precondition("next()");
+    return m_ref.next();
+  }
+
+  /// Previous residue in the molecule
+  std::optional<ResidueRef> prev() {
+    check_precondition("prev()");
+    return m_ref.prev();
+  }
+
+  /// Get children atom by name
+  std::optional<AtomRef> operator[](const AtomName& name){
+    check_precondition("operator[]()");
+    return m_ref[name];
+  }
+
+  /// Get children atom by name
+  std::optional<AtomRef> operator[](const char* name){
+    check_precondition("operator[]()");
+    return m_ref[name];
+  }
+
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const {
     check_precondition("operator!=()");
