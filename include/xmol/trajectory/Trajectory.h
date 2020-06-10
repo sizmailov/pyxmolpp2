@@ -53,6 +53,7 @@ public:
     }
 
     bool operator!=(const Sentinel&) const { return m_pos.global_pos < m_end; }
+    bool operator==(const Sentinel&) const { return m_pos.global_pos >= m_end; }
 
   private:
     friend Trajectory;

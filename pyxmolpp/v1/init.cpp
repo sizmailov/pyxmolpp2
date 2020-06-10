@@ -9,6 +9,7 @@
 #include "v1/geom/XYZ.h"
 #include "v1/geom/AngleValue.h"
 #include "v1/geom/Transformation3d.h"
+#include "v1/trajectory/trajectory.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -48,6 +49,9 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyUniformScale = py::class_<UniformScale3d>(v1, "UniformScale");
   auto pyTransformation = py::class_<Transformation3d>(v1, "Transformation");
 
+  auto pyTrajectory = py::class_<trajectory::Trajectory>(v1, "Trajectory");
+  auto pyTrajectoryInputFile = py::class_<trajectory::TrajectoryInputFile, PyTrajectoryInputFile>(v1, "TrajectoryInputFile");
+
   populate(pyXYZ);
   populate(pyAngleValue);
 
@@ -70,5 +74,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyTranslation);
   populate(pyRotation);
   populate(pyUniformScale);
+
+  populate(pyTrajectory);
+  populate(pyTrajectoryInputFile);
 
 }
