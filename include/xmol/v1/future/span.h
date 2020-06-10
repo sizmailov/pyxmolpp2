@@ -13,8 +13,8 @@ template <typename T> struct Span {
   T* m_end = nullptr;
   constexpr size_t size() const { return m_end - m_begin; };
   size_t empty() const { return m_end == m_begin; }
-  T* begin() { return m_begin; };
-  T* end() { return m_end; };
+  T* begin() const { return m_begin; };
+  T* end() const { return m_end; };
   T& operator[](size_t i) { return m_begin[i]; };
   const T& operator[](size_t i) const { return m_begin[i]; };
 

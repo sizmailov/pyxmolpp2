@@ -167,6 +167,7 @@ Frame& Frame::operator=(const Frame& other) {
     m_coordinates = other.m_coordinates;
     for (auto& mol : m_molecules) {
       mol.frame = this;
+      mol.residues.rebase(other.m_residues.data(), m_residues.data());
     }
     for (auto& res : m_residues) {
       res.molecule = m_molecules.data() + (res.molecule - other.m_molecules.data());
@@ -184,6 +185,7 @@ Frame::Frame(const Frame& other)
       m_coordinates(other.m_coordinates) {
   for (auto& mol : m_molecules) {
     mol.frame = this;
+    mol.residues.rebase(other.m_residues.data(), m_residues.data());
   }
   for (auto& res : m_residues) {
     res.molecule = m_molecules.data() + (res.molecule - other.m_molecules.data());
@@ -211,7 +213,7 @@ Frame::Frame(Frame&& other)
   notify_frame_moved(other);
 }
 Frame::~Frame() { notify_frame_delete(); }
-void Frame::check_references_integrity() {
+void Frame::check_references_integrity() const {
 #ifdef NDEBUG
   return; // disables check completely in release mode
 #endif

@@ -27,8 +27,8 @@ TEST_F(PdbReaderTests, sound){
   EXPECT_EQ(chain.name(),ChainName("A"));
   EXPECT_EQ(residue.size(),1);
   EXPECT_EQ(residue.name(),ResidueName("ARG"));
-  EXPECT_EQ(residue.id().m_serial,-3);
-  EXPECT_EQ(residue.id().m_iCode,ResidueInsertionCode("Z"));
+  EXPECT_EQ(residue.id().serial,-3);
+  EXPECT_EQ(residue.id().iCode,ResidueInsertionCode("Z"));
   EXPECT_EQ(atom.id(),32);
   EXPECT_EQ(atom.name(),AtomName("N"));
   EXPECT_DOUBLE_EQ(atom.r().x(),11.281);

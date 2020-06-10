@@ -72,7 +72,6 @@ TEST_F(TorsionAngleTests, test_backbone_angles) {
   };
   for (auto& file : files) {
     auto frame = PdbInputFile(file).frames()[0];
-
     for (auto&& r : frame.residues()) {
 
       auto phi = TorsionAngleFactory::phi(r);
@@ -80,12 +79,18 @@ TEST_F(TorsionAngleTests, test_backbone_angles) {
       auto omega = TorsionAngleFactory::omega(r);
       if (!!phi) {
         phi.value().set(Degrees(180.0));
+      } else {
+        //        std::cout << "no   phi for " << r.name().str() << r.id().serial << std::endl;
       }
       if (!!psi) {
         psi.value().set(Degrees(180.0));
+      } else {
+        //        std::cout << "no   psi for " << r.name().str() << r.id().serial << std::endl;
       }
       if (!!omega) {
         omega.value().set(Degrees(180.0));
+      } else {
+        //        std::cout << "no omega for " << r.name().str() << r.id().serial << std::endl;
       }
     }
   }
