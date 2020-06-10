@@ -6,6 +6,7 @@
 #include "v1/proxy/references.h"
 #include "v1/proxy/spans.h"
 #include "v1/proxy/selections.h"
+#include "v1/geom/XYZ.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -16,13 +17,14 @@ using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::init(pybind11::module& v1) {
 
+  auto pyXYZ = py::class_<XYZ>(v1, "XYZ");
+
   auto pyAtomName = py::class_<AtomName>(v1, "AtomName");
   auto pyResidueName = py::class_<ResidueName>(v1, "ResidueName");
   auto pyResidueId = py::class_<ResidueId>(v1, "ResidueId");
   auto pyResidueInsertionCode = py::class_<ResidueInsertionCode>(v1, "ResidueInsertionCode");
   auto pyMoleculeName = py::class_<MoleculeName>(v1, "MoleculeName");
 
-  auto pyCoord = py::class_<XYZ>(v1, "Coord");
   auto pyAtom = py::class_<AtomSmartRef>(v1, "Atom");
   auto pyResidue = py::class_<ResidueSmartRef>(v1, "Residue");
   auto pyMolecule = py::class_<MoleculeSmartRef>(v1, "Molecule");
@@ -37,6 +39,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyAtomSelection = py::class_<AtomSmartSelection>(v1, "AtomSelection");
   auto pyResidueSelection = py::class_<ResidueSmartSelection>(v1, "ResidueSelection");
   auto pyMoleculeSelection = py::class_<MoleculeSmartSelection>(v1, "MoleculeSelection");
+
+  populate(pyXYZ);
 
   populate(pyAtom);
   populate(pyResidue);
