@@ -1,7 +1,11 @@
+- indexation support
+   operator []
+   optional<ResidueRef> ResidueRef.next()
+   optional<ResidueRef> ResidueRef.prev()
+
 - increase test coverage
 
 - organize headers for convenient includes by users
-- netcdf format
 - xtc format
 - pseudo trajectory adapter
 - trajectory from layout
@@ -9,3 +13,4 @@
 - update bindings to v1
 - support erasure of elements
 - prmtop topology
+- rework predicates?
