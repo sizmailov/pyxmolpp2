@@ -7,6 +7,7 @@
 #include "v1/proxy/spans.h"
 #include "v1/proxy/selections.h"
 #include "v1/geom/XYZ.h"
+#include "v1/geom/Transformation3d.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -17,7 +18,7 @@ using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::init(pybind11::module& v1) {
 
-  auto pyXYZ = py::class_<XYZ>(v1, "XYZ");
+  auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ");
 
   auto pyAtomName = py::class_<AtomName>(v1, "AtomName");
   auto pyResidueName = py::class_<ResidueName>(v1, "ResidueName");
@@ -40,6 +41,11 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyResidueSelection = py::class_<ResidueSmartSelection>(v1, "ResidueSelection");
   auto pyMoleculeSelection = py::class_<MoleculeSmartSelection>(v1, "MoleculeSelection");
 
+  auto pyTranslation = py::class_<Translation3d>(v1, "Translation");
+  auto pyRotation = py::class_<Rotation3d>(v1, "Rotation");
+  auto pyUniformScale = py::class_<UniformScale3d>(v1, "UniformScale");
+  auto pyTransformation = py::class_<Transformation3d>(v1, "Transformation");
+
   populate(pyXYZ);
 
   populate(pyAtom);
@@ -56,5 +62,10 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyAtomSelection);
   populate(pyResidueSelection);
   populate(pyMoleculeSelection);
+
+  populate(pyTransformation);
+  populate(pyTranslation);
+  populate(pyRotation);
+  populate(pyUniformScale);
 
 }
