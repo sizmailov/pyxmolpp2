@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "xmol/geometry/Transformation3d.h"
+#include "xmol/v1/geom/affine/Transformation3d.h"
 
 
 using ::testing::Test;
-using namespace xmol::geometry;
+using namespace xmol::v1::geom::affine;
+using namespace xmol::v1::geom;
 
 class Transformation3dTests : public Test{
 public:
@@ -48,9 +49,6 @@ TEST_F(Transformation3dTests, rotation_angle){
       -5.551115123125786400e-17,
       1.000000000000000444e+00;
   auto r = Rotation3d(m);
-
-  std::cout << m << std::endl;
-  std::cout << r.theta().degrees() << std::endl;
 
   ASSERT_DOUBLE_EQ(r.theta().degrees(),0.0);
 }
