@@ -11,12 +11,14 @@ using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
   using SRef = Frame;
-  pyFrame.def(py::init<const SRef&>())
+  pyFrame
+      .def(py::init<>())
+      .def(py::init<const SRef&>())
       .def_property_readonly("coords", [](SRef& ref) { return ref.coords().smart(); })
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
       .def_property_readonly("molecules", [](SRef& ref) { return ref.molecules().smart(); })
-      .def_property_readonly("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
+      .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
   ;
 }
 void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {

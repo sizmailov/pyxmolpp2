@@ -63,8 +63,8 @@ struct ResidueStub {
 };
 
 struct ChainStub {
-  explicit ChainStub(ChainName name) : name(name){};
-  ChainName name;
+  explicit ChainStub(MoleculeName name) : name(name){};
+  MoleculeName name;
   std::vector<ResidueStub> residues;
 };
 
@@ -121,7 +121,7 @@ template <typename Iterator> ChainStub& readChain(FrameStub& frame, Iterator& it
   assert(it->getRecordName() == RecordName("ATOM") || it->getRecordName() == RecordName("HETATM"));
   std::string stringChainId = it->getString(FieldName("chainID"));
 
-  frame.chains.emplace_back(ChainName(stringChainId));
+  frame.chains.emplace_back(MoleculeName(stringChainId));
   ChainStub& c = frame.chains.back();
 
   while (it != PdbLineSentinel{} && it->getRecordName() != RecordName("TER") &&
