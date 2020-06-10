@@ -21,10 +21,10 @@ public:
 
   explicit PdbInputFile(std::string filename, Dialect dialect = Dialect::STANDARD_V3, bool read_now=true);
   PdbInputFile& read();
-  const std::vector<Frame>& frames() const { return m_frames; }
+  [[nodiscard]] const std::vector<Frame>& frames() const { return m_frames; }
 
-  size_t n_frames() const override;
-  size_t n_atoms() const override;
+  [[nodiscard]] size_t n_frames() const override;
+  [[nodiscard]] size_t n_atoms() const override;
   void read_coordinates(size_t index, proxy::CoordSpan& coordinates) override;
   void advance(size_t shift) override;
 

@@ -10,6 +10,7 @@
 #include "v1/geom/AngleValue.h"
 #include "v1/geom/Transformation3d.h"
 #include "v1/trajectory/trajectory.h"
+#include "v1/io/PdbFile.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -52,6 +53,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyTrajectory = py::class_<trajectory::Trajectory>(v1, "Trajectory");
   auto pyTrajectoryInputFile = py::class_<trajectory::TrajectoryInputFile, PyTrajectoryInputFile>(v1, "TrajectoryInputFile");
 
+  auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile");
+
   populate(pyXYZ);
   populate(pyAngleValue);
 
@@ -78,4 +81,5 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyTrajectory);
   populate(pyTrajectoryInputFile);
 
+  populate(pyPdbInputFile);
 }

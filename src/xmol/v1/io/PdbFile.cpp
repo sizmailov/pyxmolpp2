@@ -24,6 +24,9 @@ PdbInputFile& PdbInputFile::read() {
   }
 
   std::fstream in(m_filename);
+  if (!in){
+    throw PdbReadError("Can't read `"+m_filename+"`");
+  }
   m_frames = PdbReader(in).read_frames(alteredPdbRecords);
 
   m_n_frames = m_frames.size();
