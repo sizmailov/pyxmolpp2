@@ -159,9 +159,9 @@ template <typename Iterator> Frame readFrame(Iterator& it) {
 
   Frame result;
   for (auto& chain_stub : frame_stub.chains) {
-    auto& c = result.add_molecule().name(chain_stub.name);
+    auto c = result.add_molecule().name(chain_stub.name);
     for (auto& residue_stub : chain_stub.residues) {
-      auto& r = c.add_residue().name(residue_stub.name).id(residue_stub.serial);
+      auto r = c.add_residue().name(residue_stub.name).id(residue_stub.serial);
       for (auto& atom_stub : residue_stub.atoms) {
         r.add_atom().name(atom_stub.name).id(atom_stub.serial).r(atom_stub.xyz);
       }

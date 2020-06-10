@@ -3,10 +3,14 @@
 
 namespace xmol::v1::io {
 
-class NetCDFTrajectoryFile : public xmol::v1::trajectory::TrajectoryInputFile {
+class AmberNetCDF : public xmol::v1::trajectory::TrajectoryInputFile {
 public:
-  explicit NetCDFTrajectoryFile(const std::string& filename);
-  ~NetCDFTrajectoryFile();
+  AmberNetCDF(const AmberNetCDF&) = delete;
+  AmberNetCDF& operator=(const AmberNetCDF&) = delete;
+  AmberNetCDF(AmberNetCDF&&) = default;
+  AmberNetCDF& operator=(AmberNetCDF&&) = default;
+  explicit AmberNetCDF(const std::string& filename);
+  ~AmberNetCDF();
 
   size_t n_frames() const override;
   size_t n_atoms() const override;

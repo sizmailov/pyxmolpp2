@@ -12,12 +12,12 @@ inline void check_netcdf_call(int retval, int expected, const char* const nc_fun
 }
 } // namespace
 
-NetCDFTrajectoryFile::NetCDFTrajectoryFile(const std::string& filename) : m_filename(filename) {
+AmberNetCDF::AmberNetCDF(const std::string& filename) : m_filename(filename) {
   read_header();
   close();
 }
 
-void NetCDFTrajectoryFile::open() {
+void AmberNetCDF::open() {
   if (m_is_open) {
     return;
   }
@@ -25,19 +25,19 @@ void NetCDFTrajectoryFile::open() {
   m_is_open = true;
 }
 
-NetCDFTrajectoryFile::~NetCDFTrajectoryFile() {
+AmberNetCDF::~AmberNetCDF() {
   if (m_is_open) {
     close();
   }
 }
-void NetCDFTrajectoryFile::close() {
+void AmberNetCDF::close() {
   if (m_is_open) {
     check_netcdf_call(nc_close(ncid), NC_NOERR, "nc_close()");
   }
   this->m_is_open = false;
 }
 
-void NetCDFTrajectoryFile::print_info() {
+void AmberNetCDF::print_info() {
   for (auto attr : {
            "Conventions",
            "ConventionVersion",
@@ -49,7 +49,7 @@ void NetCDFTrajectoryFile::print_info() {
     std::cout << attr << ": `" << read_global_string_attr(attr) << "`" << std::endl;
   }
 }
-std::string NetCDFTrajectoryFile::read_global_string_attr(const char* name) {
+std::string AmberNetCDF::read_global_string_attr(const char* name) {
   open();
   nc_type attr_info;
   size_t attr_len;
@@ -61,9 +61,9 @@ std::string NetCDFTrajectoryFile::read_global_string_attr(const char* name) {
   return std::string(buffer, attr_len);
 }
 
-size_t xmol::v1::io::NetCDFTrajectoryFile::n_frames() const { return m_n_frames; }
-size_t xmol::v1::io::NetCDFTrajectoryFile::n_atoms() const { return m_n_atoms; }
-void xmol::v1::io::NetCDFTrajectoryFile::read_coordinates(size_t index, xmol::v1::proxy::CoordSpan& coordinates) {
+size_t xmol::v1::io::AmberNetCDF::n_frames() const { return m_n_frames; }
+size_t xmol::v1::io::AmberNetCDF::n_atoms() const { return m_n_atoms; }
+void xmol::v1::io::AmberNetCDF::read_coordinates(size_t index, xmol::v1::proxy::CoordSpan& coordinates) {
   this->open();
   m_buffer.resize(n_atoms() * 3);
 
@@ -75,11 +75,11 @@ void xmol::v1::io::NetCDFTrajectoryFile::read_coordinates(size_t index, xmol::v1
   nc_inq_varid(ncid, "coordinates", &coords_id);
 
   check_netcdf_call(nc_get_vara_float(ncid, coords_id, start, count, m_buffer.data()), NC_NOERR, "nc_get_vara_float");
-  Eigen::Map<Eigen::Matrix<float, 3, Eigen::Dynamic>> buffer_map(m_buffer.data(), n_atoms(), 3);
+  Eigen::Map<Eigen::Matrix<float, 3, Eigen::Dynamic>> buffer_map(m_buffer.data(), 3, n_atoms());
   coordinates._eigen() = buffer_map.cast<double>();
 }
 
-void xmol::v1::io::NetCDFTrajectoryFile::advance(size_t shift) {
+void xmol::v1::io::AmberNetCDF::advance(size_t shift) {
   m_current_frame += shift;
 
   if (m_current_frame >= n_frames()) {
@@ -92,7 +92,7 @@ void xmol::v1::io::NetCDFTrajectoryFile::advance(size_t shift) {
     open();
   }
 }
-void NetCDFTrajectoryFile::read_header() {
+void AmberNetCDF::read_header() {
   this->open();
 
   if (read_global_string_attr("Conventions").find("AMBER") == std::string::npos) {

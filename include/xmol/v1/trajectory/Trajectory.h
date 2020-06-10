@@ -5,7 +5,7 @@
 /// MD trajectory classes and utilites
 namespace xmol::v1::trajectory {
 
-using FrameId = int32_t;
+using FrameIndex = int32_t;
 
 class TrajectoryDoubleTraverseError : public std::runtime_error {
 public:
@@ -29,8 +29,8 @@ public:
     Frame() = default;
     Frame(Frame&&) = default;
     Frame(const Frame&) = default;
-    explicit Frame(v1::Frame frame) : v1::Frame(std::move(frame)), id(0){};
-    FrameId id = 0;
+    explicit Frame(v1::Frame frame) : v1::Frame(std::move(frame)), index(0){};
+    FrameIndex index = 0;
   };
 
   struct Sentinel {};
@@ -71,7 +71,7 @@ public:
     void update() {
       auto coords = m_frame.coords();
       m_traj.read_coordinates(m_pos, coords);
-      m_frame.id = m_pos.global_pos;
+      m_frame.index = m_pos.global_pos;
     }
     Trajectory& m_traj;
     Position m_pos;
