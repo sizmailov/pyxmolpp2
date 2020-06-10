@@ -3,6 +3,8 @@
 
 using namespace xmol::proxy;
 
+smart::CoordSmartSpan CoordSpan::smart() { return smart::CoordSmartSpan(*this); }
+
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {
     return {};

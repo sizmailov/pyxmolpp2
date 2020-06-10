@@ -10,6 +10,8 @@ public:
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
 
+  smart::CoordSmartSpan smart();
+
 protected:
   CoordSpan() = default;
   CoordSpan(Frame& frame, future::Span<XYZ>& span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};
