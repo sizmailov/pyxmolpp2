@@ -7,19 +7,19 @@ namespace xmol::predicates {
 
 using namespace xmol::proxy;
 
-class ChainPredicate;
+class MoleculePredicate;
 class ResiduePredicate;
 class AtomPredicate;
 
-class ChainPredicate {
+class MoleculePredicate {
 public:
-  template <typename Pred> explicit ChainPredicate(Pred&& predicate) : m_predicate(std::forward<Pred>(predicate)) {
+  template <typename Pred> explicit MoleculePredicate(Pred&& predicate) : m_predicate(std::forward<Pred>(predicate)) {
     static_assert(std::is_same<typename std::result_of<Pred(const MoleculeRef&)>::type, bool>::value);
   };
-  ChainPredicate(const ChainPredicate&) = default;
-  ChainPredicate(ChainPredicate&&) = default;
-  ChainPredicate& operator=(const ChainPredicate&) = default;
-  ChainPredicate& operator=(ChainPredicate&&) = default;
+  MoleculePredicate(const MoleculePredicate&) = default;
+  MoleculePredicate(MoleculePredicate&&) = default;
+  MoleculePredicate& operator=(const MoleculePredicate&) = default;
+  MoleculePredicate& operator=(MoleculePredicate&&) = default;
 
   bool operator()(MoleculeRef& MoleculeRef) const { return m_predicate(MoleculeRef); }
 
@@ -27,15 +27,14 @@ public:
 
   bool operator()(AtomRef& AtomRef) const { return m_predicate(AtomRef.molecule()); };
 
-
-  ChainPredicate operator!() const {
+  MoleculePredicate operator!() const {
     auto pred = m_predicate;
-    return ChainPredicate([pred](const MoleculeRef& c) -> bool { return !pred(c); });
+    return MoleculePredicate([pred](const MoleculeRef& c) -> bool { return !pred(c); });
   }
 
-  ChainPredicate operator&&(const ChainPredicate& rhs) const;
-  ChainPredicate operator||(const ChainPredicate& rhs) const;
-  ChainPredicate operator^(const ChainPredicate& rhs) const;
+  MoleculePredicate operator&&(const MoleculePredicate& rhs) const;
+  MoleculePredicate operator||(const MoleculePredicate& rhs) const;
+  MoleculePredicate operator^(const MoleculePredicate& rhs) const;
 
   ResiduePredicate operator&&(const ResiduePredicate& rhs) const;
   ResiduePredicate operator||(const ResiduePredicate& rhs) const;
@@ -70,9 +69,9 @@ public:
     return ResiduePredicate([pred](const ResidueRef& r) -> bool { return !pred(r); });
   }
 
-  ResiduePredicate operator&&(const ChainPredicate& rhs) const;
-  ResiduePredicate operator||(const ChainPredicate& rhs) const;
-  ResiduePredicate operator^(const ChainPredicate& rhs) const;
+  ResiduePredicate operator&&(const MoleculePredicate& rhs) const;
+  ResiduePredicate operator||(const MoleculePredicate& rhs) const;
+  ResiduePredicate operator^(const MoleculePredicate& rhs) const;
 
   ResiduePredicate operator&&(const ResiduePredicate& rhs) const;
   ResiduePredicate operator||(const ResiduePredicate& rhs) const;
@@ -84,7 +83,7 @@ public:
 
 private:
   friend class AtomPredicate;
-  friend class ChainPredicate;
+  friend class MoleculePredicate;
   std::function<bool(const ResidueRef&)> m_predicate;
 };
 
@@ -105,9 +104,9 @@ public:
     return AtomPredicate([pred](const AtomRef& a) -> bool { return !pred(a); });
   }
 
-  AtomPredicate operator&&(const ChainPredicate& rhs) const;
-  AtomPredicate operator||(const ChainPredicate& rhs) const;
-  AtomPredicate operator^(const ChainPredicate& rhs) const;
+  AtomPredicate operator&&(const MoleculePredicate& rhs) const;
+  AtomPredicate operator||(const MoleculePredicate& rhs) const;
+  AtomPredicate operator^(const MoleculePredicate& rhs) const;
 
   AtomPredicate operator&&(const ResiduePredicate& rhs) const;
   AtomPredicate operator||(const ResiduePredicate& rhs) const;
@@ -119,7 +118,7 @@ public:
 
 private:
   friend class ResiduePredicate;
-  friend class ChainPredicate;
+  friend class MoleculePredicate;
   std::function<bool(const AtomRef&)> m_predicate;
 };
 
