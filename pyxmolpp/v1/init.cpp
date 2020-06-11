@@ -9,6 +9,7 @@
 #include "v1/proxy/selections.h"
 #include "v1/geom/XYZ.h"
 #include "v1/geom/AngleValue.h"
+#include "v1/geom/UnitCell.h"
 #include "v1/geom/Transformation3d.h"
 #include "v1/trajectory/trajectory.h"
 #include "v1/io/PdbFile.h"
@@ -25,6 +26,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ");
   auto&& pyAngleValue = py::class_<AngleValue>(v1, "AngleValue");
+  auto&& pyUnitCell = py::class_<UnitCell>(v1, "UnitCell");
 
   auto pyResidueId = py::class_<ResidueId>(v1, "ResidueId");
 
@@ -58,6 +60,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   populate(pyXYZ);
   populate(pyAngleValue);
+  populate(pyUnitCell);
 
   define_angle_free_functions(v1);
 
