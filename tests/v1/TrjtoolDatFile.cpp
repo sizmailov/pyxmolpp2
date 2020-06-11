@@ -66,6 +66,14 @@ TEST_F(TrjtoolDatFileTests, trajectory_traverse) {
   }
   {
     int count = 0;
+    for (auto& _ : traj.slice({},{},50)) {
+      count += 1;
+      static_cast<void>(_);
+    }
+    EXPECT_EQ(count, 40) << "traj[::50]";
+  }
+  {
+    int count = 0;
     for (auto& _ : traj.slice()) {
       count += 1;
       static_cast<void>(_);
