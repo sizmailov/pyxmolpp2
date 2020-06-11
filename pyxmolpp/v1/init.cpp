@@ -14,6 +14,7 @@
 #include "v1/trajectory/trajectory.h"
 #include "v1/io/PdbFile.h"
 #include "v1/io/TrjtoolDatFile.h"
+#include "v1/io/AmberNetCDF.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -55,6 +56,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile");
   auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile");
+  auto pyAmberNetCDF = py::class_<io::AmberNetCDF, trajectory::TrajectoryInputFile>(v1, "AmberNetCDF");
 
   populate(pyResidueId);
 
@@ -89,4 +91,5 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   populate(pyPdbInputFile);
   populate(pyTrjtoolDatFile);
+  populate(pyAmberNetCDF);
 }

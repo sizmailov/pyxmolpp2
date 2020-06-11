@@ -7,10 +7,12 @@ using namespace xmol::io;
 using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::populate(py::class_<PdbInputFile, xmol::trajectory::TrajectoryInputFile>& pyPdbInputFile) {
+
   py::enum_<PdbInputFile::Dialect>(pyPdbInputFile, "Dialect")
       .value("AMBER_99", PdbInputFile::Dialect::AMBER_99)
       .value("STANDARD_V3", PdbInputFile::Dialect::STANDARD_V3)
       .export_values();
+
   pyPdbInputFile
       .def(py::init<std::string, PdbInputFile::Dialect>(), py::arg("self"),
            py::arg("dialect") = PdbInputFile::Dialect::AMBER_99)
