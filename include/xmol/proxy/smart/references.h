@@ -29,6 +29,11 @@ public:
     return m_ref.name(value);
   }
 
+  AtomRef& name(const char* value) {
+    check_precondition("name()");
+    return m_ref.name(value);
+  }
+
   /// Atom coordinates
   [[nodiscard]] const XYZ& r() const {
     check_precondition("r()");
@@ -112,6 +117,11 @@ public:
     return m_ref.id();
   };
   ResidueRef& id(const ResidueId& value) {
+    check_precondition("id()");
+    return m_ref.id(value);
+  }
+
+  ResidueRef& id(int value) {
     check_precondition("id()");
     return m_ref.id(value);
   }
