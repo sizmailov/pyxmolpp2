@@ -17,3 +17,9 @@ add .slice() method to spans and selections
 add .erase() to atom references, slices, selections
 
 Atom/Residue/Molecule assignment ?
+
+add kwarg only overloads
+    f(*, degrees:float)
+    f(*, radians:float)
+ for
+    f(angle:AngleValue)
