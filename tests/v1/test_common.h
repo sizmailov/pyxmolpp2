@@ -5,6 +5,6 @@
 
 namespace xmol::test {
 
-void static add_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes, Frame& frame);
+void add_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes, Frame& frame);
 
 } // namespace xmol::test

@@ -1,7 +1,7 @@
 #include "test_common.h"
 #include "xmol/Frame.h"
 
-void static xmol::test::add_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes, Frame& frame) {
+void xmol::test::add_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes, Frame& frame) {
   int aid = 1;
   int rid = 1;
   for (auto& chN_S : chain_sizes) {

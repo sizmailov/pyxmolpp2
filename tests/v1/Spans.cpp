@@ -143,3 +143,64 @@ TEST_F(SpanTests, coordinate_span_to_eigen) {
   EXPECT_DOUBLE_EQ(coords[0].distance({1, 1, 3}), 0);
   EXPECT_DOUBLE_EQ(coords[last].distance({4, 1, 6}), 0);
 }
+
+TEST_F(SpanTests, int_span) {
+  std::vector<int> vec;
+  int n = 10;
+  vec.resize(n);
+  future::Span<int> span(vec.data(), vec.size());
+  ASSERT_EQ(vec.size(), span.size());
+  for (int i = 0; i < n; i++) {
+    ASSERT_EQ(&vec[i], &span[i]);
+  }
+  {
+    auto it_v = vec.begin();
+    auto it_span = span.begin();
+    int i = 0;
+    for (; it_span != span.end(); ++it_span, ++it_v, ++i) {
+      ASSERT_EQ(&(*it_v), &(*it_span));
+    }
+    ASSERT_EQ(i, n);
+  }
+}
+
+namespace {
+
+struct FooStruct {
+  char header[8];
+  double payload[30];
+};
+
+struct FooStrutProxy {
+  using value_type = FooStruct;
+  FooStrutProxy(value_type* begin, value_type*) { ptr = begin; }
+  FooStrutProxy(value_type& value) { ptr = &value; }
+  bool operator!=(const FooStrutProxy& other) const { return ptr != other.ptr; }
+  bool operator==(const FooStrutProxy& other) const { return ptr == other.ptr; }
+  void advance() { ++ptr; }
+  value_type* ptr;
+};
+
+} // namespace
+
+TEST_F(SpanTests, foo_proxy_span) {
+  for (int n = 0; n < 30; n += 7) {
+    std::vector<FooStruct> vec;
+    vec.resize(n);
+    ProxySpan<FooStrutProxy, FooStruct> span(vec.data(), vec.size());
+    ASSERT_EQ(vec.size(), span.size());
+    ASSERT_EQ(span.size(), n);
+    for (int i = 0; i < n; i++) {
+      ASSERT_EQ(&vec[i], span[i].ptr);
+    }
+    {
+      auto it_v = vec.begin();
+      auto it_span = span.begin();
+      int i = 0;
+      for (; it_span != span.end(); ++it_span, ++it_v, ++i) {
+        ASSERT_EQ(&(*it_v), it_span->ptr);
+      }
+      ASSERT_EQ(i, n);
+    }
+  }
+}

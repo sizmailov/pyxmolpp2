@@ -4,6 +4,7 @@
 #include "xmol/predicates/predicate_generators.h"
 #include "xmol/predicates/predicates.h"
 #include "xmol/proxy/selections.h"
+#include "xmol/proxy/spans-impl.h"
 #include "xmol/Frame.h"
 
 using ::testing::Test;

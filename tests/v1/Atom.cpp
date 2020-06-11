@@ -13,8 +13,84 @@ public:
   Frame make_polyglycines(const std::vector<std::pair<std::string, int>>& chain_sizes) const {
     Frame frame;
     add_polyglycines(chain_sizes, frame);
+    return frame;
   }
+
 };
+
+TEST_F(AtomTests, add_molecules) {
+  Frame frame;
+  int n = 150;
+  for (int i = 0; i < n; ++i) {
+    auto mol = frame.add_molecule();
+    ASSERT_EQ(mol.frame(), frame);
+    ASSERT_EQ(frame.n_molecules(), frame.molecules().size());
+  }
+}
+
+TEST_F(AtomTests, add_residues) {
+  Frame frame;
+  auto mol = frame.add_molecule();
+  int n = 150;
+  for (int i = 0; i < n; ++i) {
+    auto res = mol.add_residue();
+    ASSERT_EQ(res.frame(), frame);
+    ASSERT_EQ(res.molecule(), mol);
+    ASSERT_EQ(frame.n_residues(), frame.residues().size());
+  }
+}
+
+TEST_F(AtomTests, add_residues_2) {
+  Frame frame;
+  auto mol1 = frame.add_molecule();
+  mol1.add_residue();
+  frame.add_molecule();
+}
+
+TEST_F(AtomTests, add_atoms) {
+  Frame frame;
+  auto mol = frame.add_molecule();
+  auto res = mol.add_residue();
+  int n = 150;
+  for (int i = 0; i < n; ++i) {
+    auto atom = res.add_atom();
+    ASSERT_EQ(atom.frame(), frame);
+    ASSERT_EQ(atom.residue(), res);
+    ASSERT_EQ(atom.molecule(), mol);
+    ASSERT_EQ(frame.n_molecules(), frame.molecules().size());
+    ASSERT_EQ(frame.n_residues(), frame.residues().size());
+    ASSERT_EQ(frame.n_atoms(), frame.atoms().size());
+  }
+}
+
+TEST_F(AtomTests, add_atoms_2) {
+  Frame frame;
+  int n = 150;
+  for (int i = 0; i < n; ++i) {
+    auto last_mol = frame.add_molecule();
+    auto last_res = last_mol.add_residue();
+    auto last_atom = last_res.add_atom();
+    ASSERT_EQ(last_atom.frame(), frame);
+    ASSERT_EQ(last_atom.residue(), last_res);
+    ASSERT_EQ(last_atom.molecule(), last_mol);
+    ASSERT_EQ(frame.n_molecules(), frame.molecules().size());
+    ASSERT_EQ(frame.n_residues(), frame.residues().size());
+    ASSERT_EQ(frame.n_atoms(), frame.atoms().size());
+    ASSERT_EQ(frame.n_molecules(), i + 1);
+    ASSERT_EQ(frame.n_residues(), i + 1);
+    ASSERT_EQ(frame.n_atoms(), i + 1);
+    for (auto mol : frame.molecules()) {
+      ASSERT_EQ(mol.size(), mol.residues().size()) << "Molecule " << i;
+      for (auto res : mol.residues()) {
+        ASSERT_EQ(res.size(), res.atoms().size()) << "Residue " << i;
+        ASSERT_EQ(res.molecule(), mol) << "Residue " << i;
+        for (auto atom : res.atoms()) {
+          ASSERT_EQ(atom.residue(), res) << "Atom " << i;
+        }
+      }
+    }
+  }
+}
 
 TEST_F(AtomTests, composition) {
   Frame frame;
@@ -84,6 +160,10 @@ TEST_F(AtomTests, composition) {
 
   {
     Frame frame2 = frame;
+
+    frame2.check_references_integrity();
+    check_size(frame2);
+
     EXPECT_NE(frame2, frame);
     EXPECT_EQ(frame2.n_molecules(), frame.n_molecules());
 
@@ -91,7 +171,7 @@ TEST_F(AtomTests, composition) {
     MoleculeRef C2 = frame2.molecules()[frame2.n_molecules() - 1]; // todo: switch to negative index
     EXPECT_NE(C2, C);
     EXPECT_EQ(C2.name(), C.name());
-//    EXPECT_EQ(C2.serial(), C.serial()); /// todo: enable
+    //    EXPECT_EQ(C2.serial(), C.serial()); /// todo: enable
 
     ResidueRef R = C.residues()[C.residues().size() - 1];
     ResidueRef R2 = C2.residues()[C2.residues().size() - 1];
@@ -101,7 +181,7 @@ TEST_F(AtomTests, composition) {
     EXPECT_EQ(R2.size(), R.size());
 
     AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R.size() - 1];
+    AtomRef A2 = R2.atoms()[R2.size() - 1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(), A.name());
     EXPECT_EQ(A2.id(), A.id());
@@ -121,14 +201,18 @@ TEST_F(AtomTests, composition) {
     //    EXPECT_EQ(C2.serial(),C.serial()); // todo: enable
 
     ResidueRef R = C.residues()[C.size() - 1];
-    ResidueRef R2 = C2.residues()[C.size() - 1];
+    ResidueRef R2 = C2.residues()[C2.size() - 1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(), R.name());
     EXPECT_EQ(R2.id(), R.id());
     EXPECT_EQ(R2.size(), R.size());
 
     AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R.size() - 1];
+    auto ats = R2.atoms();
+    auto&& ats2 = R2.atoms();
+    EXPECT_EQ(ats.size(), R2.size());
+    EXPECT_EQ(ats2.size(), R2.size());
+    AtomRef A2 = R2.atoms()[R2.size() - 1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(), A.name());
     EXPECT_EQ(A2.id(), A.id());
@@ -150,14 +234,14 @@ TEST_F(AtomTests, composition) {
     //    EXPECT_EQ(C2.serial(), C.serial()); // todo: enable
 
     ResidueRef R = C.residues()[C.size() - 1];
-    ResidueRef R2 = C2.residues()[C.size() - 1];
+    ResidueRef R2 = C2.residues()[C2.size() - 1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(), R.name());
     EXPECT_EQ(R2.id(), R.id());
     EXPECT_EQ(R2.size(), R.size());
 
     AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R.size() - 1];
+    AtomRef A2 = R2.atoms()[R2.size() - 1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(), A.name());
     EXPECT_EQ(A2.id(), A.id());
@@ -178,14 +262,14 @@ TEST_F(AtomTests, composition) {
     //    EXPECT_EQ(C2.serial(), C.serial()); // todo:enable
 
     ResidueRef R = C.residues()[C.size() - 1];
-    ResidueRef R2 = C2.residues()[C.size() - 1];
+    ResidueRef R2 = C2.residues()[C2.size() - 1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(), R.name());
     EXPECT_EQ(R2.id(), R.id());
     EXPECT_EQ(R2.size(), R.size());
 
     AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R.size() - 1];
+    AtomRef A2 = R2.atoms()[R2.size() - 1];
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(), A.name());
     EXPECT_EQ(A2.id(), A.id());
@@ -206,7 +290,7 @@ TEST_F(AtomTests, composition) {
     //    EXPECT_EQ(C2.serial(),C.serial());
 
     ResidueRef R = C.residues()[C.size() - 1];
-    ResidueRef R2 = C2.residues()[C.size() - 1];
+    ResidueRef R2 = C2.residues()[C2.size() - 1];
     EXPECT_NE(R2, R);
     EXPECT_EQ(R2.name(), R.name());
     EXPECT_EQ(R2.id(), R.id());
@@ -223,7 +307,7 @@ TEST_F(AtomTests, composition) {
     EXPECT_EQ(R2.size(), R.size());
 
     AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R.size() - 1];
+    AtomRef A2 = R2.atoms()[R2.size() - 1];
 
     A2.id(99);
     EXPECT_NE(A2.id(), A.id());
