@@ -1,23 +1,20 @@
 import pytest
 import math
 
-def test_calc_rmsd():
-    from pyxmolpp2.geometry import XYZ, AngleValue
-    from pyxmolpp2.crystal import LatticeVectors, BestShiftFinder
+def test_closed_image():
+    from pyxmolpp2.v1 import UnitCell, XYZ
 
 
-    latticeVectors = LatticeVectors(XYZ(1,4,1),XYZ(5,1,1),XYZ(7,1,4))
+    latticeVectors = UnitCell(XYZ(1,4,1),XYZ(5,1,1),XYZ(7,1,4))
 
-    bestShiftFinder = BestShiftFinder(latticeVectors)
-
-    latticeVectors.scale_by(0.5)
-    bestShiftFinder.scale_lattice_by(0.5)
+    cell.scale_by(0.5)
+    cell.scale_lattice_by(0.5)
 
     ref = XYZ(0,0,0)
     var = latticeVectors.translate(ref,1,4,43)
     # print()
     # print(var.x,var.y,var.z)
-    dr, shift = bestShiftFinder.find_best_shift(ref,var)
+    result = cell.closet_image_to(ref,var)
     # print(shift.x,shift.y,shift.z)
     var = var + shift
 

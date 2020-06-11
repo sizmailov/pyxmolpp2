@@ -3,7 +3,7 @@
 
 import pytest
 import numpy as np
-from pyxmolpp2.geometry import XYZ, VectorXYZ, calc_sasa
+from pyxmolpp2.v1 import XYZ
 
 
 def first_sphere_hidden_area(a, b, r1, r2):

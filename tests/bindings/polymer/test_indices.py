@@ -2,7 +2,7 @@ import pytest
 
 
 def make_polyglycine(chain_lengths, no_reserve=True):
-    from pyxmolpp2.polymer import Frame
+    from pyxmolpp2.v1 import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
     from pyxmolpp2.polymer import ResidueName, ResidueId
@@ -94,6 +94,6 @@ def test_selection_int_indexing():
     assert frame.asChains[np.array([], dtype=int)].size == 0  # array index -> selection
     assert frame.asChains[0].size == 20  # int index -> Chain
 
-
-test_selection_bool_indexing()
-test_selection_int_indexing()
+if __name__ == "__main__":
+    test_selection_bool_indexing()
+    test_selection_int_indexing()

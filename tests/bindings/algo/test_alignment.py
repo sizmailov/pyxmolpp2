@@ -2,7 +2,7 @@ import pytest
 import math
 
 def test_calc_rmsd():
-    from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd
+    from pyxmolpp2.v1 import calc_alignment, XYZ, VectorXYZ, calc_rmsd
 
     a = VectorXYZ([XYZ(1,2,3)])
     b = VectorXYZ([XYZ(3,4,5)])

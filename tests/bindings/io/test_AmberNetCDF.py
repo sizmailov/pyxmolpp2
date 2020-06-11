@@ -1,8 +1,8 @@
 import pytest
 
 
-def test_read_trjtool():
-    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+def test_read_netcdf():
+    from pyxmolpp2.v1 import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
     from pyxmolpp2.amber import NetCDFTrajectoryFile
 
     records = AlteredPdbRecords(StandardPdbRecords.instance())

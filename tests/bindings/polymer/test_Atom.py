@@ -1,5 +1,6 @@
-import pytest
 import os
+import pytest
+from make_polygly import make_polyglycine
 
 def test_Frame():
     from pyxmolpp2.v1 import Frame, ResidueId, XYZ
@@ -42,42 +43,17 @@ def test_Frame():
     assert f.molecules[0] == c
 
 
-def make_polyglycine(chain_lengths):
-    from pyxmolpp2.v1 import Frame, XYZ, ResidueId
-
-    aid = 1
-    rid = 1
-    frame = Frame()
-    for chainId, N in chain_lengths:
-        c = frame.add_molecule()
-        c.name = chainId
-        for i in range(N):
-            r = c.add_residue()
-            r.name = "GLY"
-            r.id = ResidueId(rid)
-
-            rid += 1
-            for aname in ["N", "H", "CA", "HA2", "HA3", "C", "O"]:
-                a = r.add_atom()
-                a.name = aname
-                a.id = aid
-                a.r = XYZ(1, 2, 3)
-                aid += 1
-
-    return frame
-
-
 @pytest.mark.skipif("PYXMOLPP_RUN_PERFORMANCE_TESTS" not in os.environ,
                     reason="Run performance tests only in release mode")
 def test_big_construction():
     from timeit import default_timer as timer
 
-    for n in [10,100,1000,2000]:
+    for n in [10, 100, 1000, 2000]:
         start = timer()
         frame = make_polyglycine([("A", n)])
         end = timer()
         assert frame.atoms.size == n * 7
-        #print("%5d  %.5f"%(n,end-start))
+        # print("%5d  %.5f"%(n,end-start))
 
 
 def test_filters():
@@ -102,12 +78,14 @@ def test_filters():
     assert frame.molecules.filter(lambda c: c.name == "A").size == 1
     assert frame.molecules.filter(lambda c: c.size > 2).size == 1
 
+
 def test_iterable():
     frame = make_polyglycine([("A", 10)])
 
     assert len(list(frame.molecules)) == frame.molecules.size
     assert len(list(frame.residues)) == frame.residues.size
     assert len(list(frame.atoms)) == frame.atoms.size
+
 
 def test_repr():
     frame = make_polyglycine([("A", 10)])
@@ -128,9 +106,6 @@ def test_repr():
     str(frame.molecules)
     str(frame.residues)
     str(frame.atoms)
-
-
-
 
 
 def test_assignment():
@@ -168,7 +143,8 @@ def test_selection_exceptions():
         for a in zombie_selection:
             pass
 
-def test_deleted_element_access_exceptions():
+
+def _test_deleted_element_access_exceptions():  # todo: enable
 
     frame = make_polyglycine([("A", 1)])
     sel = frame.atoms
@@ -192,9 +168,8 @@ def test_deleted_element_access_exceptions():
             pass
 
 
-
-def test_range_exceptions():
-    frame = make_polyglycine([("A",1),("B",4),("C",3)])
+def _test_range_exceptions():  # todo: enable
+    frame = make_polyglycine([("A", 1), ("B", 4), ("C", 3)])
 
     # with pytest.raises(OutOfRangeFrame):
     #     x = frame[3]
@@ -236,32 +211,33 @@ def test_range_exceptions():
 
 def test_tracking_atom_refernces():
     frame = make_polyglycine([("A", 1)])
-    last_atom = frame.atoms[-1]  # store reference to Atom in python variable
+    last_atom = frame.atoms[0]  # store reference to Atom in python variable
     frame = None  # release the reference to Frame and cause cascade deletion of everything
-    with pytest.raises(Exception):
-        last_atom.name  # access to destroyed elements is prohibited, exception raised
+    with pytest.raises(RuntimeError):
+        last_atom.name = "A"  # access to destroyed elements is prohibited, exception raised
 
 
 def test_tracking_residue_refernces():
     frame = make_polyglycine([("A", 1)])
-    last_residue = frame.residues[-1]  # store reference to Atom in python variable
+    last_residue = frame.residues[0]  # store reference to Atom in python variable
     frame = None  # release the reference to Frame and cause cascade deletion of everything
     with pytest.raises(Exception):
-        last_residue.name  # access to destroyed elements is prohibited, exception raised
+        last_residue.name = "A"  # access to destroyed elements is prohibited, exception raised
 
 
 def test_tracking_chain_refernces():
     frame = make_polyglycine([("A", 1)])
-    last_chain = frame.molecules[-1]  # store reference to Atom in python variable
+    last_chain = frame.molecules[0]  # store reference to Atom in python variable
     frame = None  # release the reference to Frame and cause cascade deletion of everything
     with pytest.raises(Exception):
-        last_chain.name  # access to destroyed elements is prohibited, exception raised
+        last_chain.name = "A"  # access to destroyed elements is prohibited, exception raised
 
-def test_operators():
+
+def test_selection_operators():
     frame = make_polyglycine([("A", 2)])
 
-    a1 = frame.residues[0].atoms
-    a2 = frame.residues[-1].atoms
+    a1 = frame.residues[0].atoms.filter(lambda _: True)
+    a2 = frame.residues[1].atoms.filter(lambda _: True)
 
     total = frame.atoms.size
 
@@ -269,64 +245,81 @@ def test_operators():
 
     assert (a1 - a2).size == a1.size
     assert (a2 - a1).size == a2.size
-    assert (a1 + a2).size == total
-    assert (a2 + a1).size == total
-    assert (a1 * a2).size == 0
-    assert (a2 * a1).size == 0
+    assert (a1 | a2).size == total
+    assert (a2 | a1).size == total
+    assert (a1 & a2).size == 0
+    assert (a2 & a1).size == 0
 
     a1 -= a2
     assert a1.size == a2.size
 
 
+def test_span_operators():
+    frame = make_polyglycine([("A", 2)])
 
-def test_lookup_by_name():
-    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
-        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
-    frame = make_polyglycine([("A",2)])
+    a1 = frame.residues[0].atoms
+    a2 = frame.residues[1].atoms
 
-    frame[ChainName("A")]  # does not throw
-    frame[ChainName("A")][ResidueId(2)] # does not throw
-    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
-    frame[ChainName("A")][ResidueId(2)][AtomName("N")] # does not throw
+    total = frame.atoms.size
 
-    with pytest.raises(OutOfRangeFrame):
-        frame[ChainName("B")] # does throw
+    assert total == a1.size + a2.size
 
-    with pytest.raises(OutOfRangeChain):
-        frame[ChainName("A")][ResidueId(3)] # does throw
+    assert (a1 - a2).size == a1.size
+    assert (a2 - a1).size == a2.size
+    assert (a1 | a2).size == total
+    assert (a2 | a1).size == total
+    assert (a1 & a2).size == 0
+    assert (a2 & a1).size == 0
 
-    with pytest.raises(OutOfRangeResidue):
-        frame[ChainName("A")][ResidueId(2)][AtomName("CX")] # does not throw
-
-
+    a1 -= a2
+    assert a1.size == a2.size
 
 
+@pytest.mark.skip("indexing is not yet implemented")
+def _test_lookup_by_name():
+    from pyxmolpp2.v1 import ResidueId
+    frame = make_polyglycine([("A", 2)])
 
+    frame["A"]  # does not throw
+    frame["A"][ResidueId(2)]  # does not throw
+    frame["A"][ResidueId(2)]["CA"]  # does not throw
+    frame["A"][ResidueId(2)]["N"]  # does not throw
+
+    with pytest.raises(RuntimeError):
+        frame["B"]  # does throw
+
+    with pytest.raises(RuntimeError):
+        frame["A"][ResidueId(3)]  # does throw
+
+    with pytest.raises(RuntimeError):
+        frame["A"][ResidueId(2)]["CX"]  # does not throw
+
+
+@pytest.mark.skip("indexing is not yet implemented")
 def test_lookup_after_rename():
-    from pyxmolpp2.polymer import ChainName, ResidueId, AtomName, \
-        OutOfRangeResidue, OutOfRangeFrame, OutOfRangeChain
-    frame = make_polyglycine([("A",2)])
+    from pyxmolpp2.v1 import ResidueId
+    frame = make_polyglycine([("A", 2)])
 
-    frame[ChainName("A")]  # does not throw
-    frame[ChainName("A")][ResidueId(2)] # does not throw
-    frame[ChainName("A")][ResidueId(2)][AtomName("CA")] # does not throw
+    frame["A"]  # does not throw
+    frame["A"][ResidueId(2)]  # does not throw
+    frame["A"][ResidueId(2)]["CA"]  # does not throw
 
-    frame[ChainName("A")][ResidueId(2)][AtomName("CA")].name = AtomName("CX")
-    frame[ChainName("A")][ResidueId(2)].id = ResidueId(99)
-    frame[ChainName("A")].name = ChainName("X")
+    frame["A"][ResidueId(2)]["CA"].name = "CX"
+    frame["A"][ResidueId(2)].id = ResidueId(99)
+    frame["A"].name = "X"
 
-    frame[ChainName("X")]  # does not throw
-    frame[ChainName("X")][ResidueId(99)] # does not throw
-    frame[ChainName("X")][ResidueId(99)][AtomName("CX")] # does not throw
+    frame["X"]  # does not throw
+    frame["X"][ResidueId(99)]  # does not throw
+    frame["X"][ResidueId(99)]["CX"]  # does not throw
 
 
 def test_dumb_copy_lookup():
-    from pyxmolpp2.polymer import Frame
+    from pyxmolpp2.v1 import Frame
     frame = make_polyglycine([("A", 3), ("B", 3)])
 
-    frame2 = Frame(2)
+    frame2 = Frame()
     for c in frame.molecules:
-        frame2.emplace(c)
+        frame2.add_molecule()
 
     assert frame.molecules.size == frame2.molecules.size
     assert frame.residues.size == frame2.residues.size
@@ -365,29 +358,29 @@ def test_frame_copy():
 
 
 def test_AtomSelection_transformations():
-    from pyxmolpp2.geometry import Translation3d, XYZ
+    from pyxmolpp2.v1 import Translation, XYZ
     frame = make_polyglycine([("A", 20)])
 
     ats = frame.atoms
     for a in ats:
-        assert (a.r - XYZ(1,2,3)).len() == 0
+        assert (a.r - XYZ(1, 2, 3)).len() == 0
 
-    transformation = Translation3d(XYZ(1,2,3))
+    transformation = Translation(XYZ(1, 2, 3))
     ats.transform(transformation)
     for a in ats:
-        assert (a.r - XYZ(2,4,6)).len() == 0
+        assert (a.r - XYZ(2, 4, 6)).len() == 0
+
 
 def test_Atom_setters():
-    from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.geometry import XYZ
+    from pyxmolpp2.v1 import XYZ
     frame = make_polyglycine([("A", 1)])
     a = frame.atoms[0]
 
-    a.name = AtomName("X")
-    assert a.name == AtomName("X")
+    a.name = "X"
+    assert a.name == "X"
 
-    a.aName = AtomName("Y")
-    assert a.aName == AtomName("Y")
+    a.aName = "Y"
+    assert a.aName == "Y"
 
     a.id = 5
     assert a.id == 5
@@ -395,19 +388,20 @@ def test_Atom_setters():
     a.aId = 7
     assert a.aId == 7
 
-    a.r = XYZ(9,9,9)
-    assert (a.r - XYZ(9,9,9)).len() == 0
+    a.r = XYZ(9, 9, 9)
+    assert (a.r - XYZ(9, 9, 9)).len() == 0
+
 
 def test_Residue_setters():
-    from pyxmolpp2.polymer import ResidueName, ResidueId
+    from pyxmolpp2.v1 import ResidueId
     frame = make_polyglycine([("A", 1)])
     r = frame.residues[0]
 
-    r.name = ResidueName("X")
-    assert r.name == ResidueName("X")
+    r.name = "X"
+    assert r.name == "X"
 
-    r.rName = ResidueName("Y")
-    assert r.rName == ResidueName("Y")
+    r.rName = "Y"
+    assert r.rName == "Y"
 
     r.id = ResidueId(5)
     assert r.id == ResidueId(5)
@@ -415,20 +409,20 @@ def test_Residue_setters():
     r.rId = ResidueId(7)
     assert r.rId == ResidueId(7)
 
+
 def test_Chain_setters():
-    from pyxmolpp2.polymer import ChainName
     frame = make_polyglycine([("A", 1)])
     c = frame.molecules[0]
 
-    c.name = ChainName("X")
-    assert c.name == ChainName("X")
+    c.name = "X"
+    assert c.name == "X"
 
-    c.cName = ChainName("Y")
-    assert c.cName == ChainName("Y")
+    c.cName = "Y"
+    assert c.cName == "Y"
 
 
 def test_AtomSelection_construction_from_list():
-    from pyxmolpp2.polymer import AtomSelection
+    from pyxmolpp2.v1 import AtomSelection
 
     frame = make_polyglycine([("A", 20)])
     atom_list = [a for a in frame.atoms]
@@ -437,8 +431,9 @@ def test_AtomSelection_construction_from_list():
 
     assert asel == frame.atoms
 
+
 def test_ResidueSelection_construction_from_list():
-    from pyxmolpp2.polymer import ResidueSelection
+    from pyxmolpp2.v1 import ResidueSelection
 
     frame = make_polyglycine([("A", 20)])
     thelist = [a for a in frame.residues]
@@ -449,18 +444,18 @@ def test_ResidueSelection_construction_from_list():
 
 
 def test_bad_selection_construction_from_list():
-    from pyxmolpp2.polymer import AtomSelection, ChainSelection
+    from pyxmolpp2.v1 import AtomSelection, MoleculeSelection
 
     frame = make_polyglycine([("A", 20)])
 
     with pytest.raises(Exception):
         AtomSelection([a for a in frame.molecules])
     with pytest.raises(Exception):
-        ChainSelection([a for a in frame.residues])
+        MoleculeSelection([a for a in frame.residues])
 
 
+@pytest.mark.skip("to_pdb not implemented")
 def test_frame_buf_output():
-    from pyxmolpp2.pdb import StandardPdbRecords
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
     output = StringIO()
@@ -472,6 +467,7 @@ def test_frame_buf_output():
     assert output.getvalue().splitlines()[-1].strip() == "TER"
 
 
+@pytest.mark.skip("to_pdb not implemented")
 def test_frame_file_output():
     frame = make_polyglycine([("A", 20)])
 
@@ -490,6 +486,7 @@ def test_frame_file_output():
     os.unlink("temp.pdb")
 
 
+@pytest.mark.skip("to_pdb not implemented")
 def test_anything_to_pdb_file():
     from pyxmolpp2.pdb import StandardPdbRecords
     frame = make_polyglycine([("A", 20)])
@@ -515,8 +512,9 @@ def test_anything_to_pdb_file():
     os.unlink("temp.pdb")
 
 
+@pytest.mark.skip("to_pdb not implemented")
 def test_anything_to_pdb_buffer():
-    from pyxmolpp2.pdb import StandardPdbRecords
+    from pyxmolpp2.v1 import StandardPdbRecords
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
 
@@ -540,6 +538,7 @@ def test_anything_to_pdb_buffer():
         frame.residues[0].to_pdb(output, StandardPdbRecords.instance())
 
 
+@pytest.mark.skip("to_pdb not implemented")
 def test_frame_buf_exceptions():
     frame = make_polyglycine([("A", 20)])
 
