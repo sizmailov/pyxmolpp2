@@ -102,9 +102,7 @@ private:
 
   XYZ& crd(BaseAtom& atom);
 
-//public:
-  void check_references_integrity() const;
-//private:
+  void check_references_integrity();
 
   friend proxy::AtomRef;
   friend proxy::ResidueRef;

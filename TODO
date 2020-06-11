@@ -15,3 +15,5 @@ add .serial() read-only method to references
 support negative indices in selections and spans
 add .slice() method to spans and selections
 add .erase() to atom references, slices, selections
+
+Atom/Residue/Molecule assignment ?

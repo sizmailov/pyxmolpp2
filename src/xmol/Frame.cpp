@@ -126,10 +126,8 @@ proxy::MoleculeRef Frame::add_molecule() {
   if (old_begin != new_begin) {
     notify_molecules_move(old_begin, old_end, new_begin);
     // update pointers in residues
-    for (auto& mol_info : future::Span{new_begin, m_molecules.size()}) {
-      for (auto& info : mol_info.residues) {
-        info.molecule = &mol_info;
-      }
+    for (auto& info : m_residues) {
+      info.molecule = new_begin + (info.molecule - old_begin);
     }
   }
   check_references_integrity();
@@ -154,7 +152,12 @@ Frame& Frame::operator=(Frame&& other) {
     m_residues = std::move(other.m_residues);
     m_molecules = std::move(other.m_molecules);
     m_coordinates = std::move(other.m_coordinates);
+    for (auto& mol : m_molecules) {
+      mol.frame = this;
+    }
   }
+  check_references_integrity();
+  other.check_references_integrity();
   return *this;
 }
 
@@ -177,6 +180,7 @@ Frame& Frame::operator=(const Frame& other) {
       atom.residue = m_residues.data() + (atom.residue - other.m_residues.data());
     }
   }
+  check_references_integrity();
   return *this;
 }
 
@@ -194,6 +198,7 @@ Frame::Frame(const Frame& other)
   for (auto& atom : m_atoms) {
     atom.residue = m_residues.data() + (atom.residue - other.m_residues.data());
   }
+  check_references_integrity();
 }
 
 Frame::Frame(Frame&& other)
@@ -211,9 +216,15 @@ Frame::Frame(Frame&& other)
       m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
       m_molecules(std::move(other.m_molecules)), m_coordinates(std::move(other.m_coordinates)) {
   notify_frame_moved(other);
+  for (auto& mol : m_molecules) {
+    mol.frame = this;
+  }
+  check_references_integrity();
+  other.check_references_integrity();
 }
 Frame::~Frame() { notify_frame_delete(); }
-void Frame::check_references_integrity() const {
+
+void Frame::check_references_integrity() {
 #ifdef NDEBUG
   return; // disables check completely in release mode
 #endif
@@ -221,6 +232,19 @@ void Frame::check_references_integrity() const {
   if (m_molecules.size() > 10 || m_residues.size() > 10 || m_atoms.size() > 10) {
     return;
   }
+
+  auto mols = molecules();
+  for (auto&& mol : mols) {
+    assert(mol.size() == mol.residues().size());
+    for (auto&& res : mol.residues()) {
+      assert(res.size() == res.atoms().size());
+      assert(res.molecule() == mol);
+      for (auto&& atom : res.atoms()) {
+        assert(atom.residue() == res);
+      }
+    }
+  }
+
   size_t res_count = 0;
   for (auto& mol : m_molecules) {
     assert(m_residues.data() <= mol.residues.m_begin);
