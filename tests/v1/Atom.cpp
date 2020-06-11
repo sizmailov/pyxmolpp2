@@ -161,9 +161,6 @@ TEST_F(AtomTests, composition) {
   {
     Frame frame2 = frame;
 
-    frame2.check_references_integrity();
-    check_size(frame2);
-
     EXPECT_NE(frame2, frame);
     EXPECT_EQ(frame2.n_molecules(), frame.n_molecules());
 
@@ -270,50 +267,6 @@ TEST_F(AtomTests, composition) {
 
     AtomRef A = R.atoms()[R.size() - 1];
     AtomRef A2 = R2.atoms()[R2.size() - 1];
-    EXPECT_NE(A2, A);
-    EXPECT_EQ(A2.name(), A.name());
-    EXPECT_EQ(A2.id(), A.id());
-    EXPECT_EQ(A2.r().x(), A.r().x());
-    EXPECT_EQ(A2.r().y(), A.r().y());
-    EXPECT_EQ(A2.r().z(), A.r().z());
-  }
-
-  {
-    Frame frame2;
-    frame2 = frame;
-    EXPECT_NE(frame2, frame);
-    EXPECT_EQ(frame2.n_molecules(), frame.n_molecules());
-
-    MoleculeRef C2 = frame2.molecules()[frame2.n_molecules() - 1];
-    EXPECT_NE(C2, C);
-    EXPECT_EQ(C2.name(), C.name());
-    //    EXPECT_EQ(C2.serial(),C.serial());
-
-    ResidueRef R = C.residues()[C.size() - 1];
-    ResidueRef R2 = C2.residues()[C2.size() - 1];
-    EXPECT_NE(R2, R);
-    EXPECT_EQ(R2.name(), R.name());
-    EXPECT_EQ(R2.id(), R.id());
-    EXPECT_EQ(R2.size(), R.size());
-
-    R2.name(ResidueName("XXX"));
-    EXPECT_NE(R2.name(), R.name());
-    R2 = R;
-    EXPECT_EQ(R2.molecule(), C2);
-
-    EXPECT_NE(R2, R);
-    EXPECT_EQ(R2.name(), R.name());
-    EXPECT_EQ(R2.id(), R.id());
-    EXPECT_EQ(R2.size(), R.size());
-
-    AtomRef A = R.atoms()[R.size() - 1];
-    AtomRef A2 = R2.atoms()[R2.size() - 1];
-
-    A2.id(99);
-    EXPECT_NE(A2.id(), A.id());
-    A2 = A;
-    EXPECT_EQ(A2.id(), A.id());
-
     EXPECT_NE(A2, A);
     EXPECT_EQ(A2.name(), A.name());
     EXPECT_EQ(A2.id(), A.id());
@@ -449,15 +402,15 @@ TEST_F(AtomTests, residue_prev_next) {
 
   EXPECT_EQ(c.size(), 4);
 
+  EXPECT_EQ(*c[0].next(), c[1]);
   EXPECT_EQ(*c[1].next(), c[2]);
   EXPECT_EQ(*c[2].next(), c[3]);
-  EXPECT_EQ(*c[3].next(), c[4]);
-  EXPECT_FALSE(!!c[4].next());
+  EXPECT_FALSE(!!c[3].next());
 
-  EXPECT_FALSE(!!c[1].prev());
+  EXPECT_FALSE(!!c[0].prev());
+  EXPECT_EQ(*c[1].prev(), c[0]);
   EXPECT_EQ(*c[2].prev(), c[1]);
   EXPECT_EQ(*c[3].prev(), c[2]);
-  EXPECT_EQ(*c[4].prev(), c[3]);
 
   // todo: enable when .erase() is implemented
   //
