@@ -348,8 +348,9 @@ def test_selection_strides():
 
 
 def test_frame_copy():
+    from pyxmolpp2.v1 import Frame
     frame = make_polyglycine([("A", 2)])
-    frame2 = frame.copy()
+    frame2 = Frame(frame)
 
     frame.atoms[0].r.x = 1
     frame2.atoms[0].r.x = 2

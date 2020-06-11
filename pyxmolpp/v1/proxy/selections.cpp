@@ -3,9 +3,9 @@
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 
+#include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -41,14 +41,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
       .def("__getitem__", [](Sel& sel, size_t i) { return sel[i].smart(); })
       .def(
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
-      // todo: enable operators with conversion to smart version!
-      //      .def(py::self |= py::self)
-      //      .def(py::self -= py::self)
-      //      .def(py::self &= py::self)
-      //      .def(py::self | py::self)
-      //      .def(py::self - py::self)
-      //      .def(py::self & py::self)
-      ;
+      .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSelection>& pyResidueSelection) {
   using Sel = ResidueSmartSelection;
@@ -65,13 +60,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
       .def("__getitem__", [](Sel& sel, size_t i) { return sel[i].smart(); })
       .def(
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
-      // todo: enable operators with conversion to smart version!
-      //      .def(py::self |= py::self)
-      //      .def(py::self -= py::self)
-      //      .def(py::self &= py::self)
-      //      .def(py::self | py::self)
-      //      .def(py::self - py::self)
-      //      .def(py::self & py::self)
+      .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); })
       ;
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSelection>& pyMoleculeSelection) {
@@ -89,12 +80,8 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
       .def("__getitem__", [](Sel& sel, size_t i) { return sel[i].smart(); })
       .def(
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
-      // todo: enable operators with conversion to smart version!
-      //      .def(py::self |= py::self)
-      //      .def(py::self -= py::self)
-      //      .def(py::self &= py::self)
-      //      .def(py::self | py::self)
-      //      .def(py::self - py::self)
-      //      .def(py::self & py::self)
+      .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); })
       ;
 }
