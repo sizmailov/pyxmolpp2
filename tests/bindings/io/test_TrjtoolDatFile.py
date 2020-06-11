@@ -1,7 +1,7 @@
 import pytest
 
-def test_read_trjtool():
 
+def test_read_trjtool():
     from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile
 
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
@@ -12,19 +12,19 @@ def test_read_trjtool():
 
     assert datfile.n_frames() == 1000
     assert datfile.n_atoms() == frame.atoms.size
-
+    datfile.advance(0)
     datfile.read_coordinates(0, frame.coords)
 
 
 def test_raise_file_does_not_exists():
-    from pyxmolpp2.trjtool import DatFile, TrjtoolException
+    from pyxmolpp2.v1 import TrjtoolDatFile
 
-    with pytest.raises(TrjtoolException):
-        DatFile("does_not_exists.dat")
+    with pytest.raises(RuntimeError):
+        TrjtoolDatFile("does_not_exists.dat")
 
 
 def test_raise_file_is_empty():
-    from pyxmolpp2.trjtool import DatFile, unexpected_eof
+    from pyxmolpp2.v1 import TrjtoolDatFile
     import os
-    with pytest.raises(unexpected_eof):
-        DatFile(os.devnull)
+    with pytest.raises(RuntimeError):
+        TrjtoolDatFile(os.devnull)

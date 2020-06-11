@@ -2,21 +2,15 @@ import pytest
 
 
 def test_read_netcdf():
-    from pyxmolpp2.v1 import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
-    from pyxmolpp2.amber import NetCDFTrajectoryFile
+    from pyxmolpp2.v1 import PdbFile, AmberNetCDF
 
-    records = AlteredPdbRecords(StandardPdbRecords.instance())
+    frame = PdbFile("tests_dataset/amber/GB1_F30C_MTSL/box.pdb").frames()[0]
 
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7, 12])
+    assert frame.atoms.size > 0
 
-    frame = PdbFile("tests_dataset/amber/GB1_F30C_MTSL/box.pdb", records).get_frame()
+    datfile = AmberNetCDF("tests_dataset/amber/GB1_F30C_MTSL/GB1_F30C_MTSL_10_frames.nc")
 
-    assert frame.asAtoms.size > 0
+    assert datfile.n_frames() == 10
+    assert datfile.n_atoms() == frame.atoms.size
 
-    datfile = NetCDFTrajectoryFile("tests_dataset/amber/GB1_F30C_MTSL/GB1_F30C_MTSL_10_frames.nc")
-
-    assert datfile.n_frames == 10
-    assert datfile.match(frame.asAtoms)
-    assert datfile.n_atoms_per_frame == frame.asAtoms.size
-
-    datfile.set_coordinates(0, frame.asAtoms, list(range(frame.asAtoms.size)))
+    datfile.read_coordinates(0, frame.coords)
