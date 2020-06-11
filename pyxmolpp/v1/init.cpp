@@ -59,6 +59,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyXYZ);
   populate(pyAngleValue);
 
+  define_angle_free_functions(v1);
+
   populate(pyAtom);
   populate(pyResidue);
   populate(pyMolecule);
