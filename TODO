@@ -23,3 +23,6 @@ add kwarg only overloads
     f(*, radians:float)
  for
     f(angle:AngleValue)
+
+
+make chain setters l/r-value qualified

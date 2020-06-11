@@ -2,6 +2,7 @@
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
+#include <sstream>
 
 #include <pybind11/operators.h>
 
@@ -21,7 +22,12 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
       .def(py::self == py::self)
       .def(py::self != py::self)
-  ;
+      .def("__repr__", [](Frame& self) {
+        std::ostringstream out;
+        out << "Frame<addr=" << std::hex << &self << ", size=(" << self.n_molecules() << ", " << self.n_residues()
+            << ", " << self.n_atoms() << ")>";
+        return out.str();
+      });
 }
 void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
   using SRef = MoleculeSmartRef;
@@ -33,11 +39,10 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
       .def_property_readonly("size", &SRef::size)
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) { return ref.frame(); })
+      .def_property_readonly("frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def("add_residue", [](SRef& ref) { return ref.add_residue().smart(); })
       .def(py::self == py::self)
-      .def(py::self != py::self)
-      ;
+      .def(py::self != py::self);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartRef>& pyResidue) {
   using SRef = ResidueSmartRef;
@@ -50,15 +55,14 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartRef
       .def_property_readonly("size", &SRef::size)
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) { return ref.frame(); })
+      .def_property_readonly("frame", [](SRef& ref) -> Frame&  { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("next", [](SRef& ref) -> std::optional<SRef> { return ref.next(); })
       .def_property_readonly("prev", [](SRef& ref) -> std::optional<SRef> { return ref.prev(); })
       .def("__getitem__", [](SRef& ref, const AtomName& name) { return ref[name]; })
       .def("__getitem__", [](SRef& ref, const std::string& name) { return ref[name.c_str()]; })
       .def("add_atom", [](SRef& ref) { return ref.add_atom().smart(); })
       .def(py::self == py::self)
-      .def(py::self != py::self)
-      ;
+      .def(py::self != py::self);
 }
 void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
   using SRef = AtomSmartRef;
@@ -70,9 +74,8 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
       .def_property("r", py::overload_cast<>(&SRef::r, py::const_), [](SRef& self, const XYZ& r) { self.r(r); })
       .def_property_readonly("residue", [](SRef& ref) { return ref.residue().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) { return ref.frame(); })
+      .def_property_readonly("frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("__eq__", &SRef::operator==)
       .def(py::self == py::self)
-      .def(py::self != py::self)
-      ;
+      .def(py::self != py::self);
 }
