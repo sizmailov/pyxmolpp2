@@ -74,8 +74,8 @@ void TrjtoolDatFile::read_header() {
     throw std::runtime_error("File size does not match header info");
   }
 }
-void TrjtoolDatFile::advance(size_t n) {
-  m_current_frame += n;
+void TrjtoolDatFile::advance(size_t shift) {
+  m_current_frame += shift;
 
   if (m_current_frame >= n_frames()) {
     m_stream = {};

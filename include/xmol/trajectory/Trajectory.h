@@ -29,6 +29,8 @@ public:
     Frame() = default;
     Frame(Frame&&) = default;
     Frame(const Frame&) = default;
+    Frame& operator=(Frame&&) = default;
+    Frame& operator=(const Frame&) = default;
     explicit Frame(xmol::Frame frame) : xmol::Frame(std::move(frame)), index(0){};
     FrameIndex index = 0;
   };
@@ -38,17 +40,24 @@ public:
   /// Iterator[Trajectory::Frame] (don't confuse with Frame)
   class Iterator {
   public:
+    Iterator() = delete;
+    Iterator(const Iterator&) = delete;
+    Iterator& operator=(const Iterator&) = delete;
+    Iterator(Iterator&& other) noexcept;
+    Iterator& operator=(Iterator&& other) noexcept;
     ~Iterator() {
-      m_traj.m_iterator_counter--;
-      if (m_pos.global_pos < m_end) { /// handle break
-        m_traj.advance(m_pos, m_end, m_end - m_pos.global_pos);
+      if (m_traj) {
+        m_traj->m_iterator_counter--;
+        if (m_pos.global_pos < m_end) { /// handle break
+          m_traj->advance(m_pos, m_end, m_end - m_pos.global_pos);
+        }
       }
     }
     Frame& operator*() { return m_frame; }
     Frame* operator->() { return &m_frame; }
     Iterator& operator++() {
       update();
-      m_traj.advance(m_pos, m_end, m_step);
+      m_traj->advance(m_pos, m_end, m_step);
       return *this;
     }
 
@@ -58,23 +67,23 @@ public:
   private:
     friend Trajectory;
     Iterator(Trajectory& t, Position begin, size_t end, size_t step)
-        : m_traj(t), m_pos(begin), m_end(end), m_step(step), m_frame(t.m_frame) {
+        : m_traj(&t), m_pos(begin), m_end(end), m_step(step), m_frame(t.m_frame) {
       assert(step > 0);
-      m_traj.m_iterator_counter++;
-      if (m_traj.m_iterator_counter > 1) {
+      m_traj->m_iterator_counter++;
+      if (m_traj->m_iterator_counter > 1) {
         throw TrajectoryDoubleTraverseError(""); // add link to doc / example
       }
       if (m_pos.global_pos < m_end) {
-        m_traj.advance(m_pos, m_end, 0);
+        m_traj->advance(m_pos, m_end, 0);
         update();
       }
     }
     void update() {
       auto coords = m_frame.coords();
-      m_traj.read_coordinates(m_pos, coords);
+      m_traj->read_coordinates(m_pos, coords);
       m_frame.index = m_pos.global_pos;
     }
-    Trajectory& m_traj;
+    Trajectory* m_traj;
     Position m_pos;
     size_t m_end;
     size_t m_step;
@@ -120,22 +129,7 @@ public:
   Sentinel end() { return {}; }
 
   /// Slice of trajectory
-  Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1) {
-    if (!end) {
-      end = n_frames();
-    }
-    if (!begin) {
-      begin = 0;
-    }
-    assert(*end <= n_frames());
-    assert(step > 0);
-    Position pos{*begin, 0, *begin};
-    while (pos.pos_in_file >= m_files[pos.file]->n_frames()) {
-      pos.pos_in_file -= m_files[pos.file]->n_frames();
-      ++pos.file;
-    }
-    return Slice(*this, pos, *end, step);
-  }
+  Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1);
 
   /// Total number of frames in trajectory
   [[nodiscard]] size_t n_frames() const { return m_n_frames; };
@@ -153,30 +147,7 @@ private:
     m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
   }
 
-  void advance(Position& position, size_t end, size_t step) {
-    position.global_pos += step;
-    if (step == 0) {
-      assert(position.pos_in_file < m_files[position.file]->n_frames());
-      m_files[position.file]->advance(position.pos_in_file);
-      return;
-    }
-    if (position.global_pos >= end) {
-      m_files[position.file]->advance(m_files[position.file]->n_frames());
-      return;
-    }
-    position.pos_in_file += step;
-    m_files[position.file]->advance(step);
-    if (position.file < m_files.size() && position.pos_in_file >= m_files[position.file]->n_frames()) {
-      position.pos_in_file -= m_files[position.file]->n_frames();
-      position.file++;
-      while (position.file < m_files.size() && position.pos_in_file >= m_files[position.file]->n_frames()) {
-        position.pos_in_file -= m_files[position.file]->n_frames();
-        position.file++;
-      }
-      m_files[position.file]->advance(0);
-    }
-    assert(position.file < m_files.size() && position.pos_in_file < m_files[position.file]->n_frames());
-  }
+  void advance(Position& position, size_t end, size_t step);
 
   void extend_unique_ptr(std::unique_ptr<TrajectoryInputFile>&& input_file) {
     assert(n_atoms() == input_file->n_atoms());
