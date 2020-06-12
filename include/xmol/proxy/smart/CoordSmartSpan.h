@@ -42,6 +42,16 @@ public:
     return m_span;
   }
 
+  Eigen::Map<CoordEigenMatrix> _eigen(){
+    check_precondition("_eigen()");
+    return m_span._eigen();
+  }
+
+  Frame& frame(){
+    check_precondition("frame()");
+    return FrameObserver::frame();
+  }
+
 private:
   CoordSpan m_span;
   bool m_is_split = false; /// indicates invalid span state

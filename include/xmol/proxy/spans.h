@@ -6,7 +6,7 @@ namespace xmol::proxy {
 
 class CoordSpan : public ProxySpan<CoordRef, XYZ> {
 public:
-  auto _eigen() { return Eigen::Map<CoordEigenMatrix>(empty() ? nullptr : m_begin->_eigen().data(), 3, size()); }
+  Eigen::Map<CoordEigenMatrix> _eigen() { return Eigen::Map<CoordEigenMatrix>(empty() ? nullptr : m_begin->_eigen().data(), 3, size()); }
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
 

@@ -27,7 +27,7 @@ protected:
 
   void on_frame_move(Frame& from, Frame& to);
   void on_frame_delete();
-
+  Frame& frame(){ return *m_frame; }
 private:
   Frame* m_frame;
   friend Frame;
