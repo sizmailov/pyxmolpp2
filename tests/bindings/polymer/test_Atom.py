@@ -2,6 +2,7 @@ import os
 import pytest
 from make_polygly import make_polyglycine
 
+
 def test_Frame():
     from pyxmolpp2.v1 import Frame, ResidueId, XYZ
 
@@ -85,6 +86,17 @@ def test_iterable():
     assert len(list(frame.molecules)) == frame.molecules.size
     assert len(list(frame.residues)) == frame.residues.size
     assert len(list(frame.atoms)) == frame.atoms.size
+    assert len(list(frame.coords)) == frame.atoms.size
+
+
+def test_coord_span_assign_values():
+    from pyxmolpp2.v1 import XYZ
+    import numpy as np
+    frame = make_polyglycine([("A", 10)])
+    frame.coords.values.T[:] = np.array([0,0,0])
+    assert frame.coords[0].distance(XYZ(0, 0, 0)) == pytest.approx(0)
+    assert frame.coords[frame.coords.size - 1].distance(XYZ(0, 0, 0)) == pytest.approx(0)
+    assert frame.coords[frame.coords.size - 1].distance(XYZ(1, 2, 3)) == pytest.approx(0)
 
 
 def test_repr():
