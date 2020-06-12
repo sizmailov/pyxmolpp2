@@ -35,7 +35,7 @@ geom::affine::Transformation3d calc_alignment_impl(const MatrixA& X, const Matri
 }
 
 template <typename MatrixA, typename MatrixB> double calc_rmsd_impl(const MatrixA& reference, const MatrixB& variable) {
-  return (reference - variable).array().square().rowwise().sum().sqrt().mean();
+  return std::sqrt((reference - variable).array().square().sum() / reference.cols() );
 }
 
 template <typename MatrixA> Eigen::Matrix3d calc_inertia_tensor_impl(const MatrixA& coords) {

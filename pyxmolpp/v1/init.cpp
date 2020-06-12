@@ -15,6 +15,7 @@
 #include "v1/io/PdbFile.h"
 #include "v1/io/TrjtoolDatFile.h"
 #include "v1/io/AmberNetCDF.h"
+#include "v1/algo/algo.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -92,4 +93,6 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyPdbInputFile);
   populate(pyTrjtoolDatFile);
   populate(pyAmberNetCDF);
+
+  define_algo_functions(v1);
 }

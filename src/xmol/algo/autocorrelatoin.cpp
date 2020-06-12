@@ -50,15 +50,10 @@ void autocorr(std::vector<std::complex<double>>& series, std::vector<std::comple
 }
 
 } // namespace
-std::vector<double> xmol::algo::calc_autocorr_order_2(const xmol::future::Span<xmol::geom::XYZ>& v,
-                                                          long long int limit, const AutoCorrelationMode& mode) {
-
+void xmol::algo::calc_autocorr_order_2(const xmol::future::Span<xmol::geom::XYZ>& v, xmol::future::Span<double> result,
+                                       const AutoCorrelationMode& mode) {
+  const long long limit = result.size();
   long long N = v.size();
-  if (limit < 0 || limit > v.size()) {
-    limit = v.size();
-  }
-
-  std::vector<double> result(limit, 0.0);
 
   std::vector<std::complex<double>> Y(2 * N);
   std::vector<std::complex<double>> tmp(2 * N);
@@ -100,6 +95,4 @@ std::vector<double> xmol::algo::calc_autocorr_order_2(const xmol::future::Span<x
   for (long long i = 0; i < limit; i++) {
     result[i] *= 4 * M_PI / 5.0 / (N - i);
   }
-
-  return result;
 }

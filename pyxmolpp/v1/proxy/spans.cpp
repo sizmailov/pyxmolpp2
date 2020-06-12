@@ -1,12 +1,14 @@
 #include "spans.h"
 #include "v1/iterator-helpers.h"
+#include "xmol/Frame.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 #include "xmol/proxy/spans-impl.h"
-#include "xmol/Frame.h"
 
 #include <pybind11/functional.h>
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
@@ -27,15 +29,22 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def(
           "__iter__", [](Span& s) { return common::make_coord_value_iterator(s.begin(), s.end()); },
           py::keep_alive<0, 1>())
-      .def_property_readonly("values", [](py::object self) {
-        py::object owner=self.attr("__frame");
-        Span& span = self.cast<Span&>();
-        auto eigen_map = span._eigen();
-        size_t shape[] = {(size_t)eigen_map.rows(), (size_t)eigen_map.cols()};
-        size_t strides[] = {(size_t)eigen_map.rowStride()*sizeof(double), (size_t)eigen_map.colStride()*sizeof(double)};
-        auto array = py::array(shape, strides, eigen_map.data(), owner);
-        return array;
-      });
+      .def_property_readonly("values",
+                             [](py::object self) {
+                               py::object owner = self.attr("__frame");
+                               Span& span = self.cast<Span&>();
+                               auto eigen_map = span._eigen();
+                               size_t shape[] = {(size_t)eigen_map.rows(), (size_t)eigen_map.cols()};
+                               size_t strides[] = {(size_t)eigen_map.rowStride() * sizeof(double),
+                                                   (size_t)eigen_map.colStride() * sizeof(double)};
+                               auto array = py::array(shape, strides, eigen_map.data(), owner);
+                               return array;
+                             })
+      .def("alignment_to", py::overload_cast<CoordSpan&>(&Span::alignment_to))
+      .def("alignment_to", py::overload_cast<CoordSelection&>(&Span::alignment_to))
+      .def("rmsd", py::overload_cast<CoordSpan&>(&Span::rmsd))
+      .def("rmsd", py::overload_cast<CoordSelection&>(&Span::rmsd))
+      .def("inertia_tensor", &Span::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {
   using Span = AtomSmartSpan;

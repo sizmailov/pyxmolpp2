@@ -1,12 +1,13 @@
 #include "selections.h"
 #include "v1/iterator-helpers.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 
+#include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -26,7 +27,12 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelec
           "__iter__", [](Sel& s) { return common::make_coord_value_iterator(s.begin(), s.end()); },
           py::keep_alive<0, 1>())
       .def_property("values", py::overload_cast<>(&Sel::_eigen),
-                    py::overload_cast<const CoordEigenMatrix&>(&Sel::_eigen));
+                    py::overload_cast<const CoordEigenMatrix&>(&Sel::_eigen))
+      .def("alignment_to", py::overload_cast<CoordSpan&>(&Sel::alignment_to))
+      .def("alignment_to", py::overload_cast<CoordSelection&>(&Sel::alignment_to))
+      .def("rmsd", py::overload_cast<CoordSpan&>(&Sel::rmsd))
+      .def("rmsd", py::overload_cast<CoordSelection&>(&Sel::rmsd))
+      .def("inertia_tensor", &Sel::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelection>& pyAtomSelection) {
   using Sel = AtomSmartSelection;

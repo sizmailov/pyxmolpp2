@@ -6,14 +6,18 @@
 
 using namespace xmol::geom;
 
-std::vector<double> xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<double> coord_radii,
-                                          double solvent_radii, int n_samples,
-                                          const future::Span<int>& sasa_points_indices) {
+void xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<double> coord_radii,
+                           double solvent_radii, future::Span<double> result, int n_samples,
+                           const future::Span<int>& sasa_points_indices) {
+  auto limit = sasa_points_indices.empty() ? coords.size() : sasa_points_indices.size();
   if (coords.size() != coord_radii.size()) {
-    throw GeomError("xmol::algo::calculate_sasa: coords.size() != radii.size()");
+    throw GeomError("xmol::algo::calc_sasa: coords.size() != radii.size()");
   }
   if (!sasa_points_indices.empty() && coords.size() < sasa_points_indices.size()) {
-    throw GeomError("xmol::algo::calculate_sasa: coords.size() < sasa_points_indices.size()");
+    throw GeomError("xmol::algo::calc_sasa: coords.size() < sasa_points_indices.size()");
+  }
+  if (limit != result.size()) {
+    throw GeomError("xmol::algo::calc_sasa: result.size() != limit");
   }
   const double max_radii = std::accumulate(coord_radii.begin(), coord_radii.end(), 0.0,
                                            [](const double& a, const double& b) { return std::max(a, b); });
@@ -57,12 +61,9 @@ std::vector<double> xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords,
     std::tie(i, j, k) = it.first;
   }
 
-  std::vector<double> result;
-  result.reserve(coords.size());
 
   const int n_neigh_cells = std::ceil((2 * (max_radii + solvent_radii) / neighbour_cell_size));
 
-  auto limit = sasa_points_indices.empty() ? coords.size() : sasa_points_indices.size();
 
   for (int i1 = 0; i1 < limit; ++i1) {
     int n = sasa_points_indices.empty() ? i1 : sasa_points_indices[i1];
@@ -142,7 +143,6 @@ std::vector<double> xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords,
       }
       atom_area -= segments_length(segments) * Rn * delta;
     }
-    result.push_back(atom_area);
+    result[i1] = atom_area;
   }
-  return result;
 }
