@@ -28,6 +28,7 @@ private:
   std::string m_filename;
   std::unique_ptr<std::istream> m_stream;
   Header m_header;
+  std::vector<float> m_buffer;
   size_t m_n_frames;
   size_t m_current_frame = 0;
   std::streampos m_offset;

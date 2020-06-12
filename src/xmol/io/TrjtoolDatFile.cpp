@@ -12,10 +12,6 @@ template <typename T> union FromRawBytes {
   char bytes[sizeof(T)];
 };
 
-struct XYZf {
-  float x, y, z;
-};
-
 } // namespace
 
 TrjtoolDatFile::TrjtoolDatFile(std::string filename) : m_filename(std::move(filename)) {
@@ -27,12 +23,13 @@ size_t TrjtoolDatFile::n_atoms() const { return m_header.nitems; }
 void TrjtoolDatFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
   assert(m_stream);
   assert(m_current_frame == index);
+  assert(m_buffer.size() == n_atoms() * 3);
+  assert(coordinates.size() == n_atoms());
 
-  for (auto& r : coordinates) {
-    FromRawBytes<XYZf> xyzf{};
-    m_stream->read(xyzf.bytes, sizeof(xyzf)); /// todo: properly handle endianness
-    r.set({xyzf.value.x, xyzf.value.y, xyzf.value.z});
-  }
+  /// todo: properly handle endianness
+  m_stream->read(reinterpret_cast<char*>(m_buffer.data()), sizeof(float) * n_atoms() * 3);
+  Eigen::Map<Eigen::Matrix<float, 3, Eigen::Dynamic>> buffer_map(m_buffer.data(), 3, n_atoms());
+  coordinates._eigen() = buffer_map.cast<double>();
 }
 void TrjtoolDatFile::read_header() {
   m_stream = std::make_unique<std::ifstream>(m_filename, std::ios::binary);
@@ -79,12 +76,14 @@ void TrjtoolDatFile::advance(size_t shift) {
 
   if (m_current_frame >= n_frames()) {
     m_stream = {};
+    m_buffer.clear();
     m_current_frame = 0;
     return;
   }
 
   if (!m_stream) {
     m_stream = std::make_unique<std::ifstream>(m_filename, std::ios::binary);
+    m_buffer.resize(n_atoms() * 3);
   }
 
   const std::streamoff frame_begin = sizeof(float) * m_header.nitems * m_header.ndim * m_current_frame;
