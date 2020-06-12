@@ -65,26 +65,26 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
   m.def(
       "calc_sasa",
       [](py::array_t<double, py::array::f_style> coords, py::array_t<double> coord_radii, double solvent_radii,
-         int n_samples, py::array_t<int>* indices_of_interest) {
-        if (coords.ndim() != 2 || coords.shape(0) != 3) {
-          throw py::type_error("coords.shape!=(3,*)");
+         py::array_t<int>* indices_of_interest, int n_samples) {
+        if (coords.ndim() != 2 || coords.shape(1) != 3) {
+          throw std::runtime_error("coords.shape!=[N,3]");
         }
         future::Span<int> indices;
         if (indices_of_interest != nullptr) {
           py::buffer_info indices_of_interest_info = indices_of_interest->request();
           if (indices_of_interest_info.ndim != 1) {
-            throw py::type_error("indices_of_interest dimension != 1");
+            throw std::runtime_error("indices_of_interest dimension != 1");
           }
           if (indices_of_interest_info.format != "i") {
-            throw py::type_error("indices_of_interest dtype(" + indices_of_interest_info.format + ") != numpy.intc");
+            throw std::runtime_error("indices_of_interest dtype(" + indices_of_interest_info.format + ") != numpy.intc");
           }
-          if (indices_of_interest_info.size > coords.size()) {
-            throw py::type_error("indices_of_interest.size() > coords.size()");
+          if (indices_of_interest_info.size > coords.shape(0)) {
+            throw std::runtime_error("indices_of_interest.size() > coords.size()");
           }
           indices = future::Span{indices_of_interest->mutable_data(), (size_t)indices_of_interest->size()};
         }
-        future::Span<XYZ> coord_span(reinterpret_cast<XYZ*>(coords.mutable_data()), coords.size());
-        const int limit = indices_of_interest ? indices_of_interest->size() : coords.size();
+        future::Span<XYZ> coord_span(reinterpret_cast<XYZ*>(coords.mutable_data()), coords.shape(0));
+        const int limit = indices_of_interest ? indices_of_interest->size() : coords.shape(0);
         py::array_t<double> result(limit);
         future::Span<double> result_span(result.mutable_data(), (size_t)result.size());
         future::Span<double> coord_radii_span(coord_radii.mutable_data(), (size_t)coord_radii.size());
@@ -92,5 +92,5 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
         return result;
       },
       py::arg("coordinates"), py::arg("vdw_radii"), py::arg("solvent_radius"),
-      py::arg("indices_of_interest").noconvert(true) = nullptr, py::arg("n_samples").noconvert(true) = 20);
+      py::arg("indices_of_interest") = nullptr, py::arg("n_samples").noconvert(true) = 20);
 }
