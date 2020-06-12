@@ -8,8 +8,10 @@ namespace xmol {
 
 using XYZ = xmol::geom::XYZ;
 using CoordEigenVector = XYZ::Vector_t;
-using CoordEigenMatrix = Eigen::Matrix<double, 3, Eigen::Dynamic>;
-using CoordEigenMatrixMap = Eigen::Map<Eigen::Matrix<double, 3, Eigen::Dynamic>>;
+using CoordEigenMatrix = Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using CoordEigenMatrixf = Eigen::Matrix<float, Eigen::Dynamic, 3, Eigen::RowMajor>;
+using CoordEigenMatrixMap = Eigen::Map<CoordEigenMatrix>;
+using CoordEigenMatrixMapf = Eigen::Map<CoordEigenMatrixf>;
 
 namespace detail {
 struct AtomNameTag {};
@@ -59,15 +61,15 @@ struct ResidueId {
   ResidueInsertionCode iCode;
 };
 
-inline bool operator< (const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <  ResidueId(rhs); }
-inline bool operator> (const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >  ResidueId(rhs); }
+inline bool operator<(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs < ResidueId(rhs); }
+inline bool operator>(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs > ResidueId(rhs); }
 inline bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }
 inline bool operator!=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs != ResidueId(rhs); }
 inline bool operator<=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <= ResidueId(rhs); }
 inline bool operator>=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >= ResidueId(rhs); }
 
-inline bool operator< (const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <  rhs; }
-inline bool operator> (const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >  rhs; }
+inline bool operator<(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) < rhs; }
+inline bool operator>(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) > rhs; }
 inline bool operator==(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) == rhs; }
 inline bool operator!=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) != rhs; }
 inline bool operator<=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <= rhs; }

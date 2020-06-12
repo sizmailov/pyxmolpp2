@@ -1,5 +1,6 @@
 *.log
 *.pyc
+.run
 .cc_token
 .directory
 .benchmark-results

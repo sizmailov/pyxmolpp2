@@ -9,7 +9,7 @@ inline XYZ operator-(const XYZ& a, const XYZ& b);
 
 class XYZ {
 public:
-  using Vector_t = Eigen::Vector3d;
+  using Vector_t = Eigen::RowVector3d;
   explicit inline XYZ(const Vector_t& v) : m_v(v) {}
 
   inline XYZ(double x, double y, double z) : m_v(x, y, z) {}

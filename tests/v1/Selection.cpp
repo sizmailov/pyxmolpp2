@@ -151,11 +151,11 @@ TEST_F(SelectionTests, smart_atom_multiple_frames) {
 TEST_F(SelectionTests, smart_coords_eigen) {
   auto frame = make_polyglycines({{"A", 1}});
   auto coords = CoordSelection(frame.coords()).smart();
-  auto matrix = coords._eigen();
+  CoordEigenMatrix matrix = coords._eigen();
   EXPECT_EQ(matrix.innerSize(), 3);
   EXPECT_EQ(matrix.outerSize(), frame.n_atoms());
-  matrix.colwise() = XYZ(1,2,3)._eigen();
-  matrix.col(2) = XYZ(3,2,1)._eigen();
+  matrix.rowwise() = XYZ(1,2,3)._eigen();
+  matrix.row(2) = XYZ(3,2,1)._eigen();
   coords._eigen(matrix);
   EXPECT_DOUBLE_EQ(coords[0].distance(XYZ(1,2,3)), 0);
   EXPECT_DOUBLE_EQ(coords[2].distance(XYZ(3,2,1)), 0);

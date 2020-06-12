@@ -157,13 +157,13 @@ operator*=(const xmol::geom::affine::Rotation3d& rhs) {
 Transformation3d& Transformation3d::
 operator*=(const xmol::geom::affine::Transformation3d& M1) {
   auto& m1 = M1.m;
-  dr = dr + XYZ(m * M1.dr._eigen());
+  dr = dr + XYZ(m * M1.dr._eigen().transpose());
   m *= m1;
   return *this;
 }
 
 XYZ Transformation3d::transform(const xmol::geom::XYZ& r) const {
-  return XYZ(m * r._eigen()) + dr;
+  return XYZ(m * r._eigen().transpose()) + dr;
 }
 
 Transformation3d Transformation3d::inverted() const {
@@ -174,7 +174,7 @@ Transformation3d Transformation3d::inverted() const {
   double scale2 = (r.m(0, 1) * r.m(0, 1) + r.m(0, 2) * r.m(0, 2) +
       r.m(0, 0) * r.m(0, 0));
   r.m /= scale2;
-  Eigen::Vector3d vvv = r.m * dr._eigen();
+  XYZ::Vector_t vvv = r.m * dr._eigen().transpose();
   r.dr = -XYZ(vvv);
   return r;
 }
@@ -184,7 +184,7 @@ Transformation3d::Transformation3d(
     : m(Eigen::Matrix3d::Identity() * uniformScale3d.scale()), dr(0, 0, 0) {}
 
 XYZ Rotation3d::transform(const XYZ& r) const {
-  return XYZ(Eigen::Vector3d(m * r._eigen()));
+  return XYZ(Eigen::Vector3d(m * r._eigen().transpose()));
 }
 
 Rotation3d xmol::geom::affine::operator*(const Rotation3d& lhs,

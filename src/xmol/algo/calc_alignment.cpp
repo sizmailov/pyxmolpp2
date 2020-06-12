@@ -15,8 +15,7 @@ Transformation3d xmol::algo::calc_alignment(proxy::CoordSpan& reference, proxy::
 Transformation3d xmol::algo::calc_alignment(proxy::CoordSelection& reference, proxy::CoordSpan& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
-Transformation3d xmol::algo::calc_alignment(proxy::CoordSelection& reference,
-                                                        proxy::CoordSelection& variable) {
+Transformation3d xmol::algo::calc_alignment(proxy::CoordSelection& reference, proxy::CoordSelection& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
 
@@ -40,14 +39,12 @@ Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coo
 Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSpan& coords) {
   return calc_inertia_tensor_impl(coords._eigen());
 }
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coords,
-                                                    const future::Span<double>& mass) {
-  Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>> mass_map(mass.m_begin, 1, mass.size());
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coords, const future::Span<double>& mass) {
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.m_begin, 1, mass.size());
   return calc_inertia_tensor_impl(coords._eigen(), mass_map);
 }
 
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSpan& coords,
-                                                    const future::Span<double>& mass) {
-  Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>> mass_map(mass.m_begin, 1, mass.size());
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSpan& coords, const future::Span<double>& mass) {
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.m_begin, 1, mass.size());
   return calc_inertia_tensor_impl(coords._eigen(), mass_map);
 }

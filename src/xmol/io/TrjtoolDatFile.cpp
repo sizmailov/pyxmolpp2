@@ -28,7 +28,7 @@ void TrjtoolDatFile::read_coordinates(size_t index, proxy::CoordSpan& coordinate
 
   /// todo: properly handle endianness
   m_stream->read(reinterpret_cast<char*>(m_buffer.data()), sizeof(float) * n_atoms() * 3);
-  Eigen::Map<Eigen::Matrix<float, 3, Eigen::Dynamic>> buffer_map(m_buffer.data(), 3, n_atoms());
+  CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
   coordinates._eigen() = buffer_map.cast<double>();
 }
 void TrjtoolDatFile::read_header() {

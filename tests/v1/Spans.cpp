@@ -138,8 +138,8 @@ TEST_F(SpanTests, coordinate_span_to_eigen) {
   coords[last].set({4, 5, 6});
 
   auto matrix_ref = coords._eigen();
-  matrix_ref.row(1).setConstant(1.0); // set all y values to 1
-
+  matrix_ref.col(1).setConstant(1.0); // set all y values to 1
+  std::cout << matrix_ref << std::endl;
   EXPECT_DOUBLE_EQ(coords[0].distance({1, 1, 3}), 0);
   EXPECT_DOUBLE_EQ(coords[last].distance({4, 1, 6}), 0);
 }

@@ -17,10 +17,10 @@ double CoordSelection::rmsd(CoordSelection& other) { return xmol::algo::calc_rms
 Eigen::Matrix3d CoordSelection::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
 
 xmol::CoordEigenMatrix CoordSelection::_eigen() {
-  CoordEigenMatrix matrix(3, size());
+  CoordEigenMatrix matrix(size(), 3);
   size_t i = 0;
   for (auto& x : *this) {
-    matrix(Eigen::all, i++) = x._eigen();
+    matrix(i++, Eigen::all) = x._eigen();
   }
   return matrix;
 }
@@ -31,7 +31,7 @@ void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
   }
   size_t i = 0;
   for (auto& x : *this) {
-    x._eigen() = matrix(Eigen::all, i++);
+    x._eigen() = matrix(i++, Eigen::all);
   }
 }
 

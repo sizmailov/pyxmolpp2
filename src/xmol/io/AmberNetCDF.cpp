@@ -75,7 +75,7 @@ void xmol::io::AmberNetCDF::read_coordinates(size_t index, xmol::proxy::CoordSpa
   nc_inq_varid(ncid, "coordinates", &coords_id);
 
   check_netcdf_call(nc_get_vara_float(ncid, coords_id, start, count, m_buffer.data()), NC_NOERR, "nc_get_vara_float");
-  Eigen::Map<Eigen::Matrix<float, 3, Eigen::Dynamic>> buffer_map(m_buffer.data(), 3, n_atoms());
+  CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
   coordinates._eigen() = buffer_map.cast<double>();
 }
 
