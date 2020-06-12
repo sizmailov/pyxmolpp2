@@ -241,6 +241,7 @@ void Frame::check_references_integrity() {
       assert(res.molecule() == mol);
       for (auto&& atom : res.atoms()) {
         assert(atom.residue() == res);
+        static_cast<void>(atom);
       }
     }
   }
