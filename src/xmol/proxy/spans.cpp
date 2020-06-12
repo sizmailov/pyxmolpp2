@@ -1,9 +1,24 @@
+
+#include <xmol/proxy/spans.h>
+
 #include "xmol/proxy/smart/spans.h"
+#include "xmol/algo/alignment.h"
 #include "xmol/proxy/selections.h"
 
 using namespace xmol::proxy;
 
 smart::CoordSmartSpan CoordSpan::smart() { return smart::CoordSmartSpan(*this); }
+
+xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSpan& other) {
+  return xmol::algo::calc_alignment(other, *this);
+}
+xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSelection& other) {
+  return xmol::algo::calc_alignment(other, *this);
+}
+
+double CoordSpan::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *this); }
+double CoordSpan::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
+Eigen::Matrix3d CoordSpan::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
 
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {

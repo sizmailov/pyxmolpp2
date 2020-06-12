@@ -1,16 +1,27 @@
 #pragma once
-#include "../base.h"
 #include "ProxySpan.h"
+#include "xmol/base.h"
+#include "xmol/geom/fwd.h"
 
 namespace xmol::proxy {
 
 class CoordSpan : public ProxySpan<CoordRef, XYZ> {
 public:
-  Eigen::Map<CoordEigenMatrix> _eigen() { return Eigen::Map<CoordEigenMatrix>(empty() ? nullptr : m_begin->_eigen().data(), 3, size()); }
+  Eigen::Map<CoordEigenMatrix> _eigen() {
+    return Eigen::Map<CoordEigenMatrix>(empty() ? nullptr : m_begin->_eigen().data(), 3, size());
+  }
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
 
   smart::CoordSmartSpan smart();
+
+  geom::affine::Transformation3d alignment_to(CoordSpan& other);
+  geom::affine::Transformation3d alignment_to(CoordSelection& other);
+
+  double rmsd(CoordSpan& other);
+  double rmsd(CoordSelection& other);
+
+  Eigen::Matrix3d inertia_tensor();
 
 protected:
   CoordSpan() = default;

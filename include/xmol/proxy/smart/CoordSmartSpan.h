@@ -15,6 +15,25 @@ public:
     return m_span.filter(std::forward<Predicate>(p));
   }
 
+  geom::affine::Transformation3d alignment_to(CoordSpan& other);
+  geom::affine::Transformation3d alignment_to(CoordSelection& other);
+
+  double rmsd(CoordSpan& other){
+    check_precondition("rmsd()");
+    return m_span.rmsd(other);
+  }
+
+  double rmsd(CoordSelection& other){
+    check_precondition("rmsd()");
+    return m_span.rmsd(other);
+  }
+
+  Eigen::Matrix3d inertia_tensor(){
+    check_precondition("inertia_tensor()");
+    return m_span.inertia_tensor();
+  }
+
+
   [[nodiscard]] auto begin() {
     check_precondition("begin()");
     return m_span.begin();

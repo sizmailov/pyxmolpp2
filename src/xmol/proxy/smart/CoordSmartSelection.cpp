@@ -1,5 +1,6 @@
 #include "xmol/proxy/smart/CoordSmartSelection.h"
 #include "xmol/Frame.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/FrameObserverImpl.h"
 
 using namespace xmol::proxy::smart;
@@ -8,7 +9,6 @@ struct CoordSmartSelection::CoordRefLessThanComparator {
   bool operator()(CoordRef& a, XYZ* ptr) { return a.m_coord < ptr; }
   bool operator()(XYZ* ptr, CoordRef& a) { return ptr < a.m_coord; }
 };
-
 
 void CoordSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
   auto it =
@@ -27,6 +27,15 @@ xmol::proxy::smart::CoordSmartSelection::CoordSmartSelection(xmol::proxy::CoordS
   if (m_selection.m_frame) {
     m_selection.m_frame->reg(*this);
   }
+}
+xmol::geom::affine::Transformation3d CoordSmartSelection::alignment_to(xmol::proxy::CoordSelection& other) {
+  check_precondition("alignment_to()");
+  return m_selection.alignment_to(other);
+}
+
+xmol::geom::affine::Transformation3d CoordSmartSelection::alignment_to(xmol::proxy::CoordSpan& other) {
+  check_precondition("alignment_to()");
+  return m_selection.alignment_to(other);
 }
 
 template class xmol::proxy::smart::FrameObserver<CoordSmartSelection>;

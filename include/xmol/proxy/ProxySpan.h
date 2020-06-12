@@ -1,5 +1,6 @@
 #pragma once
-#include "../future/span.h"
+#include "xmol/future/span.h"
+#include <cassert>
 #include <cstddef>
 #include <iterator>
 #include <vector>

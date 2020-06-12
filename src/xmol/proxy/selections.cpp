@@ -1,8 +1,20 @@
 
 #include "xmol/proxy/selections.h"
+#include "xmol/algo/alignment.h"
 #include "xmol/proxy/smart/selections.h"
 
 using namespace xmol::proxy;
+
+xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSpan& other) {
+  return xmol::algo::calc_alignment(other, *this);
+}
+xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSelection& other) {
+  return xmol::algo::calc_alignment(other, *this);
+}
+
+double CoordSelection::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *this); }
+double CoordSelection::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
+Eigen::Matrix3d CoordSelection::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
 
 xmol::CoordEigenMatrix CoordSelection::_eigen() {
   CoordEigenMatrix matrix(3, size());
@@ -14,11 +26,11 @@ xmol::CoordEigenMatrix CoordSelection::_eigen() {
 }
 
 void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
-  if (size()!=matrix.outerSize()){
+  if (size() != matrix.outerSize()) {
     throw CoordSelectionSizeMismatchError("Selection size must match matrix");
   }
-  size_t i=0;
-  for (auto&x: *this){
+  size_t i = 0;
+  for (auto& x : *this) {
     x._eigen() = matrix(Eigen::all, i++);
   }
 }

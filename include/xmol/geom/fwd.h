@@ -12,6 +12,11 @@ public:
 class XYZ;
 struct AngleValue;
 
-namespace affine {}
+namespace affine {
+class Translation3d;
+class Transformation3d;
+class UniformScale3d;
+class Rotation3d;
+} // namespace affine
 
 } // namespace xmol::geom

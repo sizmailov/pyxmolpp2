@@ -1,5 +1,6 @@
 #include "xmol/proxy/smart/CoordSmartSpan.h"
 #include "xmol/proxy/smart/FrameObserverImpl.h"
+#include "xmol/geom/affine/Transformation3d.h"
 
 using namespace xmol::proxy::smart;
 
@@ -19,6 +20,16 @@ void xmol::proxy::smart::CoordSmartSpan::on_coordinates_move(XYZ *from_begin, XY
   } else {
     m_is_split = true;
   }
+}
+
+xmol::geom::affine::Transformation3d CoordSmartSpan::alignment_to(xmol::proxy::CoordSelection& other) {
+    check_precondition("alignment_to()");
+    return m_span.alignment_to(other);
+}
+
+xmol::geom::affine::Transformation3d CoordSmartSpan::alignment_to(xmol::proxy::CoordSpan& other) {
+  check_precondition("alignment_to()");
+  return m_span.alignment_to(other);
 }
 
 template class xmol::proxy::smart::FrameObserver<CoordSmartSpan>;

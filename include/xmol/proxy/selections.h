@@ -39,6 +39,16 @@ public:
     return CoordSelection(*m_frame, internal_filter(std::forward<Predicate>(p)));
   }
 
+  geom::affine::Transformation3d alignment_to(CoordSpan& other);
+  geom::affine::Transformation3d alignment_to(CoordSelection& other);
+
+  double rmsd(CoordSpan& other);
+  double rmsd(CoordSelection& other);
+
+
+  Eigen::Matrix3d inertia_tensor();
+
+
   /// Copy of seleciton coordinates
   CoordEigenMatrix _eigen();
 
