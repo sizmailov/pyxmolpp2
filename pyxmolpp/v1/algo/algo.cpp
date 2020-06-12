@@ -29,16 +29,16 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
       py::arg("coords"));
   m.def(
       "calc_autocorr_order_2",
-      [](py::array_t<double, py::array::f_style>& array, int limit) {
-        if (array.ndim() != 2 || array.shape(0) != 3) {
-          throw py::type_error("shape!=(3,*)");
+      [](py::array_t<double, py::array::c_style | py::array::forcecast>& coords, int limit) {
+        if (coords.ndim() != 2 || coords.shape(1) != 3) {
+          throw py::type_error("shape!=[N,3]");
         }
-        int N = array.shape(1);
+        int N = coords.shape(0);
         if (limit < 0 || limit > N) {
           limit = N;
         }
         py::array_t<double> result(limit);
-        future::Span<XYZ> xyz_span(reinterpret_cast<XYZ*>(array.mutable_data()), array.size());
+        future::Span<XYZ> xyz_span(reinterpret_cast<XYZ*>(coords.mutable_data()), coords.shape(0));
         algo::calc_autocorr_order_2(xyz_span, future::Span(result.mutable_data(), result.size()),
                                     algo::AutoCorrelationMode::NORMALIZE_VECTORS);
         return result;
@@ -47,16 +47,16 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
 
   m.def(
       "calc_autocorr_order_2_PRE",
-      [](py::array_t<double, py::array::f_style>& array, int limit) {
-        if (array.ndim() != 2 || array.shape(0) != 3) {
-          throw py::type_error("shape!=(3,*)");
+      [](py::array_t<double, py::array::c_style | py::array::forcecast>& coords, int limit) {
+        if (coords.ndim() != 2 || coords.shape(1) != 3) {
+          throw py::type_error("shape!=[N,3]");
         }
-        int N = array.shape(1);
+        int N = coords.shape(0);
         if (limit < 0 || limit > N) {
           limit = N;
         }
         py::array_t<double> result(limit);
-        future::Span<XYZ> xyz_span(reinterpret_cast<XYZ*>(array.mutable_data()), array.size());
+        future::Span<XYZ> xyz_span(reinterpret_cast<XYZ*>(coords.mutable_data()), coords.shape(0));
         algo::calc_autocorr_order_2(xyz_span, future::Span(result.mutable_data(), result.size()),
                                     algo::AutoCorrelationMode::NORMALIZE_AND_DIVIDE_BY_CUBE);
         return result;

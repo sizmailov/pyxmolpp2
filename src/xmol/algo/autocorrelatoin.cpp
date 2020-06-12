@@ -67,7 +67,7 @@ void xmol::algo::calc_autocorr_order_2(const xmol::future::Span<xmol::geom::XYZ>
   ::autocorr(Y, tmp);
 
   for (long long i = 0; i < limit; i++) {
-    result[i] += Y[i].real();
+    result[i] = Y[i].real();
   }
 
   std::fill(Y.begin() + N, Y.end(), 0);

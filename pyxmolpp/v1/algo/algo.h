@@ -4,6 +4,6 @@
 
 namespace pyxmolpp::v1 {
 
-void define_algo_functions(pybind11::module& module);
+void define_algo_functions(pybind11::module& coords);
 
 }
