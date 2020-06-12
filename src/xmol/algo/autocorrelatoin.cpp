@@ -8,7 +8,7 @@ using namespace xmol::algo;
 
 namespace {
 
-void calc_Y22(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
+void calc_Y22(const xmol::future::Span<xmol::geom::XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = 1.0 / 4.0 * std::sqrt(15.0 / 2.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
@@ -16,14 +16,14 @@ void calc_Y22(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out)
   }
 }
 
-void calc_Y21(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
+void calc_Y21(const xmol::future::Span<xmol::geom::XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = -1.0 / 2.0 * std::sqrt(15.0 / 2.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
     out[i] = coeff * std::complex<double>(r.x(), r.y()) * r.z();
   }
 }
-void calc_Y20(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
+void calc_Y20(const xmol::future::Span<xmol::geom::XYZ>& v, std::vector<std::complex<double>>& out) {
   auto coeff = 1.0 / 4.0 * std::sqrt(5.0 / M_PI);
   for (size_t i = 0; i < v.size(); ++i) {
     auto r = v[i] / v[i].len();
@@ -31,7 +31,7 @@ void calc_Y20(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out)
   }
 }
 
-void divide_by_cube(const std::vector<XYZ>& v, std::vector<std::complex<double>>& out) {
+void divide_by_cube(const xmol::future::Span<xmol::geom::XYZ>& v, std::vector<std::complex<double>>& out) {
   for (size_t i = 0; i < v.size(); ++i) {
     double d = v[i].len();
     out[i] /= (d * d * d);
@@ -50,7 +50,7 @@ void autocorr(std::vector<std::complex<double>>& series, std::vector<std::comple
 }
 
 } // namespace
-std::vector<double> xmol::algo::calc_autocorr_order_2(const std::vector<XYZ>& v,
+std::vector<double> xmol::algo::calc_autocorr_order_2(const xmol::future::Span<xmol::geom::XYZ>& v,
                                                           long long int limit, const AutoCorrelationMode& mode) {
 
   long long N = v.size();

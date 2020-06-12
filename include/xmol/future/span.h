@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <vector>
 
 /// Backported C++20 features
 namespace xmol::future {
@@ -9,6 +10,7 @@ template <typename T> struct Span {
   constexpr Span() {}
   constexpr Span(T* b, T* e) : m_begin(b), m_end(e) {}
   constexpr Span(T* b, size_t n) : m_begin(b), m_end(b + n) {}
+  constexpr Span(std::vector<T>& v) : Span(v.data(), v.size()) {}
   T* m_begin = nullptr;
   T* m_end = nullptr;
   constexpr size_t size() const { return m_end - m_begin; };

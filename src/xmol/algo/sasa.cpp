@@ -1,14 +1,14 @@
 #include "xmol/algo/sasa.h"
 #include <algorithm>
+#include <gsl/gsl_assert>
 #include <map>
 #include <numeric>
-#include <gsl/gsl_assert>
 
 using namespace xmol::geom;
 
-std::vector<double> xmol::algo::calc_sasa(const std::vector<geom::XYZ>& coords,
-                                                   future::Span<double> coord_radii, double solvent_radii,
-                                                   int n_samples, const future::Span<int>& sasa_points_indices) {
+std::vector<double> xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<double> coord_radii,
+                                          double solvent_radii, int n_samples,
+                                          const future::Span<int>& sasa_points_indices) {
   if (coords.size() != coord_radii.size()) {
     throw GeomError("xmol::algo::calculate_sasa: coords.size() != radii.size()");
   }
