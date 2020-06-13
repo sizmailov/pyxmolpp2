@@ -8,6 +8,8 @@
 #include <iostream>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
 using namespace xmol;
 namespace py = pybind11;
 
@@ -64,19 +66,20 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
       py::arg("vectors"), py::arg("limit") = -1);
   m.def(
       "calc_sasa",
-      [](py::array_t<double, py::array::f_style> coords, py::array_t<double> coord_radii, double solvent_radii,
-         py::array_t<int>* indices_of_interest, int n_samples) {
+      [](py::array_t<double, py::array::c_style | py::array::forcecast> coords, py::array_t<double> coord_radii,
+         double solvent_radii, std::optional<py::array_t<int>> indices_of_interest, int n_samples) {
         if (coords.ndim() != 2 || coords.shape(1) != 3) {
           throw std::runtime_error("coords.shape!=[N,3]");
         }
         future::Span<int> indices;
-        if (indices_of_interest != nullptr) {
+        if (indices_of_interest) {
           py::buffer_info indices_of_interest_info = indices_of_interest->request();
           if (indices_of_interest_info.ndim != 1) {
             throw std::runtime_error("indices_of_interest dimension != 1");
           }
           if (indices_of_interest_info.format != "i") {
-            throw std::runtime_error("indices_of_interest dtype(" + indices_of_interest_info.format + ") != numpy.intc");
+            throw std::runtime_error("indices_of_interest dtype(" + indices_of_interest_info.format +
+                                     ") != numpy.intc");
           }
           if (indices_of_interest_info.size > coords.shape(0)) {
             throw std::runtime_error("indices_of_interest.size() > coords.size()");
@@ -92,5 +95,5 @@ void pyxmolpp::v1::define_algo_functions(pybind11::module& m) {
         return result;
       },
       py::arg("coordinates"), py::arg("vdw_radii"), py::arg("solvent_radius"),
-      py::arg("indices_of_interest") = nullptr, py::arg("n_samples").noconvert(true) = 20);
+      py::arg("indices_of_interest") = std::nullopt, py::arg("n_samples").noconvert(true) = 20);
 }
