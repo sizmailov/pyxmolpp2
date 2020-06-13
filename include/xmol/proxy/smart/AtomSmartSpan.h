@@ -56,6 +56,11 @@ public:
     return m_span.empty();
   }
 
+  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+    check_precondition("slice()");
+    return m_span.slice(start, stop, step);
+  }
+
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <optional>
 
 namespace xmol::proxy {
 
@@ -42,18 +43,10 @@ public:
     }
   }
 
-  [[nodiscard]] auto begin() {
-    return m_data.begin();
-  }
-  [[nodiscard]] auto end() {
-    return m_data.end();
-  }
-  [[nodiscard]] size_t size() const {
-    return m_data.size();
-  }
-  [[nodiscard]] size_t empty() const {
-    return m_data.empty();
-  }
+  [[nodiscard]] auto begin() { return m_data.begin(); }
+  [[nodiscard]] auto end() { return m_data.end(); }
+  [[nodiscard]] size_t size() const { return m_data.size(); }
+  [[nodiscard]] size_t empty() const { return m_data.empty(); }
 
   T& operator[](size_t i) {
     assert(i >= 0);
@@ -64,11 +57,9 @@ public:
   bool contains(const T& proxy) const;
 
 protected:
-
   void unite(const Selection& rhs);
   void substract(const Selection& rhs);
   void intersect(const Selection& rhs);
-
 
   template <typename Predicate>[[nodiscard]] std::vector<T> internal_filter(Predicate&& p) {
     std::vector<T> result;
@@ -76,6 +67,24 @@ protected:
       if (p(x)) {
         result.push_back(x);
       }
+    }
+    return result;
+  }
+
+  [[nodiscard]] std::vector<T> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,
+                                          std::optional<size_t> step) {
+    if (!stop) {
+      stop = size();
+    }
+    if (!start) {
+      start = 0;
+    }
+    if (!step) {
+      step = 1;
+    }
+    std::vector<T> result;
+    for (auto it = m_data.begin() + *start; it < m_data.begin() + *stop; it += *step) {
+      result.push_back(*it);
     }
     return result;
   }

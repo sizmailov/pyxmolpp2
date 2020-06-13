@@ -1,9 +1,9 @@
 
 #include <xmol/proxy/spans.h>
 
-#include "xmol/proxy/smart/spans.h"
 #include "xmol/algo/alignment.h"
 #include "xmol/proxy/selections.h"
+#include "xmol/proxy/smart/spans.h"
 
 using namespace xmol::proxy;
 
@@ -20,25 +20,26 @@ double CoordSpan::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *
 double CoordSpan::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
 Eigen::Matrix3d CoordSpan::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
 
-
-void CoordSpan::apply(const geom::affine::Transformation3d& t){
+void CoordSpan::apply(const geom::affine::Transformation3d& t) {
   auto map = this->_eigen();
   map = (t.get_underlying_matrix() * map.transpose()).transpose().rowwise() + t.get_translation()._eigen();
 }
-void CoordSpan::apply(const geom::affine::UniformScale3d& t){
-  this->_eigen().array() *= t.scale();
-}
-void CoordSpan::apply(const geom::affine::Rotation3d& t){
+void CoordSpan::apply(const geom::affine::UniformScale3d& t) { this->_eigen().array() *= t.scale(); }
+void CoordSpan::apply(const geom::affine::Rotation3d& t) {
   auto map = this->_eigen();
   map = (t.get_underlying_matrix() * map.transpose()).transpose();
 }
-void CoordSpan::apply(const geom::affine::Translation3d& t){
+void CoordSpan::apply(const geom::affine::Translation3d& t) {
   auto map = this->_eigen();
   map = map.rowwise() + t.dr()._eigen();
 }
 
-xmol::geom::XYZ CoordSpan::mean(){
-  return XYZ(_eigen().colwise().mean());
+xmol::geom::XYZ CoordSpan::mean() { return XYZ(_eigen().colwise().mean()); }
+CoordSelection CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+  if (empty()) {
+    return {};
+  }
+  return CoordSelection(*m_frame, slice_impl(start, stop, step), true);
 }
 
 CoordSpan AtomRefSpan::coords() {
@@ -102,11 +103,22 @@ bool AtomRefSpan::contains(const AtomRef& ref) const {
 
 smart::AtomSmartSpan AtomRefSpan::smart() { return *this; }
 
+AtomSelection AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+  return AtomSelection(slice_impl(start, stop, step), true);
+}
+
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
+ResidueSelection ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                       std::optional<size_t> step) {
+  return ResidueSelection(slice_impl(start, stop, step), true);
+}
 
 bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
   return m_begin <= ref.m_molecule && ref.m_molecule < m_end;
-  ;
 }
 smart::MoleculeSmartSpan MoleculeRefSpan::smart() { return *this; }
+MoleculeSelection MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                         std::optional<size_t> step) {
+  return MoleculeSelection(slice_impl(start, stop, step), true);
+}

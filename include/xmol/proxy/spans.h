@@ -12,6 +12,7 @@ public:
   }
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
+  CoordSelection slice(std::optional<size_t> start,std::optional<size_t> stop,std::optional<size_t> step);
 
   smart::CoordSmartSpan smart();
 
@@ -56,6 +57,7 @@ public:
   [[nodiscard]] bool contains(const AtomRef& ref) const;
 
   template <typename Predicate> AtomSelection filter(Predicate&& p);
+  AtomSelection slice(std::optional<size_t> start,std::optional<size_t> stop,std::optional<size_t> step);
 
   /// Make smart span from this
   smart::AtomSmartSpan smart();
@@ -78,6 +80,7 @@ public:
   [[nodiscard]] bool contains(const ResidueRef& ref) const;
 
   template <typename Predicate> ResidueSelection filter(Predicate&& p);
+  ResidueSelection slice(std::optional<size_t> start,std::optional<size_t> stop,std::optional<size_t> step);
 
   /// Make smart span from this
   smart::ResidueSmartSpan smart();
@@ -100,9 +103,11 @@ public:
   [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
   template <typename Predicate> MoleculeSelection filter(Predicate&& p);
+  MoleculeSelection slice(std::optional<size_t> start,std::optional<size_t> stop,std::optional<size_t> step);
 
   /// Make smart span from this
   smart::MoleculeSmartSpan smart();
+
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->frame; }

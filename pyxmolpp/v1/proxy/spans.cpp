@@ -7,10 +7,10 @@
 #include "xmol/proxy/smart/spans.h"
 #include "xmol/proxy/spans-impl.h"
 
-#include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -29,6 +29,19 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("__len__", &Span::size)
       //      .def("__contains__", &Span::contains)
       .def("__getitem__", [](Span& span, size_t i) { return XYZ(span[i]); })
+      .def("__getitem__",
+           [](Span& span, py::slice& slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
+               throw py::error_already_set();
+             }
+             if (step < 0) {
+               throw py::type_error("Negative strides are not (yet) supported");
+             }
+             assert(start >= 0);
+             assert(stop >= 0);
+             return span.slice(start, stop, step).smart();
+           })
       .def(
           "__iter__", [](Span& s) { return common::make_coord_value_iterator(s.begin(), s.end()); },
           py::keep_alive<0, 1>())
@@ -47,11 +60,11 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("alignment_to", [](Span& span, Span& other) { return span.alignment_to(other); })
       .def("rmsd", [](Span& span, Sel& other) { return span.rmsd(other); })
       .def("rmsd", [](Span& span, Span& other) { return span.rmsd(other); })
-      .def("apply", [](Span& sel, Transformation3d& other){ return sel.apply(other);})
-      .def("apply", [](Span& sel, UniformScale3d& other){ return sel.apply(other);})
-      .def("apply", [](Span& sel, Rotation3d& other){ return sel.apply(other);})
-      .def("apply", [](Span& sel, Translation3d& other){ return sel.apply(other);})
-      .def("mean", [](Span& sel){ return sel.mean();})
+      .def("apply", [](Span& sel, Transformation3d& other) { return sel.apply(other); })
+      .def("apply", [](Span& sel, UniformScale3d& other) { return sel.apply(other); })
+      .def("apply", [](Span& sel, Rotation3d& other) { return sel.apply(other); })
+      .def("apply", [](Span& sel, Translation3d& other) { return sel.apply(other); })
+      .def("mean", [](Span& sel) { return sel.mean(); })
       .def("inertia_tensor", &Span::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {
@@ -67,6 +80,19 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, py::slice& slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
+               throw py::error_already_set();
+             }
+             if (step < 0) {
+               throw py::type_error("Negative strides are not (yet) supported");
+             }
+             assert(start >= 0);
+             assert(stop >= 0);
+             return span.slice(start, stop, step).smart();
+           })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
   // todo: add operators
@@ -84,6 +110,19 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, ResidueSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, py::slice& slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
+               throw py::error_already_set();
+             }
+             if (step < 0) {
+               throw py::type_error("Negative strides are not (yet) supported");
+             }
+             assert(start >= 0);
+             assert(stop >= 0);
+             return span.slice(start, stop, step).smart();
+           })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
   // todo: add operators
@@ -101,6 +140,19 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, MoleculeSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, py::slice& slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
+               throw py::error_already_set();
+             }
+             if (step < 0) {
+               throw py::type_error("Negative strides are not (yet) supported");
+             }
+             assert(start >= 0);
+             assert(stop >= 0);
+             return span.slice(start, stop, step).smart();
+           })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
   // todo: add operators

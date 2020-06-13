@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <iterator>
+#include <optional>
 #include <vector>
 
 namespace xmol::proxy {
@@ -75,10 +76,28 @@ protected:
 
   template <typename Predicate>[[nodiscard]] std::vector<Proxy> internal_filter(Predicate&& p) {
     std::vector<Proxy> result;
-    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
+    for (auto& x : *this) {
       if (p(x)) {
         result.push_back(x);
       }
+    }
+    return result;
+  }
+
+  [[nodiscard]] std::vector<Proxy> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,
+                                                  std::optional<size_t> step) {
+    if (!stop) {
+      stop = size();
+    }
+    if (!start) {
+      start = 0;
+    }
+    if (!step) {
+      step = 1;
+    }
+    std::vector<Proxy> result;
+    for (auto it = m_begin + *start; it < m_begin + *stop; it += *step) {
+      result.emplace_back(Proxy(*it));
     }
     return result;
   }

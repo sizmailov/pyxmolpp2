@@ -147,8 +147,20 @@ AtomSelection MoleculeSelection::atoms() {
 }
 
 smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::MoleculeSmartSelection(*this); }
+MoleculeSelection MoleculeSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                           std::optional<size_t> step) {
+  return MoleculeSelection(slice_impl(start,stop,step));
+}
 smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
+ResidueSelection ResidueSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                         std::optional<size_t> step) {
+  return ResidueSelection(slice_impl(start,stop,step));
+}
 smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }
+AtomSelection AtomSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                   std::optional<size_t> step) {
+  return AtomSelection(slice_impl(start,stop,step));
+}
 
 namespace xmol::proxy {
 
@@ -177,4 +189,11 @@ MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelectio
 }
 
 smart::CoordSmartSelection CoordSelection::smart() { return smart::CoordSmartSelection(*this); }
+CoordSelection CoordSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                     std::optional<size_t> step) {
+  if (empty()){
+    return {};
+  }
+  return CoordSelection(*m_frame, slice_impl(start,stop,step));
+}
 } // namespace xmol::proxy

@@ -101,6 +101,11 @@ public:
     return m_selection.mean();
   }
 
+  CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+    check_precondition("slice()");
+    return m_selection.slice(start, stop, step);
+  }
+
 private:
   CoordSelection m_selection;
   inline void check_precondition(const char* func_name) const {

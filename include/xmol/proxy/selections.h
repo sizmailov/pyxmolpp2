@@ -61,6 +61,8 @@ public:
   void apply(const geom::affine::Translation3d& t);
   XYZ mean();
 
+  CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+
   smart::CoordSmartSelection smart();
 
 protected:
@@ -95,6 +97,8 @@ public:
   template <typename Predicate> AtomSelection filter(Predicate&& p) {
     return AtomSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
 
   /// Inplace union
   AtomSelection& operator|=(const AtomSelection& rhs) {
@@ -179,6 +183,8 @@ public:
     return ResidueSelection(internal_filter(std::forward<Predicate>(p)));
   }
 
+  ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+
   /// Create smart selection from this
   smart::ResidueSmartSelection smart();
 
@@ -240,6 +246,8 @@ public:
   template <typename Predicate> MoleculeSelection filter(Predicate&& p) {
     return MoleculeSelection(internal_filter(std::forward<Predicate>(p)));
   }
+
+  MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
 
   /// Create smart selection from this
   smart::MoleculeSmartSelection smart();

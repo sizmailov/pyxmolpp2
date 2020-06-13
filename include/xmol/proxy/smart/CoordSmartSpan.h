@@ -86,6 +86,11 @@ public:
     return m_span.mean();
   }
 
+  CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+    check_precondition("slice()");
+    return m_span.slice(start, stop, step);
+  }
+
   Frame& frame() {
     check_precondition("frame()");
     return FrameObserver::frame();
