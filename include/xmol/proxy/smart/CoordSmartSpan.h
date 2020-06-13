@@ -81,6 +81,10 @@ public:
     check_precondition("apply()");
     m_span.apply(t);
   }
+  geom::XYZ mean() {
+    check_precondition("mean()");
+    return m_span.mean();
+  }
 
   Frame& frame() {
     check_precondition("frame()");

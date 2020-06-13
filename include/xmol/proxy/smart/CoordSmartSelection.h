@@ -96,6 +96,11 @@ public:
     m_selection.apply(t);
   }
 
+  geom::XYZ mean() {
+    check_precondition("mean()");
+    return m_selection.mean();
+  }
+
 private:
   CoordSelection m_selection;
   inline void check_precondition(const char* func_name) const {

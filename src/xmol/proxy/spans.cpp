@@ -37,6 +37,10 @@ void CoordSpan::apply(const geom::affine::Translation3d& t){
   map = map.rowwise() + t.dr()._eigen();
 }
 
+xmol::geom::XYZ CoordSpan::mean(){
+  return XYZ(_eigen().colwise().mean());
+}
+
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {
     return {};

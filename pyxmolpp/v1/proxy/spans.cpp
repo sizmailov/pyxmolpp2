@@ -51,6 +51,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("apply", [](Span& sel, UniformScale3d& other){ return sel.apply(other);})
       .def("apply", [](Span& sel, Rotation3d& other){ return sel.apply(other);})
       .def("apply", [](Span& sel, Translation3d& other){ return sel.apply(other);})
+      .def("mean", [](Span& sel){ return sel.mean();})
       .def("inertia_tensor", &Span::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {

@@ -27,6 +27,7 @@ public:
   void apply(const geom::affine::UniformScale3d& t);
   void apply(const geom::affine::Rotation3d& t);
   void apply(const geom::affine::Translation3d& t);
+  XYZ mean();
 
 protected:
   CoordSpan() = default;

@@ -43,7 +43,16 @@ void CoordSelection::apply(const geom::affine::UniformScale3d& t) { this->_eigen
 void CoordSelection::apply(const geom::affine::Rotation3d& t) {
   this->_eigen((t.get_underlying_matrix() * this->_eigen().transpose()).transpose());
 }
-void CoordSelection::apply(const geom::affine::Translation3d& t) { this->_eigen(this->_eigen().rowwise() + t.dr()._eigen()); }
+void CoordSelection::apply(const geom::affine::Translation3d& t) {
+  this->_eigen(this->_eigen().rowwise() + t.dr()._eigen());
+}
+xmol::XYZ CoordSelection::mean() {
+  XYZ result;
+  for (auto& r : *this) {
+    result += r;
+  }
+  return result;
+}
 
 CoordSelection AtomSelection::coords() {
   std::vector<CoordRef> result;

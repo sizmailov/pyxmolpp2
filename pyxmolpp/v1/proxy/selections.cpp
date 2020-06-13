@@ -39,6 +39,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelec
       .def("apply", [](Sel& sel, UniformScale3d& other){ return sel.apply(other);})
       .def("apply", [](Sel& sel, Rotation3d& other){ return sel.apply(other);})
       .def("apply", [](Sel& sel, Translation3d& other){ return sel.apply(other);})
+      .def("mean", [](Sel& sel){ return sel.mean();})
       .def("inertia_tensor", &Sel::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelection>& pyAtomSelection) {
