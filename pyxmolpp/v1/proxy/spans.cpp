@@ -15,6 +15,7 @@
 namespace py = pybind11;
 using namespace xmol;
 using namespace xmol::proxy;
+using namespace xmol::geom::affine;
 using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>& pyCoordSpan) {
@@ -46,6 +47,10 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("alignment_to", [](Span& span, Span& other) { return span.alignment_to(other); })
       .def("rmsd", [](Span& span, Sel& other) { return span.alignment_to(other); })
       .def("rmsd", [](Span& span, Span& other) { return span.alignment_to(other); })
+      .def("apply", [](Span& sel, Transformation3d& other){ return sel.apply(other);})
+      .def("apply", [](Span& sel, UniformScale3d& other){ return sel.apply(other);})
+      .def("apply", [](Span& sel, Rotation3d& other){ return sel.apply(other);})
+      .def("apply", [](Span& sel, Translation3d& other){ return sel.apply(other);})
       .def("inertia_tensor", &Span::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {

@@ -14,6 +14,7 @@ namespace py = pybind11;
 using namespace xmol;
 using namespace xmol::proxy;
 using namespace xmol::proxy::smart;
+using namespace xmol::geom::affine;
 
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelection>& pyCoordSelection) {
   using Sel = CoordSmartSelection;
@@ -34,6 +35,10 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelec
       .def("alignment_to", [](Sel& sel, Span& other){ return sel.alignment_to(other);})
       .def("rmsd", [](Sel& sel, Sel& other){ return sel.alignment_to(other);})
       .def("rmsd", [](Sel& sel, Span& other){ return sel.alignment_to(other);})
+      .def("apply", [](Sel& sel, Transformation3d& other){ return sel.apply(other);})
+      .def("apply", [](Sel& sel, UniformScale3d& other){ return sel.apply(other);})
+      .def("apply", [](Sel& sel, Rotation3d& other){ return sel.apply(other);})
+      .def("apply", [](Sel& sel, Translation3d& other){ return sel.apply(other);})
       .def("inertia_tensor", &Sel::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelection>& pyAtomSelection) {
@@ -41,9 +46,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
   pyAtomSelection.def(py::init<Sel>())
       .def_property_readonly("size", &Sel::size)
       .def_property_readonly("empty", &Sel::empty)
-      .def("coords", [](Sel& sel) { return sel.coords().smart(); })
-      .def("residues", [](Sel& sel) { return sel.residues().smart(); })
-      .def("molecules", [](Sel& sel) { return sel.molecules().smart(); })
+      .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
+      .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
+      .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
       .def("filter", [](Sel& sel, const std::function<bool(const AtomSmartRef&)>& f) { return sel.filter(f).smart(); })
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, AtomSmartRef& ref) { return sel.contains(ref); })
@@ -61,9 +66,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
       .def_property_readonly("empty", &Sel::empty)
       .def("filter",
            [](Sel& sel, const std::function<bool(const ResidueSmartRef&)>& f) { return sel.filter(f).smart(); })
-      .def("coords", [](Sel& sel) { return sel.coords().smart(); })
-      .def("atoms", [](Sel& sel) { return sel.atoms().smart(); })
-      .def("molecules", [](Sel& sel) { return sel.molecules().smart(); })
+      .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
+      .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
+      .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, ResidueSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__", [](Sel& sel, size_t i) { return sel[i].smart(); })
@@ -80,9 +85,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
       .def_property_readonly("empty", &Sel::empty)
       .def("filter",
            [](Sel& sel, const std::function<bool(const MoleculeSmartRef&)>& f) { return sel.filter(f).smart(); })
-      .def("coords", [](Sel& sel) { return sel.coords().smart(); })
-      .def("atoms", [](Sel& sel) { return sel.atoms().smart(); })
-      .def("residues", [](Sel& sel) { return sel.residues().smart(); })
+      .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
+      .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
+      .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, MoleculeSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__", [](Sel& sel, size_t i) { return sel[i].smart(); })
