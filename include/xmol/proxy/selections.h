@@ -55,6 +55,11 @@ public:
   /// Assign selection coordinates
   void _eigen(const CoordEigenMatrix& matrix);
 
+  void apply(const geom::affine::Transformation3d& t);
+  void apply(const geom::affine::UniformScale3d& t);
+  void apply(const geom::affine::Rotation3d& t);
+  void apply(const geom::affine::Translation3d& t);
+
   smart::CoordSmartSelection smart();
 
 protected:

@@ -23,6 +23,11 @@ public:
 
   Eigen::Matrix3d inertia_tensor();
 
+  void apply(const geom::affine::Transformation3d& t);
+  void apply(const geom::affine::UniformScale3d& t);
+  void apply(const geom::affine::Rotation3d& t);
+  void apply(const geom::affine::Translation3d& t);
+
 protected:
   CoordSpan() = default;
   CoordSpan(Frame& frame, future::Span<XYZ>& span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};

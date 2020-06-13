@@ -4,6 +4,7 @@
 #include "xmol/Frame.h"
 #include "xmol/proxy/selections.h"
 #include "xmol/proxy/smart/selections.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/spans.h"
 #include "xmol/proxy/spans-impl.h"
 
@@ -39,6 +40,28 @@ TEST_F(SelectionTests, filter) {
   auto b_r1_ca = b_ca.filter([](proxy::AtomRef& atom) { return atom.residue().id() == 1; });
   EXPECT_EQ(a_r1_ca.size(), 1);
   EXPECT_EQ(b_r1_ca.size(), 0);
+}
+
+
+TEST_F(SelectionTests, span_transforms) {
+  using namespace xmol::geom::affine;
+  using namespace xmol::geom;
+  auto frame = make_polyglycines({{"A", 1}});
+  auto coords = frame.coords();
+  EXPECT_DOUBLE_EQ(coords._eigen().norm(), 0);
+  coords.apply(Translation3d(XYZ(1, 1, 1)));
+  EXPECT_DOUBLE_EQ((coords._eigen().array() - 1).matrix().norm(), 0);
+  coords.apply(Translation3d(XYZ(0, -1, -1)));
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 1, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(-1, 0, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, -1, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(1, 0, 0), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 0, -1)._eigen()).norm(), 1e-9);
+  coords.apply(UniformScale3d(10));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 0, -10)._eigen()).norm(), 1e-9);
 }
 
 TEST_F(SelectionTests, inplace_set_operations) {

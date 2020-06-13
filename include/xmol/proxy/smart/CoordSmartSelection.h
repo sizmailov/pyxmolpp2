@@ -19,17 +19,17 @@ public:
   geom::affine::Transformation3d alignment_to(CoordSpan& other);
   geom::affine::Transformation3d alignment_to(CoordSelection& other);
 
-  double rmsd(CoordSpan& other){
+  double rmsd(CoordSpan& other) {
     check_precondition("rmsd()");
     return m_selection.rmsd(other);
   }
 
-  double rmsd(CoordSelection& other){
+  double rmsd(CoordSelection& other) {
     check_precondition("rmsd()");
     return m_selection.rmsd(other);
   }
 
-  Eigen::Matrix3d inertia_tensor(){
+  Eigen::Matrix3d inertia_tensor() {
     check_precondition("inertia_tensor()");
     return m_selection.inertia_tensor();
   }
@@ -74,6 +74,26 @@ public:
   void _eigen(const CoordEigenMatrix& matrix) {
     check_precondition("_eigen()");
     m_selection._eigen(matrix);
+  }
+
+  void apply(const geom::affine::Transformation3d& t) {
+    check_precondition("apply()");
+    m_selection.apply(t);
+  }
+
+  void apply(const geom::affine::UniformScale3d& t) {
+    check_precondition("apply()");
+    m_selection.apply(t);
+  }
+
+  void apply(const geom::affine::Rotation3d& t) {
+    check_precondition("apply()");
+    m_selection.apply(t);
+  }
+
+  void apply(const geom::affine::Translation3d& t) {
+    check_precondition("apply()");
+    m_selection.apply(t);
   }
 
 private:

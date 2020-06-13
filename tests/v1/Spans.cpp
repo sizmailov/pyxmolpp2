@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "xmol/Frame.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/spans.h"
 
 using ::testing::Test;
@@ -104,8 +105,8 @@ TEST_F(SpanTests, split_exceptinos) {
   auto residues = frame.residues().smart();
   auto molecules = frame.molecules().smart();
 
-  residues[residues.size()-1].add_atom();
-  molecules[molecules.size()-1].add_residue();
+  residues[residues.size() - 1].add_atom();
+  molecules[molecules.size() - 1].add_residue();
   frame.add_molecule();
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
@@ -128,6 +129,27 @@ TEST_F(SpanTests, split_exceptinos) {
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
+}
+
+TEST_F(SpanTests, span_transforms) {
+  using namespace xmol::geom::affine;
+  using namespace xmol::geom;
+  auto frame = make_polyglycines({{"A", 1}});
+  auto coords = frame.coords();
+  EXPECT_DOUBLE_EQ(coords._eigen().norm(), 0);
+  coords.apply(Translation3d(XYZ(1, 1, 1)));
+  EXPECT_DOUBLE_EQ((coords._eigen().array() - 1).matrix().norm(), 0);
+  coords.apply(Translation3d(XYZ(0, -1, -1)));
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 1, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(-1, 0, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(0, 0, 1), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, -1, 0)._eigen()).norm(), 1e-9);
+  coords.apply(Rotation3d(XYZ(1, 0, 0), Degrees(90)));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 0, -1)._eigen()).norm(), 1e-9);
+  coords.apply(UniformScale3d(10));
+  EXPECT_LE((coords._eigen().rowwise() - XYZ(0, 0, -10)._eigen()).norm(), 1e-9);
 }
 
 TEST_F(SpanTests, coordinate_span_to_eigen) {

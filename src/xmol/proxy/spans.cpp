@@ -20,6 +20,23 @@ double CoordSpan::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *
 double CoordSpan::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
 Eigen::Matrix3d CoordSpan::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
 
+
+void CoordSpan::apply(const geom::affine::Transformation3d& t){
+  auto map = this->_eigen();
+  map = (t.get_underlying_matrix() * map.transpose()).transpose().rowwise() + t.get_translation()._eigen();
+}
+void CoordSpan::apply(const geom::affine::UniformScale3d& t){
+  this->_eigen().array() *= t.scale();
+}
+void CoordSpan::apply(const geom::affine::Rotation3d& t){
+  auto map = this->_eigen();
+  map = (t.get_underlying_matrix() * map.transpose()).transpose();
+}
+void CoordSpan::apply(const geom::affine::Translation3d& t){
+  auto map = this->_eigen();
+  map = map.rowwise() + t.dr()._eigen();
+}
+
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {
     return {};

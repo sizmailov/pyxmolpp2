@@ -18,21 +18,20 @@ public:
   geom::affine::Transformation3d alignment_to(CoordSpan& other);
   geom::affine::Transformation3d alignment_to(CoordSelection& other);
 
-  double rmsd(CoordSpan& other){
+  double rmsd(CoordSpan& other) {
     check_precondition("rmsd()");
     return m_span.rmsd(other);
   }
 
-  double rmsd(CoordSelection& other){
+  double rmsd(CoordSelection& other) {
     check_precondition("rmsd()");
     return m_span.rmsd(other);
   }
 
-  Eigen::Matrix3d inertia_tensor(){
+  Eigen::Matrix3d inertia_tensor() {
     check_precondition("inertia_tensor()");
     return m_span.inertia_tensor();
   }
-
 
   [[nodiscard]] auto begin() {
     check_precondition("begin()");
@@ -56,17 +55,34 @@ public:
     return m_span[i];
   }
 
-  operator CoordSpan& () {
+  operator CoordSpan&() {
     check_precondition("operator CoordRefSpan()");
     return m_span;
   }
 
-  Eigen::Map<CoordEigenMatrix> _eigen(){
+  Eigen::Map<CoordEigenMatrix> _eigen() {
     check_precondition("_eigen()");
     return m_span._eigen();
   }
 
-  Frame& frame(){
+  void apply(const geom::affine::Transformation3d& t) {
+    check_precondition("apply()");
+    m_span.apply(t);
+  }
+  void apply(const geom::affine::UniformScale3d& t) {
+    check_precondition("apply()");
+    m_span.apply(t);
+  }
+  void apply(const geom::affine::Rotation3d& t) {
+    check_precondition("apply()");
+    m_span.apply(t);
+  }
+  void apply(const geom::affine::Translation3d& t) {
+    check_precondition("apply()");
+    m_span.apply(t);
+  }
+
+  Frame& frame() {
     check_precondition("frame()");
     return FrameObserver::frame();
   }

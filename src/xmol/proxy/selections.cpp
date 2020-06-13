@@ -35,6 +35,16 @@ void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
   }
 }
 
+void CoordSelection::apply(const geom::affine::Transformation3d& t) {
+  auto map = this->_eigen();
+  this->_eigen((t.get_underlying_matrix() * map.transpose()).transpose().rowwise() + t.get_translation()._eigen());
+}
+void CoordSelection::apply(const geom::affine::UniformScale3d& t) { this->_eigen(this->_eigen().array() * t.scale()); }
+void CoordSelection::apply(const geom::affine::Rotation3d& t) {
+  this->_eigen((t.get_underlying_matrix() * this->_eigen().transpose()).transpose());
+}
+void CoordSelection::apply(const geom::affine::Translation3d& t) { this->_eigen(this->_eigen().rowwise() + t.dr()._eigen()); }
+
 CoordSelection AtomSelection::coords() {
   std::vector<CoordRef> result;
   for (auto& a : m_data) {
