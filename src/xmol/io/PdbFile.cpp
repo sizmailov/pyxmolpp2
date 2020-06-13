@@ -23,7 +23,7 @@ PdbInputFile& PdbInputFile::read() {
     break;
   }
 
-  std::fstream in(m_filename);
+  std::ifstream in(m_filename);
   if (!in){
     throw PdbReadError("Can't read `"+m_filename+"`");
   }
