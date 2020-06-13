@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -20,6 +21,14 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
       .def_property_readonly("molecules", [](SRef& ref) { return ref.molecules().smart(); })
       .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
+      .def("__getitem__",
+           [](SRef& ref, const char* name) {
+             auto r = ref[name];
+             if (r) {
+               return r;
+             }
+             throw py::index_error("No molecule with name " + std::string(name));
+           })
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def("__repr__", [](Frame& self) {
@@ -39,7 +48,24 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
       .def_property_readonly("size", &SRef::size)
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
+      .def_property_readonly(
+          "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
+      .def("__getitem__",
+           [](SRef& ref, const ResidueId& id) {
+             auto r = ref[id];
+             if (r) {
+               return r;
+             }
+             throw py::index_error("No residue with id " + std::to_string(id.serial) + id.iCode.str());
+           })
+      .def("__getitem__",
+           [](SRef& ref, int id) {
+             auto r = ref[id];
+             if (r) {
+               return r;
+             }
+             throw py::index_error("No residue with id " + std::to_string(id));
+           })
       .def("add_residue", [](SRef& ref) { return ref.add_residue().smart(); })
       .def(py::self == py::self)
       .def(py::self != py::self);
@@ -55,11 +81,18 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartRef
       .def_property_readonly("size", &SRef::size)
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) -> Frame&  { return ref.frame(); }, py::return_value_policy::reference)
+      .def_property_readonly(
+          "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("next", [](SRef& ref) -> std::optional<SRef> { return ref.next(); })
       .def_property_readonly("prev", [](SRef& ref) -> std::optional<SRef> { return ref.prev(); })
-      .def("__getitem__", [](SRef& ref, const AtomName& name) { return ref[name]; })
-      .def("__getitem__", [](SRef& ref, const std::string& name) { return ref[name.c_str()]; })
+      .def("__getitem__",
+           [](SRef& ref, const char* name) {
+             auto r = ref[name];
+             if (r) {
+               return r;
+             }
+             throw py::index_error("No atom with name " + std::string(name));
+           })
       .def("add_atom", [](SRef& ref) { return ref.add_atom().smart(); })
       .def(py::self == py::self)
       .def(py::self != py::self);
@@ -74,7 +107,8 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
       .def_property("r", py::overload_cast<>(&SRef::r, py::const_), [](SRef& self, const XYZ& r) { self.r(r); })
       .def_property_readonly("residue", [](SRef& ref) { return ref.residue().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
+      .def_property_readonly(
+          "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("__eq__", &SRef::operator==)
       .def(py::self == py::self)
       .def(py::self != py::self);
