@@ -57,6 +57,7 @@ def test_sasa_two_spheres():
 
 
 def test_sasa_three_spheres():
+    from pyxmolpp2.v1 import calc_sasa
     for samples, precision in [
         (10, 5e0),  # 5% accuracy
         (50, 1e0),  # 1% accuracy
@@ -84,7 +85,7 @@ def test_sasa_three_spheres():
             total_area = S1 + S2 + S3
             exposed_area_exact = total_area - S1_loss - S2_loss - S3_loss
 
-            sasa = calc_sasa(VectorXYZ([a, b, c]), np.array([r1, r2, r3]), 0, n_samples=samples)
+            sasa = calc_sasa(np.array([a.values, b.values, c.values]), np.array([r1, r2, r3]), 0, n_samples=samples)
             exposed_area_approx = sum(sasa)
 
             exposed_area_percent_exact = exposed_area_exact / total_area * 100

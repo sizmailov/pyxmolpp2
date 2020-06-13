@@ -32,29 +32,21 @@ def test_calc_rmsd_exception():
     assert pytest.approx(0) == calc_rmsd(a[:4], a[:4])
 
 
-@pytest.mark.skip("not implemented")
-def test_calc_geom_center_exception():
-    from pyxmolpp2.geometry import calc_geom_center, XYZ, VectorXYZ, calc_rmsd, GeometryException, Transformation3d
-
-    with pytest.raises(GeometryException):
-        calc_geom_center(VectorXYZ([]))
-
-    calc_geom_center(VectorXYZ([XYZ(1, 2, 3)]))
-
-
-@pytest.mark.skip("not implemented")
 def test_alignment_exception():
-    from pyxmolpp2.geometry import calc_alignment, XYZ, VectorXYZ, calc_rmsd, AlignmentError
+    from pyxmolpp2.v1 import calc_alignment
 
-    a = [XYZ(1, 2, 3)] * 10
+    a = np.array([(1, 2, 3)] * 10)
 
-    with pytest.raises(AlignmentError):
-        calc_alignment(VectorXYZ(a[:2]), VectorXYZ(a[:2]))
+    # two coords is not enough
+    with pytest.raises(RuntimeError):
+        calc_alignment(a[:2], a[:2])
 
-    calc_alignment(VectorXYZ(a[:3]), VectorXYZ(a[:3]))
+    # three coords is just enough
+    calc_alignment(a[:3], a[:3])
 
-    with pytest.raises(AlignmentError):
-        calc_alignment(VectorXYZ(a[:4]), VectorXYZ(a))
+    # number of coords must match
+    with pytest.raises(RuntimeError):
+        calc_alignment(a[:4], a)
 
 
 def test_calc_alignment():
@@ -79,10 +71,16 @@ def test_calc_inertia_tensor():
 
     assert np.allclose(x, np.diag([2, 2, 4]))
 
-    # todo: enable
-    # m = [10, 1, 1, 10]
-    # x = calc_inertia_tensor(a, m)
-    # assert np.allclose(x, np.diag([20, 2, 22]))
+
+@pytest.mark.skip("intertia tensor with mass is not implemented")
+def test_calc_inertia_tensor_mass():
+    from pyxmolpp2.v1 import calc_inertia_tensor, XYZ, Rotation, Translation
+    import numpy as np
+
+    a = np.array([(0, 1, 0), (1, 0, 0), (-1, 0, 0), (0, -1, 0)])
+    m = np.array([10, 1, 1, 10])
+    x = calc_inertia_tensor(a, m)
+    assert np.allclose(x, np.diag([20, 2, 22]))
 
 
 def _inertia_tensor(coords: np.ndarray):
