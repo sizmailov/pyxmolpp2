@@ -35,9 +35,8 @@ TEST_F(PdbReaderTests, sound){
   EXPECT_DOUBLE_EQ(atom.r().y(), 86.699);
   EXPECT_DOUBLE_EQ(atom.r().z(), 94.383);
 
-  // todo: re-enable when indexing is implemented
-//  EXPECT_NO_THROW(frame[ChainName("A")]);
-//  EXPECT_NO_THROW(frame[ChainName("A")][ResidueId(-3,ResidueInsertionCode("Z"))]);
-//  EXPECT_NO_THROW(frame[ChainName("A")][ResidueId(-3,ResidueInsertionCode("Z"))][AtomName("N")]);
-//  EXPECT_THROW(frame[ChainName("B")],OutOfRangeFrame);
+  EXPECT_NO_THROW(frame["A"]);
+  EXPECT_NO_THROW(frame["A"].value()[ResidueId(-3,ResidueInsertionCode("Z"))].value());
+  EXPECT_NO_THROW(frame["A"].value()[ResidueId(-3,ResidueInsertionCode("Z"))].value()[AtomName("N")].value());
+  EXPECT_THROW(frame["B"].value(), std::bad_optional_access);
 }
