@@ -23,6 +23,7 @@ def first_sphere_hidden_area(a, b, r1, r2):
 
 
 def test_sasa_two_spheres():
+    from pyxmolpp2.v1 import calc_sasa
     for samples, precision in [
         (10, 5e0),  # 5% accuracy
         (50, 1e0),  # 1% accuracy
@@ -44,7 +45,7 @@ def test_sasa_two_spheres():
             total_area = S1 + S2
             exposed_area_exact = total_area - S1_loss - S2_loss
 
-            sasa = calc_sasa(VectorXYZ([a, b]), np.array([r1, r2]), 0, n_samples=samples)
+            sasa = calc_sasa(np.array([a.values, b.values]), np.array([r1, r2]), 0, n_samples=samples)
             exposed_area_approx = sum(sasa)
 
             exposed_area_percent_exact = exposed_area_exact / total_area * 100
@@ -96,9 +97,8 @@ def test_sasa_three_spheres():
 
 
 def test_sasa_errors():
-
-
-    coords = VectorXYZ.from_numpy(np.random.random((100, 3)))
+    from pyxmolpp2.v1 import calc_sasa
+    coords = np.random.random((100, 3))
     radii = np.random.random((100,))
     indices = np.zeros(100).astype(np.intc)
 

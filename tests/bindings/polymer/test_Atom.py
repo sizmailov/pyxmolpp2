@@ -93,9 +93,11 @@ def test_coord_span_assign_values():
     from pyxmolpp2.v1 import XYZ
     import numpy as np
     frame = make_polyglycine([("A", 10)])
-    frame.coords.values.T[:] = np.array([0,0,0])
+    frame.coords.values[:] = np.array([0, 0, 0])
     assert frame.coords[0].distance(XYZ(0, 0, 0)) == pytest.approx(0)
     assert frame.coords[frame.coords.size - 1].distance(XYZ(0, 0, 0)) == pytest.approx(0)
+    frame.coords.values[:] = np.array([1, 2, 3])
+    assert frame.coords[0].distance(XYZ(1, 2, 3)) == pytest.approx(0)
     assert frame.coords[frame.coords.size - 1].distance(XYZ(1, 2, 3)) == pytest.approx(0)
 
 
@@ -140,7 +142,7 @@ def test_assignment():
 
 
 def test_selection_exceptions():
-    zombie_selection = make_polyglycine([("A", 1)]).atoms
+    zombie_selection = make_polyglycine([("A", 1)])
     with pytest.raises(RuntimeError):
         for a in zombie_selection:
             pass
@@ -287,7 +289,6 @@ def test_span_operators():
     assert a1.size == a2.size
 
 
-@pytest.mark.skip("indexing is not yet implemented")
 def _test_lookup_by_name():
     from pyxmolpp2.v1 import ResidueId
     frame = make_polyglycine([("A", 2)])
@@ -297,17 +298,14 @@ def _test_lookup_by_name():
     frame["A"][ResidueId(2)]["CA"]  # does not throw
     frame["A"][ResidueId(2)]["N"]  # does not throw
 
-    with pytest.raises(RuntimeError):
-        frame["B"]  # does throw
+    frame["B"]
+
+    frame["A"][ResidueId(3)]
 
     with pytest.raises(RuntimeError):
-        frame["A"][ResidueId(3)]  # does throw
-
-    with pytest.raises(RuntimeError):
-        frame["A"][ResidueId(2)]["CX"]  # does not throw
+        frame["A"][ResidueId(2)]["CX"]  # does throw
 
 
-@pytest.mark.skip("indexing is not yet implemented")
 def test_lookup_after_rename():
     from pyxmolpp2.v1 import ResidueId
     frame = make_polyglycine([("A", 2)])
@@ -392,14 +390,8 @@ def test_Atom_setters():
     a.name = "X"
     assert a.name == "X"
 
-    a.aName = "Y"
-    assert a.aName == "Y"
-
     a.id = 5
     assert a.id == 5
-
-    a.aId = 7
-    assert a.aId == 7
 
     a.r = XYZ(9, 9, 9)
     assert (a.r - XYZ(9, 9, 9)).len() == 0
@@ -413,14 +405,9 @@ def test_Residue_setters():
     r.name = "X"
     assert r.name == "X"
 
-    r.rName = "Y"
-    assert r.rName == "Y"
-
     r.id = ResidueId(5)
     assert r.id == ResidueId(5)
 
-    r.rId = ResidueId(7)
-    assert r.rId == ResidueId(7)
 
 
 def test_Chain_setters():
@@ -429,9 +416,6 @@ def test_Chain_setters():
 
     c.name = "X"
     assert c.name == "X"
-
-    c.cName = "Y"
-    assert c.cName == "Y"
 
 
 def test_AtomSelection_construction_from_list():

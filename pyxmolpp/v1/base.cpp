@@ -8,8 +8,8 @@ using namespace xmol;
 void pyxmolpp::v1::populate(pybind11::class_<xmol::ResidueId>& pyName) {
   pyName.def(py::init<>())
       .def(py::init<residueSerial_t>())
-      .def("__init__",
-           [](residueSerial_t serial, std::string& name) { return ResidueId(serial, ResidueInsertionCode(name)); })
+      .def(py::init(
+          [](residueSerial_t serial, std::string& name) { return ResidueId(serial, ResidueInsertionCode(name)); }))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self <= py::self)

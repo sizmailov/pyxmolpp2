@@ -16,6 +16,7 @@
 #include "v1/io/TrjtoolDatFile.h"
 #include "v1/io/AmberNetCDF.h"
 #include "v1/algo/algo.h"
+#include "v1/predicates/predicates.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -36,6 +37,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyResidue = py::class_<ResidueSmartRef>(v1, "Residue");
   auto pyMolecule = py::class_<MoleculeSmartRef>(v1, "Molecule");
   auto pyFrame = py::class_<Frame>(v1, "Frame");
+
+  init_predicates(v1);
 
   auto pyCoordSpan = py::class_<CoordSmartSpan>(v1, "CoordSpan");
   auto pyAtomSpan = py::class_<AtomSmartSpan>(v1, "AtomSpan");
