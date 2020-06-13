@@ -50,9 +50,9 @@ TEST_F(TrjtoolDatFileTests, trajectory_traverse) {
   Trajectory traj = construct_trajectory();
   {
     int count = 0;
-    for (auto& _ : traj) {
+    for (auto& frame : traj) {
+      EXPECT_EQ(frame.index, count);
       count += 1;
-      static_cast<void>(_);
     }
     EXPECT_EQ(count, 2000) << "traj";
   }

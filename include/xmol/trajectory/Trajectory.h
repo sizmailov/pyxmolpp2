@@ -56,8 +56,10 @@ public:
     Frame& operator*() { return m_frame; }
     Frame* operator->() { return &m_frame; }
     Iterator& operator++() {
-      update();
       m_traj->advance(m_pos, m_end, m_step);
+      if (m_pos.global_pos < m_end){
+        update();
+      }
       return *this;
     }
 

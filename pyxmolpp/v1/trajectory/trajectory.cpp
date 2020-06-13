@@ -43,12 +43,37 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
           py::arg("trajectory_file"))
       .def("n_atoms", &Trajectory::n_atoms)
       .def("n_frames", &Trajectory::n_frames)
+      .def("__getitem__",
+           [](Trajectory& trj, int idx) -> xmol::Frame {
+             int i = idx;
+             if (i < 0) {
+               i += trj.n_frames();
+             }
+             if (i < 0 || i >= trj.n_frames()) {
+               throw py::index_error("Bad trajectory index " + std::to_string(idx) + "");
+             }
+             return Frame(std::move(*trj.slice(i, i + 1, 1).begin()));
+           })
+      .def("__getitem__",
+           [](Trajectory& trj, py::slice& slice) {
+             ssize_t start, stop, step, slicelength;
+             if (!slice.compute(trj.n_frames(), &start, &stop, &step, &slicelength)) {
+               throw py::error_already_set();
+             }
+             if (step < 0) {
+               throw py::type_error("Negative strides are not (yet) supported");
+             }
+             assert(start>=0);
+             assert(stop>=0);
+             return trj.slice(start, stop, step);
+           })
       .def(
           "__iter__", [](Trajectory& self) { return common::make_iterator(self.begin(), self.end()); },
           py::keep_alive<0, 1>());
 
   pyTrajectorySlice.def(
-      "__iter__", [](Trajectory::Slice& self) { common::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>());
+      "__iter__", [](Trajectory::Slice& self) { return common::make_iterator(self.begin(), self.end()); },
+      py::keep_alive<0, 1>());
 
   pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index);
 }

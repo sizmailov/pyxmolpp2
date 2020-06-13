@@ -1,126 +1,97 @@
 import pytest
 
+
 def test_traj_iteration():
+    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
-    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
-    from pyxmolpp2.trjtool import DatFile
-    from pyxmolpp2.trajectory import Trajectory
-
-    records = AlteredPdbRecords(StandardPdbRecords.instance())
-
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7, 12])
-
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
-
-    assert frame.asAtoms.size > 0
+    assert frame.atoms.size > 0
 
     datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
     datfile2 = DatFile("tests_dataset/trjtool/GB1/run00002.dat")
 
-    trj = Trajectory(frame, True)
+    trj = Trajectory(frame)
 
-    trj.push_trajectory_portion(datfile1)
-    trj.push_trajectory_portion(datfile2)
+    trj.extend(datfile1)
+    trj.extend(datfile2)
 
-    assert trj.size == datfile1.n_frames + datfile2.n_frames
+    assert trj.n_frames() == datfile1.n_frames() + datfile2.n_frames()
 
     n = 0
     stride = 50
     for f in trj[::stride]:
-        r = f.asAtoms[0].r
-        n +=1
+        r = f.atoms[0].r
+        n += 1
 
-    assert trj.size//stride == n
-
-    n = 0
-    stride = 1
-    ats = frame.asResidues[0].asAtoms
-    trj.set_update_list(ats)
-    for f in trj[::stride]:
-        n +=1
-    assert trj.size//stride == n
+    assert trj.n_frames() // stride == n
 
 
+@pytest.mark.skip("Consistency checks are not implemented")
 def test_traj_exceptions():
-
-    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
-    from pyxmolpp2.polymer import AtomName
-    from pyxmolpp2.trjtool import DatFile
-    from pyxmolpp2.trajectory import Trajectory, TrajectoryException
-
-    records = AlteredPdbRecords(StandardPdbRecords.instance())
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
     datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
 
-    with pytest.raises(TrajectoryException):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb", records).get_frame()
-        frame.asAtoms[0].name=AtomName("XX")
-        trj = Trajectory(frame, True)
-        trj.push_trajectory_portion(datfile1)
+    # atom name is different
+    with pytest.raises(RuntimeError):
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+        frame.atoms[0].name = "XX"
+        trj = Trajectory(frame)
+        trj.extend(datfile1)
 
-    with pytest.raises(TrajectoryException):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
-        frame.asAtoms[0].delete()
-        trj = Trajectory(frame, True)
-        trj.push_trajectory_portion(datfile1)
+    # atom number of atoms is different
+    with pytest.raises(RuntimeError):
+        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+        frame.atoms[0].erase()
+        trj = Trajectory(frame)
+        trj.extend(datfile1)
 
 
 def test_traj_size():
+    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
-    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+    assert frame.atoms.size > 0
 
-    from pyxmolpp2.trjtool import DatFile
-    from pyxmolpp2.trajectory import Trajectory
+    trj = Trajectory(frame)
+    trj.extend(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
 
+    assert sum([1 for _ in trj[0:10]]) == 10
+    assert sum([1 for _ in trj[0:10:10]]) == 1
+    assert sum([1 for _ in trj[0:10:100]]) == 1
+    assert sum([1 for _ in trj[0:100:10]]) == 10
 
-    records = AlteredPdbRecords(StandardPdbRecords.instance())
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
+    assert sum([1 for _ in trj[0:-1000]]) == 0
+    assert sum([1 for _ in trj[-100:]]) == 100
+    assert sum([1 for _ in trj[:-100]]) == 900
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
+    with pytest.raises(TypeError):
+        trj[::-1]
 
-    assert frame.asAtoms.size > 0
-
-    trj = Trajectory(frame, True)
-    trj.push_trajectory_portion(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
-    assert len(trj[0:10]) == 10
-    assert len(trj[0:10:10]) == 1
-    assert len(trj[0:10:100]) == 1
-    assert len(trj[0:100:10]) == 10
-    assert len(trj[0:100:-10]) == 0
-    assert len(trj[100:0:-1]) == 100
-    assert len(trj[0:100:-1]) == 0
 
 
 def test_trajectory_integer_indexing():
+    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
-    from pyxmolpp2.pdb import PdbFile, AlteredPdbRecords, StandardPdbRecords, RecordName, FieldName
+    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
-    from pyxmolpp2.trjtool import DatFile
-    from pyxmolpp2.trajectory import Trajectory
+    trj = Trajectory(frame)
+    trj.extend(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
 
-
-    records = AlteredPdbRecords(StandardPdbRecords.instance())
-    records.alter_record(RecordName("ATOM"), FieldName("serial"), [7,12])
-
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb",records).get_frame()
-
-    trj = Trajectory(frame, True)
-    trj.push_trajectory_portion(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
-
-    n = trj.size
-
+    n = trj.n_frames()
 
     trj[-n]
-    trj[n-1]
+    trj[n - 1]
 
     with pytest.raises(IndexError):
         trj[n]
 
     with pytest.raises(IndexError):
-        trj[-n-1]
+        trj[-n - 1]
 
     frame1 = trj[0]
     frame2 = trj[-n]
+    frame3 = trj[0]
 
-    assert frame1.index == frame2.index
+    assert frame1 != frame2
+    assert frame1 != frame3
