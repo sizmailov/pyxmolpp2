@@ -33,8 +33,8 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def(py::self != py::self)
       .def("__repr__", [](Frame& self) {
         std::ostringstream out;
-        out << "Frame<addr=" << std::hex << &self << ", size=(" << self.n_molecules() << ", " << self.n_residues()
-            << ", " << self.n_atoms() << ")>";
+        out << "Frame<addr=" << std::hex << &self << std::dec << ", size=(" << self.n_molecules() << ", "
+            << self.n_residues() << ", " << self.n_atoms() << ")>";
         return out.str();
       });
 }
