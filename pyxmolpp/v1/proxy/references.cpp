@@ -25,7 +25,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
            [](SRef& ref, const char* name) {
              auto r = ref[name];
              if (r) {
-               return r;
+               return r->smart();
              }
              throw py::index_error("No molecule with name " + std::string(name));
            })
@@ -54,7 +54,7 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
            [](SRef& ref, const ResidueId& id) {
              auto r = ref[id];
              if (r) {
-               return r;
+               return r->smart();
              }
              throw py::index_error("No residue with id " + std::to_string(id.serial) + id.iCode.str());
            })
@@ -62,7 +62,7 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
            [](SRef& ref, int id) {
              auto r = ref[id];
              if (r) {
-               return r;
+               return r->smart();
              }
              throw py::index_error("No residue with id " + std::to_string(id));
            })
@@ -89,7 +89,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartRef
            [](SRef& ref, const char* name) {
              auto r = ref[name];
              if (r) {
-               return r;
+               return r->smart();
              }
              throw py::index_error("No atom with name " + std::string(name));
            })

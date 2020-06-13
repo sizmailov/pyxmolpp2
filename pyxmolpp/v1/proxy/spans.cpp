@@ -7,9 +7,10 @@
 #include "xmol/proxy/smart/spans.h"
 #include "xmol/proxy/spans-impl.h"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
-#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -17,6 +18,7 @@ using namespace xmol::proxy;
 using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>& pyCoordSpan) {
+  using Sel = CoordSmartSelection;
   using Span = CoordSmartSpan;
   pyCoordSpan.def(py::init<Span>())
       .def_property_readonly("size", &Span::size)
@@ -40,10 +42,10 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
                                auto array = py::array(shape, strides, eigen_map.data(), owner);
                                return array;
                              })
-      .def("alignment_to", py::overload_cast<CoordSpan&>(&Span::alignment_to))
-      .def("alignment_to", py::overload_cast<CoordSelection&>(&Span::alignment_to))
-      .def("rmsd", py::overload_cast<CoordSpan&>(&Span::rmsd))
-      .def("rmsd", py::overload_cast<CoordSelection&>(&Span::rmsd))
+      .def("alignment_to", [](Span& span, Sel& other) { return span.alignment_to(other); })
+      .def("alignment_to", [](Span& span, Span& other) { return span.alignment_to(other); })
+      .def("rmsd", [](Span& span, Sel& other) { return span.alignment_to(other); })
+      .def("rmsd", [](Span& span, Span& other) { return span.alignment_to(other); })
       .def("inertia_tensor", &Span::inertia_tensor);
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {
@@ -57,7 +59,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def("__len__", &Span::size)
-      .def("__contains__", &Span::contains)
+      .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
@@ -74,7 +76,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def("__len__", &Span::size)
-      .def("__contains__", &Span::contains)
+      .def("__contains__", [](Span& span, ResidueSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
@@ -91,7 +93,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def("__len__", &Span::size)
-      .def("__contains__", &Span::contains)
+      .def("__contains__", [](Span& span, MoleculeSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
       .def(
           "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());

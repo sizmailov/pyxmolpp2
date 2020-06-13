@@ -14,7 +14,7 @@ void pyxmolpp::v1::populate(py::class_<PdbInputFile, xmol::trajectory::Trajector
       .export_values();
 
   pyPdbInputFile
-      .def(py::init<std::string, PdbInputFile::Dialect>(), py::arg("self"),
+      .def(py::init<std::string, PdbInputFile::Dialect>(), py::arg("filename"),
            py::arg("dialect") = PdbInputFile::Dialect::AMBER_99)
       .def("frames", &PdbInputFile::frames)
       .def("n_frames", &PdbInputFile::n_frames)
