@@ -378,3 +378,15 @@ void Frame::notify_frame_delete() const {
   utils::Observable<CoordSmartSpan>::notify(&CoordSmartSpan::on_frame_delete);
   utils::Observable<CoordSmartSelection>::notify(&CoordSmartSelection::on_frame_delete);
 }
+std::optional<proxy::MoleculeRef> Frame::operator[](const MoleculeName& name) {
+  // vector outperforms any mapping, do simple first-match return;
+  for (auto& mol: m_molecules){
+    if (mol.name==name){
+      return proxy::MoleculeRef(mol);
+    }
+  }
+  return {};
+}
+std::optional<proxy::MoleculeRef> Frame::operator[](const char* name) {
+  return operator[](MoleculeName(name));
+}

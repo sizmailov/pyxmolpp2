@@ -94,6 +94,9 @@ public:
   bool operator==(const Frame& rhs) const { return this == &rhs; }
   bool operator!=(const Frame& rhs) const { return this != &rhs; }
 
+  std::optional<proxy::MoleculeRef> operator[](const MoleculeName& name);
+  std::optional<proxy::MoleculeRef> operator[](const char* name);
+
 private:
   BaseResidue& add_residue(BaseMolecule& mol);
   BaseAtom& add_atom(BaseResidue& residue);

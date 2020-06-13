@@ -16,6 +16,16 @@ xmol::proxy::AtomRef::AtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
 AtomRef::AtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
 smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
+std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
+  // todo: benchmark vs mappings (number of residues might be high)
+  for (auto& r : residues()) {
+    if (r.id() == id) {
+      return r;
+    }
+  }
+  return {};
+}
+std::optional<ResidueRef> MoleculeRef::operator[](residueSerial_t id) { return (*this)[ResidueId(id)]; }
 smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
 std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
   for (auto& a : atoms()) {
@@ -25,10 +35,8 @@ std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
   }
   return {};
 }
-
-std::optional<AtomRef> ResidueRef::operator[](const char* name) {
-  return operator[](AtomName(name));
-}
+std::optional<AtomRef> ResidueRef::operator[](const char* name) { return operator[](AtomName(name)); }
+std::optional<AtomRef> ResidueRef::operator[](const std::string& name) { return operator[](AtomName(name)); }
 
 smart::AtomSmartRef AtomRef::smart() { return smart::AtomSmartRef(*this); }
 

@@ -180,6 +180,12 @@ public:
     return m_ref[name];
   }
 
+  /// Get children atom by name
+  std::optional<AtomRef> operator[](const std::string& name) {
+    check_precondition("operator[]()");
+    return m_ref[name];
+  }
+
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const {
     check_precondition("operator!=()");
@@ -280,6 +286,18 @@ public:
   bool operator==(const MoleculeRef& rhs) const {
     check_precondition("operator!=()");
     return m_ref == rhs;
+  }
+
+  /// Get children residue by id
+  std::optional<ResidueRef> operator[](const ResidueId& id){
+    check_precondition("operator[]()");
+    return m_ref[id];
+  }
+
+  /// Get children residue by id
+  std::optional<ResidueRef> operator[](residueSerial_t id) {
+    check_precondition("operator[]()");
+    return m_ref[id];
   }
 
   /// @brief Adds residue to the end of the molecule and return its reference

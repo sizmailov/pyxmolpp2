@@ -15,7 +15,6 @@ public:
     add_polyglycines(chain_sizes, frame);
     return frame;
   }
-
 };
 
 TEST_F(AtomTests, add_molecules) {
@@ -276,45 +275,38 @@ TEST_F(AtomTests, composition) {
   }
 }
 
-// todo: enable
-// TEST_F(AtomTests, brakets){
-//
-//  Frame f;
-//
-//  MoleculeRef c = f.add_molecule();
-//  ResidueRef r = c.add_residue().name("GLY").id(1);
-//  AtomRef a = r.add_atom().name("CA").id(1);
-//
-//  { // cover const functions
-//    const Frame& frame = f;
-//    EXPECT_EQ(frame.molecules()[0],c);
-//    EXPECT_EQ(frame.molecules()[0][1],r);
-//    EXPECT_EQ(frame.molecules()[0][1][AtomName("CA")],a);
-//
-//    EXPECT_ANY_THROW(frame.molecules()[1]);
-//    EXPECT_ANY_THROW(frame.molecules()[0][2]);
-//    EXPECT_ANY_THROW(frame.molecules()[0][1][AtomName("CB")]);
-//  }
-//
-//
-//  EXPECT_EQ(f.molecules()[0],c);
-//  EXPECT_EQ(f.molecules()[0][1],r);
-//  EXPECT_EQ(f.molecules()[0][1][AtomName("CA")],a);
-//
-//  EXPECT_ANY_THROW(f.molecules()[1]);
-//  EXPECT_ANY_THROW(f.molecules()[0][2]);
-//  EXPECT_ANY_THROW(f.molecules()[0][1][AtomName("CB")]);
-//
-//  r.id(42);
-//  a.name("XX");
-//
-//  EXPECT_EQ(f.molecules()[0][42],r);
-//  EXPECT_EQ(f.molecules()[0][42][AtomName("XX")],a);
-//
-//  EXPECT_ANY_THROW(f.molecules()[0][2]);
-//  EXPECT_ANY_THROW(f.molecules()[0][42][AtomName("YY")]);
-//
-//}
+TEST_F(AtomTests, brakets) {
+
+  Frame f;
+
+  MoleculeRef c = f.add_molecule();
+  ResidueRef r = c.add_residue().name("GLY").id(1);
+  AtomRef a = r.add_atom().name("CA").id(1);
+
+  { // cover const functions
+    Frame& frame = f;
+    EXPECT_EQ(frame.molecules()[0][1].value(), r);
+    EXPECT_EQ(frame.molecules()[0][1].value()["CA"], a);
+
+    EXPECT_ANY_THROW(frame.molecules()[0][2].value());
+    EXPECT_ANY_THROW(frame.molecules()[0][1].value()["CB"].value());
+  }
+
+  EXPECT_EQ(f.molecules()[0][1].value(), r);
+  EXPECT_EQ(f.molecules()[0][1].value()["CA"].value(), a);
+
+  EXPECT_ANY_THROW(f.molecules()[0][2].value());
+  EXPECT_ANY_THROW(f.molecules()[0][1].value()["CB"].value());
+
+  r.id(42);
+  a.name("XX");
+
+  EXPECT_EQ(f.molecules()[0][42].value(), r);
+  EXPECT_EQ(f.molecules()[0][42].value()["XX"].value(), a);
+
+  EXPECT_ANY_THROW(f.molecules()[0][2].value());
+  EXPECT_ANY_THROW(f.molecules()[0][42].value()["YY"].value());
+}
 
 TEST_F(AtomTests, dedicated_selections) {
   Frame f;

@@ -180,6 +180,9 @@ public:
   bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
   bool operator==(const MoleculeRef& rhs) const { return m_molecule == rhs.m_molecule; }
 
+  std::optional<proxy::ResidueRef> operator[](const ResidueId& id);
+  std::optional<proxy::ResidueRef> operator[](residueSerial_t id);
+
   /// @brief Adds residue to the end of the molecule and return its reference
   ///
   /// Invalidates all kinds of non-smart residue references including proxy::ResidueRef, proxy::ResidueRefSpan and
@@ -284,9 +287,9 @@ public:
 
   /// Get children atom by name
   std::optional<AtomRef> operator[](const AtomName& name);
+  std::optional<proxy::AtomRef> operator[](const char* name);
+  std::optional<proxy::AtomRef> operator[](const std::string& name);
 
-  /// Get children atom by name
-  std::optional<AtomRef> operator[](const char* name);
 
   /// Create smart reference from this
   smart::ResidueSmartRef smart();
@@ -294,6 +297,8 @@ public:
   /// Check if references point to same data
   bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
   bool operator==(const ResidueRef& rhs) const { return m_residue == rhs.m_residue; }
+
+
 
   /// @brief Adds atom to the end of the reside and return its reference
   ///
