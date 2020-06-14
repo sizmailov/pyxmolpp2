@@ -70,9 +70,16 @@ protected:
     m_end = to + (m_end - from);
   }
 
-protected:
   T* m_begin = nullptr;
   T* m_end = nullptr;
+
+  /// Precondition: rhs and this must point to same allocation
+  void intersect(const ProxySpan& rhs) {
+    assert(rhs.m_begin < rhs.m_end);
+    assert(m_begin < m_end);
+    m_begin = std::max(rhs.m_begin, m_begin);
+    m_end = std::min(rhs.m_end, m_end);
+  }
 
   template <typename Predicate>[[nodiscard]] std::vector<Proxy> internal_filter(Predicate&& p) {
     std::vector<Proxy> result;
@@ -84,9 +91,19 @@ protected:
     return result;
   }
 
+  [[nodiscard]] ProxySpan slice_impl(std::optional<size_t> start, std::optional<size_t> stop) {
+    if (!stop || stop > size()) {
+      stop = size();
+    }
+    if (!start) {
+      start = 0;
+    }
+    return ProxySpan(m_begin + *start, m_begin + *stop);
+  }
+
   [[nodiscard]] std::vector<Proxy> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,
-                                                  std::optional<size_t> step) {
-    if (!stop) {
+                                              std::optional<size_t> step) {
+    if (!stop || stop > size()) {
       stop = size();
     }
     if (!start) {

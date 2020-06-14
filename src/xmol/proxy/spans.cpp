@@ -103,12 +103,17 @@ bool AtomRefSpan::contains(const AtomRef& ref) const {
 
 smart::AtomSmartSpan AtomRefSpan::smart() { return *this; }
 
+AtomRefSpan& AtomRefSpan::operator&=(const AtomRefSpan& rhs) { intersect(rhs); }
+
 AtomSelection AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
   return AtomSelection(slice_impl(start, stop, step), true);
 }
 
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
+
+ResidueRefSpan& ResidueRefSpan::operator&=(const ResidueRefSpan& rhs) { intersect(rhs); }
+
 ResidueSelection ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                        std::optional<size_t> step) {
   return ResidueSelection(slice_impl(start, stop, step), true);
@@ -118,7 +123,51 @@ bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
   return m_begin <= ref.m_molecule && ref.m_molecule < m_end;
 }
 smart::MoleculeSmartSpan MoleculeRefSpan::smart() { return *this; }
+
+MoleculeRefSpan& MoleculeRefSpan::operator&=(const MoleculeRefSpan& rhs) {
+  intersect(rhs);
+  return *this;
+}
 MoleculeSelection MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                          std::optional<size_t> step) {
   return MoleculeSelection(slice_impl(start, stop, step), true);
 }
+
+namespace xmol::proxy {
+
+AtomSelection operator|(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
+  return AtomSelection(lhs) | AtomSelection(rhs);
+}
+AtomSelection operator-(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
+  return AtomSelection(lhs) - AtomSelection(rhs);
+}
+AtomRefSpan operator&(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
+  AtomRefSpan result(lhs);
+  result &= rhs;
+  return result;
+}
+ResidueSelection operator|(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
+  return ResidueSelection(lhs) | ResidueSelection(rhs);
+}
+ResidueSelection operator-(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
+  return ResidueSelection(lhs) - ResidueSelection(rhs);
+}
+ResidueRefSpan operator&(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
+  ResidueRefSpan result(lhs);
+  result &= rhs;
+  return result;
+}
+
+MoleculeSelection operator|(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
+  return MoleculeSelection(lhs) | MoleculeSelection(rhs);
+}
+MoleculeSelection operator-(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
+  return MoleculeSelection(lhs) - MoleculeSelection(rhs);
+}
+MoleculeRefSpan operator&(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
+  MoleculeRefSpan result(lhs);
+  result &= rhs;
+  return result;
+}
+
+} // namespace xmol::proxy
