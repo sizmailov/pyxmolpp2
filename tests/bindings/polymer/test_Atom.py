@@ -256,10 +256,14 @@ def test_selection_operators():
 
 
 def test_span_operators():
-    frame = make_polyglycine([("A", 2)])
+    from pyxmolpp2 import AtomSpan
+    frame = make_polyglycine([("A", 3)])
 
     a1 = frame.residues[0].atoms
-    a2 = frame.residues[1].atoms
+    a2 = frame.residues[1:3].atoms
+
+    assert isinstance(a1, AtomSpan)
+    assert isinstance(a2, AtomSpan)
 
     total = frame.atoms.size
 
@@ -273,7 +277,7 @@ def test_span_operators():
     assert (a2 & a1).size == 0
 
     a1 -= a2
-    assert a1.size == a2.size
+    assert a1.size == 7
 
 
 def _test_lookup_by_name():

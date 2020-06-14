@@ -62,6 +62,10 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile");
   auto pyAmberNetCDF = py::class_<io::AmberNetCDF, trajectory::TrajectoryInputFile>(v1, "AmberNetCDF");
 
+  py::implicitly_convertible<AtomSmartSpan,AtomSmartSelection>();
+  py::implicitly_convertible<ResidueSmartSpan,ResidueSmartSelection>();
+  py::implicitly_convertible<MoleculeSmartSpan,MoleculeSmartSelection>();
+
   populate(pyResidueId);
 
   populate(pyXYZ);

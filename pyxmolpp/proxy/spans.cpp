@@ -10,7 +10,10 @@
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
+
+#include <variant>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -39,7 +42,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
              return XYZ(span[i]);
            })
       .def("__getitem__",
-           [](Span& span, py::slice& slice) {
+           [](Span& span, py::slice& slice) -> std::variant<CoordSmartSpan, CoordSmartSelection> {
              ssize_t start, stop, step, slicelength;
              if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
                throw py::error_already_set();
@@ -49,6 +52,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
              }
              assert(start >= 0);
              assert(stop >= 0);
+             if (step == 1) {
+               return span.slice(start, stop).smart();
+             }
              return span.slice(start, stop, step).smart();
            })
       .def(
@@ -99,7 +105,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
              return span[i].smart();
            })
       .def("__getitem__",
-           [](Span& span, py::slice& slice) {
+           [](Span& span, py::slice& slice) -> std::variant<AtomSmartSpan, AtomSmartSelection> {
              ssize_t start, stop, step, slicelength;
              if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
                throw py::error_already_set();
@@ -109,11 +115,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
              }
              assert(start >= 0);
              assert(stop >= 0);
+             if (step == 1) {
+               return span.slice(start, stop).smart();
+             }
              return span.slice(start, stop, step).smart();
            })
       .def(
-          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
-  // todo: add operators
+          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
+      .def("__or__", [](Span& lhs, Span& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Span& lhs, Span& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Span& lhs, Span& rhs) { return (lhs - rhs).smart(); });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpan>& pyResidueSpan) {
   using Span = ResidueSmartSpan;
@@ -138,7 +149,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
              return span[i].smart();
            })
       .def("__getitem__",
-           [](Span& span, py::slice& slice) {
+           [](Span& span, py::slice& slice) -> std::variant<ResidueSmartSpan, ResidueSmartSelection> {
              ssize_t start, stop, step, slicelength;
              if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
                throw py::error_already_set();
@@ -148,11 +159,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
              }
              assert(start >= 0);
              assert(stop >= 0);
+             if (step == 1) {
+               return span.slice(start, stop).smart();
+             }
              return span.slice(start, stop, step).smart();
            })
       .def(
-          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
-  // todo: add operators
+          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
+      .def("__or__", [](Span& lhs, Span& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Span& lhs, Span& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Span& lhs, Span& rhs) { return (lhs - rhs).smart(); });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSpan>& pyMoleculeSpan) {
   using Span = MoleculeSmartSpan;
@@ -177,7 +193,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
              return span[i].smart();
            })
       .def("__getitem__",
-           [](Span& span, py::slice& slice) {
+           [](Span& span, py::slice& slice) -> std::variant<MoleculeSmartSpan, MoleculeSmartSelection> {
              ssize_t start, stop, step, slicelength;
              if (!slice.compute(span.size(), &start, &stop, &step, &slicelength)) {
                throw py::error_already_set();
@@ -187,9 +203,14 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
              }
              assert(start >= 0);
              assert(stop >= 0);
+             if (step == 1) {
+               return span.slice(start, stop).smart();
+             }
              return span.slice(start, stop, step).smart();
            })
       .def(
-          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>());
-  // todo: add operators
+          "__iter__", [](Span& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
+      .def("__or__", [](Span& lhs, Span& rhs) { return (lhs | rhs).smart(); })
+      .def("__and__", [](Span& lhs, Span& rhs) { return (lhs & rhs).smart(); })
+      .def("__sub__", [](Span& lhs, Span& rhs) { return (lhs - rhs).smart(); });
 }

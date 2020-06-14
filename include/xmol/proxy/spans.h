@@ -13,6 +13,7 @@ public:
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
   CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  CoordSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   smart::CoordSmartSpan smart();
 
@@ -32,7 +33,7 @@ public:
 
 protected:
   CoordSpan() = default;
-  CoordSpan(Frame& frame, future::Span<XYZ>& span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};
+  CoordSpan(Frame& frame, future::Span<XYZ> span) : ProxySpan<CoordRef, XYZ>(span), m_frame(&frame){};
   CoordSpan(Frame& frame, XYZ* b, XYZ* e) : ProxySpan(b, e), m_frame(&frame){};
   CoordSpan(Frame& frame, XYZ* b, size_t n) : ProxySpan<CoordRef, XYZ>(b, n), m_frame(&frame){};
 
@@ -58,6 +59,7 @@ public:
 
   template <typename Predicate> AtomSelection filter(Predicate&& p);
   AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  AtomRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::AtomSmartSpan smart();
@@ -84,6 +86,7 @@ public:
 
   template <typename Predicate> ResidueSelection filter(Predicate&& p);
   ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  ResidueRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::ResidueSmartSpan smart();
@@ -110,6 +113,7 @@ public:
 
   template <typename Predicate> MoleculeSelection filter(Predicate&& p);
   MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  MoleculeRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::MoleculeSmartSpan smart();

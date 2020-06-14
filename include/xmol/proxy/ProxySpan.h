@@ -91,14 +91,14 @@ protected:
     return result;
   }
 
-  [[nodiscard]] ProxySpan slice_impl(std::optional<size_t> start, std::optional<size_t> stop) {
+  [[nodiscard]] future::Span<T> slice_impl(std::optional<size_t> start, std::optional<size_t> stop) {
     if (!stop || stop > size()) {
       stop = size();
     }
     if (!start) {
       start = 0;
     }
-    return ProxySpan(m_begin + *start, m_begin + *stop);
+    return future::Span(m_begin + *start, m_begin + *stop);
   }
 
   [[nodiscard]] std::vector<Proxy> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,

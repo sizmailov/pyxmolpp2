@@ -62,6 +62,11 @@ public:
     return m_span.slice(start, stop, step);
   }
 
+  MoleculeRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop) {
+    check_precondition("slice()");
+    return m_span.slice(start, stop);
+  }
+
   MoleculeRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

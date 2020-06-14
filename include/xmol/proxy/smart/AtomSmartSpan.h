@@ -61,6 +61,11 @@ public:
     return m_span.slice(start, stop, step);
   }
 
+  AtomRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop) {
+    check_precondition("slice()");
+    return m_span.slice(start, stop);
+  }
+
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

@@ -62,6 +62,11 @@ public:
     return m_span.slice(start, stop, step);
   }
 
+  ResidueRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop) {
+    check_precondition("slice()");
+    return m_span.slice(start, stop);
+  }
+
   ResidueRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

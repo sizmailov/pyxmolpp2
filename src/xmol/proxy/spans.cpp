@@ -42,6 +42,13 @@ CoordSelection CoordSpan::slice(std::optional<size_t> start, std::optional<size_
   return CoordSelection(*m_frame, slice_impl(start, stop, step), true);
 }
 
+CoordSpan CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  if (empty()) {
+    return {};
+  }
+  return CoordSpan(*m_frame, slice_impl(start, stop));
+}
+
 CoordSpan AtomRefSpan::coords() {
   if (empty()) {
     return {};
@@ -103,20 +110,34 @@ bool AtomRefSpan::contains(const AtomRef& ref) const {
 
 smart::AtomSmartSpan AtomRefSpan::smart() { return *this; }
 
-AtomRefSpan& AtomRefSpan::operator&=(const AtomRefSpan& rhs) { intersect(rhs); }
+AtomRefSpan& AtomRefSpan::operator&=(const AtomRefSpan& rhs) {
+  intersect(rhs);
+  return *this;
+}
 
 AtomSelection AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
   return AtomSelection(slice_impl(start, stop, step), true);
 }
 
+AtomRefSpan AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return AtomRefSpan(slice_impl(start, stop));
+}
+
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
 
-ResidueRefSpan& ResidueRefSpan::operator&=(const ResidueRefSpan& rhs) { intersect(rhs); }
+ResidueRefSpan& ResidueRefSpan::operator&=(const ResidueRefSpan& rhs) {
+  intersect(rhs);
+  return *this;
+}
 
 ResidueSelection ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                        std::optional<size_t> step) {
   return ResidueSelection(slice_impl(start, stop, step), true);
+}
+
+ResidueRefSpan ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return ResidueRefSpan(slice_impl(start, stop));
 }
 
 bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
@@ -131,6 +152,10 @@ MoleculeRefSpan& MoleculeRefSpan::operator&=(const MoleculeRefSpan& rhs) {
 MoleculeSelection MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                          std::optional<size_t> step) {
   return MoleculeSelection(slice_impl(start, stop, step), true);
+}
+
+MoleculeRefSpan MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return MoleculeRefSpan(slice_impl(start, stop));
 }
 
 namespace xmol::proxy {
