@@ -166,9 +166,11 @@ TEST_F(SelectionTests, smart_atom_multiple_frames) {
   auto frame = make_polyglycines({{"A", 1}});
   auto frame2 = make_polyglycines({{"A", 1}});
 
-  EXPECT_THROW(frame.atoms() | frame2.atoms(), MultipleFramesSelectionError);
-  EXPECT_THROW(frame.atoms() - frame2.atoms(), MultipleFramesSelectionError);
-  EXPECT_THROW(frame.atoms() & frame2.atoms(), MultipleFramesSelectionError);
+  AtomSelection ats1 = frame.atoms();
+  AtomSelection ats2 = frame2.atoms();
+  EXPECT_THROW(ats1 | ats2, MultipleFramesSelectionError);
+  EXPECT_THROW(ats1 - ats2, MultipleFramesSelectionError);
+  EXPECT_THROW(ats1 & ats2, MultipleFramesSelectionError);
 }
 
 TEST_F(SelectionTests, smart_coords_eigen) {
