@@ -4,7 +4,7 @@ from make_polygly import make_polyglycine
 
 
 def test_atom_name():
-    from pyxmolpp2.v1 import aName
+    from pyxmolpp2 import aName
     frame = make_polyglycine([("A", 10)])
 
     assert frame.atoms.filter(aName == "CA").size == 10
@@ -14,7 +14,7 @@ def test_atom_name():
 
 
 def test_residue_name():
-    from pyxmolpp2.v1 import rName
+    from pyxmolpp2 import rName
     frame = make_polyglycine([("A", 10)])
 
     assert frame.atoms.filter(rName == "GLY").size == 70
@@ -30,7 +30,7 @@ def test_residue_name():
 
 
 def test_chain_name():
-    from pyxmolpp2.v1 import cName
+    from pyxmolpp2 import cName
     frame = make_polyglycine([("A", 10),("B",20)])
 
     assert frame.atoms.filter(cName == "A").size == 10*7
@@ -50,7 +50,7 @@ def test_chain_name():
 
 
 def test_atom_id():
-    from pyxmolpp2.v1 import aId
+    from pyxmolpp2 import aId
     frame = make_polyglycine([("A", 10)])
 
     assert frame.atoms.filter(aId == 5).size == 1
@@ -60,7 +60,7 @@ def test_atom_id():
 
 
 def test_residue_id():
-    from pyxmolpp2.v1 import rId, ResidueId
+    from pyxmolpp2 import rId, ResidueId
     frame = make_polyglycine([("A", 10)])
 
     assert frame.atoms.filter(rId == 5).size == 1*7

@@ -3,7 +3,7 @@ import math
 
 
 def test_conversions():
-    from pyxmolpp2.v1 import Degrees, Radians, radians_to_degrees, degrees_to_radians
+    from pyxmolpp2 import Degrees, Radians, radians_to_degrees, degrees_to_radians
     deg = Degrees(10)
     rad = Radians(100)
 
@@ -15,7 +15,7 @@ def test_conversions():
 
 
 def test_operations():
-    from pyxmolpp2.v1 import Degrees, Radians
+    from pyxmolpp2 import Degrees, Radians
     l = Radians(10)
     r = Radians(20)
 

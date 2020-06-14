@@ -1,4 +1,4 @@
-from pyxmolpp2.v1 import XYZ
+from pyxmolpp2 import XYZ
 
 
 def test_construction():

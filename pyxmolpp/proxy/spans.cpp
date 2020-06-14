@@ -1,5 +1,5 @@
 #include "spans.h"
-#include "v1/iterator-helpers.h"
+#include "iterator-helpers.h"
 #include "xmol/Frame.h"
 #include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"

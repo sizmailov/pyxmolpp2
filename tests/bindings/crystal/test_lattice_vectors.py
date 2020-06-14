@@ -2,7 +2,7 @@ import pytest
 
 
 def test_closed_image():
-    from pyxmolpp2.v1 import UnitCell, XYZ
+    from pyxmolpp2 import UnitCell, XYZ
 
     cell = UnitCell(XYZ(1, 4, 1), XYZ(5, 1, 1), XYZ(7, 1, 4))
 

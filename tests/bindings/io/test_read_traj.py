@@ -2,7 +2,7 @@ def test_read_chromatin():
     import pyxmolpp2
     from tqdm import tqdm
     print(pyxmolpp2)
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile, Trajectory
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile, Trajectory
 
     st = PdbFile("/home/sergei/Downloads/chromatin/run00001.pdb").frames()[0]
     traj = Trajectory(st)

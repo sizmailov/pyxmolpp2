@@ -1,5 +1,5 @@
 #include "selections.h"
-#include "v1/iterator-helpers.h"
+#include "iterator-helpers.h"
 #include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"

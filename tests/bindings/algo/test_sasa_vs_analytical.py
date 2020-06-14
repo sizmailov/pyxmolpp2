@@ -3,7 +3,7 @@
 
 import pytest
 import numpy as np
-from pyxmolpp2.v1 import XYZ
+from pyxmolpp2 import XYZ
 
 
 def first_sphere_hidden_area(a, b, r1, r2):
@@ -23,7 +23,7 @@ def first_sphere_hidden_area(a, b, r1, r2):
 
 
 def test_sasa_two_spheres():
-    from pyxmolpp2.v1 import calc_sasa
+    from pyxmolpp2 import calc_sasa
     for samples, precision in [
         (10, 5e0),  # 5% accuracy
         (50, 1e0),  # 1% accuracy
@@ -57,7 +57,7 @@ def test_sasa_two_spheres():
 
 
 def test_sasa_three_spheres():
-    from pyxmolpp2.v1 import calc_sasa
+    from pyxmolpp2 import calc_sasa
     for samples, precision in [
         (10, 5e0),  # 5% accuracy
         (50, 1e0),  # 1% accuracy
@@ -98,7 +98,7 @@ def test_sasa_three_spheres():
 
 
 def test_sasa_errors():
-    from pyxmolpp2.v1 import calc_sasa
+    from pyxmolpp2 import calc_sasa
     coords = np.random.random((100, 3))
     radii = np.random.random((100,))
     indices = np.zeros(100).astype(np.intc)

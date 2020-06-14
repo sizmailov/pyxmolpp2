@@ -69,7 +69,7 @@ def autocorr_all_harmonics5(r):
 
 
 def test_autocorr():
-    from pyxmolpp2.v1 import calc_autocorr_order_2
+    from pyxmolpp2 import calc_autocorr_order_2
     from numpy.random import random
     from timeit import default_timer as timer
 

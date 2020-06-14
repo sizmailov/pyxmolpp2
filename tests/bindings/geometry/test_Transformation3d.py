@@ -2,7 +2,7 @@ import pytest
 
 
 def test_composition():
-    from pyxmolpp2.v1 import XYZ, Rotation, Translation, Degrees, UniformScale
+    from pyxmolpp2 import XYZ, Rotation, Translation, Degrees, UniformScale
 
     R = Rotation(XYZ(1, 1, 1), Degrees(39))
     T = Translation(XYZ(7, 1, 2))
@@ -25,7 +25,7 @@ def test_composition():
 
 def test_transformation_3d():
     import numpy as np
-    from pyxmolpp2.v1 import XYZ, Rotation, Translation, Degrees
+    from pyxmolpp2 import XYZ, Rotation, Translation, Degrees
 
     R = Rotation(XYZ(1, 0, 0), Degrees(45))
     T = Translation(XYZ(1, 2, 5))
@@ -47,7 +47,7 @@ def test_transformation_3d():
 
 def test_rotation_decomposition():
     import numpy as np
-    from pyxmolpp2.v1 import XYZ, Rotation, Degrees
+    from pyxmolpp2 import XYZ, Rotation, Degrees
 
     for ax, theta in [
         (XYZ(0, 0, 1), Degrees(30)),
@@ -71,7 +71,7 @@ def test_rotation_decomposition():
 
 def test_angle_extraction():
     import numpy as np
-    from pyxmolpp2.v1 import Rotation
+    from pyxmolpp2 import Rotation
 
     r = Rotation(np.identity(3))
     assert np.isclose(r.theta().degrees, 0.0)
@@ -94,7 +94,7 @@ def test_angle_extraction():
 
 def test_bad_rotation_matrix_input():
     import numpy as np
-    from pyxmolpp2.v1 import Rotation
+    from pyxmolpp2 import Rotation
 
     with pytest.raises(TypeError):
         r = Rotation(np.array([1, 2, 3]))

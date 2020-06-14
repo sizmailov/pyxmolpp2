@@ -3,7 +3,7 @@ from make_polygly import make_polyglycine
 
 def test_shorthands():
     import numpy as np
-    from pyxmolpp2.v1 import Rotation, Translation, XYZ, Degrees, Frame
+    from pyxmolpp2 import Rotation, Translation, XYZ, Degrees, Frame
 
     frame = make_polyglycine([("A", 20)])
     for a in frame.atoms:

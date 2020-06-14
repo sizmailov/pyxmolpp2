@@ -1,5 +1,5 @@
 #include "trajectory.h"
-#include "v1/iterator-helpers.h"
+#include "iterator-helpers.h"
 
 namespace py = pybind11;
 using namespace xmol::trajectory;

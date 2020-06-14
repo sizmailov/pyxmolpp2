@@ -4,7 +4,7 @@ from make_polygly import make_polyglycine
 
 
 def test_Frame():
-    from pyxmolpp2.v1 import Frame, ResidueId, XYZ
+    from pyxmolpp2 import Frame, ResidueId, XYZ
 
     f = Frame()
     c = f.add_molecule()
@@ -77,7 +77,7 @@ def test_iterable():
 
 
 def test_coord_span_assign_values():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     import numpy as np
     frame = make_polyglycine([("A", 10)])
     frame.coords.values[:] = np.array([0, 0, 0])
@@ -110,7 +110,7 @@ def test_repr():
 
 
 def test_assignment():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     frame = make_polyglycine([("A", 1)])
     for a in frame.atoms:
         # print(a,a.r)
@@ -277,7 +277,7 @@ def test_span_operators():
 
 
 def _test_lookup_by_name():
-    from pyxmolpp2.v1 import ResidueId
+    from pyxmolpp2 import ResidueId
     frame = make_polyglycine([("A", 2)])
 
     frame["A"]  # does not throw
@@ -294,7 +294,7 @@ def _test_lookup_by_name():
 
 
 def test_lookup_after_rename():
-    from pyxmolpp2.v1 import ResidueId
+    from pyxmolpp2 import ResidueId
     frame = make_polyglycine([("A", 2)])
 
     frame["A"]  # does not throw
@@ -311,7 +311,7 @@ def test_lookup_after_rename():
 
 
 def test_dumb_copy_lookup():
-    from pyxmolpp2.v1 import Frame
+    from pyxmolpp2 import Frame
     frame = make_polyglycine([("A", 3), ("B", 3)])
 
     frame2 = Frame(frame)
@@ -343,7 +343,7 @@ def test_selection_strides():
 
 
 def test_frame_copy():
-    from pyxmolpp2.v1 import Frame
+    from pyxmolpp2 import Frame
     frame = make_polyglycine([("A", 2)])
     frame2 = Frame(frame)
 
@@ -354,7 +354,7 @@ def test_frame_copy():
 
 
 def test_AtomSelection_transformations():
-    from pyxmolpp2.v1 import Translation, XYZ
+    from pyxmolpp2 import Translation, XYZ
     frame = make_polyglycine([("A", 20)])
 
     ats = frame.atoms
@@ -368,7 +368,7 @@ def test_AtomSelection_transformations():
 
 
 def test_Atom_setters():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     frame = make_polyglycine([("A", 1)])
     a = frame.atoms[0]
 
@@ -383,7 +383,7 @@ def test_Atom_setters():
 
 
 def test_Residue_setters():
-    from pyxmolpp2.v1 import ResidueId
+    from pyxmolpp2 import ResidueId
     frame = make_polyglycine([("A", 1)])
     r = frame.residues[0]
 
@@ -403,7 +403,7 @@ def test_Chain_setters():
 
 
 def test_AtomSelection_construction_from_list():
-    from pyxmolpp2.v1 import AtomSelection
+    from pyxmolpp2 import AtomSelection
 
     frame = make_polyglycine([("A", 20)])
     atom_list = [a for a in frame.atoms]
@@ -416,7 +416,7 @@ def test_AtomSelection_construction_from_list():
 
 
 def test_ResidueSelection_construction_from_list():
-    from pyxmolpp2.v1 import ResidueSelection
+    from pyxmolpp2 import ResidueSelection
 
     frame = make_polyglycine([("A", 20)])
     thelist = [a for a in frame.residues]
@@ -429,7 +429,7 @@ def test_ResidueSelection_construction_from_list():
 
 
 def test_bad_selection_construction_from_list():
-    from pyxmolpp2.v1 import AtomSelection, MoleculeSelection
+    from pyxmolpp2 import AtomSelection, MoleculeSelection
 
     frame = make_polyglycine([("A", 20)])
 
@@ -499,7 +499,7 @@ def test_anything_to_pdb_file():
 
 @pytest.mark.skip("to_pdb not implemented")
 def test_anything_to_pdb_buffer():
-    from pyxmolpp2.v1 import StandardPdbRecords
+    from pyxmolpp2 import StandardPdbRecords
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
 

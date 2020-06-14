@@ -3,7 +3,7 @@ import os
 from make_polygly import make_polyglycine
 
 def test_dead_selection_access():
-    from pyxmolpp2.v1 import UniformScale
+    from pyxmolpp2 import UniformScale
     frame = make_polyglycine([("A", 20)])
     asel = frame.atoms
     rsel = frame.residues

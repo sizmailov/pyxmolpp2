@@ -1,6 +1,6 @@
 
 def make_polyglycine(chain_lengths):
-    from pyxmolpp2.v1 import Frame, XYZ, ResidueId
+    from pyxmolpp2 import Frame, XYZ, ResidueId
 
     aid = 1
     rid = 1

@@ -2,7 +2,7 @@ import pytest
 
 
 def test_traj_iteration():
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
     assert frame.atoms.size > 0
@@ -28,7 +28,7 @@ def test_traj_iteration():
 
 @pytest.mark.skip("Consistency checks are not implemented")
 def test_traj_exceptions():
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
     datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
 
@@ -48,7 +48,7 @@ def test_traj_exceptions():
 
 
 def test_traj_size():
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
     assert frame.atoms.size > 0
@@ -71,7 +71,7 @@ def test_traj_size():
 
 
 def test_trajectory_integer_indexing():
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 

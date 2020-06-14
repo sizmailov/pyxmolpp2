@@ -2,7 +2,7 @@ import pytest
 
 
 def test_read_frame():
-    from pyxmolpp2.v1 import PdbFile
+    from pyxmolpp2 import PdbFile
     import glob
 
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
@@ -11,7 +11,7 @@ def test_read_frame():
 
 
 def test_read_frames():
-    from pyxmolpp2.v1 import PdbFile
+    from pyxmolpp2 import PdbFile
     import glob
 
     for filename in glob.glob("tests_dataset/pdb/rcsb/*.pdb"):
@@ -22,21 +22,21 @@ def test_read_frames():
 
 
 def test_read_non_existent_file():
-    from pyxmolpp2.v1 import PdbFile
+    from pyxmolpp2 import PdbFile
 
     with pytest.raises(RuntimeError):
         PdbFile("does_not_exists.pdb")
 
 
 def test_read_empty_file():
-    from pyxmolpp2.v1 import PdbFile
+    from pyxmolpp2 import PdbFile
     import os
 
     assert len(PdbFile(os.devnull).frames()) == 0
 
 # todo: move to another test set
 # def test_rmsd():
-#     from pyxmolpp2.v1 PdbFile, import calc_rmsd, calc_alignment, calc_geom_center
+#     from pyxmolpp2 PdbFile, import calc_rmsd, calc_alignment, calc_geom_center
 #     import glob
 #
 #     filenames = sorted(glob.glob("tests_dataset/pdb/rcsb/*.pdb"))
@@ -72,7 +72,7 @@ def test_read_empty_file():
 
 # todo: move to another test set
 # def test_torsions():
-#     from pyxmolpp2.v1 import TorsionAngleFactory, OutOfRangeResidue
+#     from pyxmolpp2 import TorsionAngleFactory, OutOfRangeResidue
 #     from pyxmolpp2.pdb import PdbFile
 #     from pyxmolpp2.geometry import Degrees
 #     import glob

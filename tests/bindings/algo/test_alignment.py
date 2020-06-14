@@ -4,7 +4,7 @@ import numpy as np
 
 
 def test_calc_rmsd():
-    from pyxmolpp2.v1 import calc_alignment, XYZ, calc_rmsd
+    from pyxmolpp2 import calc_alignment, XYZ, calc_rmsd
 
     a = np.array([(1, 2, 3)])
     b = np.array([(3, 4, 5)])
@@ -18,7 +18,7 @@ def test_calc_rmsd():
 
 
 def test_calc_rmsd_exception():
-    from pyxmolpp2.v1 import calc_alignment, XYZ, calc_rmsd, Transformation
+    from pyxmolpp2 import calc_alignment, XYZ, calc_rmsd, Transformation
 
     a = np.zeros(0)
     with pytest.raises(TypeError):
@@ -33,7 +33,7 @@ def test_calc_rmsd_exception():
 
 
 def test_alignment_exception():
-    from pyxmolpp2.v1 import calc_alignment
+    from pyxmolpp2 import calc_alignment
 
     a = np.array([(1, 2, 3)] * 10)
 
@@ -50,7 +50,7 @@ def test_alignment_exception():
 
 
 def test_calc_alignment():
-    from pyxmolpp2.v1 import calc_alignment, XYZ, calc_rmsd, Rotation, Translation, Degrees
+    from pyxmolpp2 import calc_alignment, XYZ, calc_rmsd, Rotation, Translation, Degrees
 
     a = np.array([(1, 2, 3), (1, 2, 5), (4, 2, 7), (8, 1, 4)])
     G = Rotation(XYZ(7, 6, 5), Degrees(12)) * Translation(XYZ(8, -9, 1))
@@ -63,7 +63,7 @@ def test_calc_alignment():
 
 
 def test_calc_inertia_tensor():
-    from pyxmolpp2.v1 import calc_inertia_tensor, XYZ, Rotation, Translation
+    from pyxmolpp2 import calc_inertia_tensor, XYZ, Rotation, Translation
     import numpy as np
 
     a = np.array([(0, 1, 0), (1, 0, 0), (-1, 0, 0), (0, -1, 0)])
@@ -74,7 +74,7 @@ def test_calc_inertia_tensor():
 
 @pytest.mark.skip("intertia tensor with mass is not implemented")
 def test_calc_inertia_tensor_mass():
-    from pyxmolpp2.v1 import calc_inertia_tensor, XYZ, Rotation, Translation
+    from pyxmolpp2 import calc_inertia_tensor, XYZ, Rotation, Translation
     import numpy as np
 
     a = np.array([(0, 1, 0), (1, 0, 0), (-1, 0, 0), (0, -1, 0)])
@@ -108,7 +108,7 @@ def _inertia_tensor(coords: np.ndarray):
 
 
 def test_calc_inertia_tensor_off_diagonal():
-    from pyxmolpp2.v1 import calc_inertia_tensor, Rotation
+    from pyxmolpp2 import calc_inertia_tensor, Rotation
     import numpy as np
 
     N = 1000

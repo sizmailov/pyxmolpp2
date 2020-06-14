@@ -10,4 +10,4 @@ def test_import_pyxmolpp2():
     import pyxmolpp2
 
 def test_import_pyxmolpp2_v1():
-    import pyxmolpp2.v1
+    import pyxmolpp2

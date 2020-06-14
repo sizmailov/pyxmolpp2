@@ -2,7 +2,7 @@ import pytest
 
 
 def make_polyglycine(chain_lengths, no_reserve=True):
-    from pyxmolpp2.v1 import Frame
+    from pyxmolpp2 import Frame
     from pyxmolpp2.polymer import ChainName
     from pyxmolpp2.polymer import AtomName
     from pyxmolpp2.polymer import ResidueName, ResidueId

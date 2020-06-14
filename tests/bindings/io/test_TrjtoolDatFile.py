@@ -2,7 +2,7 @@ import pytest
 
 
 def test_read_trjtool():
-    from pyxmolpp2.v1 import PdbFile, TrjtoolDatFile
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile
 
     frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
 
@@ -17,14 +17,14 @@ def test_read_trjtool():
 
 
 def test_raise_file_does_not_exists():
-    from pyxmolpp2.v1 import TrjtoolDatFile
+    from pyxmolpp2 import TrjtoolDatFile
 
     with pytest.raises(RuntimeError):
         TrjtoolDatFile("does_not_exists.dat")
 
 
 def test_raise_file_is_empty():
-    from pyxmolpp2.v1 import TrjtoolDatFile
+    from pyxmolpp2 import TrjtoolDatFile
     import os
     with pytest.raises(RuntimeError):
         TrjtoolDatFile(os.devnull)

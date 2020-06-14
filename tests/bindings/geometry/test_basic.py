@@ -4,7 +4,7 @@ import pytest
 
 
 def test_distance():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     a = XYZ(1, 2, 3)
     b = XYZ(4, 5, 6)
 
@@ -12,7 +12,7 @@ def test_distance():
 
 
 def test_distance2():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     a = XYZ(1, 2, 3)
     b = XYZ(4, 5, 6)
 
@@ -20,7 +20,7 @@ def test_distance2():
 
 
 def test_angle():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     a = XYZ(0, 0, 1)
     b = XYZ(0, 0, 0)
     c = XYZ(1, 0, 0)
@@ -35,7 +35,7 @@ def test_angle():
 
 
 def test_dihedral():
-    from pyxmolpp2.v1 import XYZ
+    from pyxmolpp2 import XYZ
     a = XYZ(1, 0, 0)
     b = XYZ(0, 0, 0)
     c = XYZ(0, 0, 1)
