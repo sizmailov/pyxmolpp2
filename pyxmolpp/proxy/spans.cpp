@@ -28,7 +28,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("filter", [](Span& span, const std::function<bool(const XYZ&)>& f) { return span.filter(f).smart(); })
       .def("__len__", &Span::size)
       //      .def("__contains__", &Span::contains)
-      .def("__getitem__", [](Span& span, size_t i) { return XYZ(span[i]); })
+      .def("__getitem__",
+           [](Span& span, ssize_t i) {
+             if (i < 0) {
+               i += span.size();
+             }
+             if (i < 0 || i >= span.size()) {
+               throw py::index_error();
+             }
+             return XYZ(span[i]);
+           })
       .def("__getitem__",
            [](Span& span, py::slice& slice) {
              ssize_t start, stop, step, slicelength;
@@ -79,7 +88,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
-      .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, ssize_t i) {
+             if (i < 0) {
+               i += span.size();
+             }
+             if (i < 0 || i >= span.size()) {
+               throw py::index_error();
+             }
+             return span[i].smart();
+           })
       .def("__getitem__",
            [](Span& span, py::slice& slice) {
              ssize_t start, stop, step, slicelength;
@@ -109,7 +127,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, ResidueSmartRef& ref) { return span.contains(ref); })
-      .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, ssize_t i) {
+             if (i < 0) {
+               i += span.size();
+             }
+             if (i < 0 || i >= span.size()) {
+               throw py::index_error();
+             }
+             return span[i].smart();
+           })
       .def("__getitem__",
            [](Span& span, py::slice& slice) {
              ssize_t start, stop, step, slicelength;
@@ -139,7 +166,16 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, MoleculeSmartRef& ref) { return span.contains(ref); })
-      .def("__getitem__", [](Span& span, size_t i) { return span[i].smart(); })
+      .def("__getitem__",
+           [](Span& span, ssize_t i) {
+             if (i < 0) {
+               i += span.size();
+             }
+             if (i < 0 || i >= span.size()) {
+               throw py::index_error();
+             }
+             return span[i].smart();
+           })
       .def("__getitem__",
            [](Span& span, py::slice& slice) {
              ssize_t start, stop, step, slicelength;
