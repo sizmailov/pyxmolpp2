@@ -1,6 +1,7 @@
 
 #include <xmol/proxy/spans.h>
 
+#include "xmol/Frame.h"
 #include "xmol/algo/alignment.h"
 #include "xmol/proxy/selections.h"
 #include "xmol/proxy/smart/spans.h"
@@ -47,6 +48,18 @@ CoordSpan CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> st
     return {};
   }
   return CoordSpan(*m_frame, slice_impl(start, stop));
+}
+
+std::vector<xmol::CoordIndex> CoordSpan::index() const {
+  std::vector<AtomIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    AtomIndex first = m_frame->index_of(*m_begin);
+    for (int i = 0; i < size(); ++i) {
+      result.push_back(first + i);
+    }
+  }
+  return result;
 }
 
 CoordSpan AtomRefSpan::coords() {
@@ -123,6 +136,18 @@ AtomRefSpan AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t
   return AtomRefSpan(slice_impl(start, stop));
 }
 
+std::vector<xmol::AtomIndex> AtomRefSpan::index() const {
+  std::vector<AtomIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    AtomIndex first = frame_ptr()->index_of(*m_begin);
+    for (int i = 0; i < size(); ++i) {
+      result.push_back(first + i);
+    }
+  }
+  return result;
+}
+
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
 
@@ -138,6 +163,17 @@ ResidueSelection ResidueRefSpan::slice(std::optional<size_t> start, std::optiona
 
 ResidueRefSpan ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
   return ResidueRefSpan(slice_impl(start, stop));
+}
+std::vector<xmol::ResidueIndex> ResidueRefSpan::index() const {
+  std::vector<ResidueIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    ResidueIndex first = frame_ptr()->index_of(*m_begin);
+    for (int i = 0; i < size(); ++i) {
+      result.push_back(first + i);
+    }
+  }
+  return result;
 }
 
 bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
@@ -156,6 +192,17 @@ MoleculeSelection MoleculeRefSpan::slice(std::optional<size_t> start, std::optio
 
 MoleculeRefSpan MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
   return MoleculeRefSpan(slice_impl(start, stop));
+}
+std::vector<xmol::MoleculeIndex> MoleculeRefSpan::index() const {
+  std::vector<MoleculeIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    MoleculeIndex first = frame_ptr()->index_of(*m_begin);
+    for (int i = 0; i < size(); ++i) {
+      result.push_back(first + i);
+    }
+  }
+  return result;
 }
 
 namespace xmol::proxy {

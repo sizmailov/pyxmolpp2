@@ -1,9 +1,21 @@
 
 #include "xmol/proxy/selections.h"
+#include "xmol/Frame.h"
 #include "xmol/algo/alignment.h"
 #include "xmol/proxy/smart/selections.h"
 
 using namespace xmol::proxy;
+
+std::vector<xmol::CoordIndex> CoordSelection::index() const {
+  std::vector<CoordIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    for (auto& coord : m_data) {
+      result.push_back(m_frame->index_of(*coord.m_coord));
+    }
+  }
+  return result;
+}
 
 xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSpan& other) {
   return xmol::algo::calc_alignment(other, *this);
@@ -149,17 +161,47 @@ AtomSelection MoleculeSelection::atoms() {
 smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::MoleculeSmartSelection(*this); }
 MoleculeSelection MoleculeSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                            std::optional<size_t> step) {
-  return MoleculeSelection(slice_impl(start,stop,step));
+  return MoleculeSelection(slice_impl(start, stop, step));
+}
+std::vector<xmol::MoleculeIndex> MoleculeSelection::index() const {
+  std::vector<MoleculeIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    for (auto& ref : m_data) {
+      result.push_back(frame_ptr()->index_of(*ref.m_molecule));
+    }
+  }
+  return result;
 }
 smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
 ResidueSelection ResidueSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                          std::optional<size_t> step) {
-  return ResidueSelection(slice_impl(start,stop,step));
+  return ResidueSelection(slice_impl(start, stop, step));
+}
+std::vector<xmol::ResidueIndex> ResidueSelection::index() const {
+  std::vector<ResidueIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    for (auto& ref : m_data) {
+      result.push_back(frame_ptr()->index_of(*ref.m_residue));
+    }
+  }
+  return result;
 }
 smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }
 AtomSelection AtomSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                    std::optional<size_t> step) {
-  return AtomSelection(slice_impl(start,stop,step));
+  return AtomSelection(slice_impl(start, stop, step));
+}
+std::vector<xmol::AtomIndex> AtomSelection::index() const {
+  std::vector<AtomIndex> result;
+  if (!empty()) {
+    result.reserve(size());
+    for (auto& ref : m_data) {
+      result.push_back(frame_ptr()->index_of(*ref.m_atom));
+    }
+  }
+  return result;
 }
 
 namespace xmol::proxy {
@@ -191,9 +233,10 @@ MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelectio
 smart::CoordSmartSelection CoordSelection::smart() { return smart::CoordSmartSelection(*this); }
 CoordSelection CoordSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                      std::optional<size_t> step) {
-  if (empty()){
+  if (empty()) {
     return {};
   }
-  return CoordSelection(*m_frame, slice_impl(start,stop,step));
+  return CoordSelection(*m_frame, slice_impl(start, stop, step));
 }
+
 } // namespace xmol::proxy

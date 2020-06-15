@@ -95,6 +95,7 @@ private:
   friend AtomSelection;
   friend Frame;
   friend MoleculeSelection;
+  friend CoordSelection;
   friend ProxySpan<CoordRef, XYZ>;
   friend ResidueSelection;
   friend Selection<CoordRef>;

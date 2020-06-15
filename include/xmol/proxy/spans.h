@@ -12,6 +12,7 @@ public:
   }
 
   template <typename Predicate> CoordSelection filter(Predicate&& p);
+  std::vector<CoordIndex> index() const;
   CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
   CoordSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
@@ -29,6 +30,7 @@ public:
   void apply(const geom::affine::UniformScale3d& t);
   void apply(const geom::affine::Rotation3d& t);
   void apply(const geom::affine::Translation3d& t);
+
   XYZ mean();
 
 protected:
@@ -55,9 +57,11 @@ public:
   ResidueRefSpan residues();
   MoleculeRefSpan molecules();
 
+
   [[nodiscard]] bool contains(const AtomRef& ref) const;
 
   template <typename Predicate> AtomSelection filter(Predicate&& p);
+  std::vector<AtomIndex> index() const;
   AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
   AtomRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
@@ -69,6 +73,7 @@ public:
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->residue->molecule->frame; }
+  const Frame* frame_ptr() const { return empty() ? nullptr : m_begin->residue->molecule->frame; }
 
 private:
   friend smart::AtomSmartSpan;
@@ -85,6 +90,8 @@ public:
   [[nodiscard]] bool contains(const ResidueRef& ref) const;
 
   template <typename Predicate> ResidueSelection filter(Predicate&& p);
+  std::vector<ResidueIndex> index() const;
+
   ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
   ResidueRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
@@ -96,6 +103,7 @@ public:
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->molecule->frame; }
+  const Frame* frame_ptr() const { return empty() ? nullptr : m_begin->molecule->frame; }
 
 private:
   friend smart::ResidueSmartSpan;
@@ -112,6 +120,8 @@ public:
   [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
   template <typename Predicate> MoleculeSelection filter(Predicate&& p);
+  std::vector<MoleculeIndex> index() const;
+
   MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
   MoleculeRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
@@ -123,6 +133,7 @@ public:
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->frame; }
+  const Frame* frame_ptr() const { return empty() ? nullptr : m_begin->frame; }
 
 private:
   friend smart::MoleculeSmartSpan;

@@ -113,6 +113,11 @@ public:
     return m_selection.slice(start, stop, step);
   }
 
+  auto index() {
+    check_precondition("index()");
+    return m_selection.index();
+  }
+
   AtomRef& operator[](size_t i) {
     check_precondition("operator[]()");
     return m_selection[i];

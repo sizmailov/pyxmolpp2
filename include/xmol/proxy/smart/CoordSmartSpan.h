@@ -96,6 +96,11 @@ public:
     return m_span.slice(start, stop);
   }
 
+  auto index() {
+    check_precondition("index()");
+    return m_span.index();
+  }
+
   Frame& frame() {
     check_precondition("frame()");
     return FrameObserver::frame();

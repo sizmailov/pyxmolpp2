@@ -38,6 +38,7 @@ public:
     }
     return CoordSelection(*m_frame, internal_filter(std::forward<Predicate>(p)));
   }
+  std::vector<CoordIndex> index() const;
 
   geom::affine::Transformation3d alignment_to(CoordSpan& other);
   geom::affine::Transformation3d alignment_to(CoordSelection& other);
@@ -98,6 +99,8 @@ public:
     return AtomSelection(internal_filter(std::forward<Predicate>(p)));
   }
 
+  std::vector<AtomIndex> index() const;
+
   AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
 
   /// Inplace union
@@ -137,6 +140,7 @@ private:
   }
   friend smart::AtomSmartSelection;
   Frame* frame_ptr() { return empty() ? nullptr : &m_data[0].frame(); }
+  const Frame* frame_ptr() const { return empty() ? nullptr : &m_data[0].frame(); }
 };
 
 /// @breif Ordered set of @ref ResidueRef from single @ref Frame
@@ -183,6 +187,9 @@ public:
     return ResidueSelection(internal_filter(std::forward<Predicate>(p)));
   }
 
+  std::vector<ResidueIndex> index() const;
+
+
   ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
 
   /// Create smart selection from this
@@ -201,6 +208,7 @@ private:
   }
   friend smart::ResidueSmartSelection;
   Frame* frame_ptr() { return empty() ? nullptr : &m_data[0].frame(); }
+  const Frame* frame_ptr() const { return empty() ? nullptr : &m_data[0].frame(); }
 };
 
 /// @breif Ordered set of @ref MoleculeRef from single @ref Frame
@@ -247,6 +255,8 @@ public:
     return MoleculeSelection(internal_filter(std::forward<Predicate>(p)));
   }
 
+  std::vector<MoleculeIndex> index() const;
+
   MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
 
   /// Create smart selection from this
@@ -265,6 +275,7 @@ private:
   }
   friend smart::MoleculeSmartSelection;
   Frame* frame_ptr() { return empty() ? nullptr : &m_data[0].frame(); }
+  const Frame* frame_ptr() const { return empty() ? nullptr : &m_data[0].frame(); }
 };
 
 AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs);

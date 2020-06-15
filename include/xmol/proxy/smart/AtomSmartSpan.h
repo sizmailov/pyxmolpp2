@@ -66,6 +66,11 @@ public:
     return m_span.slice(start, stop);
   }
 
+  auto index() {
+    check_precondition("index()");
+    return m_span.index();
+  }
+
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

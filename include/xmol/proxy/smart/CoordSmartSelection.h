@@ -106,6 +106,11 @@ public:
     return m_selection.slice(start, stop, step);
   }
 
+  auto index() {
+    check_precondition("index()");
+    return m_selection.index();
+  }
+
 private:
   CoordSelection m_selection;
   inline void check_precondition(const char* func_name) const {

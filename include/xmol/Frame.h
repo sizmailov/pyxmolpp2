@@ -134,6 +134,16 @@ private:
   friend proxy::ResidueRef;
   friend proxy::MoleculeRef;
 
+  friend proxy::CoordSpan;
+  friend proxy::AtomRefSpan;
+  friend proxy::ResidueRefSpan;
+  friend proxy::MoleculeRefSpan;
+
+  friend proxy::CoordSelection;
+  friend proxy::AtomSelection;
+  friend proxy::ResidueSelection;
+  friend proxy::MoleculeSelection;
+
   friend proxy::smart::AtomSmartRef;
   friend proxy::smart::ResidueSmartRef;
   friend proxy::smart::MoleculeSmartRef;
