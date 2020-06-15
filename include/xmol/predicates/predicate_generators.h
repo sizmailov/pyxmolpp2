@@ -265,48 +265,11 @@ public:
 
 };
 
-/*
-class MoleculeSerialPredicateGenerator {
-public:
-  constexpr MoleculeSerialPredicateGenerator()=default;
-
-  ChainPredicate operator==(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() == index;});
-  }
-
-  ChainPredicate operator!=(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() != index;});
-  }
-
-  ChainPredicate operator<=(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() <= index;});
-  }
-
-  ChainPredicate operator<(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() < index;});
-  }
-
-  ChainPredicate operator>=(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() >= index;});
-  }
-
-  ChainPredicate operator>(const MoleculeSerial& index) const {
-    return ChainPredicate([index](const MoleculeRef& c){ return c.serial() > index;});
-  }
-
-  ChainPredicate is_in(const std::set<MoleculeSerial>& ids) const {
-    return ChainPredicate([ids](const MoleculeRef& c){ return ids.count(c.serial())==1 ;});
-  }
-};
-*/
-
-
 [[maybe_unused]] constexpr auto aName = AtomNamePredicateGenerator{};
 [[maybe_unused]] constexpr auto rName = ResidueNamePredicateGenerator{};
 [[maybe_unused]] constexpr auto mName = MoleculeNamePredicateGenerator{};
 
 [[maybe_unused]] constexpr auto aId = AtomIdPredicateGenerator{};
 [[maybe_unused]] constexpr auto rId = ResidueIdPredicateGenerator{};
-//constexpr auto mSerial = MoleculeSerialPredicateGenerator{}; // todo: enable 
 
 }

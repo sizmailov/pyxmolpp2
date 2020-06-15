@@ -443,7 +443,6 @@ def test_bad_selection_construction_from_list():
         MoleculeSelection([a for a in frame.residues])
 
 
-@pytest.mark.skip("to_pdb not implemented")
 def test_frame_buf_output():
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
@@ -451,12 +450,7 @@ def test_frame_buf_output():
     frame.to_pdb(output)
     assert output.getvalue().splitlines()[-1].strip() == "TER"
 
-    output = StringIO()
-    frame.to_pdb(output, StandardPdbRecords.instance())
-    assert output.getvalue().splitlines()[-1].strip() == "TER"
 
-
-@pytest.mark.skip("to_pdb not implemented")
 def test_frame_file_output():
     frame = make_polyglycine([("A", 20)])
 
@@ -475,15 +469,14 @@ def test_frame_file_output():
     os.unlink("temp.pdb")
 
 
-@pytest.mark.skip("to_pdb not implemented")
 def test_anything_to_pdb_file():
-    from pyxmolpp2.pdb import StandardPdbRecords
+    from pyxmolpp2 import PdbFile
     frame = make_polyglycine([("A", 20)])
 
     output = "temp.pdb"
     frame.to_pdb(output)
 
-    frame.to_pdb(output, StandardPdbRecords.instance())
+    frame.to_pdb(output)
     frame.atoms.to_pdb(output)
     frame.molecules.to_pdb(output)
     frame.residues.to_pdb(output)
@@ -491,26 +484,25 @@ def test_anything_to_pdb_file():
     frame.molecules[0].to_pdb(output)
     frame.residues[0].to_pdb(output)
 
-    frame.to_pdb(output, StandardPdbRecords.instance())
-    frame.atoms.to_pdb(output, StandardPdbRecords.instance())
-    frame.molecules.to_pdb(output, StandardPdbRecords.instance())
-    frame.residues.to_pdb(output, StandardPdbRecords.instance())
-    frame.atoms[0].to_pdb(output, StandardPdbRecords.instance())
-    frame.molecules[0].to_pdb(output, StandardPdbRecords.instance())
-    frame.residues[0].to_pdb(output, StandardPdbRecords.instance())
+    frame.to_pdb(output, PdbFile.STANDARD_V3)
+    frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
+    frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
+    frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
+    frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
+    frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
+    frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
     os.unlink("temp.pdb")
 
 
-@pytest.mark.skip("to_pdb not implemented")
 def test_anything_to_pdb_buffer():
-    from pyxmolpp2 import StandardPdbRecords
+    from pyxmolpp2 import PdbFile
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
 
     with StringIO() as output:
         frame.to_pdb(output)
 
-        frame.to_pdb(output, StandardPdbRecords.instance())
+        frame.to_pdb(output, PdbFile.STANDARD_V3)
         frame.atoms.to_pdb(output)
         frame.molecules.to_pdb(output)
         frame.residues.to_pdb(output)
@@ -518,16 +510,15 @@ def test_anything_to_pdb_buffer():
         frame.molecules[0].to_pdb(output)
         frame.residues[0].to_pdb(output)
 
-        frame.to_pdb(output, StandardPdbRecords.instance())
-        frame.atoms.to_pdb(output, StandardPdbRecords.instance())
-        frame.molecules.to_pdb(output, StandardPdbRecords.instance())
-        frame.residues.to_pdb(output, StandardPdbRecords.instance())
-        frame.atoms[0].to_pdb(output, StandardPdbRecords.instance())
-        frame.molecules[0].to_pdb(output, StandardPdbRecords.instance())
-        frame.residues[0].to_pdb(output, StandardPdbRecords.instance())
+        frame.to_pdb(output, PdbFile.STANDARD_V3)
+        frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
+        frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
+        frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
+        frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
+        frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
+        frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
 
 
-@pytest.mark.skip("to_pdb not implemented")
 def test_frame_buf_exceptions():
     frame = make_polyglycine([("A", 20)])
 

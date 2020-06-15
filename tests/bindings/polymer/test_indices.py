@@ -21,12 +21,11 @@ def test_selection_int_indexing():
     rsel = frame.residues
     csel = frame.molecules
 
-    ind = np.array([i for i, a in enumerate(asel) if a.name.str == "C"])
-    ind2 = asel.index(aName == "C")
-    subset = asel[ind]
-
-
+    ind = np.array([i for i, a in enumerate(asel) if a.name == "C"])
+    ind2 = asel.filter(aName == "C").index
     assert np.allclose(ind, ind2)
+
+    subset = asel[ind]
     assert subset.size == 20
     assert asel[ind2].size == 20
 
@@ -60,10 +59,10 @@ def test_selection_int_indexing():
     with pytest.raises(RuntimeError):
         csel[np.array([[0, 2], [1, 2]])]
 
-    assert frame.asResidues[np.array([0, 1])].size == 2
-    assert frame.asChains[np.array([0])].size == 1  # array index -> selection
-    assert frame.asChains[np.array([], dtype=int)].size == 0  # array index -> selection
-    assert frame.asChains[0].size == 20  # int index -> Chain
+    assert frame.residues[np.array([0, 1])].size == 2
+    assert frame.residues[np.array([0])].size == 1  # array index -> selection
+    assert frame.chains[np.array([], dtype=int)].size == 0  # array index -> selection
+    assert frame.chains[0].size == 20  # int index -> Chain
 
 if __name__ == "__main__":
     test_selection_bool_indexing()

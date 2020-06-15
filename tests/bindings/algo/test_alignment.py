@@ -26,8 +26,8 @@ def test_calc_rmsd_exception():
 
     a = np.array([[1, 2, 3]] * 10)
 
-    # with pytest.raises(TypeError):
-    #     calc_rmsd(a[:4].T, a.T) # todo: enable
+    with pytest.raises(TypeError):
+        calc_rmsd(a[:4].T, a.T)
 
     assert pytest.approx(0) == calc_rmsd(a[:4], a[:4])
 

@@ -167,7 +167,7 @@ TEST_F(AtomTests, composition) {
   C.name(MoleculeName("X"));
   EXPECT_EQ(C.name(), MoleculeName("X"));
 
-  //  EXPECT_EQ(C.serial(),2);// todo: enable when .serial() is supported
+  EXPECT_EQ(C.index(), 2);
   EXPECT_EQ(C.frame(), frame);
 
   {
@@ -180,7 +180,7 @@ TEST_F(AtomTests, composition) {
     MoleculeRef C2 = frame2.molecules()[frame2.n_molecules() - 1]; // todo: switch to negative index
     EXPECT_NE(C2, C);
     EXPECT_EQ(C2.name(), C.name());
-    //    EXPECT_EQ(C2.serial(), C.serial()); /// todo: enable
+    EXPECT_EQ(C2.index(), C.index());
 
     ResidueRef R = C.residues()[C.residues().size() - 1];
     ResidueRef R2 = C2.residues()[C2.residues().size() - 1];
@@ -207,7 +207,7 @@ TEST_F(AtomTests, composition) {
     MoleculeRef C2 = frame2.molecules()[frame2.n_molecules() - 1];
     EXPECT_NE(C2, C);
     EXPECT_EQ(C2.name(), C.name());
-    //    EXPECT_EQ(C2.serial(),C.serial()); // todo: enable
+    EXPECT_EQ(C2.index(), C.index());
 
     ResidueRef R = C.residues()[C.size() - 1];
     ResidueRef R2 = C2.residues()[C2.size() - 1];
@@ -240,7 +240,7 @@ TEST_F(AtomTests, composition) {
     MoleculeRef C2 = frame2.molecules()[frame2.n_molecules() - 1];
     EXPECT_NE(C2, C);
     EXPECT_EQ(C2.name(), C.name());
-    //    EXPECT_EQ(C2.serial(), C.serial()); // todo: enable
+    EXPECT_EQ(C2.index(), C.index());
 
     ResidueRef R = C.residues()[C.size() - 1];
     ResidueRef R2 = C2.residues()[C2.size() - 1];
@@ -268,7 +268,7 @@ TEST_F(AtomTests, composition) {
     MoleculeRef C2 = frame2.molecules()[frame.n_molecules() - 1];
     EXPECT_NE(C2, C);
     EXPECT_EQ(C2.name(), C.name());
-    //    EXPECT_EQ(C2.serial(), C.serial()); // todo:enable
+    EXPECT_EQ(C2.index(), C.index());
 
     ResidueRef R = C.residues()[C.size() - 1];
     ResidueRef R2 = C2.residues()[C2.size() - 1];
@@ -339,16 +339,16 @@ TEST_F(AtomTests, selection_slices) {
   Frame frame = make_polyglycines({{"A", 10}, {"B", 20}});
   auto atoms = frame.atoms();
   EXPECT_EQ(atoms.size(), 7 * 10 + 20 * 7);
-  // todo : enable
-  //  EXPECT_EQ(atoms.slice_range().size(), 7*10+20*7);
-  //  EXPECT_EQ(atoms.slice_range({},{},-1).size(), 7*10+20*7);
-  //  EXPECT_EQ(atoms.slice_range(10,{},1).size(), 7*10+20*7-10);
-  //  EXPECT_EQ(atoms.slice_range({},10).size(),10);
-  //  EXPECT_EQ(atoms.slice_range({},10,2).size(),5);
-  //  EXPECT_EQ(atoms.slice_range(0,10,-2).size(),0);
-  //  EXPECT_EQ(atoms.slice_range(10,{},-2).size(),6);
-  //  EXPECT_EQ(frame.atoms().slice(10,{},-2).size(),6);
-  //  EXPECT_EQ(frame.atoms().slice({},{},-1).size(), 7*10+20*7);
+
+  EXPECT_EQ(atoms.slice({}, {}, {}).size(), 7 * 10 + 20 * 7);
+//  EXPECT_EQ(atoms.slice({}, {}, -1).size(), 7 * 10 + 20 * 7); // todo: negative indices in slices
+  EXPECT_EQ(atoms.slice(10, {}, 1).size(), 7 * 10 + 20 * 7 - 10);
+  EXPECT_EQ(atoms.slice({}, 10).size(), 10);
+  EXPECT_EQ(atoms.slice({}, 10, 2).size(), 5);
+//  EXPECT_EQ(atoms.slice(0, 10, -2).size(), 0); // todo: negative indices in slices
+//  EXPECT_EQ(atoms.slice(10, {}, -2).size(), 6); // todo: negative indices in slices
+//  EXPECT_EQ(frame.atoms().slice(10, {}, -2).size(), 6); // todo: negative indices in slices
+//  EXPECT_EQ(frame.atoms().slice({}, {}, -1).size(), 7 * 10 + 20 * 7); // todo: negative indices in slices
 }
 
 // todo: enable when .erase() is implemented
