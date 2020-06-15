@@ -1,12 +1,13 @@
 *.log
 *.pyc
-.run
+.benchmark-results
 .cc_token
 .directory
-.benchmark-results
 .idea/*
 .pytest_cahce/
+.run
 __pycache__/
+build
 cmake-build-*
 coverage
 dist
