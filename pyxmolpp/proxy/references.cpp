@@ -2,8 +2,11 @@
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
+#include "xmol/io/pdb/PdbWriter.h"
 #include <sstream>
+#include <fstream>
 
+#include <pybind11/iostream.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 
@@ -36,7 +39,35 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
         out << "Frame<addr=" << std::hex << &self << std::dec << ", size=(" << self.n_molecules() << ", "
             << self.n_residues() << ", " << self.n_atoms() << ")>";
         return out.str();
-      });
+      })
+      .def("to_pdb",
+           [](Frame& sel, std::string& path) {
+             std::ofstream out(path);
+             if (out.fail()) {
+               throw std::runtime_error("Can't open file `" + path + "` for writing"); // toto: replace with IOError
+             }
+             xmol::io::pdb::PdbWriter writer(out);
+             writer.write(sel);
+           },
+           py::arg("path_or_buf")
+      )
+      .def("to_pdb",
+           [](Frame& sel, py::object fileHandle) {
+
+             if (!(py::hasattr(fileHandle,"write") &&
+                   py::hasattr(fileHandle,"flush") )){
+               throw py::type_error("Frame.to_pdb(file): incompatible function argument: `file` must be a file-like object, but `"
+                                    +(std::string)(py::repr(fileHandle))+"` provided"
+               );
+             }
+             py::detail::pythonbuf buf(fileHandle);
+             std::ostream stream(&buf);
+             xmol::io::pdb::PdbWriter writer(stream);
+             writer.write(sel);
+           },
+           py::arg("path_or_buf"),
+           "Write PDB file"
+      );
 }
 void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
   using SRef = MoleculeSmartRef;
