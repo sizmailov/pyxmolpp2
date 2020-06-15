@@ -14,15 +14,15 @@ git:
 
 jobs:
   include:
-    - name: Python3.8, clang-9
+    - name: Python3.8, g++-7
       env:
-      - COMPILER=clang-9
-      - BUILD_TYPE=Release
+      - COMPILER=g++-7
+      - BUILD_TYPE=Coverage
       - RUN_CTESTS=true
       addons:
         apt:
           packages:
-            - clang++-9
+            - g++-7
             - python3.8
             - python3.8-dev
             - libnetcdf-dev
@@ -75,6 +75,7 @@ script:
 
 
 after_success:
+    - ( cd docs && bash build.sh )
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
         gcovr _build --root=./ --delete --filter='src/.*' --filter='include/.*' --filter='pyxmolpp/.*'  --xml -o coverage.xml ;
@@ -89,7 +90,6 @@ after_success:
       fi;
 
 before_deploy:
-  - ( cd docs && bash build.sh )
   - git config --global user.email "builds@travis-ci.com"
   - git config --global user.name "Travis CI"
 
