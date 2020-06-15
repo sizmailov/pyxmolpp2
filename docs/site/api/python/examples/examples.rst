@@ -1,7 +1,5 @@
 :ref-prefix:
     pyxmolpp2
-    pyxmolpp2.polymer
-    pyxmolpp2.geometry
 
 .. role:: cpp(code)
     :language: c++
@@ -13,16 +11,16 @@
 
 .. |Atom| replace:: :ref:`Atom`
 .. |Residue| replace:: :ref:`Residue`
-.. |Chain| replace:: :ref:`Chain`
+.. |Molecule| replace:: :ref:`Molecule`
 .. |Frame| replace:: :ref:`Frame`
 
 .. |AtomSelection| replace:: :ref:`AtomSelection`
 .. |ResidueSelection| replace:: :ref:`ResidueSelection`
-.. |ChainSelection| replace:: :ref:`ChainSelection`
+.. |MoleculeSelection| replace:: :ref:`MoleculeSelection`
 
 .. |AtomPredicate| replace:: :ref:`AtomPredicate`
 .. |ResiduePredicate| replace:: :ref:`ResiduePredicate`
-.. |ChainPredicate| replace:: :ref:`ChainPredicate`
+.. |MoleculePredicate| replace:: :ref:`MoleculePredicate`
 
 
 Examples
@@ -45,4 +43,4 @@ Each section is essentially a self-contained python script augmented with commen
 
 .. include:: basic/index.rst
 
-.. include:: advanced/index.rst
+.. .. include:: advanced/index.rst

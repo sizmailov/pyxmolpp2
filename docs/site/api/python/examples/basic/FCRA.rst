@@ -1,11 +1,11 @@
-Frame - Chain - Residue - Atom
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Frame - Molecule - Residue - Atom
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-The ``pyxmolpp2`` library implements |Frame|/|Chain|/|Residue|/|Atom| hierarchy to represent a molecular system.
+The ``pyxmolpp2`` library implements |Frame|/|Molecule|/|Residue|/|Atom| hierarchy to represent a molecular system.
 
-Unlike many other molecular libraries |Atom|, |Residue| or |Chain| do not exist on their own, they are always part of |Frame|.
-Therefore any |Atom|, |Residue| or |Chain| are guaranteed to have a parent.
+Unlike many other molecular libraries |Atom|, |Residue| or |Molecule| do not exist on their own, they are always part of |Frame|.
+Therefore any |Atom|, |Residue| or |Molecule| are guaranteed to have a parent.
 This makes expression :py:`atom.residue.chain.frame.index` always valid and eliminates :py:`is not None` from user and
 library code.
 
@@ -19,12 +19,12 @@ Let's read pdb file and get first frame (i.e. ``MODEL`` in pdb terms):
 
 
     import os
-    import pyxmolpp2
+    from pyxmolpp2 import PdbFile
 
-    pdb_filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/1UBQ.pdb")
-    pdb_file = pyxmolpp2.pdb.PdbFile(pdb_filename)
+    filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/1UBQ.pdb")
 
-    frame = pdb_file.get_frame()
+    # read first model from pdb
+    frame = PdbFile(filename).frames()[0]
 
 
 Let's print info about first C-alpha atom:
@@ -32,17 +32,14 @@ Let's print info about first C-alpha atom:
 .. py-exec::
     :context-id: FRCA
 
-    from pyxmolpp2.polymer import ChainName,AtomName
-
-    a = frame[ChainName("A")][1][AtomName("CA")]
-    print(a.id, a.name, a.residue.name, a.chain.name, a.r, sep='\n')
-
+    a = frame["A"][1]["CA"]
+    print(a.id, a.name, a.residue.name, a.molecule.name, a.r, sep='\n')
 
 
 .. block-danger::
     Keep frame alive
 
-    |Atom|/|Residue|/|Chain| are alive until corresponding |Frame| exists.
+    |Atom|/|Residue|/|Molecule| are alive until corresponding |Frame| exists.
     |Frame| exists until python holds a reference to it. No frame - no game.
 
 

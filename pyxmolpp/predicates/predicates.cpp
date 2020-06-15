@@ -148,7 +148,7 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
 
   polymer.attr("aName") = aName;
   polymer.attr("rName") = rName;
-  polymer.attr("cName") = mName;
+  polymer.attr("mName") = mName;
 
   polymer.attr("aId") = aId;
   polymer.attr("rId") = rId;
