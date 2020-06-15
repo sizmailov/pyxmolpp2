@@ -62,6 +62,11 @@ public:
     return m_ref.frame();
   };
 
+  AtomIndex index() const {
+    check_precondition("index()");
+    return m_ref.index();
+  };
+
   /// Check if references point to same data
   bool operator!=(const AtomRef& rhs) const {
     check_precondition("operator!=()");
@@ -149,6 +154,11 @@ public:
     check_precondition("frame()");
     return m_ref.frame();
   }
+
+  ResidueIndex index() const{
+    check_precondition("index()");
+    return m_ref.index();
+  };
 
   /// Atoms of the residue
   AtomRefSpan atoms() {
@@ -262,6 +272,11 @@ public:
   Frame& frame() {
     check_precondition("frame()");
     return m_ref.frame();
+  };
+
+  MoleculeIndex index() const {
+    check_precondition("index()");
+    return m_ref.index();
   };
 
   /// Residues of the molecule

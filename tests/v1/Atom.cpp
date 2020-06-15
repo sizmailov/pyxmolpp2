@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <xmol/proxy/smart/spans.h>
 
 #include "test_common.h"
 #include "xmol/Frame.h"
@@ -88,6 +89,18 @@ TEST_F(AtomTests, add_atoms_2) {
         }
       }
     }
+  }
+  auto atoms = frame.atoms().smart();
+  for (int i = 0; i < atoms.size(); i++) {
+    ASSERT_EQ(atoms[i].index(), i);
+  }
+  auto residues = frame.residues().smart();
+  for (int i = 0; i < atoms.size(); i++) {
+    ASSERT_EQ(residues[i].index(), i);
+  }
+  auto molecules = frame.molecules().smart();
+  for (int i = 0; i < molecules.size(); i++) {
+    ASSERT_EQ(molecules[i].index(), i);
   }
 }
 

@@ -5,6 +5,12 @@
 /// Reworked original xmol
 namespace xmol {
 
+using Index = int;
+using AtomIndex = Index;
+using ResidueIndex = Index;
+using MoleculeIndex = Index;
+using CoordIndex = Index;
+
 struct BaseAtom;
 struct BaseResidue;
 struct BaseMolecule;

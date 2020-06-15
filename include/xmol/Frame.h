@@ -59,9 +59,8 @@ public:
   [[nodiscard]] proxy::CoordSpan coords();
 
   /// Current number of smart atom references
-  template<typename Smart>
-  [[nodiscard]] size_t n_references() const {
-    static_assert(std::is_base_of_v<utils::Observable<Smart>,Frame>);
+  template <typename Smart>[[nodiscard]] size_t n_references() const {
+    static_assert(std::is_base_of_v<utils::Observable<Smart>, Frame>);
     return utils::Observable<Smart>::observers.size();
   }
 
@@ -100,6 +99,30 @@ public:
 private:
   BaseResidue& add_residue(BaseMolecule& mol);
   BaseAtom& add_atom(BaseResidue& residue);
+
+  inline CoordIndex index_of(const XYZ& coord) const noexcept {
+    assert(m_coordinates.data() <= &coord);
+    assert(&coord < m_coordinates.data() + m_coordinates.size());
+    return &coord - m_coordinates.data();
+  }
+
+  inline AtomIndex index_of(const BaseAtom& atom) const noexcept {
+    assert(m_atoms.data() <= &atom);
+    assert(&atom < m_atoms.data() + m_atoms.size() );
+    return &atom - m_atoms.data();
+  }
+
+  inline ResidueIndex index_of(const BaseResidue& residue) const noexcept {
+    assert(m_residues.data() <= &residue);
+    assert(&residue < m_residues.data() + m_residues.size() );
+    return &residue - m_residues.data();
+  }
+
+  inline MoleculeIndex index_of(const BaseMolecule& molecule) const noexcept {
+    assert(m_molecules.data() <= &molecule);
+    assert(&molecule < m_molecules.data() + m_molecules.size() );
+    return &molecule - m_molecules.data();
+  }
 
   template <typename Observer> void reg(Observer& o) { utils::Observable<Observer>::add_observer(o); }
 

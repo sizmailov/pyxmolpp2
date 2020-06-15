@@ -78,7 +78,6 @@ inline bool operator>=(const residueSerial_t& lhs, const ResidueId& rhs) { retur
 namespace detail {} // namespace detail
 
 using AtomId = int32_t;
-using MoleculeSerial = size_t;
 using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
 using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;

@@ -26,6 +26,9 @@ std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
   return {};
 }
 std::optional<ResidueRef> MoleculeRef::operator[](residueSerial_t id) { return (*this)[ResidueId(id)]; }
+xmol::MoleculeIndex MoleculeRef::index() const noexcept { return frame().index_of(*m_molecule); }
+xmol::ResidueIndex ResidueRef::index() const noexcept { return frame().index_of(*m_residue); }
+xmol::AtomIndex AtomRef::index() const noexcept { return frame().index_of(*m_atom); }
 smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
 std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
   for (auto& a : atoms()) {

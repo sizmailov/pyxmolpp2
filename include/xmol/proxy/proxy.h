@@ -154,6 +154,9 @@ public:
     return m_molecule->residues.m_end - m_molecule->residues.m_begin;
   }
 
+  /// Index of the molecule in frame
+  [[nodiscard]] MoleculeIndex index() const noexcept;
+
   /// Parent frame
   Frame& frame() { return *m_molecule->frame; };
 
@@ -256,6 +259,9 @@ public:
     assert(m_residue);
     return m_residue->atoms.m_end - m_residue->atoms.m_begin;
   }
+
+  /// Index of the residue in frame (0-based)
+  [[nodiscard]] ResidueIndex index() const noexcept;
 
   /// Parent molecule
   MoleculeRef molecule() { return MoleculeRef(*m_residue->molecule); }
@@ -382,6 +388,9 @@ public:
 
   /// Parent frame
   const Frame& frame() const { return *m_atom->residue->molecule->frame; }
+
+  /// Index of the atom in frame (0-based)
+  [[nodiscard]] AtomIndex index() const noexcept;
 
   /// Create smart reference from this
   smart::AtomSmartRef smart();
