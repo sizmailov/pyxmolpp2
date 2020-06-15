@@ -1,23 +1,19 @@
 
-
-Advanced
---------
-
 .. include:: angles.rst
 
-.. include:: torsion_angle.rst
+.. .. include:: torsion_angle.rst # todo: rework
 
-.. include:: transformations.rst
+.. .. include:: transformations.rst
 
-.. include:: RMSD.rst
+.. .. include:: RMSD.rst
 
-.. include:: array_indexing.rst
+.. .. include:: array_indexing.rst
 
-.. include:: SASA.rst
+.. .. include:: SASA.rst
 
-.. include:: trajectory.rst
+.. .. include:: trajectory.rst
 
-.. include:: crystal.rst
+.. .. include:: crystal.rst
 
 
 

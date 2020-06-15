@@ -6,11 +6,8 @@ RMSD/RMSF
 .. py-exec::
     :context-id: RMSD
 
-
-    import pyxmolpp2
-    from pyxmolpp2.polymer import aName
-    from pyxmolpp2.geometry import calc_rmsd, calc_alignment
     import os
+    from pyxmolpp2 import calc_rmsd, calc_alignment, PdbFile
 
 Let's create a frame to work with
 
@@ -18,17 +15,17 @@ Let's create a frame to work with
     :context-id: RMSD
 
     pdb_filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/5BMG.pdb")
-    pdb_file = pyxmolpp2.pdb.PdbFile(pdb_filename)
-    frame = pdb_file.get_frame()
+    pdb_file = PdbFile(pdb_filename)
+    frame = pdb_file.frames()[0]
 
-Number of residues in chains must be same (strip water, ions, etc.)
+Number of residues in molecules must be same (strip water, ions, etc.)
 
 .. py-exec::
     :context-id: RMSD
 
     N = 0
     for i in range(frame.size):
-        if frame.asChains[i].size != frame.asChains[0].size:
+        if frame.molecules[i].size != frame.asChains[0].size:
             break
         N += 1
 
@@ -38,13 +35,13 @@ Print RMSD matrix for all deposited chains:
     :context-id: RMSD
 
     for i in range(0, N):
-        chain_i_ca = frame.asChains[i].asAtoms.filter(aName == "CA")
+        chain_i_ca = frame.molecules[i].atoms.filter(aName == "CA")
 
         for j in range(0, i + 1):
-            chain_j_ca = frame.asChains[j].asAtoms.filter(aName == "CA")
+            chain_j_ca = frame.molecules[j].atoms.filter(aName == "CA")
 
-            alignment = calc_alignment(chain_i_ca.toCoords, chain_j_ca.toCoords)
-            rmsd = calc_rmsd(chain_i_ca.toCoords, chain_j_ca.toCoords, alignment)
+            chain_i_ca.coords.alignment_to(chain_j_ca.coords)
+            rmsd = calc_rmsd(chain_i_ca.coords, chain_j_ca.coords, alignment)
 
             print("%5.1f" % rmsd, end=" ")
 

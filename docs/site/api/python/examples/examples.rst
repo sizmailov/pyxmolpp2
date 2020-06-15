@@ -43,4 +43,4 @@ Each section is essentially a self-contained python script augmented with commen
 
 .. include:: basic/index.rst
 
-.. .. include:: advanced/index.rst
+.. include:: advanced/index.rst

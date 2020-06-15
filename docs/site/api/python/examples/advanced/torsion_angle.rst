@@ -8,13 +8,13 @@ In addition it might be able to rotate part of structure around ``b-c`` bond (wh
     :hide-code:
     :context-id: torsion_angle
 
-    import pyxmolpp2
     import os
+    from pyxmolpp2 import PdbFile
 
     pdb_filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/1UBQ.pdb")
-    pdb_file = pyxmolpp2.pdb.PdbFile(pdb_filename)
+    pdb_file = PdbFile(pdb_filename)
 
-    frame = pdb_file.get_frame()
+    frame = pdb_file.frames()[0]
 
 For standard protein residues angles can be constructed using :ref:`TorsionAngleFactory`:
 
@@ -24,7 +24,7 @@ For standard protein residues angles can be constructed using :ref:`TorsionAngle
     from pyxmolpp2.polymer import TorsionAngleFactory
     from pyxmolpp2.geometry import Degrees
 
-    residue48 = frame.asChains[0][48]
+    residue48 = frame.molecules[0][48]
     print(residue48)
 
     psi_48 = TorsionAngleFactory.psi(residue48)
