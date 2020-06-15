@@ -9,6 +9,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -23,6 +24,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelec
       .def_property_readonly("size", &Sel::size)
       .def_property_readonly("empty", &Sel::empty)
       .def("filter", [](Sel& sel, const std::function<bool(const XYZ&)>& f) { return sel.filter(f).smart(); })
+      .def_property_readonly("index", &Sel::index)
       .def("__len__", &Sel::size)
       //      .def("__contains__", &Sel::contains)
       .def("__getitem__",
@@ -80,6 +82,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
       .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
       .def("filter", [](Sel& sel, const std::function<bool(const AtomSmartRef&)>& f) { return sel.filter(f).smart(); })
+      .def_property_readonly("index", &Sel::index)
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, AtomSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",
@@ -128,6 +131,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
       .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
+      .def_property_readonly("index", &Sel::index)
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, ResidueSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",
@@ -176,6 +180,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
       .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
+      .def_property_readonly("index", &Sel::index)
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, MoleculeSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",

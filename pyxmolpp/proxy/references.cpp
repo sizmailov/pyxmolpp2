@@ -71,7 +71,7 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
       .def(py::self == py::self)
       .def(py::self != py::self);
 }
-void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartRef>& pyResidue) {
+void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
   using SRef = ResidueSmartRef;
   pyResidue.def(py::init<const SRef&>())
       .def_property("id", py::overload_cast<>(&SRef::id, py::const_), [](SRef& self, ResidueId& id) { self.id(id); })

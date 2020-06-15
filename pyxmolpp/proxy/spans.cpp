@@ -29,6 +29,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def_property_readonly("empty", &Span::empty)
       .def_property_readonly("__frame", &Span::frame, py::return_value_policy::reference)
       .def("filter", [](Span& span, const std::function<bool(const XYZ&)>& f) { return span.filter(f).smart(); })
+      .def_property_readonly("index", &Span::index)
       .def("__len__", &Span::size)
       //      .def("__contains__", &Span::contains)
       .def("__getitem__",
@@ -92,6 +93,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
+      .def_property_readonly("index", &Span::index)
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__",
@@ -136,6 +138,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
+      .def_property_readonly("index", &Span::index)
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, ResidueSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__",
@@ -180,6 +183,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
+      .def_property_readonly("index", &Span::index)
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, MoleculeSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__",
