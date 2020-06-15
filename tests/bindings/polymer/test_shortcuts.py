@@ -1,6 +1,8 @@
+import pytest
 from make_polygly import make_polyglycine
 
 
+@pytest.mark.skip("not implemented")
 def test_shorthands():
     import numpy as np
     from pyxmolpp2 import Rotation, Translation, XYZ, Degrees, Frame

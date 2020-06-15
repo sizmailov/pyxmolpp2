@@ -30,23 +30,23 @@ def test_residue_name():
 
 
 def test_chain_name():
-    from pyxmolpp2 import cName
+    from pyxmolpp2 import mName
     frame = make_polyglycine([("A", 10),("B",20)])
 
-    assert frame.atoms.filter(cName == "A").size == 10*7
-    assert frame.atoms.filter(cName.is_in({"A", "B"})).size == 30*7
-    assert frame.atoms.filter(~cName.is_in({"B"})).size == 10*7
-    assert frame.atoms.filter((cName == "A") | (cName != "B")).size == 10*7
+    assert frame.atoms.filter(mName == "A").size == 10*7
+    assert frame.atoms.filter(mName.is_in({"A", "B"})).size == 30*7
+    assert frame.atoms.filter(~mName.is_in({"B"})).size == 10*7
+    assert frame.atoms.filter((mName == "A") | (mName != "B")).size == 10*7
 
-    assert frame.residues.filter(cName == "A").size == 10
-    assert frame.residues.filter(cName.is_in({"A", "B"})).size == 30
-    assert frame.residues.filter(~cName.is_in({"B"})).size == 10
-    assert frame.residues.filter((cName == "A") | (cName != "B")).size == 10
+    assert frame.residues.filter(mName == "A").size == 10
+    assert frame.residues.filter(mName.is_in({"A", "B"})).size == 30
+    assert frame.residues.filter(~mName.is_in({"B"})).size == 10
+    assert frame.residues.filter((mName == "A") | (mName != "B")).size == 10
 
-    assert frame.molecules.filter(cName == "A").size == 1
-    assert frame.molecules.filter(cName.is_in({"A", "B"})).size == 2
-    assert frame.molecules.filter(~cName.is_in({"B"})).size == 1
-    assert frame.molecules.filter((cName == "A") | (cName != "B")).size == 1
+    assert frame.molecules.filter(mName == "A").size == 1
+    assert frame.molecules.filter(mName.is_in({"A", "B"})).size == 2
+    assert frame.molecules.filter(~mName.is_in({"B"})).size == 1
+    assert frame.molecules.filter((mName == "A") | (mName != "B")).size == 1
 
 
 def test_atom_id():

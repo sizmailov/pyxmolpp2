@@ -469,6 +469,7 @@ def test_frame_file_output():
     os.unlink("temp.pdb")
 
 
+@pytest.mark.skip("not implemented")
 def test_anything_to_pdb_file():
     from pyxmolpp2 import PdbFile
     frame = make_polyglycine([("A", 20)])
@@ -494,6 +495,7 @@ def test_anything_to_pdb_file():
     os.unlink("temp.pdb")
 
 
+@pytest.mark.skip("not implemented")
 def test_anything_to_pdb_buffer():
     from pyxmolpp2 import PdbFile
     from io import StringIO
