@@ -75,7 +75,7 @@ script:
 
 
 after_success:
-    - ( cd docs && bash build.sh )
+#    - ( cd docs && bash build.sh ) # patched doxygen is required, disabled for now
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
         gcovr _build --root=./ --delete --filter='src/.*' --filter='include/.*' --filter='pyxmolpp/.*'  --xml -o coverage.xml ;
