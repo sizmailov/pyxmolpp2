@@ -43,8 +43,10 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
           py::arg("trajectory_file"))
       .def("n_atoms", &Trajectory::n_atoms)
       .def("n_frames", &Trajectory::n_frames)
+      .def("size", &Trajectory::n_frames)
+      .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
-           [](Trajectory& trj, int idx) -> xmol::Frame {
+           [](Trajectory& trj, int idx) -> Trajectory::Frame {
              int i = idx;
              if (i < 0) {
                i += trj.n_frames();
@@ -52,7 +54,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
              if (i < 0 || i >= trj.n_frames()) {
                throw py::index_error("Bad trajectory index " + std::to_string(idx) + "");
              }
-             return Frame(std::move(*trj.slice(i, i + 1, 1).begin()));
+             return trj.at(i);
            })
       .def("__getitem__",
            [](Trajectory& trj, py::slice& slice) {
@@ -73,7 +75,19 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
 
   pyTrajectorySlice.def(
       "__iter__", [](Trajectory::Slice& self) { return common::make_iterator(self.begin(), self.end()); },
-      py::keep_alive<0, 1>());
+      py::keep_alive<0, 1>())
+      .def("__len__", &Trajectory::Slice::size)
+      .def("__getitem__",
+           [](Trajectory::Slice& self, int idx) -> Trajectory::Frame {
+             int i = idx;
+             if (i < 0) {
+               i += self.size();
+             }
+             if (i < 0 || i >= self.size()) {
+               throw py::index_error("Bad trajectory slice index " + std::to_string(idx) + "");
+             }
+             return self.at(i);
+           });
 
   pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index);
 }

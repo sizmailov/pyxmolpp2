@@ -57,7 +57,7 @@ public:
     Frame* operator->() { return &m_frame; }
     Iterator& operator++() {
       m_traj->advance(m_pos, m_end, m_step);
-      if (m_pos.global_pos < m_end){
+      if (m_pos.global_pos < m_end) {
         update();
       }
       return *this;
@@ -98,6 +98,9 @@ public:
     Iterator begin() { return Iterator(m_traj, m_begin, m_end, m_step); }
     Sentinel end() { return {}; }
 
+    Trajectory::Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
+    size_t size() const { return (m_begin.global_pos + m_step - 1 - m_end) / m_step; }
+
   private:
     friend Trajectory;
     Slice(Trajectory& traj, Position begin, size_t end, size_t step)
@@ -129,6 +132,8 @@ public:
 
   Iterator begin() { return Iterator(*this, Position{0, 0, 0}, n_frames(), 1); }
   Sentinel end() { return {}; }
+
+  Trajectory::Frame at(size_t i) { return *slice(i, i + 1, 1).begin(); }
 
   /// Slice of trajectory
   Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1);
