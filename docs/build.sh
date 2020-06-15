@@ -14,5 +14,5 @@ fi
 cd m.css/documentation
 
 python python.py "$wd/site/api/python/conf.py"
-#python doxygen.py "$wd/../Doxyfile-mcss"
-#python python.py "$wd/site/conf.py"
+python doxygen.py "$wd/../Doxyfile-mcss"
+python python.py "$wd/site/conf.py"

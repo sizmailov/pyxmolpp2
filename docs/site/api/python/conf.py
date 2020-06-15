@@ -30,13 +30,14 @@ INPUT_PAGES = ['index.rst',
 OUTPUT = f'../../../_/site/api/python'
 
 LINKS_NAVBAR1 = [
-    ('Install', './install.html', []),
+    ('Install', './install.html', [
+        ('Changelog', './changelog.html'),
+    ]),
     ('Examples', './examples.html', []),
     ('API', 'pyxmolpp2', [
         ('Modules', 'modules'),
         ('Classes', 'classes'),
     ]),
-    ('Changelog', './changelog.html', []),
     ('Github', 'https://github.com/sizmailov/pyxmolpp2', [])
 ]
 
