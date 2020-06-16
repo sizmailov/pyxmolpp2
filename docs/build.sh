@@ -13,6 +13,8 @@ fi
 
 cd m.css/documentation
 
+rm -r "_"
+mkdir "_"
 python python.py "$wd/site/api/python/conf.py"
 python doxygen.py "$wd/../Doxyfile-mcss"
 python python.py "$wd/site/conf.py"
