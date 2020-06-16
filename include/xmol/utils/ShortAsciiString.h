@@ -7,19 +7,16 @@
 
 #include <cassert>
 
-namespace xmol {
-namespace utils {
+namespace xmol::utils {
 
-template <int MAX_LENGTH, bool ALLOW_CONSTRUCT_TRUNCATION=false, typename = void> class ShortAsciiString {
+template <int MAX_LENGTH, bool ALLOW_CONSTRUCT_TRUNCATION = false, typename = void> class ShortAsciiString {
 
 public:
-  static_assert(MAX_LENGTH <= 8,"");
+  static_assert(MAX_LENGTH <= 8);
   using uint_type = typename std::conditional<
       MAX_LENGTH <= 4,
-      typename std::conditional<
-          MAX_LENGTH <= 2,
-          typename std::conditional<MAX_LENGTH <= 1, uint8_t, uint16_t>::type,
-          uint32_t>::type,
+      typename std::conditional<MAX_LENGTH <= 2, typename std::conditional<MAX_LENGTH <= 1, uint8_t, uint16_t>::type,
+                                uint32_t>::type,
       uint64_t>::type;
   static const int max_length = MAX_LENGTH;
 
@@ -126,8 +123,7 @@ private:
   }
   uint_type m_value;
 };
-}
-}
+} // namespace xmol::utils
 
 namespace std {
 template <int N, bool ALLOW_TRUNC, typename T> struct hash<xmol::utils::ShortAsciiString<N, ALLOW_TRUNC, T>> {
@@ -136,4 +132,4 @@ template <int N, bool ALLOW_TRUNC, typename T> struct hash<xmol::utils::ShortAsc
 
   result_type operator()(argument_type const& s) const { return s.value(); }
 };
-}
+} // namespace std

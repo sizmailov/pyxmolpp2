@@ -1,7 +1,9 @@
 #include "xmol/utils/parsing.h"
 
+
+
 std::pair<bool, double>
-xmol::utils::parsing::parse_fixed_precision_rt(const std::string& line, int pos,
+xmol::utils::parse_fixed_precision_rt(const std::string& line, int pos,
                                                int width) noexcept {
   if (GSL_UNLIKELY(line.size() < pos + width)) {
     return {false, 0};

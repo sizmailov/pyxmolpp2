@@ -1,7 +1,3 @@
-
-Basic
------
-
 .. include:: FCRA.rst
 
 .. include:: selections.rst

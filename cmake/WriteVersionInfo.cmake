@@ -1,7 +1,7 @@
 
 add_custom_target (
         write_version_info
-        COMMAND python ${CMAKE_SOURCE_DIR}/tools/write_version_info.py
+        COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/write_version_info.py
                        ${CMAKE_BINARY_DIR}/xmol_version_info.h
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )

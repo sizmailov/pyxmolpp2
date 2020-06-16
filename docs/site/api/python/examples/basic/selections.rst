@@ -1,11 +1,12 @@
-Selections basics
-^^^^^^^^^^^^^^^^^
+Selections
+^^^^^^^^^^
+
 
 *Selection* is ordered set of elements in ``pyxmolpp2``. Order is defined as follows
 
-1. if two elements belongs to same parent object, the order match their construction order
+1. if two children belong to same parent object, the order match children construction order
 2. otherwise, they ordered as their parents
-3. |Frame| references are ordered by :ref:`Frame.index`
+
 
 .. py-exec::
     :context-id: selections
@@ -15,52 +16,53 @@ Selections basics
     import os
 
     pdb_filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/1UBQ.pdb")
-    pdb_file = pyxmolpp2.pdb.PdbFile(pdb_filename)
+    pdb_file = pyxmolpp2.PdbFile(pdb_filename)
 
-    frame = pdb_file.get_frame()
+    frame = pdb_file.frames()[0]
 
+.. block-info:: Span vs Selections
 
-Library has three types of `selections`: |AtomSelection|, |ResidueSelection| and |ChainSelection|
+    There are two slightly different types of "selections" in the library.
+    A ``Span`` is a continuous selections of elements, while ``Selection`` is an arbitrary set of elements.
+    Those two forms of selections functionally almost the same so you won't notice any difference most of the time.
 
-Any selections can be created from |Frame|:
+    In what follows both are referred as selections.
 
-.. py-exec::
-    :context-id: selections
+    .. py-exec::
+        :context-id: selections
 
-    print(frame.asChains)
-    print(frame.asResidues)
-    print(frame.asAtoms)
-
-
-|AtomSelection| and |ResidueSelection| can be created from |Chain|:
-
-.. py-exec::
-    :context-id: selections
-
-    chain = frame.asChains[0]
-    print(chain.asResidues)
-    print(chain.asAtoms)
+        print(frame.atoms[10:20])   # AtomSpan
+        print(frame.atoms[10:20:2]) # AtomSelection
 
 
-|AtomSelection| can be created from a |Residue|:
+
+Library has three types of `selections`: |AtomSelection|, |ResidueSelection| and |MoleculeSelection|
+
+Selections can be created in a number of ways:
 
 .. py-exec::
     :context-id: selections
 
-    residue = frame.asResidues[0]
-    print(residue.asAtoms)
-
-Selection can be converted up and down through hierarchy:
+    # from frame
+    print(frame.molecules)
+    print(frame.residues)
+    print(frame.atoms)
 
 .. py-exec::
     :context-id: selections
 
-    # selects non-empty residues
-    print(chain.asAtoms.asResidues)
-    # selects chains with at least 1 residue
-    print(frame.asResidues.asChains)
-    # select chains with at least 1 non-empty residue
-    print(frame.asChains.asResidues.asAtoms.asResidues.asChains)
+    # Construct from another selection
+    print(frame.molecules.atoms)
+    print(frame.residues.molecules)
+    print(frame.atoms.residues)
+
+.. py-exec::
+    :context-id: selections
+
+    # From an iterable
+    from pyxmolpp2 import AtomSelection
+    print(AtomSelection((atom for atom in frame.residues[:2].atoms )))
+
 
 Filter selections
 ^^^^^^^^^^^^^^^^^
@@ -70,11 +72,11 @@ Selection ``.filter`` method returns new selection with elements that match give
 .. py-exec::
     :context-id: selections
 
-    from pyxmolpp2.polymer import AtomName, ResidueName
+    mol = frame.molecules[0]
 
-    chain.asAtoms.filter(lambda a: a.r.x < 0)  # select atoms with negative x coord
-    chain.asAtoms.filter(lambda a: a.name == AtomName("CA"))  # select CA atoms
-    chain.asResidues.filter(lambda r: r.name == ResidueName("LYS"))  # select LYS residues
+    mol.atoms.filter(lambda a: a.r.x < 0)           # select atoms with negative x coord
+    mol.atoms.filter(lambda a: a.name == "CA")      # select CA atoms
+    mol.residues.filter(lambda r: r.name == "LYS")  # select LYS residues
 
 
 
@@ -83,47 +85,47 @@ Selection ``.filter`` method returns new selection with elements that match give
 .. py-exec::
     :context-id: selections
 
-    from pyxmolpp2.polymer import aName, rName, aId, rId, cName, cIndex
+    from pyxmolpp2 import aName, rName, aId, rId, mName
 
-    frame.asAtoms.filter(aName == "CA")  # select CA atoms
-    frame.asResidues.filter(rName == "LYS")  # select LYS residues
-    frame.asChains.filter(cName == "A")  # select chain(s) A
+    frame.atoms.filter(aName == "CA")      # select CA atoms
+    frame.residues.filter(rName == "LYS")  # select LYS residues
+    frame.molecules.filter(mName == "A")   # select molecule(s) with name A
 
 
 
-|ChainPredicate| and |ResiduePredicate| can be naturally applied to |AtomSelection|,
+|MoleculePredicate| and |ResiduePredicate| can be naturally applied to |AtomSelection|,
 while |AtomPredicate| can be applied only to |AtomSelection|.
 
 .. py-exec::
     :context-id: selections
 
-    frame.asAtoms.filter(aName == "CA")  # select CA atoms
-    frame.asAtoms.filter(rName == "LYS")  # select all atoms of LYS residues
+    frame.atoms.filter(aName == "CA")  # select CA atoms
+    frame.atoms.filter(rName == "LYS")  # select all atoms of LYS residues
 
 
-Application of |AtomPredicate| to |ResidueSelection| or |ChainSelection| leads to :ref:`TypeError` exception.
-Same stands for |ResiduePredicate| and |ChainSelection|:
-
-.. py-exec::
-    :context-id: selections
-    :raises: TypeError
-    :hide-stderr:
-
-    frame.asResidues.filter(aName == "CA")
+Application of |AtomPredicate| to |ResidueSelection| or |MoleculeSelection| leads to :ref:`TypeError` exception.
+Same stands for |ResiduePredicate| and |MoleculeSelection|:
 
 .. py-exec::
     :context-id: selections
     :raises: TypeError
     :hide-stderr:
 
-    frame.asChains.filter(aName == "CA")
+    frame.residues.filter(aName == "CA")
 
 .. py-exec::
     :context-id: selections
     :raises: TypeError
     :hide-stderr:
 
-    frame.asChains.filter(rName == "LYS")
+    frame.molecules.filter(aName == "CA")
+
+.. py-exec::
+    :context-id: selections
+    :raises: TypeError
+    :hide-stderr:
+
+    frame.molecules.filter(rName == "LYS")
 
 
 Predicates can be combined using ``&``, ``|``, ``~`` operators and reused:
@@ -131,38 +133,38 @@ Predicates can be combined using ``&``, ``|``, ``~`` operators and reused:
 .. py-exec::
     :context-id: selections
 
-    from pyxmolpp2.polymer import AtomPredicate
+    from pyxmolpp2 import AtomPredicate
 
-    criteria = (aName == "CA") & rId.is_in({1, 2, 3, 4}) & AtomPredicate(lambda a: a.r.x < 0)  # type:AtomPredicate
-
-    print(frame.asAtoms.filter(criteria | cName.is_in({"X", "Y", "Z"})))
+    criteria = (aName == "CA") & rId.is_in({1, 2, 3, 4}) & AtomPredicate(lambda a: a.r.x < 0)
+    print(criteria)
+    print(frame.atoms.filter(criteria | mName.is_in({"X", "Y", "Z"})))
 
 Selection operations
 ^^^^^^^^^^^^^^^^^^^^
 
 Selections support set operations:
 
-- `union` (operators ``+``, ``+=``)
-- `set intersection` (operators ``*``, ``*=``)
-- `difference` (operators ``-``, ``-=``)
+- `union`, operator ``|``
+- `set intersection`, operator ``&``
+- `difference`, operator ``-``
 
 
 .. py-exec::
     :context-id: selections
 
-    A = frame.asAtoms.filter(lambda a: a.r.x > 5)
-    B = frame.asAtoms.filter(lambda a: a.r.x <= 5)
+    A = frame.atoms.filter(lambda a: a.r.x > 5)
+    B = frame.atoms.filter(lambda a: a.r.x <= 5)
 
     print(A)
     print(B)
-    print(A+B)
-    print(A-B)
-    print(A*B)
+    print(A | B)
+    print(A - B)
+    print(A & B)
 
-Selection invalidation
-^^^^^^^^^^^^^^^^^^^^^^
+Selections invalidation
+^^^^^^^^^^^^^^^^^^^^^^^
 
-In execution of the program selection may be marked as `invalid`, i.e. further access
+In execution of the program selection or element may be marked as `invalid`, i.e. further access
 to it's elements raises an exception.
 
 Selections are invalidated on:
@@ -172,10 +174,4 @@ Selections are invalidated on:
 .. note-info::
 
     The exception will be raised so you will know that you are doing something wrong.
-
-- on :ref:`Frame.index` change if selection had elements from two frames or more.
-
-.. note-danger::
-
-   There is no runtime checks against this type of errors.
 

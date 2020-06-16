@@ -1,160 +1,166 @@
 #pragma once
+#include "../Frame.h"
+#include "TrajectoryFile.h"
 
-#include "exceptions.h"
-#include "xmol/polymer/Atom.h"
-#include "xmol/utils/optional.h"
+/// MD trajectory classes and utilites
+namespace xmol::trajectory {
 
-namespace xmol {
-namespace trajectory {
+using FrameIndex = int32_t;
 
-class Trajectory;
-
-class TrajectoryRange {
+class TrajectoryDoubleTraverseError : public std::runtime_error {
 public:
-  TrajectoryRange(const TrajectoryRange& other) noexcept = delete;
-  TrajectoryRange(TrajectoryRange&& other) noexcept = default;
-  TrajectoryRange& operator=(const TrajectoryRange& other) noexcept = delete;
-  TrajectoryRange& operator=(TrajectoryRange&& other) noexcept = default;
-
-  xmol::polymer::Frame& operator*();
-  xmol::polymer::Frame* operator->();
-
-  template <typename Sentinel> bool operator!=(const Sentinel&) const;
-
-  TrajectoryRange& operator++();
-  TrajectoryRange& operator--();
-
-  TrajectoryRange operator-(int n);
-  TrajectoryRange operator+(int n);
-  TrajectoryRange& operator+=(int n);
-  TrajectoryRange& operator-=(int n);
-
-private:
-  friend class Trajectory;
-
-  friend class TrajectorySlice;
-
-  explicit TrajectoryRange(Trajectory& trajectory, int pos, int end, int step);
-  Trajectory* trajectory;
-  xmol::polymer::Frame frame;
-  std::unique_ptr<const xmol::polymer::AtomSelection> atoms;
-  int pos;
-  int end;
-  int step;
-  bool is_updated;
+  using std::runtime_error::runtime_error;
 };
 
-class TrajectoryPortion {
-public:
-  virtual ~TrajectoryPortion() = default;
-  virtual std::unique_ptr<TrajectoryPortion> get_copy() const = 0;
-
-  void set_update_list(const xmol::polymer::AtomSelection& selection);
-  virtual void set_coordinates(xmol::polymer::frameIndex_t frameIndex,
-                               const xmol::polymer::AtomSelection& atoms, const std::vector<int>& update_list) = 0;
-  virtual bool match(const xmol::polymer::AtomSelection& atoms) const = 0;
-  virtual xmol::polymer::frameIndex_t n_frames() const = 0;
-  virtual xmol::polymer::atomIndex_t n_atoms_per_frame() const = 0;
-  virtual void close() = 0;
-
-protected:
-};
-
-class TrajectorySlice {
-public:
-  TrajectoryRange begin() const;
-  TrajectoryRange end() const;
-  int size() const;
-
-private:
-  friend class Trajectory;
-
-  TrajectorySlice(Trajectory& trj, int first, int last, int stride);
-  Trajectory& trj;
-  int first;
-  int last;
-  int stride;
-};
-
+/** Forward-traversable, re-enterable MD trajectory
+ *
+ * Trajectory
+ */
 class Trajectory {
+  struct Position {
+    size_t global_pos;  // global frame index in trajectory
+    size_t file;        // number of input file
+    size_t pos_in_file; // position in input file
+  };
+
 public:
-  explicit Trajectory(const xmol::polymer::Frame& reference,
-                      bool check_portions_to_match_reference = true);
+  class Frame : public xmol::Frame {
+  public:
+    Frame() = default;
+    Frame(Frame&&) = default;
+    Frame(const Frame&) = default;
+    Frame& operator=(Frame&&) = default;
+    Frame& operator=(const Frame&) = default;
+    explicit Frame(xmol::Frame frame) : xmol::Frame(std::move(frame)), index(0){};
+    FrameIndex index = 0;
+  };
 
-  /**
-   * Enable move-copy
-   * */
-  Trajectory(Trajectory&&) = default;
-  Trajectory& operator=(Trajectory&&) = default;
+  struct Sentinel {};
 
-  /**
-   * Disable copy from lvalue
-   * */
-  Trajectory(const Trajectory&) = delete;
-  Trajectory& operator=(const Trajectory&) = delete;
-
-  template <typename T, typename... Args>
-  void add_trajectory_portion(Args&&... args);
-
-  void push_trajectory_portion(const TrajectoryPortion& trajectoryPortion) {
-    portions.emplace_back(trajectoryPortion.get_copy());
-    auto& ref = portions.back();
-    cumulative_n_frames.push_back(n_frames() + ref->n_frames());
-    if (check_portions_to_match_reference) {
-      if (!ref->match(reference.asAtoms())) {
-        throw TrajectoryException(
-            "Trajectory portion does not match reference atoms");
+  /// Iterator[Trajectory::Frame] (don't confuse with Frame)
+  class Iterator {
+  public:
+    Iterator() = delete;
+    Iterator(const Iterator&) = delete;
+    Iterator& operator=(const Iterator&) = delete;
+    Iterator(Iterator&& other) noexcept;
+    Iterator& operator=(Iterator&& other) noexcept;
+    ~Iterator() {
+      if (m_traj) {
+        m_traj->m_iterator_counter--;
+        if (m_pos.global_pos < m_end) { /// handle break
+          m_traj->advance(m_pos, m_end, m_end - m_pos.global_pos);
+        }
       }
     }
-    ref->close();
+    Frame& operator*() { return m_frame; }
+    Frame* operator->() { return &m_frame; }
+    Iterator& operator++() {
+      m_traj->advance(m_pos, m_end, m_step);
+      if (m_pos.global_pos < m_end) {
+        update();
+      }
+      return *this;
+    }
+
+    bool operator!=(const Sentinel&) const { return m_pos.global_pos < m_end; }
+    bool operator==(const Sentinel&) const { return m_pos.global_pos >= m_end; }
+
+  private:
+    friend Trajectory;
+    Iterator(Trajectory& t, Position begin, size_t end, size_t step)
+        : m_traj(&t), m_pos(begin), m_end(end), m_step(step), m_frame(t.m_frame) {
+      assert(step > 0);
+      m_traj->m_iterator_counter++;
+      if (m_traj->m_iterator_counter > 1) {
+        throw TrajectoryDoubleTraverseError(""); // add link to doc / example
+      }
+      if (m_pos.global_pos < m_end) {
+        m_traj->advance(m_pos, m_end, 0);
+        update();
+      }
+    }
+    void update() {
+      auto coords = m_frame.coords();
+      m_traj->read_coordinates(m_pos, coords);
+      m_frame.index = m_pos.global_pos;
+    }
+    Trajectory* m_traj;
+    Position m_pos;
+    size_t m_end;
+    size_t m_step;
+    Frame m_frame;
+  };
+
+  /// Reference to trajectory slice
+  class Slice {
+  public:
+    Iterator begin() { return Iterator(m_traj, m_begin, m_end, m_step); }
+    Sentinel end() { return {}; }
+
+    Trajectory::Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
+    size_t size() const { return (m_begin.global_pos + m_step - 1 - m_end) / m_step; }
+
+  private:
+    friend Trajectory;
+    Slice(Trajectory& traj, Position begin, size_t end, size_t step)
+        : m_traj(traj), m_begin(begin), m_end(end), m_step(step) {}
+    Trajectory& m_traj;
+    Position m_begin;
+    size_t m_end;
+    size_t m_step;
+  };
+
+  Trajectory() = delete;
+
+  /// Constructor
+  explicit Trajectory(xmol::Frame frame) : m_frame(std::move(frame)){};
+
+  /// Move constructor, invalidates iterators/slices
+  Trajectory(Trajectory&& other) = default;
+
+  /// Move assignment, invalidates iterators/slices
+  Trajectory& operator=(Trajectory&& other) = default;
+
+  Trajectory(const Trajectory& other) = delete;
+  Trajectory& operator=(const Trajectory& other) = delete;
+
+  /// Extend trajectory with @p input_file, invalidates iterators/slices
+  template <typename InputFile> void extend(InputFile&& input_file) {
+    extend_unique_ptr(std::make_unique<InputFile>(std::forward<InputFile>(input_file)));
   }
 
-  xmol::polymer::frameIndex_t n_frames() const;
+  Iterator begin() { return Iterator(*this, Position{0, 0, 0}, n_frames(), 1); }
+  Sentinel end() { return {}; }
 
-  void set_update_list(const xmol::polymer::AtomSelection& selection);
+  Trajectory::Frame at(size_t i) { return *slice(i, i + 1, 1).begin(); }
 
-  TrajectorySlice slice(xmol::utils::optional<int> first = {},
-                        xmol::utils::optional<int> last = {},
-                        xmol::utils::optional<int> stride = {});
-  TrajectoryRange begin();
-  TrajectoryRange end();
+  /// Slice of trajectory
+  Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1);
+
+  /// Total number of frames in trajectory
+  [[nodiscard]] size_t n_frames() const { return m_n_frames; };
+
+  /// Number of atoms in trajectory frame
+  [[nodiscard]] size_t n_atoms() const { return m_frame.n_atoms(); }
 
 private:
-  friend class TrajectoryRange;
+  xmol::Frame m_frame;
+  size_t m_n_frames = 0;
+  std::vector<std::unique_ptr<TrajectoryInputFile>> m_files;
+  int m_iterator_counter = 0;
 
-  std::vector<int> m_update_list;
-  xmol::polymer::Frame reference;
-  TrajectoryPortion* m_prev_portion = nullptr;
+  void read_coordinates(Position pos, proxy::CoordSpan& coords) {
+    m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
+  }
 
-  std::vector<std::unique_ptr<TrajectoryPortion>> portions;
-  std::vector<xmol::polymer::frameIndex_t> cumulative_n_frames;
-  bool check_portions_to_match_reference;
+  void advance(Position& position, size_t end, size_t step);
 
-  void update_frame(xmol::polymer::frameIndex_t position,
-                    const xmol::polymer::AtomSelection& atoms);
+  void extend_unique_ptr(std::unique_ptr<TrajectoryInputFile>&& input_file) {
+    assert(n_atoms() == input_file->n_atoms());
+    m_n_frames += input_file->n_frames();
+    m_files.push_back(std::move(input_file));
+  }
 };
 
-template <typename Sentinel>
-bool TrajectoryRange::operator!=(const Sentinel&) const {
-  if (step > 0) {
-    return pos < end;
-  } else {
-    return pos > end;
-  }
-}
-
-template <typename T, typename... Args>
-void Trajectory::add_trajectory_portion(Args&&... args) {
-  portions.emplace_back(std::unique_ptr<T>(new T(std::forward<Args>(args)...)));
-  auto& ref = portions.back();
-  cumulative_n_frames.push_back(n_frames() + ref->n_frames());
-  if (check_portions_to_match_reference) {
-    if (!ref->match(reference.asAtoms())) {
-      throw TrajectoryException(
-          "Trajectory portion does not match reference atoms");
-    }
-  }
-  ref->close();
-}
-}
-}
+} // namespace xmol::trajectory

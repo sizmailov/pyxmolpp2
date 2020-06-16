@@ -6,7 +6,7 @@ Protect yourself from missing 2pi/180.0
 .. py-exec::
     :context-id: angles
 
-    from pyxmolpp2.geometry import Degrees, Radians, cos, sin, tan, fabs
+    from pyxmolpp2 import Degrees, Radians
     import numpy as np
 
 
@@ -38,15 +38,15 @@ AngleValue supports all basic arithmetic operations:
 
     print((angle_value_1*2 + angle_value_2/3).degrees)
 
-:ref:`pyxmolpp2.geometry` also defines :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` for convenience:
+:ref:`pyxmolpp2.geometry` also defines :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` methods for convenience:
 
 .. py-exec::
     :context-id: angles
 
-    print( cos(angle_value_1),
-           sin(angle_value_1),
-           tan(angle_value_1),
-           fabs(angle_value_1).degrees)
+    print( (angle_value_1).cos(),
+           (angle_value_1).sin(),
+           (angle_value_1).tan(),
+           (angle_value_1).fabs().degrees)
 
 .. py-exec::
     :context-id: angles

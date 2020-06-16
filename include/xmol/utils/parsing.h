@@ -6,9 +6,7 @@
 #include <tuple>
 #include <utility>
 
-namespace xmol {
-namespace utils {
-namespace parsing {
+namespace xmol::utils {
 
 constexpr static int powers_of_10[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 
@@ -85,9 +83,9 @@ std::pair<bool, int> parse_int(const std::string& line, int pos, int LEN) noexce
 };
 
 template <int WIDTH, int PRECISION, SpaceStrip STRIP> struct parse_fixed_precision_fn {
-  static_assert(PRECISION >= 0, "");
-  static_assert(WIDTH > 0, "");
-  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2, "");
+  static_assert(PRECISION >= 0);
+  static_assert(WIDTH > 0);
+  static_assert(PRECISION == 0 || WIDTH >= PRECISION + 2);
 
   inline std::pair<bool, double> operator()(const std::string& line, int pos) const noexcept {
 
@@ -153,6 +151,4 @@ constexpr parse_fixed_precision_fn___ parse_fixed_precision{};
 }
 
 std::pair<bool, double> parse_fixed_precision_rt(const std::string& line, int pos, int width) noexcept;
-}
-}
 }

@@ -1,0 +1,28 @@
+- increase test coverage
+
+- organize headers for convenient includes by users
+- xtc format
+- pseudo trajectory adapter
+- trajectory from layout
+
+- update bindings to v1
+- support erasure of elements
+- prmtop topology
+- rework predicates?
+
+
+add .serial() read-only method to references
+support negative indices in selections and spans
+add .slice() method to spans and selections
+add .erase() to atom references, slices, selections
+
+Atom/Residue/Molecule assignment ?
+
+add kwarg only overloads
+    f(*, degrees:float)
+    f(*, radians:float)
+ for
+    f(angle:AngleValue)
+
+
+make chain setters l/r-value qualified
