@@ -2,7 +2,7 @@
 #include "future/span.h"
 #include "fwd.h"
 #include "geom/XYZ.h"
-#include <tuple>
+#include "basics/ResidueId.h"
 
 namespace xmol {
 
@@ -15,73 +15,14 @@ using CoordEigenMatrixMapf = Eigen::Map<CoordEigenMatrixf>;
 
 namespace detail {
 struct AtomNameTag {};
-struct InsertionCodeTag {};
 struct ResidueNameTag {};
 struct ChainNameTag {};
 } // namespace detail
-using ResidueInsertionCode = utils::ShortAsciiString<1, false, detail::InsertionCodeTag>;
-
-using residueSerial_t = int32_t;
-struct ResidueId {
-  ResidueId() : ResidueId(0, ResidueInsertionCode("")) {}
-  explicit ResidueId(residueSerial_t serial) : serial(serial) {}
-  ResidueId(residueSerial_t serial, ResidueInsertionCode iCode) : serial(serial), iCode(std::move(iCode)) {}
-
-  ResidueId(const ResidueId& other) = default;
-  ResidueId(ResidueId&& other) = default;
-
-  ResidueId& operator=(const ResidueId& other) = default;
-  ResidueId& operator=(ResidueId&& other) = default;
-  ResidueId& operator=(const residueSerial_t& serial) {
-    this->serial = serial;
-    iCode = ResidueInsertionCode{};
-    return *this;
-  };
-
-  inline bool operator<(const ResidueId& other) const {
-    return std::tie(serial, iCode) < std::tie(other.serial, other.iCode);
-  }
-  inline bool operator>(const ResidueId& other) const {
-    return std::tie(serial, iCode) > std::tie(other.serial, other.iCode);
-  }
-  inline bool operator==(const ResidueId& other) const {
-    return std::tie(serial, iCode) == std::tie(other.serial, other.iCode);
-  }
-  inline bool operator!=(const ResidueId& other) const {
-    return std::tie(serial, iCode) != std::tie(other.serial, other.iCode);
-  }
-  inline bool operator<=(const ResidueId& other) const {
-    return std::tie(serial, iCode) <= std::tie(other.serial, other.iCode);
-  }
-  inline bool operator>=(const ResidueId& other) const {
-    return std::tie(serial, iCode) >= std::tie(other.serial, other.iCode);
-  }
-
-  residueSerial_t serial;
-  ResidueInsertionCode iCode;
-};
-
-inline bool operator<(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs < ResidueId(rhs); }
-inline bool operator>(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs > ResidueId(rhs); }
-inline bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }
-inline bool operator!=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs != ResidueId(rhs); }
-inline bool operator<=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <= ResidueId(rhs); }
-inline bool operator>=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >= ResidueId(rhs); }
-
-inline bool operator<(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) < rhs; }
-inline bool operator>(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) > rhs; }
-inline bool operator==(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) == rhs; }
-inline bool operator!=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) != rhs; }
-inline bool operator<=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <= rhs; }
-inline bool operator>=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >= rhs; }
-
-namespace detail {} // namespace detail
 
 using AtomId = int32_t;
 using AtomName = xmol::utils::ShortAsciiString<4, false, detail::AtomNameTag>;
 using ResidueName = xmol::utils::ShortAsciiString<3, false, detail::ResidueNameTag>;
 using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTag>;
-using ResidueInsertionCode = xmol::ResidueInsertionCode;
 
 /// Storage of atomic data except coords
 struct BaseAtom {
