@@ -171,7 +171,7 @@ public:
   };
 
   /// Atoms of the residue
-  AtomRefSpan atoms() {
+  AtomSpan atoms() {
     check_precondition("atoms()");
     return m_ref.atoms();
   }
@@ -290,13 +290,13 @@ public:
   };
 
   /// Residues of the molecule
-  ResidueRefSpan residues() {
+  ResidueSpan residues() {
     check_precondition("residues()");
     return m_ref.residues();
   }
 
   /// Atoms of the molecule
-  AtomRefSpan atoms() {
+  AtomSpan atoms() {
     check_precondition("atoms()");
     return m_ref.atoms();
   }

@@ -62,81 +62,81 @@ std::vector<xmol::CoordIndex> CoordSpan::index() const {
   return result;
 }
 
-CoordSpan AtomRefSpan::coords() {
+CoordSpan AtomSpan::coords() {
   if (empty()) {
     return {};
   }
   return {begin()->frame(), begin()->m_coord, size()};
 }
 
-ResidueRefSpan AtomRefSpan::residues() {
+ResidueSpan AtomSpan::residues() {
   if (empty()) {
     return {};
   }
-  return ResidueRefSpan(m_begin->residue, (m_begin + size() - 1)->residue + 1);
+  return ResidueSpan(m_begin->residue, (m_begin + size() - 1)->residue + 1);
 }
 
-MoleculeRefSpan AtomRefSpan::molecules() {
+MoleculeSpan AtomSpan::molecules() {
   if (empty()) {
     return {};
   }
-  return MoleculeRefSpan(m_begin->residue->molecule, (m_begin + size() - 1)->residue->molecule + 1);
+  return MoleculeSpan(m_begin->residue->molecule, (m_begin + size() - 1)->residue->molecule + 1);
 }
 
-CoordSpan ResidueRefSpan::coords() { return atoms().coords(); }
+CoordSpan ResidueSpan::coords() { return atoms().coords(); }
 
-AtomRefSpan ResidueRefSpan::atoms() {
+AtomSpan ResidueSpan::atoms() {
   if (empty()) {
     return {};
   }
-  return AtomRefSpan(m_begin->atoms.m_begin, (m_begin + size() - 1)->atoms.m_end);
+  return AtomSpan(m_begin->atoms.m_begin, (m_begin + size() - 1)->atoms.m_end);
 }
-MoleculeRefSpan ResidueRefSpan::molecules() {
+MoleculeSpan ResidueSpan::molecules() {
   if (empty()) {
     return {};
   }
-  return MoleculeRefSpan(m_begin->molecule, (m_begin + size() - 1)->molecule + 1);
+  return MoleculeSpan(m_begin->molecule, (m_begin + size() - 1)->molecule + 1);
 }
 
-CoordSpan MoleculeRefSpan::coords() { return atoms().coords(); }
+CoordSpan MoleculeSpan::coords() { return atoms().coords(); }
 
-AtomRefSpan MoleculeRefSpan::atoms() {
+AtomSpan MoleculeSpan::atoms() {
   if (empty()) {
     return {};
   }
   auto last_mol = m_begin + size() - 1;
   auto last_mol_last_residue = last_mol->residues.m_begin + last_mol->residues.size() - 1;
-  return AtomRefSpan(m_begin->residues.m_begin->atoms.m_begin, last_mol_last_residue->atoms.m_end);
+  return AtomSpan(m_begin->residues.m_begin->atoms.m_begin, last_mol_last_residue->atoms.m_end);
 }
-ResidueRefSpan MoleculeRefSpan::residues() {
+ResidueSpan MoleculeSpan::residues() {
   if (empty()) {
     return {};
   }
   auto last_mol = m_begin + size() - 1;
-  return ResidueRefSpan(m_begin->residues.m_begin, last_mol->residues.m_begin + last_mol->residues.size());
+  return ResidueSpan(m_begin->residues.m_begin, last_mol->residues.m_begin + last_mol->residues.size());
 }
 
-bool AtomRefSpan::contains(const AtomRef& ref) const {
+bool AtomSpan::contains(const AtomRef& ref) const {
   return m_begin <= ref.m_atom && ref.m_atom < m_end;
   ;
 }
 
-smart::AtomSmartSpan AtomRefSpan::smart() { return *this; }
+smart::AtomSmartSpan AtomSpan::smart() { return *this; }
 
-AtomRefSpan& AtomRefSpan::operator&=(const AtomRefSpan& rhs) {
+AtomSpan& AtomSpan::operator&=(const AtomSpan& rhs) {
   intersect(rhs);
   return *this;
 }
 
-AtomSelection AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+AtomSelection AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
   return AtomSelection(slice_impl(start, stop, step), true);
 }
 
-AtomRefSpan AtomRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
-  return AtomRefSpan(slice_impl(start, stop));
+AtomSpan AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return AtomSpan(slice_impl(start, stop));
 }
 
-std::vector<xmol::AtomIndex> AtomRefSpan::index() const {
+std::vector<xmol::AtomIndex> AtomSpan::index() const {
   std::vector<AtomIndex> result;
   if (!empty()) {
     result.reserve(size());
@@ -148,25 +148,25 @@ std::vector<xmol::AtomIndex> AtomRefSpan::index() const {
   return result;
 }
 
-void AtomRefSpan::guess_mass() { algo::heuristic::guess_mass(*this); }
+void AtomSpan::guess_mass() { algo::heuristic::guess_mass(*this); }
 
-bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
-smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }
+bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
+smart::ResidueSmartSpan ResidueSpan::smart() { return *this; }
 
-ResidueRefSpan& ResidueRefSpan::operator&=(const ResidueRefSpan& rhs) {
+ResidueSpan& ResidueSpan::operator&=(const ResidueSpan& rhs) {
   intersect(rhs);
   return *this;
 }
 
-ResidueSelection ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+ResidueSelection ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                        std::optional<size_t> step) {
   return ResidueSelection(slice_impl(start, stop, step), true);
 }
 
-ResidueRefSpan ResidueRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
-  return ResidueRefSpan(slice_impl(start, stop));
+ResidueSpan ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return ResidueSpan(slice_impl(start, stop));
 }
-std::vector<xmol::ResidueIndex> ResidueRefSpan::index() const {
+std::vector<xmol::ResidueIndex> ResidueSpan::index() const {
   std::vector<ResidueIndex> result;
   if (!empty()) {
     result.reserve(size());
@@ -178,24 +178,24 @@ std::vector<xmol::ResidueIndex> ResidueRefSpan::index() const {
   return result;
 }
 
-bool MoleculeRefSpan::contains(const MoleculeRef& ref) const {
+bool MoleculeSpan::contains(const MoleculeRef& ref) const {
   return m_begin <= ref.m_molecule && ref.m_molecule < m_end;
 }
-smart::MoleculeSmartSpan MoleculeRefSpan::smart() { return *this; }
+smart::MoleculeSmartSpan MoleculeSpan::smart() { return *this; }
 
-MoleculeRefSpan& MoleculeRefSpan::operator&=(const MoleculeRefSpan& rhs) {
+MoleculeSpan& MoleculeSpan::operator&=(const MoleculeSpan& rhs) {
   intersect(rhs);
   return *this;
 }
-MoleculeSelection MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+MoleculeSelection MoleculeSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
                                          std::optional<size_t> step) {
   return MoleculeSelection(slice_impl(start, stop, step), true);
 }
 
-MoleculeRefSpan MoleculeRefSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
-  return MoleculeRefSpan(slice_impl(start, stop));
+MoleculeSpan MoleculeSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  return MoleculeSpan(slice_impl(start, stop));
 }
-std::vector<xmol::MoleculeIndex> MoleculeRefSpan::index() const {
+std::vector<xmol::MoleculeIndex> MoleculeSpan::index() const {
   std::vector<MoleculeIndex> result;
   if (!empty()) {
     result.reserve(size());
@@ -209,37 +209,37 @@ std::vector<xmol::MoleculeIndex> MoleculeRefSpan::index() const {
 
 namespace xmol::proxy {
 
-AtomSelection operator|(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
+AtomSelection operator|(const AtomSpan& lhs, const AtomSpan& rhs) {
   return AtomSelection(lhs) | AtomSelection(rhs);
 }
-AtomSelection operator-(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
+AtomSelection operator-(const AtomSpan& lhs, const AtomSpan& rhs) {
   return AtomSelection(lhs) - AtomSelection(rhs);
 }
-AtomRefSpan operator&(const AtomRefSpan& lhs, const AtomRefSpan& rhs) {
-  AtomRefSpan result(lhs);
+AtomSpan operator&(const AtomSpan& lhs, const AtomSpan& rhs) {
+  AtomSpan result(lhs);
   result &= rhs;
   return result;
 }
-ResidueSelection operator|(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
+ResidueSelection operator|(const ResidueSpan& lhs, const ResidueSpan& rhs) {
   return ResidueSelection(lhs) | ResidueSelection(rhs);
 }
-ResidueSelection operator-(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
+ResidueSelection operator-(const ResidueSpan& lhs, const ResidueSpan& rhs) {
   return ResidueSelection(lhs) - ResidueSelection(rhs);
 }
-ResidueRefSpan operator&(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs) {
-  ResidueRefSpan result(lhs);
+ResidueSpan operator&(const ResidueSpan& lhs, const ResidueSpan& rhs) {
+  ResidueSpan result(lhs);
   result &= rhs;
   return result;
 }
 
-MoleculeSelection operator|(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
+MoleculeSelection operator|(const MoleculeSpan& lhs, const MoleculeSpan& rhs) {
   return MoleculeSelection(lhs) | MoleculeSelection(rhs);
 }
-MoleculeSelection operator-(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
+MoleculeSelection operator-(const MoleculeSpan& lhs, const MoleculeSpan& rhs) {
   return MoleculeSelection(lhs) - MoleculeSelection(rhs);
 }
-MoleculeRefSpan operator&(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs) {
-  MoleculeRefSpan result(lhs);
+MoleculeSpan operator&(const MoleculeSpan& lhs, const MoleculeSpan& rhs) {
+  MoleculeSpan result(lhs);
   result &= rhs;
   return result;
 }

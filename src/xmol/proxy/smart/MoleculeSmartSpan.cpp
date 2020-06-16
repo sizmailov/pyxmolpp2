@@ -15,7 +15,7 @@ void xmol::proxy::smart::MoleculeSmartSpan::on_base_molecules_move(BaseMolecule*
   }
 }
 
-xmol::proxy::smart::MoleculeSmartSpan::MoleculeSmartSpan(xmol::proxy::MoleculeRefSpan sel)
+xmol::proxy::smart::MoleculeSmartSpan::MoleculeSmartSpan(xmol::proxy::MoleculeSpan sel)
     : FrameObserver(sel.frame_ptr()), m_span(sel) {
   if (m_span.frame_ptr()) {
     m_span.frame_ptr()->reg(*this);

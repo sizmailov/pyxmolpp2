@@ -154,26 +154,26 @@ public:
 
 template <return_value_policy Policy>
 struct type_caster<
-    iterator_state<xmol::proxy::AtomRefSpan::Iterator, xmol::proxy::AtomRefSpan::Iterator, false, Policy>>
+    iterator_state<xmol::proxy::AtomSpan::Iterator, xmol::proxy::AtomSpan::Iterator, false, Policy>>
     : type_caster_base<
-          iterator_state<xmol::proxy::AtomRefSpan::Iterator, xmol::proxy::AtomRefSpan::Iterator, false, Policy>> {
+          iterator_state<xmol::proxy::AtomSpan::Iterator, xmol::proxy::AtomSpan::Iterator, false, Policy>> {
 public:
   static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::AtomSmartRef>::name + _("]");
 };
 
 template <return_value_policy Policy>
 struct type_caster<
-    iterator_state<xmol::proxy::ResidueRefSpan::Iterator, xmol::proxy::ResidueRefSpan::Iterator, false, Policy>>
+    iterator_state<xmol::proxy::ResidueSpan::Iterator, xmol::proxy::ResidueSpan::Iterator, false, Policy>>
     : type_caster_base<
-          iterator_state<xmol::proxy::ResidueRefSpan::Iterator, xmol::proxy::ResidueRefSpan::Iterator, false, Policy>> {
+          iterator_state<xmol::proxy::ResidueSpan::Iterator, xmol::proxy::ResidueSpan::Iterator, false, Policy>> {
 public:
   static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::ResidueSmartRef>::name + _("]");
 };
 
 template <return_value_policy Policy>
 struct type_caster<
-    iterator_state<xmol::proxy::MoleculeRefSpan::Iterator, xmol::proxy::MoleculeRefSpan::Iterator, false, Policy>>
-    : type_caster_base<iterator_state<xmol::proxy::MoleculeRefSpan::Iterator, xmol::proxy::MoleculeRefSpan::Iterator,
+    iterator_state<xmol::proxy::MoleculeSpan::Iterator, xmol::proxy::MoleculeSpan::Iterator, false, Policy>>
+    : type_caster_base<iterator_state<xmol::proxy::MoleculeSpan::Iterator, xmol::proxy::MoleculeSpan::Iterator,
                                       false, Policy>> {
 public:
   static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::MoleculeSmartRef>::name + _("]");

@@ -8,7 +8,7 @@ namespace xmol::proxy::smart {
 /// ResidueSpan with parent frame changes tracking
 class ResidueSmartSpan : public FrameObserver<ResidueSmartSpan> {
 public:
-  ResidueSmartSpan(ResidueRefSpan span);
+  ResidueSmartSpan(ResidueSpan span);
 
   /// Coordinates
   CoordSpan coords() {
@@ -17,13 +17,13 @@ public:
   };
 
   /// Child atoms
-  AtomRefSpan atoms() {
+  AtomSpan atoms() {
     check_precondition("atoms()");
     return m_span.atoms();
   };
 
   /// Parent molecules
-  MoleculeRefSpan molecules(){
+  MoleculeSpan molecules(){
     check_precondition("molecules()");
     return m_span.molecules();
   };
@@ -62,7 +62,7 @@ public:
     return m_span.slice(start, stop, step);
   }
 
-  ResidueRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop) {
+  ResidueSpan slice(std::optional<size_t> start, std::optional<size_t> stop) {
     check_precondition("slice()");
     return m_span.slice(start, stop);
   }
@@ -77,13 +77,13 @@ public:
     return m_span[i];
   }
 
-  operator ResidueRefSpan() {
+  operator ResidueSpan() {
     check_precondition("operator ResidueSpan&()");
     return m_span;
   }
 
 private:
-  ResidueRefSpan m_span;
+  ResidueSpan m_span;
   bool m_is_split = false; /// indicates invalid span state
   inline void check_precondition(const char* func_name) const {
     if (!is_bound_to_frame() && !m_span.empty()) {

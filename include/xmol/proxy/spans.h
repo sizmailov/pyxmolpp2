@@ -42,20 +42,20 @@ protected:
 private:
   friend Frame;
   friend CoordSelection;
-  friend AtomRefSpan;
+  friend AtomSpan;
   friend smart::CoordSmartSpan;
 //  friend smart::CoordSmartSelection;
   Frame* m_frame = nullptr;
   friend smart::MoleculeSmartSpan;
 };
 
-class AtomRefSpan : public ProxySpan<AtomRef, BaseAtom> {
+class AtomSpan : public ProxySpan<AtomRef, BaseAtom> {
 public:
   using ProxySpan::ProxySpan;
 
   CoordSpan coords();
-  ResidueRefSpan residues();
-  MoleculeRefSpan molecules();
+  ResidueSpan residues();
+  MoleculeSpan molecules();
 
 
   [[nodiscard]] bool contains(const AtomRef& ref) const;
@@ -63,7 +63,7 @@ public:
   template <typename Predicate> AtomSelection filter(Predicate&& p);
   std::vector<AtomIndex> index() const;
   AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
-  AtomRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
+  AtomSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::AtomSmartSpan smart();
@@ -72,7 +72,7 @@ public:
   void guess_mass();
 
   /// Intersect inplace
-  AtomRefSpan& operator&=(const AtomRefSpan& rhs);
+  AtomSpan& operator&=(const AtomSpan& rhs);
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->residue->molecule->frame; }
@@ -82,13 +82,13 @@ private:
   friend smart::AtomSmartSpan;
 };
 
-class ResidueRefSpan : public ProxySpan<ResidueRef, BaseResidue> {
+class ResidueSpan : public ProxySpan<ResidueRef, BaseResidue> {
 public:
   using ProxySpan::ProxySpan;
 
   CoordSpan coords();
-  AtomRefSpan atoms();
-  MoleculeRefSpan molecules();
+  AtomSpan atoms();
+  MoleculeSpan molecules();
 
   [[nodiscard]] bool contains(const ResidueRef& ref) const;
 
@@ -96,13 +96,13 @@ public:
   std::vector<ResidueIndex> index() const;
 
   ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
-  ResidueRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
+  ResidueSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::ResidueSmartSpan smart();
 
   /// Intersect inplace
-  ResidueRefSpan& operator&=(const ResidueRefSpan& rhs);
+  ResidueSpan& operator&=(const ResidueSpan& rhs);
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->molecule->frame; }
@@ -112,13 +112,13 @@ private:
   friend smart::ResidueSmartSpan;
 };
 
-class MoleculeRefSpan : public ProxySpan<MoleculeRef, BaseMolecule> {
+class MoleculeSpan : public ProxySpan<MoleculeRef, BaseMolecule> {
 public:
   using ProxySpan::ProxySpan;
 
   CoordSpan coords();
-  AtomRefSpan atoms();
-  ResidueRefSpan residues();
+  AtomSpan atoms();
+  ResidueSpan residues();
 
   [[nodiscard]] bool contains(const MoleculeRef& ref) const;
 
@@ -126,13 +126,13 @@ public:
   std::vector<MoleculeIndex> index() const;
 
   MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
-  MoleculeRefSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
+  MoleculeSpan slice(std::optional<size_t> start, std::optional<size_t> stop);
 
   /// Make smart span from this
   smart::MoleculeSmartSpan smart();
 
   /// Intersect inplace
-  MoleculeRefSpan& operator&=(const MoleculeRefSpan& rhs);
+  MoleculeSpan& operator&=(const MoleculeSpan& rhs);
 
 protected:
   Frame* frame_ptr() { return empty() ? nullptr : m_begin->frame; }
@@ -142,16 +142,16 @@ private:
   friend smart::MoleculeSmartSpan;
 };
 
-AtomSelection operator|(const AtomRefSpan& lhs, const AtomRefSpan& rhs);
-AtomSelection operator-(const AtomRefSpan& lhs, const AtomRefSpan& rhs);
-AtomRefSpan operator&(const AtomRefSpan& lhs, const AtomRefSpan& rhs);
+AtomSelection operator|(const AtomSpan& lhs, const AtomSpan& rhs);
+AtomSelection operator-(const AtomSpan& lhs, const AtomSpan& rhs);
+AtomSpan operator&(const AtomSpan& lhs, const AtomSpan& rhs);
 
-ResidueSelection operator|(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs);
-ResidueSelection operator-(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs);
-ResidueRefSpan operator&(const ResidueRefSpan& lhs, const ResidueRefSpan& rhs);
+ResidueSelection operator|(const ResidueSpan& lhs, const ResidueSpan& rhs);
+ResidueSelection operator-(const ResidueSpan& lhs, const ResidueSpan& rhs);
+ResidueSpan operator&(const ResidueSpan& lhs, const ResidueSpan& rhs);
 
-MoleculeSelection operator|(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs);
-MoleculeSelection operator-(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs);
-MoleculeRefSpan operator&(const MoleculeRefSpan& lhs, const MoleculeRefSpan& rhs);
+MoleculeSelection operator|(const MoleculeSpan& lhs, const MoleculeSpan& rhs);
+MoleculeSelection operator-(const MoleculeSpan& lhs, const MoleculeSpan& rhs);
+MoleculeSpan operator&(const MoleculeSpan& lhs, const MoleculeSpan& rhs);
 
 } // namespace xmol::proxy

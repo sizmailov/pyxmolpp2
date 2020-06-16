@@ -29,9 +29,9 @@ class ResidueSelection;
 class MoleculeSelection;
 
 class CoordSpan;
-class AtomRefSpan;
-class ResidueRefSpan;
-class MoleculeRefSpan;
+class AtomSpan;
+class ResidueSpan;
+class MoleculeSpan;
 
 /// Reference counting (smart) proxies
 namespace smart {

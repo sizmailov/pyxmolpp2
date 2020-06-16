@@ -27,7 +27,7 @@ namespace xmol::algo::heuristic {
 }
 
 /// Guess mass by atom name
-void guess_mass(proxy::AtomRefSpan& atomSpan);
+void guess_mass(proxy::AtomSpan& atomSpan);
 
 /// Guess mass by atom name
 void guess_mass(proxy::AtomSelection& atomSelection);

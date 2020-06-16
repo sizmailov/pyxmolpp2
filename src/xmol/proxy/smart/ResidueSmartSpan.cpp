@@ -15,7 +15,7 @@ void xmol::proxy::smart::ResidueSmartSpan::on_base_residues_move(BaseResidue* fr
   }
 }
 
-xmol::proxy::smart::ResidueSmartSpan::ResidueSmartSpan(xmol::proxy::ResidueRefSpan sel)
+xmol::proxy::smart::ResidueSmartSpan::ResidueSmartSpan(xmol::proxy::ResidueSpan sel)
     : FrameObserver(sel.frame_ptr()), m_span(sel) {
   if (m_span.frame_ptr()) {
     m_span.frame_ptr()->reg(*this);

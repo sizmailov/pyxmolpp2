@@ -47,13 +47,13 @@ public:
   [[nodiscard]] size_t n_molecules() const { return m_molecules.size(); }
 
   /// Atoms of the frame
-  [[nodiscard]] proxy::AtomRefSpan atoms();
+  [[nodiscard]] proxy::AtomSpan atoms();
 
   /// Residues of the frame
-  [[nodiscard]] proxy::ResidueRefSpan residues();
+  [[nodiscard]] proxy::ResidueSpan residues();
 
   /// Molecules of the frame
-  [[nodiscard]] proxy::MoleculeRefSpan molecules();
+  [[nodiscard]] proxy::MoleculeSpan molecules();
 
   /// Coordinates of the frame
   [[nodiscard]] proxy::CoordSpan coords();
@@ -135,9 +135,9 @@ private:
   friend proxy::MoleculeRef;
 
   friend proxy::CoordSpan;
-  friend proxy::AtomRefSpan;
-  friend proxy::ResidueRefSpan;
-  friend proxy::MoleculeRefSpan;
+  friend proxy::AtomSpan;
+  friend proxy::ResidueSpan;
+  friend proxy::MoleculeSpan;
 
   friend proxy::CoordSelection;
   friend proxy::AtomSelection;

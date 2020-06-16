@@ -16,7 +16,7 @@ void xmol::proxy::smart::AtomSmartSpan::on_base_atoms_move(xmol::BaseAtom* from_
   }
 }
 
-xmol::proxy::smart::AtomSmartSpan::AtomSmartSpan(xmol::proxy::AtomRefSpan sel)
+xmol::proxy::smart::AtomSmartSpan::AtomSmartSpan(xmol::proxy::AtomSpan sel)
     : FrameObserver(sel.frame_ptr()), m_span(sel) {
   if (m_span.frame_ptr()) {
     m_span.frame_ptr()->reg(*this);

@@ -165,15 +165,15 @@ public:
   const Frame& frame() const { return *m_molecule->frame; };
 
   /// Residues of the molecule
-  ResidueRefSpan residues() { return ResidueRefSpan{m_molecule->residues}; }
+  ResidueSpan residues() { return ResidueSpan{m_molecule->residues}; }
 
   /// Atoms of the molecule
-  AtomRefSpan atoms() {
+  AtomSpan atoms() {
     if (empty())
       return {};
     assert(m_molecule->residues.m_begin);
     assert(m_molecule->residues.m_end);
-    return AtomRefSpan(m_molecule->residues.m_begin->atoms.m_begin,
+    return AtomSpan(m_molecule->residues.m_begin->atoms.m_begin,
                        (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
@@ -199,7 +199,7 @@ private:
   friend AtomRef;
   friend AtomSelection;
   friend Frame;
-  friend MoleculeRefSpan;
+  friend MoleculeSpan;
   friend MoleculeSelection;
   friend ProxySpan<MoleculeRef, BaseMolecule>;
   friend ResidueRef;
@@ -274,7 +274,7 @@ public:
   const Frame& frame() const { return *m_residue->molecule->frame; }
 
   /// Atoms of the residue
-  AtomRefSpan atoms() { return AtomRefSpan{m_residue->atoms}; }
+  AtomSpan atoms() { return AtomSpan{m_residue->atoms}; }
 
   /// Next residue in the molecule
   std::optional<ResidueRef> next() {
@@ -322,7 +322,7 @@ private:
   friend MoleculeRef;
   friend MoleculeSelection;
   friend ProxySpan<ResidueRef, BaseResidue>;
-  friend ResidueRefSpan;
+  friend ResidueSpan;
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
   friend smart::ResidueSmartRef;
@@ -418,7 +418,7 @@ protected:
   BaseAtom* m_atom = nullptr;
 
 private:
-  friend AtomRefSpan;
+  friend AtomSpan;
   friend AtomSelection;
   friend Frame;
   friend MoleculeSelection;

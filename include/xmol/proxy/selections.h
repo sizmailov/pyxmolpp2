@@ -85,7 +85,7 @@ public:
   using Selection::Selection;
   /// Construct from parent
   AtomSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
-  AtomSelection(AtomRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
+  AtomSelection(AtomSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Coordinates
   CoordSelection coords();
@@ -153,7 +153,7 @@ class ResidueSelection : public Selection<ResidueRef> {
 public:
   using Selection::Selection;
   ResidueSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
-  ResidueSelection(ResidueRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
+  ResidueSelection(ResidueSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Coordinates
   CoordSelection coords();
@@ -221,7 +221,7 @@ class MoleculeSelection : public Selection<MoleculeRef> {
 public:
   using Selection::Selection;
   MoleculeSelection(Selection&& rhs) : Selection(std::move(rhs)) { check_invariants("ctor"); }
-  MoleculeSelection(MoleculeRefSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
+  MoleculeSelection(MoleculeSpan rhs) : Selection(rhs.begin(), rhs.end()) {}
 
   /// Coordinates
   CoordSelection coords();
