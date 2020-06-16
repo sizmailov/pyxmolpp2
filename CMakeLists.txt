@@ -45,7 +45,6 @@ include_directories(SYSTEM external/pybind11/include)
 
 
 enable_testing()
-include_directories(include)
 add_subdirectory(tests)
 
 include(cmake/WriteVersionInfo.cmake)
@@ -54,9 +53,9 @@ file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
 add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+target_include_directories(xmolpp2 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
 target_link_libraries(xmolpp2 PUBLIC NetCDF::NetCDF)
-
 set_target_properties(xmolpp2 PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
 
 add_dependencies(xmolpp2 write_version_info)

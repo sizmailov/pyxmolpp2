@@ -7,7 +7,7 @@
 .pytest_cahce/
 .run
 __pycache__/
-build
+*build*
 cmake-build-*
 coverage
 dist
