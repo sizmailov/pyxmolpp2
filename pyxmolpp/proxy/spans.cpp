@@ -94,6 +94,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def_property_readonly("index", &Span::index)
+      .def("guess_mass", &Span::guess_mass)
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__",

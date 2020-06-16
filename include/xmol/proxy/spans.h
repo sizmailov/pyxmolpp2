@@ -68,6 +68,9 @@ public:
   /// Make smart span from this
   smart::AtomSmartSpan smart();
 
+  /// Guess atom mass by atom name
+  void guess_mass();
+
   /// Intersect inplace
   AtomRefSpan& operator&=(const AtomRefSpan& rhs);
 

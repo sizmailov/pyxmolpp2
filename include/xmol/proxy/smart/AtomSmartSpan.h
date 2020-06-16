@@ -71,6 +71,11 @@ public:
     return m_span.index();
   }
 
+  void guess_mass() {
+    check_precondition("guess_mass()");
+    return m_span.guess_mass();
+  }
+
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

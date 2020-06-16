@@ -1,8 +1,8 @@
 
-#include <xmol/proxy/spans.h>
-
+#include "xmol/proxy/spans.h"
 #include "xmol/Frame.h"
 #include "xmol/algo/alignment.h"
+#include "xmol/algo/heuristic/guess_mass.h"
 #include "xmol/proxy/selections.h"
 #include "xmol/proxy/smart/spans.h"
 
@@ -147,6 +147,8 @@ std::vector<xmol::AtomIndex> AtomRefSpan::index() const {
   }
   return result;
 }
+
+void AtomRefSpan::guess_mass() { algo::heuristic::guess_mass(*this); }
 
 bool ResidueRefSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueRefSpan::smart() { return *this; }

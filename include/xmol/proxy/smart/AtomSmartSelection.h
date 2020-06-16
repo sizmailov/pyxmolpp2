@@ -23,7 +23,7 @@ public:
   };
 
   /// Parent molecules
-  MoleculeSelection molecules(){
+  MoleculeSelection molecules() {
     check_precondition("molecules()");
     return m_selection.molecules();
   };
@@ -35,13 +35,13 @@ public:
   }
 
   /// Inplace union
-  void unite(const AtomSelection& rhs){
+  void unite(const AtomSelection& rhs) {
     check_precondition("unite()");
     m_selection.unite(rhs);
   }
 
   /// Inplace difference
-  void substract(const AtomSelection& rhs){
+  void substract(const AtomSelection& rhs) {
     check_precondition("substract()");
     if (empty()) {
       *this = AtomSelection{};
@@ -50,7 +50,7 @@ public:
   }
 
   /// Inplace intersection
-  void intersect(const AtomSelection& rhs){
+  void intersect(const AtomSelection& rhs) {
     check_precondition("intersect()");
     if (empty()) {
       *this = AtomSelection{};
@@ -59,7 +59,7 @@ public:
   }
 
   /// Check if element in selection
-  [[nodiscard]] bool contains(const AtomRef& ref) const{
+  [[nodiscard]] bool contains(const AtomRef& ref) const {
     check_precondition("filter()");
     return m_selection.contains(ref);
   }
@@ -67,14 +67,14 @@ public:
   /// Inplace union
   AtomSmartSelection& operator|=(const AtomSelection& rhs) {
     check_precondition("operator|=()");
-    m_selection |=(rhs);
+    m_selection |= (rhs);
     return *this;
   };
 
   /// Inplace difference
   AtomSmartSelection& operator-=(const AtomSelection& rhs) {
     check_precondition("operator-=()");
-    m_selection -=(rhs);
+    m_selection -= (rhs);
     if (empty()) {
       *this = AtomSelection{};
     }
@@ -116,6 +116,11 @@ public:
   auto index() {
     check_precondition("index()");
     return m_selection.index();
+  }
+
+  void guess_mass() {
+    check_precondition("guess_mass()");
+    return m_selection.guess_mass();
   }
 
   AtomRef& operator[](size_t i) {

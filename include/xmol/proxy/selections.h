@@ -127,6 +127,9 @@ public:
   /// Create smart selection from this
   smart::AtomSmartSelection smart();
 
+  /// Guess atom mass by atom name
+  void guess_mass();
+
 private:
   inline void check_invariants(const char* func_name) {
     if (!empty() && &m_data.front().frame() != &m_data.back().frame()) {

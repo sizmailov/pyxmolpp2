@@ -2,6 +2,7 @@
 #include "xmol/proxy/selections.h"
 #include "xmol/Frame.h"
 #include "xmol/algo/alignment.h"
+#include "xmol/algo/heuristic/guess_mass.h"
 #include "xmol/proxy/smart/selections.h"
 
 using namespace xmol::proxy;
@@ -203,6 +204,8 @@ std::vector<xmol::AtomIndex> AtomSelection::index() const {
   }
   return result;
 }
+
+void AtomSelection::guess_mass() { algo::heuristic::guess_mass(*this); }
 
 namespace xmol::proxy {
 

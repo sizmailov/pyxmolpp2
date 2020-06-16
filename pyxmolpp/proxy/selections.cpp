@@ -83,6 +83,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
       .def("filter", [](Sel& sel, const std::function<bool(const AtomSmartRef&)>& f) { return sel.filter(f).smart(); })
       .def_property_readonly("index", &Sel::index)
+      .def("guess_mass", &Sel::guess_mass)
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, AtomSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",
