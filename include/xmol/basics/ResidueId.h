@@ -1,7 +1,10 @@
 #pragma once
-#include <tuple>
-#include <stdexcept>
+
+#include "xmol/utils/ShortAsciiString.h"
+
 #include <cstdint>
+#include <stdexcept>
+#include <tuple>
 #include <type_traits>
 
 namespace xmol {

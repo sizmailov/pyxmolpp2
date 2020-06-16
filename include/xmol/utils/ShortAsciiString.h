@@ -25,8 +25,23 @@ public:
   explicit ShortAsciiString(const std::string& aName)
       : m_value(to_uint(aName.c_str())) {}
 
-  inline explicit ShortAsciiString(const char* aName)
-      : m_value(to_uint(aName)) {}
+//  inline explicit ShortAsciiString(const char* aName)
+//      : m_value(to_uint(aName)) {}
+
+  template<int N>
+  constexpr inline explicit ShortAsciiString(const char (&aName)[N]) noexcept
+      : m_value(0) {
+    static_assert(N<=MAX_LENGTH+1 || ALLOW_CONSTRUCT_TRUNCATION);
+    const char* ptr = aName;
+    for (int i = 0; *ptr != '\0' && i < MAX_LENGTH; ++i, ++ptr) {
+      m_value = m_value * 256 + uint_type(*ptr);
+    }
+  }
+
+  [[nodiscard]] constexpr char operator[](const uint8_t& i) const noexcept {
+    assert(i<MAX_LENGTH);
+    return m_value >> (8*i) & 255;
+  }
 
   inline explicit ShortAsciiString(const char* aName, int exact_length)
       : m_value(to_uint(aName, exact_length)) {}
@@ -97,7 +112,7 @@ public:
   }
 
   explicit operator std::string() const { return this->str(); }
-  inline uint_type value() const { return m_value; }
+  constexpr inline uint_type value() const { return m_value; }
 
 private:
   inline uint_type static to_uint(const char* aName) {

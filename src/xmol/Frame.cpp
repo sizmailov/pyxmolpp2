@@ -81,7 +81,7 @@ BaseAtom& Frame::add_atom(BaseResidue& residue) {
   auto old_insert_pos = residue.atoms.m_end;
   auto old_insert_crd_pos = old_begin_crd + (residue.atoms.m_end - old_begin);
 
-  auto new_inserted_it = m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{{}, {}, &residue});
+  auto new_inserted_it = m_atoms.insert(m_atoms.begin() + (old_insert_pos - old_begin), BaseAtom{{}, {}, {}, &residue});
 
   auto new_inserted_crd_it = m_coordinates.insert(m_coordinates.begin() + (old_insert_pos - old_begin), XYZ{});
 
