@@ -79,7 +79,6 @@ after_success:
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
         bash tools/run_coverage.sh
-        bash <(curl -s https://codecov.io/bash) ;
       fi;
     - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
         DO_GH_PAGES=true;

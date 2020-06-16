@@ -145,7 +145,8 @@ def test_selection_exceptions():
             pass
 
 
-def _test_deleted_element_access_exceptions():  # todo: enable
+@pytest.mark.skip("not implemented")
+def test_deleted_element_access_exceptions():
 
     frame = make_polyglycine([("A", 1)])
     sel = frame.atoms
@@ -168,8 +169,8 @@ def _test_deleted_element_access_exceptions():  # todo: enable
         for a in sel:
             pass
 
-
-def _test_range_exceptions():  # todo: enable
+@pytest.mark.skip("not implemented")
+def test_range_exceptions():  # todo: enable
     frame = make_polyglycine([("A", 1), ("B", 4), ("C", 3)])
 
     # with pytest.raises(OutOfRangeFrame):
@@ -280,7 +281,7 @@ def test_span_operators():
     assert a1.size == 7
 
 
-def _test_lookup_by_name():
+def test_lookup_by_name():
     from pyxmolpp2 import ResidueId
     frame = make_polyglycine([("A", 2)])
 
@@ -289,12 +290,14 @@ def _test_lookup_by_name():
     frame["A"][ResidueId(2)]["CA"]  # does not throw
     frame["A"][ResidueId(2)]["N"]  # does not throw
 
-    frame["B"]
+    with pytest.raises(IndexError):
+        frame["B"]
 
-    frame["A"][ResidueId(3)]
+    with pytest.raises(IndexError):
+        frame["A"][ResidueId(3)]
 
-    with pytest.raises(RuntimeError):
-        frame["A"][ResidueId(2)]["CX"]  # does throw
+    with pytest.raises(IndexError):
+        frame["A"][ResidueId(2)]["CX"]
 
 
 def test_lookup_after_rename():
