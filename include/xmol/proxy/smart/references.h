@@ -19,6 +19,16 @@ public:
     return m_ref.id(value);
   }
 
+  /// Atom mass
+  [[nodiscard]] float mass() const {
+    check_precondition("mass()");
+    return m_ref.mass();
+  };
+  AtomRef& mass(float value) {
+    check_precondition("mass()");
+    return m_ref.mass(value);
+  }
+
   /// Atom name
   [[nodiscard]] const AtomName& name() const {
     check_precondition("name()");

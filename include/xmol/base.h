@@ -1,8 +1,8 @@
 #pragma once
+#include "basics/ResidueId.h"
 #include "future/span.h"
 #include "fwd.h"
 #include "geom/XYZ.h"
-#include "basics/ResidueId.h"
 
 namespace xmol {
 
@@ -28,6 +28,7 @@ using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTa
 struct BaseAtom {
   AtomName name;                  /// Atom name
   AtomId id;                      /// Atom id
+  float mass = 1;                 /// Atomic mass in Daltons
   BaseResidue* residue = nullptr; /// Parent residue
 };
 

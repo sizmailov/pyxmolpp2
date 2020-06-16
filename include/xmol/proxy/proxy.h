@@ -354,6 +354,13 @@ public:
     return *this;
   }
 
+  /// Atom mass
+  [[nodiscard]] float mass() const { return m_atom->mass; };
+  AtomRef& mass(float value) {
+    m_atom->mass = value;
+    return *this;
+  }
+
   /// Atom name
   [[nodiscard]] const AtomName& name() const { return m_atom->name; };
   AtomRef& name(const AtomName& value) {
