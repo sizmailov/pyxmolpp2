@@ -59,11 +59,16 @@ geom::affine::Transformation3d calc_alignment_weighted_impl(const MatrixA& X, co
     throw geom::GeomError("Total weight is too low, check you inputs");
   }
 
-  CoordEigenMatrix X_scaled = X.array().colwise() * weight.array();
-  CoordEigenMatrix Y_scaled = Y.array().colwise() * weight.array();
-  CoordEigenVector xc = X_scaled.colwise().sum() / total_mass;
-  CoordEigenVector yc = Y_scaled.colwise().sum() / total_mass;
-  return calc_alignment_impl(X_scaled.rowwise() - xc, Y_scaled.rowwise() - yc);
+  CoordEigenMatrix X_scaled = X.array().colwise() * weight.array() / total_mass;
+  CoordEigenMatrix Y_scaled = Y.array().colwise() * weight.array() / total_mass;
+
+  CoordEigenVector xc = X_scaled.colwise().sum();
+  CoordEigenVector yc = Y_scaled.colwise().sum();
+
+  auto R = calc_alignment_precentered_impl(X.rowwise() - xc, Y.rowwise() - yc);
+  auto T = geom::affine::Translation3d(XYZ(xc) - R.transform(XYZ(yc)));
+
+  return geom::affine::Transformation3d(R, T);
 }
 
 template <typename MatrixA, typename MatrixB> double calc_rmsd_impl(const MatrixA& reference, const MatrixB& variable) {

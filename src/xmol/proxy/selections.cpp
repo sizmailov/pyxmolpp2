@@ -211,21 +211,21 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
 
 [[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs, bool weighted) {
   if (weighted) {
-    return algo::calc_alignment(*this, rhs);
+    return algo::calc_alignment(rhs, *this);
   } else {
     auto lhs_coords = this->coords();
     auto rhs_coords = rhs.coords();
-    return algo::calc_alignment(lhs_coords, rhs_coords);
+    return algo::calc_alignment(rhs_coords, lhs_coords);
   }
 }
 
 [[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs, bool weighted) {
   if (weighted) {
-    return algo::calc_alignment(*this, rhs);
+    return algo::calc_alignment(rhs, *this);
   } else {
     auto lhs_coords = this->coords();
     auto rhs_coords = rhs.coords();
-    return algo::calc_alignment(lhs_coords, rhs_coords);
+    return algo::calc_alignment(rhs_coords, lhs_coords);
   }
 }
 
