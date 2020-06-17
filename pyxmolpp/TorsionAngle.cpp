@@ -1,15 +1,14 @@
-#include "init.h"
-
+#include "TorsionAngle.h"
 #include "xmol/ProteinTorsionAngleFactory.h"
 #include "xmol/TorsionAngle.h"
-#include "xmol/proxy/selections.h"
+#include "xmol/proxy/smart/selections.h"
 
 #include "pybind11/functional.h"
 #include "pybind11/stl.h"
 
 namespace py = pybind11;
 
-void init_TorsionAngle(pybind11::module& polymer) {
+void pyxmolpp::v1::init_TorsionAngle(pybind11::module& polymer) {
   using namespace xmol;
   using namespace xmol::proxy::smart;
   using namespace xmol::proxy;
@@ -29,7 +28,7 @@ void init_TorsionAngle(pybind11::module& polymer) {
            py::arg("a"), py::arg("b"), py::arg("c"), py::arg("d"))
       .def(py::init(
                [](AtomSmartRef& a, AtomSmartRef& b, AtomSmartRef& c, AtomSmartRef& d,
-                  std::function<AtomSelection(AtomSmartRef&, AtomSmartRef&, AtomSmartRef&, AtomSmartRef&)>& selector) {
+                  std::function<AtomSmartSelection(AtomSmartRef&, AtomSmartRef&, AtomSmartRef&, AtomSmartRef&)>& selector) {
                  return TorsionAngle(a, b, c, d,
                                      [selector, a, b, c, d](AtomRef&, AtomRef&, AtomRef&, AtomRef&) mutable {
                                        return selector(a, b, c, d);
@@ -49,22 +48,22 @@ Precondition:
 )pydoc");
   py::class_<TorsionAngleFactory>(polymer, "TorsionAngleFactory")
       .def_static(
-          "get", [](ResidueRef& r, const char* name) { return TorsionAngleFactory::get(r, TorsionAngleName(name)); },
+          "get", [](ResidueSmartRef& r, const char* name) { return TorsionAngleFactory::get(r, TorsionAngleName(name)); },
           py::arg("residue"), py::arg("torsion_name"))
       .def_static(
-          "phi", [](ResidueRef& r) { return TorsionAngleFactory::phi(r); }, py::arg("residue"))
+          "phi", [](ResidueSmartRef& r) { return TorsionAngleFactory::phi(r); }, py::arg("residue"))
       .def_static(
-          "psi", [](ResidueRef& r) { return TorsionAngleFactory::psi(r); }, py::arg("residue"))
+          "psi", [](ResidueSmartRef& r) { return TorsionAngleFactory::psi(r); }, py::arg("residue"))
       .def_static(
-          "omega", [](ResidueRef& r) { return TorsionAngleFactory::omega(r); }, py::arg("residue"))
+          "omega", [](ResidueSmartRef& r) { return TorsionAngleFactory::omega(r); }, py::arg("residue"))
       .def_static(
-          "chi1", [](ResidueRef& r) { return TorsionAngleFactory::chi1(r); }, py::arg("residue"))
+          "chi1", [](ResidueSmartRef& r) { return TorsionAngleFactory::chi1(r); }, py::arg("residue"))
       .def_static(
-          "chi2", [](ResidueRef& r) { return TorsionAngleFactory::chi2(r); }, py::arg("residue"))
+          "chi2", [](ResidueSmartRef& r) { return TorsionAngleFactory::chi2(r); }, py::arg("residue"))
       .def_static(
-          "chi3", [](ResidueRef& r) { return TorsionAngleFactory::chi3(r); }, py::arg("residue"))
+          "chi3", [](ResidueSmartRef& r) { return TorsionAngleFactory::chi3(r); }, py::arg("residue"))
       .def_static(
-          "chi4", [](ResidueRef& r) { return TorsionAngleFactory::chi4(r); }, py::arg("residue"))
+          "chi4", [](ResidueSmartRef& r) { return TorsionAngleFactory::chi4(r); }, py::arg("residue"))
       .def_static(
-          "chi5", [](ResidueRef& r) { return TorsionAngleFactory::chi5(r); }, py::arg("residue"));
+          "chi5", [](ResidueSmartRef& r) { return TorsionAngleFactory::chi5(r); }, py::arg("residue"));
 }

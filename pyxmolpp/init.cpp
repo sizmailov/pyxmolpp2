@@ -3,20 +3,21 @@
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 
+#include "TorsionAngle.h"
+#include "algo/algo.h"
 #include "base.h"
-#include "proxy/references.h"
-#include "proxy/spans.h"
-#include "proxy/selections.h"
-#include "geom/XYZ.h"
 #include "geom/AngleValue.h"
-#include "geom/UnitCell.h"
 #include "geom/Transformation3d.h"
-#include "trajectory/trajectory.h"
+#include "geom/UnitCell.h"
+#include "geom/XYZ.h"
+#include "io/AmberNetCDF.h"
 #include "io/PdbFile.h"
 #include "io/TrjtoolDatFile.h"
-#include "io/AmberNetCDF.h"
-#include "algo/algo.h"
 #include "predicates/predicates.h"
+#include "proxy/references.h"
+#include "proxy/selections.h"
+#include "proxy/spans.h"
+#include "trajectory/trajectory.h"
 
 namespace py = pybind11;
 using namespace xmol;
@@ -102,4 +103,5 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyAmberNetCDF);
 
   define_algo_functions(v1);
+  init_TorsionAngle(v1);
 }

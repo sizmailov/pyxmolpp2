@@ -169,17 +169,18 @@ def test_deleted_element_access_exceptions():
         for a in sel:
             pass
 
-@pytest.mark.skip("not implemented")
-def test_range_exceptions():  # todo: enable
+def test_range_exceptions():
     frame = make_polyglycine([("A", 1), ("B", 4), ("C", 3)])
 
-    # with pytest.raises(OutOfRangeFrame):
-    #     x = frame[3]
+    with pytest.raises(TypeError):
+        x = frame[3]
 
-    # with pytest.raises(OutOfRangeChain):
-    #     x = frame.molecules[0][3]
+    x = frame["C"] # ok
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
+        x = frame.molecules[0][3]
+
+    with pytest.raises(IndexError):
         x = frame.residues[0]["ca"]
 
     assert frame.residues[0]["CA"].name == "CA"
@@ -195,19 +196,19 @@ def test_range_exceptions():  # todo: enable
     frame.molecules[0]
     frame.molecules[-nchains]
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.atoms[natoms]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.atoms[-natoms - 1]
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.residues[nresidues]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.residues[-nresidues - 1]
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.molecules[nchains]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(IndexError):
         x = frame.molecules[-nchains - 1]
 
 
