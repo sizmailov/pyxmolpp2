@@ -124,8 +124,8 @@ public:
   }
 
   auto inertia_tensor() -> Eigen::Matrix3d;
-  auto alignment_to(AtomSpan& rhs)  -> geom::affine::Transformation3d;
-  auto alignment_to(AtomSelection& rhs)  -> geom::affine::Transformation3d;
+  auto alignment_to(AtomSpan& rhs, bool weighted=false)  -> geom::affine::Transformation3d;
+  auto alignment_to(AtomSelection& rhs, bool weighted=false)  -> geom::affine::Transformation3d;
 
   AtomRef& operator[](size_t i) {
     check_precondition("operator[]()");

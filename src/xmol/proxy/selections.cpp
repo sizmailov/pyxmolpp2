@@ -209,12 +209,24 @@ void AtomSelection::guess_mass() { algo::heuristic::guess_mass(*this); }
 
 Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tensor(*this); }
 
-[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs) {
-  return algo::calc_alignment(*this, rhs);
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_alignment(*this, rhs);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_alignment(lhs_coords, rhs_coords);
+  }
 }
 
-[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs) {
-  return algo::calc_alignment(*this, rhs);
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_alignment(*this, rhs);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_alignment(lhs_coords, rhs_coords);
+  }
 }
 
 namespace xmol::proxy {

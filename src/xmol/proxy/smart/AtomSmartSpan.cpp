@@ -29,14 +29,14 @@ auto AtomSmartSpan::inertia_tensor() -> Eigen::Matrix3d {
   return m_span.inertia_tensor();
 }
 
-auto AtomSmartSpan::alignment_to(xmol::proxy::AtomSpan& rhs) -> geom::affine::Transformation3d {
+auto AtomSmartSpan::alignment_to(xmol::proxy::AtomSpan& rhs, bool weighted) -> geom::affine::Transformation3d {
   check_precondition("alignment_to()");
-  return m_span.alignment_to(rhs);
+  return m_span.alignment_to(rhs, weighted);
 }
 
-auto AtomSmartSpan::alignment_to(xmol::proxy::AtomSelection& rhs) -> geom::affine::Transformation3d {
+auto AtomSmartSpan::alignment_to(xmol::proxy::AtomSelection& rhs, bool weighted) -> geom::affine::Transformation3d {
   check_precondition("alignment_to()");
-  return m_span.alignment_to(rhs);
+  return m_span.alignment_to(rhs, weighted);
 }
 
 template class xmol::proxy::smart::FrameObserver<AtomSmartSpan>;

@@ -134,10 +134,10 @@ public:
   [[nodiscard]] Eigen::Matrix3d inertia_tensor();
 
   /// Calc alignment to another set of atoms
-  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs);
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs, bool weighted=false);
 
   /// Calc alignment to another set of atoms
-  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs);
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs, bool weighted=false);
 
 private:
   inline void check_invariants(const char* func_name) {

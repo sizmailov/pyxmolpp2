@@ -75,10 +75,10 @@ public:
   [[nodiscard]] Eigen::Matrix3d inertia_tensor();
 
   /// Calc alignment to another set of atoms
-  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs);
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs, bool weighted=false);
 
   /// Calc alignment to another set of atoms
-  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs);
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs, bool weighted=false);
 
   /// Intersect inplace
   AtomSpan& operator&=(const AtomSpan& rhs);

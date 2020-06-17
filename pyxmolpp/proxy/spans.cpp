@@ -95,12 +95,17 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
       .def_property_readonly("index", &Span::index)
       .def("guess_mass", &Span::guess_mass)
-      .def("alignment_to", [](Span& span, AtomSmartSelection& rhs) { return span.alignment_to(rhs); })
-      .def("alignment_to",
-           [](Span& span, AtomSmartSpan& rhs) {
-             AtomSpan rhs_span(rhs);
-             return span.alignment_to(rhs_span);
-           })
+      .def(
+          "alignment_to",
+          [](Span& span, AtomSmartSelection& rhs, bool weighted) { return span.alignment_to(rhs, weighted); },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def(
+          "alignment_to",
+          [](Span& span, AtomSmartSpan& rhs, bool weighted) {
+            AtomSpan rhs_span(rhs);
+            return span.alignment_to(rhs_span, weighted);
+          },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
       .def("inertia_tensor", &Span::inertia_tensor)
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
