@@ -78,7 +78,7 @@ after_success:
 #    - ( cd docs && bash build.sh ) # patched doxygen is required, disabled for now
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
-        bash tools/run_coverage.sh
+        bash tools/run_coverage.sh ;
       fi;
     - if [ "$TRAVIS_BRANCH" == "master" ]  && [ $RELEASE_MAKER ]; then
         DO_GH_PAGES=true;
