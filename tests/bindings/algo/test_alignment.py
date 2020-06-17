@@ -72,7 +72,6 @@ def test_calc_inertia_tensor():
     assert np.allclose(x, np.diag([2, 2, 4]))
 
 
-# @pytest.mark.skip("intertia tensor with mass is not implemented")
 def test_calc_inertia_tensor_mass():
     from pyxmolpp2 import Frame, XYZ
     import numpy as np

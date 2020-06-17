@@ -2,10 +2,9 @@ import pytest
 from make_polygly import make_polyglycine
 
 
-@pytest.mark.skip("not implemented")
 def test_shorthands():
     import numpy as np
-    from pyxmolpp2 import Rotation, Translation, XYZ, Degrees, Frame
+    from pyxmolpp2 import Rotation, Translation, XYZ, Degrees, Frame, calc_alignment
 
     frame = make_polyglycine([("A", 20)])
     for a in frame.atoms:
@@ -35,12 +34,11 @@ def test_shorthands():
     assert np.isclose(asel.coords.rmsd(asel2.coords), 0)
 
     asel2.coords.apply(T)
-    asel.align_to(asel2.coords)
-    assert np.isclose(asel.rmsd(asel2), 0)
+    asel.coords.apply(asel.alignment_to(asel2))  # todo: replace with .align_to()
+    assert np.isclose(asel.coords.rmsd(asel2.coords), 0)
 
     T = Translation(XYZ(1, 0, 0)) * Rotation(XYZ(1, 1, 1), Degrees(45))
     asel2.coords.apply(T)
 
     assert np.allclose(T.matrix3d(), calc_alignment(asel2.coords.values, asel.coords.values).matrix3d())
     assert np.allclose(T.matrix3d(), asel.alignment_to(asel2).matrix3d())
-    assert np.allclose(T.matrix3d(), asel.alignment_to(asel2.coords).matrix3d())
