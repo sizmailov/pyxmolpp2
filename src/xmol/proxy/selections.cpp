@@ -229,6 +229,26 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
   }
 }
 
+[[nodiscard]] double AtomSelection::rmsd(AtomSelection& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_weighted_rmsd(rhs, *this);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_rmsd(rhs_coords, lhs_coords);
+  }
+}
+
+[[nodiscard]] double AtomSelection::rmsd(AtomSpan& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_weighted_rmsd(rhs, *this);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_rmsd(rhs_coords, lhs_coords);
+  }
+}
+
 namespace xmol::proxy {
 
 AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) |= rhs; }

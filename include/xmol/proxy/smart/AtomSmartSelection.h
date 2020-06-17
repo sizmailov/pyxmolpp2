@@ -127,6 +127,16 @@ public:
   auto alignment_to(AtomSpan& rhs, bool weighted=false)  -> geom::affine::Transformation3d;
   auto alignment_to(AtomSelection& rhs, bool weighted=false)  -> geom::affine::Transformation3d;
 
+  double rmsd(AtomSpan& rhs, bool weighted=false) {
+    check_precondition("rmsd()");
+    return m_selection.rmsd(rhs, weighted);
+  }
+
+  double rmsd(AtomSelection& rhs, bool weighted=false) {
+    check_precondition("rmsd()");
+    return m_selection.rmsd(rhs, weighted);
+  }
+
   AtomRef& operator[](size_t i) {
     check_precondition("operator[]()");
     return m_selection[i];

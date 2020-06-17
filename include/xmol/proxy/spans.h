@@ -80,6 +80,9 @@ public:
   /// Calc alignment to another set of atoms
   [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs, bool weighted=false);
 
+  [[nodiscard]] double rmsd(AtomSelection& rhs, bool weighted=false);
+  [[nodiscard]] double rmsd(AtomSpan& rhs, bool weighted=false);
+
   /// Intersect inplace
   AtomSpan& operator&=(const AtomSpan& rhs);
 

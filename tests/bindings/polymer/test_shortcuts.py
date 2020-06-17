@@ -41,7 +41,8 @@ def test_shorthands():
     asel2.guess_mass()
     asel.guess_mass()
     asel.coords.apply(asel.alignment_to(asel2, weighted=True))  # todo: replace with .align_to()
-    assert np.isclose(asel.coords.rmsd(asel2.coords), 0)
+    assert np.isclose(asel.rmsd(asel2), 0)
+    assert np.isclose(asel.rmsd(asel2, weighted=True), 0)
 
     T = Translation(XYZ(1, 0, 0)) * Rotation(XYZ(1, 1, 1), Degrees(45))
     asel2.coords.apply(T)

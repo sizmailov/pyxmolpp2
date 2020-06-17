@@ -156,19 +156,39 @@ Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*t
   if (weighted){
     return algo::calc_alignment(rhs, *this);
   }else{
-    CoordSpan lhs_coords = this->coords();
-    CoordSpan rhs_coords = rhs.coords();
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
     return algo::calc_alignment(rhs_coords, lhs_coords);
   }
 }
 
-[[nodiscard]] xmol::geom::affine::Transformation3d AtomSpan::alignment_to(AtomSelection& rhs, bool weighted){
-  if (weighted){
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSpan::alignment_to(AtomSelection& rhs, bool weighted) {
+  if (weighted) {
     return algo::calc_alignment(rhs, *this);
-  }else{
-    CoordSpan lhs_coords = this->coords();
-    CoordSelection rhs_coords = rhs.coords();
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
     return algo::calc_alignment(rhs_coords, lhs_coords);
+  }
+}
+
+[[nodiscard]] double AtomSpan::rmsd(AtomSelection& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_weighted_rmsd(rhs, *this);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_rmsd(rhs_coords, lhs_coords);
+  }
+}
+
+[[nodiscard]] double AtomSpan::rmsd(AtomSpan& rhs, bool weighted) {
+  if (weighted) {
+    return algo::calc_weighted_rmsd(rhs, *this);
+  } else {
+    auto lhs_coords = this->coords();
+    auto rhs_coords = rhs.coords();
+    return algo::calc_rmsd(rhs_coords, lhs_coords);
   }
 }
 
@@ -181,7 +201,7 @@ ResidueSpan& ResidueSpan::operator&=(const ResidueSpan& rhs) {
 }
 
 ResidueSelection ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                       std::optional<size_t> step) {
+                                    std::optional<size_t> step) {
   return ResidueSelection(slice_impl(start, stop, step), true);
 }
 

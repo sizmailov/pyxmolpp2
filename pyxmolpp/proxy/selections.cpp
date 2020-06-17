@@ -95,6 +95,17 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
             return span.alignment_to(rhs_span, weighted);
           },
           py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def(
+          "rmsd",
+          [](Sel& span, AtomSmartSelection& rhs, bool weighted) { return span.rmsd(rhs, weighted); },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def(
+          "rmsd",
+          [](Sel& span, AtomSmartSpan& rhs, bool weighted) {
+            AtomSpan rhs_span(rhs);
+            return span.rmsd(rhs_span, weighted);
+          },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
       .def("inertia_tensor", &Sel::inertia_tensor)
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, AtomSmartRef& ref) { return sel.contains(ref); })

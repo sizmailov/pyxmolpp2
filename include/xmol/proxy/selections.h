@@ -139,6 +139,9 @@ public:
   /// Calc alignment to another set of atoms
   [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs, bool weighted=false);
 
+  [[nodiscard]] double rmsd(AtomSelection& rhs, bool weighted=false);
+  [[nodiscard]] double rmsd(AtomSpan& rhs, bool weighted=false);
+
 private:
   inline void check_invariants(const char* func_name) {
     if (!empty() && &m_data.front().frame() != &m_data.back().frame()) {
