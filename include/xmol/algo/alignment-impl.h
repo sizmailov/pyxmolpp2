@@ -63,7 +63,7 @@ geom::affine::Transformation3d calc_alignment_weighted_impl(const MatrixA& X, co
   CoordEigenMatrix Y_scaled = Y.array().colwise() * weight.array();
   CoordEigenVector xc = X_scaled.colwise().sum() / total_mass;
   CoordEigenVector yc = Y_scaled.colwise().sum() / total_mass;
-  return calc_alignment_impl(X_scaled - xc, Y_scaled - yc);
+  return calc_alignment_impl(X_scaled.rowwise() - xc, Y_scaled.rowwise() - yc);
 }
 
 template <typename MatrixA, typename MatrixB> double calc_rmsd_impl(const MatrixA& reference, const MatrixB& variable) {
