@@ -20,10 +20,10 @@ namespace xmol::algo {
 [[nodiscard]] double calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSpan& variable);
 [[nodiscard]] double calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSelection& variable);
 
-[[nodiscard]] double calc_rmsd(proxy::AtomSpan& reference, proxy::AtomSpan& variable);
-[[nodiscard]] double calc_rmsd(proxy::AtomSpan& reference, proxy::AtomSelection& variable);
-[[nodiscard]] double calc_rmsd(proxy::AtomSelection& reference, proxy::AtomSpan& variable);
-[[nodiscard]] double calc_rmsd(proxy::AtomSelection& reference, proxy::AtomSelection& variable);
+[[nodiscard]] double calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSpan& variable);
+[[nodiscard]] double calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSelection& variable);
+[[nodiscard]] double calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSpan& variable);
+[[nodiscard]] double calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSelection& variable);
 
 [[nodiscard]] Eigen::Matrix3d calc_inertia_tensor(proxy::CoordSelection& reference);
 [[nodiscard]] Eigen::Matrix3d calc_inertia_tensor(proxy::CoordSpan& reference);

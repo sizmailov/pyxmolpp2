@@ -8,7 +8,7 @@ using namespace xmol::geom::affine;
 
 namespace {
 
-template <typename AtomsA, typename AtomsB> double calc_rmsd_atoms_impl(AtomsA& reference, AtomsB& variable) {
+template <typename AtomsA, typename AtomsB> double calc_weighted_rmsd_atoms_impl(AtomsA& reference, AtomsB& variable) {
   if (reference.size() != variable.size()) {
     throw xmol::geom::GeomError("can't calc rmsd on atom selections of different size");
   }
@@ -105,17 +105,17 @@ double xmol::algo::calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSelec
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
 
-double xmol::algo::calc_rmsd(proxy::AtomSpan& reference, proxy::AtomSpan& variable) {
-  return calc_rmsd_atoms_impl(reference, variable);
+double xmol::algo::calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSpan& variable) {
+  return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_rmsd(proxy::AtomSpan& reference, proxy::AtomSelection& variable) {
-  return calc_rmsd_atoms_impl(reference, variable);
+double xmol::algo::calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSelection& variable) {
+  return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_rmsd(proxy::AtomSelection& reference, proxy::AtomSpan& variable) {
-  return calc_rmsd_atoms_impl(reference, variable);
+double xmol::algo::calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSpan& variable) {
+  return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_rmsd(proxy::AtomSelection& reference, proxy::AtomSelection& variable) {
-  return calc_rmsd_atoms_impl(reference, variable);
+double xmol::algo::calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSelection& variable) {
+  return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
 
 Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coords) {
