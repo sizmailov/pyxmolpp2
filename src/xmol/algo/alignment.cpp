@@ -49,7 +49,7 @@ Transformation3d calc_alignment_atoms_impl(AtomsA& reference, AtomsB& variable) 
     throw xmol::geom::GeomError("Mass of reference atoms doesn't match mass aligned ones."
                                 "If you want ignore mass use alignment of coordinates instead.");
   }
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.data(), 1, mass.size());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.data(), mass.size(), 1);
   return calc_alignment_weighted_impl(reference.coords()._eigen(), variable.coords()._eigen(), mass_map);
 }
 
