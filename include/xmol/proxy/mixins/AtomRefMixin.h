@@ -9,7 +9,7 @@ public:
 
 #define REF_GETTER(NAME, EXPR)                                                                                         \
   [[nodiscard]] auto& NAME() const {                                                                                   \
-    ref().check_invariants();                                                                                          \
+    ref().check_invariants(#NAME);                                                                                     \
     return EXPR;                                                                                                       \
   }
 
@@ -24,7 +24,7 @@ public:
 
 #define VALUE_GETTER(NAME, EXPR)                                                                                       \
   [[nodiscard]] auto NAME() const {                                                                                    \
-    ref().check_invariants();                                                                                          \
+    ref().check_invariants(#NAME);                                                                                     \
     return EXPR;                                                                                                       \
   }
   VALUE_GETTER(residue, RRef(*ref().atom_ptr()->residue));
@@ -50,13 +50,13 @@ public:
 
 #define PROXY_SETTER(NAME, TYPE, EXPR)                                                                                 \
   [[maybe_unused]] ARef& NAME(TYPE value)& {                                                                           \
-    ref().check_invariants();                                                                                          \
+    ref().check_invariants(#NAME);                                                                                     \
     EXPR;                                                                                                              \
     return ref();                                                                                                      \
   }                                                                                                                    \
                                                                                                                        \
   [[maybe_unused]] ARef&& NAME(TYPE value)&& {                                                                         \
-    ref().check_invariants();                                                                                          \
+    ref().check_invariants(#NAME);                                                                                     \
     EXPR;                                                                                                              \
     return std::move(ref());                                                                                           \
   }

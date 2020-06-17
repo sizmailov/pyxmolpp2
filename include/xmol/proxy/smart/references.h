@@ -5,120 +5,56 @@
 namespace xmol::proxy::smart {
 
 /// Smart Atom reference proxy
-class AtomSmartRef : public FrameObserver<AtomSmartRef> {
+class AtomSmartRef : public FrameObserver<AtomSmartRef>, public AtomSettersMixin<AtomSmartRef> {
 public:
   AtomSmartRef(AtomRef atom);
 
-  /// Atom id
-  [[nodiscard]] const AtomId& id() const {
-    check_precondition("id()");
-    return m_ref.id();
-  };
-  AtomRef& id(const AtomId& value) {
-    check_precondition("id()");
-    return m_ref.id(value);
-  }
-
-  /// Atom mass
-  [[nodiscard]] float mass() const {
-    check_precondition("mass()");
-    return m_ref.mass();
-  };
-  AtomRef& mass(float value) {
-    check_precondition("mass()");
-    return m_ref.mass(value);
-  }
-
-  /// Van der Waals radius
-  [[nodiscard]] float vdw_radius() const {
-    check_precondition("vdw_radius()");
-    return m_ref.vdw_radius();
-  };
-  AtomRef& vdw_radius(float value) {
-    check_precondition("vdw_radius()");
-    return m_ref.vdw_radius(value);
-  }
-
-  /// Atom name
-  [[nodiscard]] const AtomName& name() const {
-    check_precondition("name()");
-    return m_ref.name();
-  };
-  AtomRef& name(const AtomName& value) {
-    check_precondition("name()");
-    return m_ref.name(value);
-  }
-
-  AtomRef& name(const char* value) {
-    check_precondition("name()");
-    return m_ref.name(value);
-  }
-
-  /// Atom coordinates
-  [[nodiscard]] const XYZ& r() const {
-    check_precondition("r()");
-    return m_ref.r();
-  }
-  AtomRef& r(const XYZ& value) {
-    check_precondition("r()");
-    return m_ref.r(value);
-  }
-
-  /// Parent residue
-  ResidueRef residue() {
-    check_precondition("residue()");
-    return m_ref.residue();
-  }
-
-  /// Parent molecule
-  MoleculeRef molecule() {
-    check_precondition("molecule()");
-    return m_ref.molecule();
-  };
-
-  /// Parent frame
-  Frame& frame() {
-    check_precondition("frame()");
-    return m_ref.frame();
-  };
+  using AtomSettersMixin<AtomSmartRef>::frame;
 
   AtomIndex index() const {
-    check_precondition("index()");
+    check_invariants("index()");
     return m_ref.index();
   };
 
   /// Check if references point to same data
   bool operator!=(const AtomRef& rhs) const {
-    check_precondition("operator!=()");
+    check_invariants("operator!=()");
     return m_ref != rhs;
   }
 
   /// Check if references point to same data
   bool operator==(const AtomRef& rhs) const {
-    check_precondition("operator==()");
+    check_invariants("operator==()");
     return m_ref == rhs;
   }
 
   operator AtomRef&() {
-    check_precondition("operator const AtomRef&()");
+    check_invariants("operator const AtomRef&()");
     return m_ref;
   }
   operator const AtomRef&() const {
-    check_precondition("operator const AtomRef&()");
+    check_invariants("operator const AtomRef&()");
     return m_ref;
   }
 
 private:
   AtomRef m_ref;
   friend Frame;
+
+  XYZ* coord_ptr() const { return m_ref.coord_ptr(); }
+  BaseAtom* atom_ptr() const { return m_ref.atom_ptr(); }
+
   void on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin);
   void on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin);
 
-  inline void check_precondition(const char* func_name) const {
+  inline void check_invariants(const char* func_name) const {
     if (!is_bound_to_frame()) {
       throw DeadFrameAccessError(std::string("AtomSmartRef::") + func_name);
     }
   }
+
+  friend AtomGettersMixin<AtomSmartRef>;
+  friend AtomSettersMixin<AtomSmartRef>;
 };
 
 /// Smart Residue reference proxy

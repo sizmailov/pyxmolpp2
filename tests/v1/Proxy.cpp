@@ -168,9 +168,9 @@ TEST_F(ProxyTests, dead_frame_access_from_atom_ref) {
   AtomSmartRef atom = residue.add_atom();
   AtomRef plain_ref = atom;
   frame = {};
-  EXPECT_THROW(atom.frame(), DeadFrameAccessError);
-  EXPECT_THROW(atom.molecule(), DeadFrameAccessError);
-  EXPECT_THROW(atom.residue(), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(atom.frame()), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(atom.molecule()), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(atom.residue()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.name()), DeadFrameAccessError);
   EXPECT_THROW(atom.name({}), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.id()), DeadFrameAccessError);

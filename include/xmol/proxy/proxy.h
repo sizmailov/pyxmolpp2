@@ -332,6 +332,8 @@ private:
   friend ResidueSpan;
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
+  friend AtomGettersMixin<AtomRef>;
+  friend AtomGettersMixin<smart::AtomSmartRef>;
   friend smart::ResidueSmartRef;
   friend smart::ResidueSmartSelection;
   explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
@@ -382,6 +384,12 @@ protected:
   BaseAtom* m_atom = nullptr;
 
 private:
+  XYZ* coord_ptr() const { return m_coord; }
+  BaseAtom* atom_ptr() const { return m_atom; }
+  void check_invariants(const char*) const {};
+
+  friend AtomGettersMixin<AtomRef>;
+  friend AtomSettersMixin<AtomRef>;
   friend AtomSpan;
   friend AtomSelection;
   friend Frame;
