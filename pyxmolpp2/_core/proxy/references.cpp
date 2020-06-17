@@ -126,13 +126,16 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
 void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
   using SRef = AtomSmartRef;
   pyAtom.def(py::init<const SRef&>())
-      .def_property("id", py::overload_cast<>(&SRef::id, py::const_), [](SRef& self, AtomId& id) { self.id(id); })
-      .def_property("mass", py::overload_cast<>(&SRef::mass, py::const_), [](SRef& self, float value) { self.mass(value); })
-      .def_property("vdw_radius", py::overload_cast<>(&SRef::vdw_radius, py::const_), [](SRef& self, float value) { self.vdw_radius(value); })
+      .def_property(
+          "id", [](SRef& self) { return self.id(); }, [](SRef& self, AtomId& id) { self.id(id); })
+      .def_property(
+          "mass", [](SRef& self) { return self.mass(); }, [](SRef& self, float value) { self.mass(value); })
+      .def_property("vdw_radius", [](SRef& self) { return self.vdw_radius(); }, [](SRef& self, float value) { self.vdw_radius(value); })
       .def_property(
           "name", [](const SRef& self) { return self.name().str(); },
           [](SRef& self, std::string& name) { self.name(AtomName(name)); })
-      .def_property("r", py::overload_cast<>(&SRef::r, py::const_), [](SRef& self, const XYZ& r) { self.r(r); })
+      .def_property(
+          "r", [](SRef& self) { return self.r(); }, [](SRef& self, const XYZ& r) { self.r(r); })
       .def_property_readonly("residue", [](SRef& ref) { return ref.residue().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
       .def_property_readonly("index", &SRef::index)
