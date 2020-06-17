@@ -177,6 +177,9 @@ public:
                        (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
+  /// Atom coordinates of the molecule
+  CoordSpan coords() { return atoms().coords(); }
+
   /// Create smart reference from this
   smart::MoleculeSmartRef smart();
 
@@ -275,6 +278,9 @@ public:
 
   /// Atoms of the residue
   AtomSpan atoms() { return AtomSpan{m_residue->atoms}; }
+
+  /// Atom coordinates of the molecule
+  CoordSpan coords() { return atoms().coords(); }
 
   /// Next residue in the molecule
   std::optional<ResidueRef> next() {

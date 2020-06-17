@@ -176,6 +176,12 @@ public:
     return m_ref.atoms();
   }
 
+  /// Atoms coordinates of the residue
+  CoordSpan coords() {
+    check_precondition("coords()");
+    return m_ref.coords();
+  }
+
   /// Next residue in the molecule
   std::optional<ResidueRef> next() {
     check_precondition("next()");
@@ -299,6 +305,12 @@ public:
   AtomSpan atoms() {
     check_precondition("atoms()");
     return m_ref.atoms();
+  }
+
+  /// Atoms coordinates of the residue
+  CoordSpan coords() {
+    check_precondition("coords()");
+    return m_ref.coords();
   }
 
   /// Check if references point to same data
