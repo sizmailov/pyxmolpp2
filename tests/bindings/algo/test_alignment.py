@@ -72,15 +72,21 @@ def test_calc_inertia_tensor():
     assert np.allclose(x, np.diag([2, 2, 4]))
 
 
-@pytest.mark.skip("intertia tensor with mass is not implemented")
+# @pytest.mark.skip("intertia tensor with mass is not implemented")
 def test_calc_inertia_tensor_mass():
-    from pyxmolpp2 import calc_inertia_tensor, XYZ, Rotation, Translation
+    from pyxmolpp2 import Frame, XYZ
     import numpy as np
 
-    a = np.array([(0, 1, 0), (1, 0, 0), (-1, 0, 0), (0, -1, 0)])
-    m = np.array([10, 1, 1, 10])
-    x = calc_inertia_tensor(a, m)
-    assert np.allclose(x, np.diag([20, 2, 22]))
+    frame = Frame()
+    mol = frame.add_molecule()
+    residue = mol.add_residue()
+    for r, m in zip([(0, 1, 0), (1, 0, 0), (-1, 0, 0), (0, -1, 0)], [10, 1, 1, 10]):
+        atom = residue.add_atom()
+        atom.mass = m
+        atom.r = XYZ(*r)
+
+    assert np.allclose(frame.coords.inertia_tensor(), np.diag([2, 2, 4]))
+    assert np.allclose(frame.atoms.inertia_tensor(), np.diag([20, 2, 22]))
 
 
 def _inertia_tensor(coords: np.ndarray):
@@ -108,7 +114,7 @@ def _inertia_tensor(coords: np.ndarray):
 
 
 def test_calc_inertia_tensor_off_diagonal():
-    from pyxmolpp2 import calc_inertia_tensor, Rotation
+    from pyxmolpp2 import calc_inertia_tensor
     import numpy as np
 
     N = 1000

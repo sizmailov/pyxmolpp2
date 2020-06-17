@@ -73,8 +73,12 @@ public:
 
   void guess_mass() {
     check_precondition("guess_mass()");
-    return m_span.guess_mass();
+    m_span.guess_mass();
   }
+
+  auto inertia_tensor() -> Eigen::Matrix3d;
+  auto alignment_to(AtomSpan& rhs) -> geom::affine::Transformation3d;
+  auto alignment_to(AtomSelection& rhs) -> geom::affine::Transformation3d;
 
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");

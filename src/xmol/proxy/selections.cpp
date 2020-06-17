@@ -207,6 +207,16 @@ std::vector<xmol::AtomIndex> AtomSelection::index() const {
 
 void AtomSelection::guess_mass() { algo::heuristic::guess_mass(*this); }
 
+Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tensor(*this); }
+
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs) {
+  return algo::calc_alignment(*this, rhs);
+}
+
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs) {
+  return algo::calc_alignment(*this, rhs);
+}
+
 namespace xmol::proxy {
 
 AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) |= rhs; }

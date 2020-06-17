@@ -150,6 +150,16 @@ std::vector<xmol::AtomIndex> AtomSpan::index() const {
 
 void AtomSpan::guess_mass() { algo::heuristic::guess_mass(*this); }
 
+Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*this); }
+
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSpan::alignment_to(AtomSpan& rhs){
+  return algo::calc_alignment(*this, rhs);
+}
+
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSpan::alignment_to(AtomSelection& rhs){
+  return algo::calc_alignment(*this, rhs);
+}
+
 bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueSpan::smart() { return *this; }
 

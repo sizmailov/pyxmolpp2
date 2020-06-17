@@ -71,6 +71,15 @@ public:
   /// Guess atom mass by atom name
   void guess_mass();
 
+  /// Guess atom mass by atom name
+  [[nodiscard]] Eigen::Matrix3d inertia_tensor();
+
+  /// Calc alignment to another set of atoms
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs);
+
+  /// Calc alignment to another set of atoms
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs);
+
   /// Intersect inplace
   AtomSpan& operator&=(const AtomSpan& rhs);
 

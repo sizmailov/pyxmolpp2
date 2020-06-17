@@ -130,6 +130,15 @@ public:
   /// Guess atom mass by atom name
   void guess_mass();
 
+  /// Guess atom mass by atom name
+  [[nodiscard]] Eigen::Matrix3d inertia_tensor();
+
+  /// Calc alignment to another set of atoms
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSpan& rhs);
+
+  /// Calc alignment to another set of atoms
+  [[nodiscard]] geom::affine::Transformation3d alignment_to(AtomSelection& rhs);
+
 private:
   inline void check_invariants(const char* func_name) {
     if (!empty() && &m_data.front().frame() != &m_data.back().frame()) {

@@ -1,5 +1,6 @@
 #include "xmol/proxy/smart/AtomSmartSelection.h"
 #include "xmol/Frame.h"
+#include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/FrameObserverImpl.h"
 
 using namespace xmol::proxy::smart;
@@ -40,6 +41,21 @@ xmol::proxy::smart::AtomSmartSelection::AtomSmartSelection(xmol::proxy::AtomSele
   if (m_selection.frame_ptr()) {
     m_selection.frame_ptr()->reg(*this);
   }
+}
+
+auto AtomSmartSelection::inertia_tensor() -> Eigen::Matrix3d {
+  check_precondition("inertia_tensor()");
+  return m_selection.inertia_tensor();
+}
+
+auto AtomSmartSelection::alignment_to(xmol::proxy::AtomSpan& rhs) -> geom::affine::Transformation3d {
+  check_precondition("alignment_to()");
+  return m_selection.alignment_to(rhs);
+}
+
+auto AtomSmartSelection::alignment_to(xmol::proxy::AtomSelection& rhs) -> geom::affine::Transformation3d {
+  check_precondition("alignment_to()");
+  return m_selection.alignment_to(rhs);
 }
 
 template class xmol::proxy::smart::FrameObserver<AtomSmartSelection>;
