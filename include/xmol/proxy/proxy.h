@@ -2,6 +2,7 @@
 #include "../base.h"
 #include "Selection.h"
 #include "spans.h"
+#include "mixins/AtomRefMixin.h"
 
 /** @file
  * Lightweight proxy reference classes for Atom, Residue and Molecule.
@@ -346,64 +347,14 @@ private:
  *
  * For ref-counting reference see @ref smart::AtomSmartRef
  * */
-class AtomRef {
+class AtomRef : public AtomSettersMixin<AtomRef>  {
 public:
   AtomRef(const AtomRef& rhs) = default;
   AtomRef(AtomRef&& rhs) noexcept = default;
   AtomRef& operator=(const AtomRef& rhs) = default;
   AtomRef& operator=(AtomRef&& rhs) noexcept = default;
 
-  /// Atom id
-  [[nodiscard]] const AtomId& id() const { return m_atom->id; };
-  AtomRef& id(const AtomId& value) {
-    m_atom->id = value;
-    return *this;
-  }
-
-  /// Atom mass
-  [[nodiscard]] float mass() const { return m_atom->mass; };
-  AtomRef& mass(float value) {
-    m_atom->mass = value;
-    return *this;
-  }
-
-  /// Van der Waals radius
-  [[nodiscard]] float vdw_radius() const { return m_atom->vdw_radius; };
-  AtomRef& vdw_radius(float value) {
-    m_atom->vdw_radius = value;
-    return *this;
-  }
-
-  /// Atom name
-  [[nodiscard]] const AtomName& name() const { return m_atom->name; };
-  AtomRef& name(const AtomName& value) {
-    m_atom->name = value;
-    return *this;
-  }
-
-  AtomRef& name(const char* value) {
-    m_atom->name = AtomName(value);
-    return *this;
-  }
-
-  AtomRef& name(const std::string& value) {
-    m_atom->name = AtomName(value);
-    return *this;
-  }
-
-  /// Atom coordinates
-  [[nodiscard]] const XYZ& r() const { return *m_coord; }
-  AtomRef& r(const XYZ& value) {
-    *m_coord = value;
-    return *this;
-  }
-
-  /// Parent residue
-  ResidueRef residue() { return ResidueRef(*m_atom->residue); }
-
-  /// Parent molecule
-  MoleculeRef molecule() { return MoleculeRef(*m_atom->residue->molecule); };
-
+  using AtomSettersMixin::frame;
   /// Parent frame
   Frame& frame() { return *m_atom->residue->molecule->frame; };
 
