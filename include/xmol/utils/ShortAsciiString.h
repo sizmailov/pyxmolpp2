@@ -34,7 +34,7 @@ public:
     static_assert(N<=MAX_LENGTH+1 || ALLOW_CONSTRUCT_TRUNCATION);
     const char* ptr = aName;
     for (int i = 0; *ptr != '\0' && i < MAX_LENGTH; ++i, ++ptr) {
-      m_value = m_value * 256 + uint_type(*ptr);
+      m_value = (uint_type(*ptr) << (8 * i)) + m_value;
     }
   }
 
@@ -94,18 +94,12 @@ public:
   std::string str() const {
 
     uint_type tmp = m_value;
-    uint32_t length = 0;
-    while (tmp > 0) {
-      tmp /= 256;
-      length += 1;
-    }
 
     std::string result;
-    result.resize(length);
+    result.reserve(MAX_LENGTH);
 
-    tmp = m_value;
-    for (int i = length - 1; i > -1; i--) {
-      result[i] = char(tmp % 256);
+    while (tmp > 0) {
+      result.push_back(char(tmp % 256));
       tmp /= 256;
     }
     return result;
@@ -116,25 +110,24 @@ public:
 
 private:
   inline uint_type static to_uint(const char* aName) {
-    uint_type m_value = 0;
+    uint_type value = 0;
     const char* origin = aName;
     for (int i = 0; *aName != '\0' && i < MAX_LENGTH; ++i, ++aName) {
-      m_value = m_value * 256 + uint_type(*aName);
+      value = (uint_type(*aName) << (8 * i)) + value;
     }
-    return (ALLOW_CONSTRUCT_TRUNCATION || *aName == '\0') ? m_value
-                            : throw std::runtime_error(
-                                  "ShortName::too_long: len(`" +
-                                  std::string(origin, MAX_LENGTH) + "`...) > " +
-                                  std::to_string(MAX_LENGTH));
+    return (ALLOW_CONSTRUCT_TRUNCATION || *aName == '\0')
+               ? value
+               : throw std::runtime_error("ShortName::too_long: len(`" + std::string(origin, MAX_LENGTH) + "`...) > " +
+                                          std::to_string(MAX_LENGTH));
   }
-  inline uint_type static to_uint(const char* aName, int exact_length) {
-    assert(exact_length <= MAX_LENGTH);
-    uint_type m_value = 0;
-    const char* end = aName + exact_length;
-    for (; aName != end; ++aName) {
-      m_value = m_value * 256 + uint_type(*aName);
+  inline uint_type static to_uint(const char* aName, int length) {
+    assert(length <= MAX_LENGTH);
+    uint_type value = 0;
+    const char* end = aName + length;
+    for (int i = 0; aName != end; ++aName, ++i) {
+      value = (uint_type(*aName) << (8 * i)) + value;
     }
-    return m_value;
+    return value;
   }
   uint_type m_value;
 };
