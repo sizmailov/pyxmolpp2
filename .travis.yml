@@ -55,7 +55,7 @@ before_install:
     - python --version
 
 install:
-    - python -m pip install pytest numpy
+    - python -m pip install pytest numpy tqdm
 
 before_script:
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
