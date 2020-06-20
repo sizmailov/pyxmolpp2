@@ -99,7 +99,12 @@ public:
     Sentinel end() { return {}; }
 
     Trajectory::Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
-    size_t size() const { return (m_begin.global_pos + m_step - 1 - m_end) / m_step; }
+    size_t size() const {
+      if (m_begin.global_pos >= m_end) {
+        return 0;
+      }
+      return (m_end - m_begin.global_pos + m_step - 1) / m_step;
+    }
 
   private:
     friend Trajectory;
