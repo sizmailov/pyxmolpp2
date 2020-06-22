@@ -81,9 +81,9 @@ endif()
 
 #add_subdirectory(pyxmolpp)
 file(GLOB_RECURSE PYXMOLPP_SOURCES
-        pyxmolpp/**.cpp
-        pyxmolpp/**.h
+        _pyxmolpp2/**.cpp
+        _pyxmolpp2/**.h
         )
-pybind11_add_module(pyxmolpp2 ${PYXMOLPP_SOURCES})
-target_include_directories(pyxmolpp2 PRIVATE ${CMAKE_CURRENT_LIST_DIR}/pyxmolpp)
-target_link_libraries(pyxmolpp2 PRIVATE xmolpp2)
+pybind11_add_module(_pyxmolpp2 ${PYXMOLPP_SOURCES})
+target_include_directories(_pyxmolpp2 PRIVATE ${CMAKE_CURRENT_LIST_DIR}/_pyxmolpp2)
+target_link_libraries(_pyxmolpp2 PRIVATE xmolpp2)

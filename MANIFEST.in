@@ -4,20 +4,22 @@ recursive-include external *
 include ./ *.py
 include ./ VERSION
 include ./ *.cmake
+include ./tools
 
 global-exclude .git
 global-exclude .js
 global-exclude .html
 global-exclude .png
 global-exclude .dox
-
+global-exclude .pyc
+exclude __pycache__
 
 graft include
 graft src
 graft tests
-graft pyxmolpp
+graft _pyxmolpp2
+graft pyxmolpp2
 graft cmake
-
 
 
 

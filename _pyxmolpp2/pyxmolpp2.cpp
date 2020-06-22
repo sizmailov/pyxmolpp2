@@ -3,7 +3,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(pyxmolpp2, m) {
-  m.doc() = "pyxmolpp2 module";
+PYBIND11_MODULE(_pyxmolpp2, m) {
+  m.doc() = "pyxmolpp2 implementation";
   pyxmolpp::v1::init(m);
 }
