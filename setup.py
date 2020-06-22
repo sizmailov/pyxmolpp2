@@ -8,7 +8,6 @@ from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 
-from tools.write_version_info import get_version_info
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
@@ -64,9 +63,15 @@ class CMakeBuild(build_ext):
                                ] + build_args,
                               cwd=self.build_temp)
 
+
+def read_version():
+    with open("VERSION") as f:
+        return f.readline().strip()
+
+
 setup(
     name='pyxmolpp2',
-    version=get_version_info()[3],
+    version=read_version(),
     author='Sergei Izmailov',
     author_email='sergei.a.izmailov@gmail.com',
     description='Utils for processing MD',
