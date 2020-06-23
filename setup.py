@@ -77,7 +77,7 @@ setup(
     description='Utils for processing MD',
     long_description=open("README.rst").read(),
     ext_modules=[CMakeExtension('_pyxmolpp2')],
-    packages=['pyxmolpp2'],
+    packages=find_packages(),
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
