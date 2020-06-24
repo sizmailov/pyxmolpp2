@@ -473,7 +473,6 @@ def test_frame_file_output():
     os.unlink("temp.pdb")
 
 
-@pytest.mark.skip("not implemented")
 def test_anything_to_pdb_file():
     from pyxmolpp2 import PdbFile
     frame = make_polyglycine([("A", 20)])
@@ -489,26 +488,24 @@ def test_anything_to_pdb_file():
     frame.molecules[0].to_pdb(output)
     frame.residues[0].to_pdb(output)
 
-    frame.to_pdb(output, PdbFile.STANDARD_V3)
-    frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
-    frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
-    frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
-    frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
-    frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
-    frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
+    # frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
     os.unlink("temp.pdb")
 
 
-@pytest.mark.skip("not implemented")
 def test_anything_to_pdb_buffer():
-    from pyxmolpp2 import PdbFile
     from io import StringIO
     frame = make_polyglycine([("A", 20)])
 
     with StringIO() as output:
         frame.to_pdb(output)
 
-        frame.to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.to_pdb(output, PdbFile.STANDARD_V3)
         frame.atoms.to_pdb(output)
         frame.molecules.to_pdb(output)
         frame.residues.to_pdb(output)
@@ -516,13 +513,13 @@ def test_anything_to_pdb_buffer():
         frame.molecules[0].to_pdb(output)
         frame.residues[0].to_pdb(output)
 
-        frame.to_pdb(output, PdbFile.STANDARD_V3)
-        frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
-        frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
-        frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
-        frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
-        frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
-        frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.atoms.to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.molecules.to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.residues.to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.atoms[0].to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.molecules[0].to_pdb(output, PdbFile.STANDARD_V3)
+        # frame.residues[0].to_pdb(output, PdbFile.STANDARD_V3)
 
 
 def test_frame_buf_exceptions():
