@@ -16,6 +16,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::UnitCell>& pyUniCell) {
   ;
 
   pyUniCell
+      .def(py::init<UnitCell>())
       .def(py::init<const XYZ&, const XYZ&, const XYZ&>(), py::arg("v1"), py::arg("v2"), py::arg("v3"),
            "Construct lattice vectors explicitly")
       .def(py::init<double, double, double, AngleValue, AngleValue, AngleValue>(), py::arg("a"), py::arg("b"),
