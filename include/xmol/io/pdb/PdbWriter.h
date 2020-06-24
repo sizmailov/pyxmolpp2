@@ -26,6 +26,10 @@ public:
   void write(xmol::proxy::ResidueSelection& residueSelection, const basic_PdbRecords& db);
   void write(xmol::proxy::AtomSelection& atomSelection, const basic_PdbRecords& db);
 
+  void write(xmol::proxy::MoleculeSpan& chain, const basic_PdbRecords& db);
+  void write(xmol::proxy::ResidueSpan& residueSelection, const basic_PdbRecords& db);
+  void write(xmol::proxy::AtomSpan& atomSelection, const basic_PdbRecords& db);
+
 private:
   std::locale m_old_locale;
   std::ostream* m_ostream;

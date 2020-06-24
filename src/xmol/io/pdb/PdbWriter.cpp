@@ -106,3 +106,22 @@ void PdbWriter::write(MoleculeSelection& chainSelection, const basic_PdbRecords&
     this->write(c, db);
   }
 }
+
+void PdbWriter::write(AtomSpan& atomSpan, const basic_PdbRecords& db) {
+  for (auto& a : atomSpan) {
+    this->write(a, db);
+  }
+}
+void PdbWriter::write(ResidueSpan& residueSpan, const basic_PdbRecords& db) {
+  for (auto& r : residueSpan) {
+    this->write(r, db);
+  }
+  (*m_ostream) << ("TER\n");
+}
+
+void PdbWriter::write(MoleculeSpan& chainSpan, const basic_PdbRecords& db) {
+  for (auto& c : chainSpan) {
+    this->write(c, db);
+  }
+}
+
