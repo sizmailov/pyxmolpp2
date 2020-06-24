@@ -31,51 +31,25 @@ A tool to process MD trajectories
 |master_coverage| |dev_coverage|
 ================= =================
 
-----
-Goal
-----
+-----
+About
+-----
 
-We want our scripts to
- - run fast
- - be easy to read
- - be easy to write correct
- - be hard to write incorrect
-
-So we need a library which
- - is reliable
- - full of features
-
-
-Well-written C++ code gives us speed. An IDE augmented with static type system should prevent many occasional
-pythonic mistakes before script is run. Moderate functional style programming contributes to readability.
-At least it's how it was meant to be)
+C++ and python library to process MD trajectories.
 
 -------
 Install
 -------
 
-from PyPi
-^^^^^^^^^
-
-PyPi package contains all C++ dependencies, total size is about ~4 mb.
-Install command:
-
 .. code-block:: bash
 
+    # from pypi
     python -m pip install pyxmolpp2
 
+    # from github dev branch
+    python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git@dev
 
-from github
-^^^^^^^^^^^^^^^^^^^
-
-**Caution**: Total size of repository with sub-repositories exceeds 100mb
-
-To install from master branch run command
-
-.. code-block:: bash
-
-    python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git
-
+See `install page <https://sizmailov.github.io/pyxmolpp2/install.html>`_ for more details
 
 -------------
 Documentation
@@ -83,7 +57,7 @@ Documentation
 
 https://sizmailov.github.io/pyxmolpp2/
 
-It includes tutorial, usage examples and python API reference.
+The documentation includes usage examples and python API reference.
 
 ------------
 Contribution
@@ -95,5 +69,4 @@ Issues and PRs are welcome
 License
 -------
 
-Sofwtare is distributed under MIT license. Other licensing options are considered upon request.
-Note that dependencies have separate licenses.
+Software is distributed under MIT license.
