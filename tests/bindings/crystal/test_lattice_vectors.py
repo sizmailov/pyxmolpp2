@@ -1,6 +1,21 @@
 import pytest
 
 
+def test_unit_cell_volume():
+    from pyxmolpp2 import UnitCell, XYZ, Degrees
+
+    cell = UnitCell(1, 1, 1, Degrees(90), Degrees(90), Degrees(90))
+    assert cell.volume == 1
+    cell.scale_by(2)
+    assert cell.volume == 8
+
+    cell.scale_to_volume(27)
+
+    assert cell[0].distance(XYZ(3, 0, 0)) == pytest.approx(0)
+    assert cell[1].distance(XYZ(0, 3, 0)) == pytest.approx(0)
+    assert cell[2].distance(XYZ(0, 0, 3)) == pytest.approx(0)
+
+
 def test_closed_image():
     from pyxmolpp2 import UnitCell, XYZ
 

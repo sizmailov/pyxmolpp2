@@ -52,6 +52,10 @@ public:
   double b() { return v[1].len(); }
   double c() { return v[2].len(); }
 
+  double volume() const { return ::fabs(v[0].cross(v[1]).dot(v[2])); }
+
+  void scale_to_volume(double vol) { scale_by(::cbrt(vol / volume())); }
+
   [[nodiscard]] ClosestImage closest_image_to(const XYZ& ref, const XYZ& var) const;
 
 private:
