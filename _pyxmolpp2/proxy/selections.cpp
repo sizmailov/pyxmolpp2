@@ -1,4 +1,5 @@
 #include "selections.h"
+#include "to_pdb_shortcuts.h"
 #include "iterator-helpers.h"
 #include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"
@@ -107,6 +108,8 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
           },
           py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
       .def("inertia_tensor", &Sel::inertia_tensor)
+      .def("to_pdb", to_pdb_file<Sel>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<Sel>, py::arg("path_or_buf"))
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, AtomSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",
@@ -156,6 +159,8 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
       .def_property_readonly("index", &Sel::index)
+      .def("to_pdb", to_pdb_file<Sel>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<Sel>, py::arg("path_or_buf"))
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, ResidueSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",
@@ -205,6 +210,8 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
       .def_property_readonly("index", &Sel::index)
+      .def("to_pdb", to_pdb_file<Sel>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<Sel>, py::arg("path_or_buf"))
       .def("__len__", &Sel::size)
       .def("__contains__", [](Sel& sel, MoleculeSmartRef& ref) { return sel.contains(ref); })
       .def("__getitem__",

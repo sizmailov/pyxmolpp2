@@ -1,12 +1,11 @@
 #include "references.h"
+#include "to_pdb_shortcuts.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
-#include "xmol/io/pdb/PdbWriter.h"
-#include <sstream>
-#include <fstream>
 
-#include <pybind11/iostream.h>
+#include <sstream>
+
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 
@@ -25,6 +24,8 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def_property_readonly("molecules", [](SRef& ref) { return ref.molecules().smart(); })
       .def_readwrite("cell", &SRef::cell)
       .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
+      .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def("__getitem__",
            [](SRef& ref, const char* name) {
              auto r = ref[name];
@@ -35,40 +36,13 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
            })
       .def(py::self == py::self)
       .def(py::self != py::self)
-      .def("__repr__", [](Frame& self) {
-        std::ostringstream out;
-        out << "Frame<addr=" << std::hex << &self << std::dec << ", size=(" << self.n_molecules() << ", "
-            << self.n_residues() << ", " << self.n_atoms() << ")>";
-        return out.str();
-      })
-      .def("to_pdb",
-           [](Frame& sel, std::string& path) {
-             std::ofstream out(path);
-             if (out.fail()) {
-               throw std::runtime_error("Can't open file `" + path + "` for writing"); // toto: replace with IOError
-             }
-             xmol::io::pdb::PdbWriter writer(out);
-             writer.write(sel);
-           },
-           py::arg("path_or_buf")
-      )
-      .def("to_pdb",
-           [](Frame& sel, py::object fileHandle) {
-
-             if (!(py::hasattr(fileHandle,"write") &&
-                   py::hasattr(fileHandle,"flush") )){
-               throw py::type_error("Frame.to_pdb(file): incompatible function argument: `file` must be a file-like object, but `"
-                                    +(std::string)(py::repr(fileHandle))+"` provided"
-               );
-             }
-             py::detail::pythonbuf buf(fileHandle);
-             std::ostream stream(&buf);
-             xmol::io::pdb::PdbWriter writer(stream);
-             writer.write(sel);
-           },
-           py::arg("path_or_buf"),
-           "Write PDB file"
-      );
+      .def("__repr__",
+           [](Frame& self) {
+             std::ostringstream out;
+             out << "Frame<addr=" << std::hex << &self << std::dec << ", size=(" << self.n_molecules() << ", "
+                 << self.n_residues() << ", " << self.n_atoms() << ")>";
+             return out.str();
+           });
 }
 void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
   using SRef = MoleculeSmartRef;
@@ -82,6 +56,8 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
       .def_property_readonly("index", &SRef::index )
+      .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def_property_readonly(
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def("__getitem__",
@@ -121,6 +97,8 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("next", [](SRef& ref) -> std::optional<SRef> { return ref.next(); })
       .def_property_readonly("prev", [](SRef& ref) -> std::optional<SRef> { return ref.prev(); })
+      .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def("__getitem__",
            [](SRef& ref, const char* name) {
              auto r = ref[name];
@@ -147,6 +125,8 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
       .def_property_readonly("index", &SRef::index )
       .def_property_readonly(
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
+      .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
+      .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def_property_readonly("__eq__", &SRef::operator==)
       .def(py::self == py::self)
       .def(py::self != py::self);
