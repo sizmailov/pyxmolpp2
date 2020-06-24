@@ -95,9 +95,19 @@ public:
     return m_span[i];
   }
 
-  operator AtomSpan() {
-    check_precondition("operator AtomRefSpan()");
+  operator const AtomSpan& () const & {
+    check_precondition("operator AtomSpan()");
     return m_span;
+  }
+
+  operator AtomSpan& () & {
+    check_precondition("operator AtomSpan()");
+    return m_span;
+  }
+
+  operator AtomSpan&& () && {
+    check_precondition("operator AtomSpan()");
+    return std::move(m_span);
   }
 
 private:

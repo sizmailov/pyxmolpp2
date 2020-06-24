@@ -77,9 +77,19 @@ public:
     return m_span[i];
   }
 
-  operator ResidueSpan() {
+  operator const ResidueSpan& () const & {
     check_precondition("operator ResidueSpan&()");
     return m_span;
+  }
+
+  operator ResidueSpan& () & {
+    check_precondition("operator ResidueSpan&()");
+    return m_span;
+  }
+
+  operator ResidueSpan&& () && {
+    check_precondition("operator ResidueSpan&()");
+    return std::move(m_span);
   }
 
 private:

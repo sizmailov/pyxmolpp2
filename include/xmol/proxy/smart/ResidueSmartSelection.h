@@ -124,14 +124,19 @@ public:
     return m_selection[i];
   }
 
-  operator const ResidueSelection&() const {
+  operator const ResidueSelection&() const & {
     check_precondition("operator const ResidueSelection&()");
     return m_selection;
   }
 
-  operator ResidueSelection&() {
+  operator ResidueSelection&() & {
     check_precondition("operator ResidueSelection&()");
     return m_selection;
+  }
+
+  operator ResidueSelection&&() &&{
+    check_precondition("operator ResidueSelection&()");
+    return std::move(m_selection);
   }
 
 private:

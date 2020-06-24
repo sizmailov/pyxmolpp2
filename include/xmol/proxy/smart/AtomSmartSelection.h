@@ -142,14 +142,19 @@ public:
     return m_selection[i];
   }
 
-  operator const AtomSelection&() const {
+  operator const AtomSelection&() const & {
     check_precondition("operator const AtomSelection&()");
     return m_selection;
   }
 
-  operator AtomSelection&() {
+  operator AtomSelection& () &{
     check_precondition("operator AtomSelection&()");
     return m_selection;
+  }
+
+  operator AtomSelection&&() &&{
+    check_precondition("operator AtomSelection&()");
+    return std::move(m_selection);
   }
 
 private:

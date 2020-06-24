@@ -55,9 +55,19 @@ public:
     return m_span[i];
   }
 
-  operator CoordSpan&() {
-    check_precondition("operator CoordRefSpan()");
+  operator const CoordSpan&() const & {
+    check_precondition("operator CoordSpan()");
     return m_span;
+  }
+
+  operator CoordSpan&() & {
+    check_precondition("operator CoordSpan()");
+    return m_span;
+  }
+
+  operator CoordSpan&&() && {
+    check_precondition("operator CoordSpan()");
+    return std::move(m_span);
   }
 
   Eigen::Map<CoordEigenMatrix> _eigen() {

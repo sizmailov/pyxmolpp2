@@ -77,9 +77,19 @@ public:
     return m_span[i];
   }
 
-  operator MoleculeSpan() {
+  operator const MoleculeSpan&() const& {
     check_precondition("operator MoleculeSpan&()");
     return m_span;
+  }
+
+  operator MoleculeSpan&() & {
+    check_precondition("operator MoleculeSpan&()");
+    return m_span;
+  }
+
+  operator MoleculeSpan&&() && {
+    check_precondition("operator MoleculeSpan&()");
+    return std::move(m_span);
   }
 
 private:

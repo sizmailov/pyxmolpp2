@@ -56,14 +56,19 @@ public:
     return m_selection[i];
   }
 
-  operator const CoordSelection&() const {
+  operator const CoordSelection&() const & {
     check_precondition("operator const CoordSelection&()");
     return m_selection;
   }
 
-  operator CoordSelection&() {
+  operator CoordSelection&() & {
     check_precondition("operator CoordSelection&()");
     return m_selection;
+  }
+
+  operator CoordSelection&&() && {
+    check_precondition("operator CoordSelection&()");
+    return std::move(m_selection);
   }
 
   CoordEigenMatrix _eigen() {

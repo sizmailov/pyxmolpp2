@@ -123,14 +123,19 @@ public:
     return m_selection[i];
   }
 
-  operator const MoleculeSelection&() const {
+  operator const MoleculeSelection&() const & {
     check_precondition("operator const MoleculeSelection&()");
     return m_selection;
   }
 
-  operator MoleculeSelection&() {
+  operator MoleculeSelection&() & {
     check_precondition("operator MoleculeSelection&()");
     return m_selection;
+  }
+
+  operator MoleculeSelection&&() && {
+    check_precondition("operator MoleculeSelection&()");
+    return std::move(m_selection);
   }
 
 private:
