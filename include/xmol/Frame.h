@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "proxy/smart/references.h" // <- can be moved to .cpp
+#include "xmol/geom/UnitCell.h"
 #include "xmol/utils/Observable.h"
 #include <vector>
 
@@ -95,6 +96,8 @@ public:
 
   std::optional<proxy::MoleculeRef> operator[](const MoleculeName& name);
   std::optional<proxy::MoleculeRef> operator[](const char* name);
+
+  geom::UnitCell cell = geom::UnitCell(XYZ(1, 0, 0), XYZ(0, 1, 0), XYZ(0, 0, 1));
 
 private:
   BaseResidue& add_residue(BaseMolecule& mol);

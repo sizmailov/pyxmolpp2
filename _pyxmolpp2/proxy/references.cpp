@@ -23,6 +23,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
       .def_property_readonly("molecules", [](SRef& ref) { return ref.molecules().smart(); })
+      .def_readwrite("cell", &SRef::cell)
       .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
       .def("__getitem__",
            [](SRef& ref, const char* name) {

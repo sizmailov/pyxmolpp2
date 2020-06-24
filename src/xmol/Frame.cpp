@@ -148,6 +148,7 @@ Frame& Frame::operator=(Frame&& other) {
     utils::Observable<CoordSmartSpan>::operator=(std::move(other));
     utils::Observable<CoordSmartSelection>::operator=(std::move(other));
     notify_frame_moved(other);
+    cell = std::move(other.cell);
     m_atoms = std::move(other.m_atoms);
     m_residues = std::move(other.m_residues);
     m_molecules = std::move(other.m_molecules);
@@ -164,6 +165,7 @@ Frame& Frame::operator=(Frame&& other) {
 Frame& Frame::operator=(const Frame& other) {
   if (this != &other) {
     notify_frame_delete();
+    cell = other.cell;
     m_atoms = other.m_atoms;
     m_residues = other.m_residues;
     m_molecules = other.m_molecules;
@@ -185,7 +187,7 @@ Frame& Frame::operator=(const Frame& other) {
 }
 
 Frame::Frame(const Frame& other)
-    : m_atoms(other.m_atoms), m_residues(other.m_residues), m_molecules(other.m_molecules),
+    : cell(other.cell), m_atoms(other.m_atoms), m_residues(other.m_residues), m_molecules(other.m_molecules),
       m_coordinates(other.m_coordinates) {
   for (auto& mol : m_molecules) {
     mol.frame = this;
@@ -213,7 +215,7 @@ Frame::Frame(Frame&& other)
       utils::Observable<MoleculeSmartSpan>(std::move(other)),
       utils::Observable<CoordSmartSpan>(std::move(other)),
       utils::Observable<CoordSmartSelection>(std::move(other)),
-      m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
+      cell(std::move(other.cell)), m_atoms(std::move(other.m_atoms)), m_residues(std::move(other.m_residues)),
       m_molecules(std::move(other.m_molecules)), m_coordinates(std::move(other.m_coordinates)) {
   notify_frame_moved(other);
   for (auto& mol : m_molecules) {
