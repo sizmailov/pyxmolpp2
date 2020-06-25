@@ -59,7 +59,7 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake',
                                '--build', '.',
-                               '--target', ext.name
+                               '--target', os.path.basename(ext.name)
                                ] + build_args,
                               cwd=self.build_temp)
 
@@ -76,8 +76,8 @@ setup(
     author_email='sergei.a.izmailov@gmail.com',
     description='Utils for processing MD',
     long_description=open("README.rst").read(),
-    ext_modules=[CMakeExtension('_pyxmolpp2')],
-    packages=find_packages(),
+    ext_modules=[CMakeExtension('pyxmolpp2/_core')],
+    packages=find_packages(exclude=["tools"]),
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,

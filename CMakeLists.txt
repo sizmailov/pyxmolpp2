@@ -79,11 +79,4 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 #    endif()
 endif()
 
-#add_subdirectory(pyxmolpp)
-file(GLOB_RECURSE PYXMOLPP_SOURCES
-        _pyxmolpp2/**.cpp
-        _pyxmolpp2/**.h
-        )
-pybind11_add_module(_pyxmolpp2 ${PYXMOLPP_SOURCES})
-target_include_directories(_pyxmolpp2 PRIVATE ${CMAKE_CURRENT_LIST_DIR}/_pyxmolpp2)
-target_link_libraries(_pyxmolpp2 PRIVATE xmolpp2)
+add_subdirectory(pyxmolpp2)
