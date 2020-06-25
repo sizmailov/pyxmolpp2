@@ -5,7 +5,7 @@
 
 .. .. include:: transformations.rst
 
-.. .. include:: RMSD.rst
+.. include:: RMSD.rst
 
 .. .. include:: array_indexing.rst
 

@@ -7,7 +7,8 @@ RMSD/RMSF
     :context-id: RMSD
 
     import os
-    from pyxmolpp2 import calc_rmsd, calc_alignment, PdbFile
+    from pyxmolpp2 import calc_rmsd, calc_alignment, PdbFile, aName, Atom
+    import numpy as np
 
 Let's create a frame to work with
 
@@ -24,8 +25,8 @@ Number of residues in molecules must be same (strip water, ions, etc.)
     :context-id: RMSD
 
     N = 0
-    for i in range(frame.size):
-        if frame.molecules[i].size != frame.asChains[0].size:
+    for mol in frame.molecules:
+        if mol.size != frame.molecules[0].size:
             break
         N += 1
 
@@ -34,18 +35,21 @@ Print RMSD matrix for all deposited chains:
 .. py-exec::
     :context-id: RMSD
 
+    print(' '.join([" " * 6] + [f"{i:5d}" for i in range(N)]))
     for i in range(0, N):
         chain_i_ca = frame.molecules[i].atoms.filter(aName == "CA")
-
+        print(f"{i:-5d}:", end=" ")
         for j in range(0, i + 1):
             chain_j_ca = frame.molecules[j].atoms.filter(aName == "CA")
 
-            chain_i_ca.coords.alignment_to(chain_j_ca.coords)
-            rmsd = calc_rmsd(chain_i_ca.coords, chain_j_ca.coords, alignment)
+            alignment = chain_i_ca.alignment_to(chain_j_ca)
+            crd = chain_i_ca.coords.values.copy()
+            crd = (crd @ alignment.matrix3d()) + alignment.vector3d().values
 
-            print("%5.1f" % rmsd, end=" ")
+            rmsd = calc_rmsd(chain_i_ca.coords.values, crd)
 
-        print()
+            print(f"{rmsd:5.1f}", end=" ")
+        print("")
 
 
 Calculate RMSF per residue
@@ -53,68 +57,75 @@ Calculate RMSF per residue
 .. py-exec::
     :context-id: RMSD
 
-    from pyxmolpp2.geometry import UniformScale3d
-
-    first_chain_ca = frame.asChains[0].asAtoms.filter(aName == "CA")
+    first_mol_ca = frame.molecules[0].atoms.filter(aName == "CA")
 
     # initialize average coordinates with (0,0,0)
-    avg_coords = first_chain_ca.toCoords.transform(UniformScale3d(0))
+    avg_coords = np.zeros((first_mol_ca.size, 3))
 
     # calculate average coordinates across N frames
-    for i in range(0, N):
-        chain_i_ca = frame.asChains[i].asAtoms.filter(aName == "CA")
-        chain_i_ca.transform(calc_alignment(first_chain_ca.toCoords, chain_i_ca.toCoords))
+    for mol in frame.molecules[:N]:
+        chain_i_ca = mol.atoms.filter(aName == "CA")
+        chain_i_ca.coords.apply(chain_i_ca.alignment_to(first_mol_ca))
 
-        for k, a in enumerate(chain_i_ca):
-            avg_coords[k] += a.r
+        avg_coords += chain_i_ca.coords.values
 
-    avg_coords.transform(UniformScale3d(1/N))
+    avg_coords /= N
 
     # align to average coordinates
-    for i in range(0, N):
-        chain_i_ca = frame.asChains[i].asAtoms.filter(aName == "CA")
-        chain_i_ca.transform(calc_alignment(avg_coords, chain_i_ca.toCoords))
+    for mol in frame.molecules[:N]:
+        chain_i_ca = mol.atoms.filter(aName == "CA")
+        chain_i_ca.coords.apply(calc_alignment(ref=avg_coords, var=chain_i_ca.coords.values))
 
     # calculate per residue RMSF
 
     import numpy as np
 
-    rmsf = np.zeros((first_chain_ca.size,) )
-    for i in range(0, N):
-        chain_i_ca = frame.asChains[i].asAtoms.filter(aName == "CA")
+    rmsf = np.zeros((first_mol_ca.size,))
+    for mol in frame.molecules[:N]:
+        chain_i_ca = mol.atoms.filter(aName == "CA")
         for k, a in enumerate(chain_i_ca):
-              rmsf[k] += (a.r-avg_coords[k]).len2()
+            rmsf[k] += np.linalg.norm(a.r.values - avg_coords[k])
 
-    rmsf = np.sqrt(rmsf/N)
+    rmsf = np.sqrt(rmsf / N)
 
 
 
 Now we can plot RMSF
 
-.. py-exec::
+.. matplotlib-figure::
     :context-id: RMSD
     :discard-context:
 
     import matplotlib.pyplot as plt
+    from matplotlib.ticker import Formatter, IndexLocator
 
-    plt.figure(dpi=150)
+    plt.style.use(MCSS_MPL_DARK)
+
+    plt.figure(figsize=(5, 3))
     plt.step(range(len(rmsf)), rmsf, where="mid")
+    plt.fill_between(range(len(rmsf)), rmsf, step="mid", alpha=0.1)
     plt.ylabel("RMSF, $\AA$")
-    plt.grid(color="#CCCCCC",lw=0.1)
+    plt.grid(color="#CCCCCC", lw=0.1)
 
-    def to_label(a):
-        from  Bio.PDB.Polypeptide import three_to_one
-        if a.rId.serial%5==0:
-            return "%s\n%d"%(three_to_one(a.rName.str), a.rId.serial)
-        else:
-            return "%s"%(three_to_one(a.rName.str))
 
-    plt.xticks(range(len(rmsf)),
-               [ to_label(a) for a in first_chain_ca],
-               rotation=0,fontsize="x-small")
+    class ResidueFormatter(Formatter):
+        def __call__(self, x, pos=None):
+            from Bio.PDB.Polypeptide import three_to_one
+            if x < 0 or x >= first_mol_ca.size:
+                return ''
+            a = first_mol_ca[int(x)]
+            if a.residue.id.serial % 5 == 0:
+                return "%s\n%d" % (three_to_one(a.residue.name), a.residue.id.serial)
+            else:
+                return "%s" % (three_to_one(a.residue.name))
 
-    # can't show picture here, uncomment next line to see result
-    # plt.show()
+    plt.gca().xaxis.set_minor_locator(IndexLocator(base=1, offset=-1))
+    plt.gca().xaxis.set_major_locator(IndexLocator(base=5, offset=-1))
+    plt.gca().xaxis.set_minor_formatter(ResidueFormatter())
+    plt.gca().xaxis.set_major_formatter(ResidueFormatter())
+    plt.gca().tick_params(axis='both', which='both', labelsize=6)
+    plt.gca().tick_params(axis='both', which='minor', pad=4, length=2)
+    plt.gca().tick_params(axis='both', which='major', pad=2, length=4)
 
 
 

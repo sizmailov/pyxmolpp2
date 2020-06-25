@@ -8,6 +8,7 @@ MAIN_PROJECT_URL = '../../'
 PLUGINS = [
     'm.code',
     'm.py_exec',
+    'm.matplotlib_figure',
     'm.components',
     'm.gh',
     'm.htmlsanity',
@@ -24,7 +25,7 @@ INPUT_MODULES = ['pyxmolpp2']
 INPUT_PAGES = ['index.rst',
                'install.rst',
                'changelog.rst',
-               'examples/examples.rst'
+               'examples.rst'
                ]
 
 OUTPUT = f'../../../_/site/api/python'
