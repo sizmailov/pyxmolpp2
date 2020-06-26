@@ -56,7 +56,6 @@ __all__ = [
     'calc_sasa',
     'degrees_to_radians',
     'mName',
-    'pipe',
     'rId',
     'rName',
     'radians_to_degrees',
