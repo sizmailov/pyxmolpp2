@@ -33,19 +33,19 @@ def test_calc_rmsd_exception():
 
 
 def test_alignment_exception():
-    from pyxmolpp2 import calc_alignment
+    from pyxmolpp2 import calc_alignment, GeomError
 
     a = np.array([(1, 2, 3)] * 10)
 
     # two coords is not enough
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GeomError):
         calc_alignment(a[:2], a[:2])
 
     # three coords is just enough
     calc_alignment(a[:3], a[:3])
 
     # number of coords must match
-    with pytest.raises(RuntimeError):
+    with pytest.raises(GeomError):
         calc_alignment(a[:4], a)
 
 

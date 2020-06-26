@@ -11,11 +11,11 @@ namespace xmol::algo {
 template <typename MatrixA, typename MatrixB>
 geom::affine::Rotation3d calc_alignment_precentered_impl(const MatrixA& X, const MatrixB& Y) {
   if (X.rows() != Y.rows()) {
-    throw geom::GeomError("alignment: reference.size(" + std::to_string(X.size()) +
-                          ") != variable.size (=" + std::to_string(Y.size()) + ")");
+    throw geom::GeomError("alignment: reference.size (=" + std::to_string(X.rows()) +
+                          ") != variable.size (=" + std::to_string(Y.rows()) + ")");
   }
   if (X.rows() < 3) {
-    throw geom::GeomError("alignment: reference.size(" + std::to_string(X.size()) + ") < 3");
+    throw geom::GeomError("alignment: reference.size (=" + std::to_string(X.rows()) + ") < 3");
   }
 
   Eigen::Matrix3d C = X.transpose() * Y;

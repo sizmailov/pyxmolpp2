@@ -129,18 +129,19 @@ def test_assignment():
 
 
 def test_selection_exceptions():
+    from pyxmolpp2 import DeadFrameAccessError
     zombie_selection = make_polyglycine([("A", 1)]).molecules
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DeadFrameAccessError):
         for a in zombie_selection:
             pass
 
     zombie_selection = make_polyglycine([("A", 1)]).residues
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DeadFrameAccessError):
         for a in zombie_selection:
             pass
 
     zombie_selection = make_polyglycine([("A", 1)]).molecules
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DeadFrameAccessError):
         for a in zombie_selection:
             pass
 
@@ -213,10 +214,11 @@ def test_range_exceptions():
 
 
 def test_tracking_atom_refernces():
+    from pyxmolpp2 import DeadFrameAccessError
     frame = make_polyglycine([("A", 1)])
     last_atom = frame.atoms[0]  # store reference to Atom in python variable
     frame = None  # release the reference to Frame and cause cascade deletion of everything
-    with pytest.raises(RuntimeError):
+    with pytest.raises(DeadFrameAccessError):
         last_atom.name = "A"  # access to destroyed elements is prohibited, exception raised
 
 

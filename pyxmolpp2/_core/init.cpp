@@ -104,4 +104,12 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   define_algo_functions(v1);
   init_TorsionAngle(v1);
+
+  py::register_exception<DeadFrameAccessError>(v1, "DeadFrameAccessError");
+  py::register_exception<SpanSplitError>(v1, "SpanSplitError");
+  py::register_exception<MultipleFramesSelectionError>(v1, "MultipleFramesSelectionError");
+  py::register_exception<CoordSelectionSizeMismatchError>(v1, "CoordSelectionSizeMismatchError");
+  py::register_exception<xmol::trajectory::TrajectoryDoubleTraverseError>(v1, "TrajectoryDoubleTraverseError");
+  py::register_exception<xmol::geom::GeomError>(v1, "GeomError");
+  py::register_exception<xmol::utils::DeadObserverAccessError>(v1, "DeadObserverAccessError");
 }
