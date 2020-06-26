@@ -15,7 +15,7 @@ def test_traj_iteration():
     trj.extend(datfile1)
     trj.extend(datfile2)
 
-    assert trj.n_frames() == datfile1.n_frames() + datfile2.n_frames()
+    assert trj.n_frames == datfile1.n_frames() + datfile2.n_frames()
 
     n = 0
     stride = 50
@@ -23,7 +23,7 @@ def test_traj_iteration():
         r = f.atoms[0].r
         n += 1
 
-    assert trj.n_frames() // stride == n
+    assert trj.n_frames // stride == n
 
 
 @pytest.mark.skip("Consistency checks are not implemented")
@@ -69,7 +69,6 @@ def test_traj_size():
         trj[::-1]
 
 
-
 def test_trajectory_integer_indexing():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
@@ -78,7 +77,7 @@ def test_trajectory_integer_indexing():
     trj = Trajectory(frame)
     trj.extend(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
 
-    n = trj.n_frames()
+    n = trj.n_frames
 
     trj[-n]
     trj[n - 1]

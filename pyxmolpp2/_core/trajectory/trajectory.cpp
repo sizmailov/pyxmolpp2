@@ -41,9 +41,9 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
             self.extend(PyObjectTrajectoryInputFile(PyObjectTrajectoryInputFile(trajectory_file)));
           },
           py::arg("trajectory_file"))
-      .def("n_atoms", &Trajectory::n_atoms)
-      .def("n_frames", &Trajectory::n_frames)
-      .def("size", &Trajectory::n_frames)
+      .def_property_readonly("n_atoms", &Trajectory::n_atoms)
+      .def_property_readonly("n_frames", &Trajectory::n_frames)
+      .def_property_readonly("size", &Trajectory::n_frames)
       .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
            [](Trajectory& trj, int idx) -> Trajectory::Frame {
