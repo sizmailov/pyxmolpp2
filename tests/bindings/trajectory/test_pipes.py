@@ -1,7 +1,7 @@
 from typing import Sequence
 from pyxmolpp2 import Frame, PdbFile, TrjtoolDatFile, Trajectory, XYZ
 from pyxmolpp2.pipe import ProcessedTrajectory, Align
-
+import os
 
 class AngstromsToNanometers:
     def __init__(self):
@@ -17,10 +17,10 @@ class AngstromsToNanometers:
 
 
 def test_pipes():
-    ref = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    ref = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     traj = Trajectory(ref)
-    traj.extend(TrjtoolDatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+    traj.extend(TrjtoolDatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat"))
 
     first_geom_center = XYZ(8.422286, 0.967190, -13.856332)
 
@@ -47,10 +47,10 @@ def test_pipes():
 
 def test_tqdm():
     from tqdm import tqdm
-    ref = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    ref = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     traj = Trajectory(ref)
-    traj.extend(TrjtoolDatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+    traj.extend(TrjtoolDatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat"))
     for _ in tqdm(traj):
         pass
     del _

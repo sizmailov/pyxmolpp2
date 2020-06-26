@@ -1,5 +1,5 @@
 import pytest
-
+import os
 
 def test_calc_sasa():
     from pyxmolpp2 import PdbFile, calc_sasa
@@ -7,7 +7,7 @@ def test_calc_sasa():
     import numpy as np
     import glob
 
-    for filename in sorted(glob.glob("tests_dataset/pdb/rcsb/*.pdb")):
+    for filename in sorted(glob.glob(os.environ["TEST_DATA_PATH"] + "/pdb/rcsb/*.pdb")):
         frame = PdbFile(filename).frames()[0]
         coords = frame.coords.values
         radii = np.array([1.0] * frame.atoms.size)

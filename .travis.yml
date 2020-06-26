@@ -63,9 +63,10 @@ before_script:
 
 script:
     - git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git tests_dataset
+    - export TEST_DATA_PATH="$PWD/tests_dataset"
     - python setup.py sdist
     - python -m pip install dist/*.tar.gz
-    - python -m pytest tests/bindings
+    - (cd tests/bindings ; python -m pytest )
     - if $RUN_CTESTS ; then
         mkdir -p _build ;
         (cd _build && cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE) ;

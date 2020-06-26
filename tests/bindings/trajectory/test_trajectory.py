@@ -1,14 +1,14 @@
 import pytest
-
+import os
 
 def test_traj_iteration():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     assert frame.atoms.size > 0
 
-    datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
-    datfile2 = DatFile("tests_dataset/trjtool/GB1/run00002.dat")
+    datfile1 = DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat")
+    datfile2 = DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00002.dat")
 
     trj = Trajectory(frame)
 
@@ -30,18 +30,18 @@ def test_traj_iteration():
 def test_traj_exceptions():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
-    datfile1 = DatFile("tests_dataset/trjtool/GB1/run00001.dat")
+    datfile1 = DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat")
 
     # atom name is different
     with pytest.raises(RuntimeError):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+        frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
         frame.atoms[0].name = "XX"
         trj = Trajectory(frame)
         trj.extend(datfile1)
 
     # atom number of atoms is different
     with pytest.raises(RuntimeError):
-        frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+        frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
         frame.atoms[0].erase()
         trj = Trajectory(frame)
         trj.extend(datfile1)
@@ -49,12 +49,12 @@ def test_traj_exceptions():
 
 def test_traj_size():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     assert frame.atoms.size > 0
 
     trj = Trajectory(frame)
-    trj.extend(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+    trj.extend(DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat"))
 
     assert sum([1 for _ in trj[0:10]]) == 10
     assert sum([1 for _ in trj[0:10:10]]) == 1
@@ -72,10 +72,10 @@ def test_traj_size():
 def test_trajectory_integer_indexing():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     trj = Trajectory(frame)
-    trj.extend(DatFile("tests_dataset/trjtool/GB1/run00001.dat"))
+    trj.extend(DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat"))
 
     n = trj.n_frames
 

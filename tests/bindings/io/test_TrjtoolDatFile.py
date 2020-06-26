@@ -1,14 +1,14 @@
 import pytest
-
+import os
 
 def test_read_trjtool():
     from pyxmolpp2 import PdbFile, TrjtoolDatFile
 
-    frame = PdbFile("tests_dataset/trjtool/GB1/run00001.pdb").frames()[0]
+    frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.pdb").frames()[0]
 
     assert frame.atoms.size > 0
 
-    datfile = TrjtoolDatFile("tests_dataset/trjtool/GB1/run00001.dat")
+    datfile = TrjtoolDatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat")
 
     assert datfile.n_frames() == 1000
     assert datfile.n_atoms() == frame.atoms.size
