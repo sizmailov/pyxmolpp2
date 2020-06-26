@@ -1,4 +1,5 @@
 import pyxmolpp2
+import glob
 
 PROJECT_TITLE = 'xmolpp2' # Change when C++ doc will be available
 PROJECT_SUBTITLE = f'Python API'
@@ -20,21 +21,23 @@ PLUGINS = [
     'm.link',
 ]
 
-INPUT_MODULES = ['pyxmolpp2']
+INPUT_MODULES = ['pyxmolpp2', 'pyxmolpp2.pipe']
 
 INPUT_PAGES = ['index.rst',
                'install.rst',
                'changelog.rst',
-               'examples.rst'
+               'examples.rst',
+               'overview.rst'
                ]
 
 OUTPUT = f'../../../_/site/api/python'
 
 LINKS_NAVBAR1 = [
-    ('Install', './install.html', [
-        ('Changelog', './changelog.html'),
+    ('Install', 'install', [
+        ('Changelog', 'changelog'),
     ]),
-    ('Examples', './examples.html', []),
+    ('Overview', 'overview', []),
+    ('Examples', 'examples', []),
     ('API', 'pyxmolpp2', [
         ('Modules', 'modules'),
         ('Classes', 'classes'),

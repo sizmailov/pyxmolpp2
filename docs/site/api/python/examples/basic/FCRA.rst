@@ -49,7 +49,7 @@ happens when we try to access stored atom reference:
 .. py-exec::
     :context-id: FRCA
     :discard-context:
-    :raises: RuntimeError
+    :raises: DeadFrameAccessError
 
     frame = None
     a.name
