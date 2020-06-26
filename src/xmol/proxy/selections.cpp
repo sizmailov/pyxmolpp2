@@ -64,7 +64,7 @@ xmol::XYZ CoordSelection::mean() {
   for (auto& r : *this) {
     result += r;
   }
-  return result;
+  return result / size();
 }
 
 CoordSelection AtomSelection::coords() {
