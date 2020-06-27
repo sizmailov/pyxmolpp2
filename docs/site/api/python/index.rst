@@ -1,5 +1,5 @@
-Welcome to :ref:`pyxmolpp2` documentation!
-==========================================
+Welcome to pyxmolpp2 documentation!
+===================================
 
-Explore examples, search API, have fun!
+See brief :ref:`overview <std:doc:overview>`, explore :ref:`examples <std:doc:overview>`, search :ref:`API <pyxmolpp2>`, have fun!
 
