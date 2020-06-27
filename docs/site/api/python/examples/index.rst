@@ -1,3 +1,6 @@
+Examples
+########
+
 :ref-prefix:
     pyxmolpp2
 
@@ -23,9 +26,6 @@
 .. |MoleculePredicate| replace:: :ref:`MoleculePredicate`
 
 
-Examples
-========
-
 This page contains a number of typical application of the library from very
 basics to advanced topics.
 
@@ -38,9 +38,8 @@ Each section is essentially a self-contained python script augmented with commen
     so you can see actual output of the programs.
 
 
-.. contents::
-
-
-.. include:: basic/index.rst
-
-.. include:: advanced/index.rst
+- :ref:`Calculate RMSD/RMSF <std:doc:examples/rmsd>`
+- :ref:`PDB files <std:doc:examples/pdb_files>`
+- :ref:`Reorder atoms <std:doc:examples/reorder_atoms>`
+- :ref:`Torsion angle <std:doc:examples/torsion_angle>`
+- :ref:`AngleValue <std:doc:examples/angles>`

@@ -1,7 +1,5 @@
-
 RMSD/RMSF
 ^^^^^^^^^
-
 
 .. py-exec::
     :context-id: RMSD
@@ -126,7 +124,3 @@ Now we can plot RMSF
     plt.gca().tick_params(axis='both', which='both', labelsize=6)
     plt.gca().tick_params(axis='both', which='minor', pad=4, length=2)
     plt.gca().tick_params(axis='both', which='major', pad=2, length=4)
-
-
-
-

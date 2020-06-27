@@ -1,5 +1,5 @@
-PDB read/write
-^^^^^^^^^^^^^^
+PDB files
+#########
 
 There are many flavours of PDB managed differently by different programs.
 By default ``pyxmolpp2`` uses AMBER-compatible convention.

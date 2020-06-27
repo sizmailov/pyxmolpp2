@@ -1,7 +1,7 @@
 Reorder atoms/residues
-^^^^^^^^^^^^^^^^^^^^^^
+######################
 
-In this example we will see how to reorder atoms/residues/chains
+In this example we will see how to reorder atoms/residues/molecules
 
 .. py-exec::
     :context-id: reorder_atoms
@@ -66,9 +66,3 @@ We can create a new Frame with altered atom order `within` residue.
 
     # New frame atoms ids:
     print([a.id for a in new_frame.atoms])
-
-.. block-info::
-    Hierarchy defines order
-
-    Note that frame order is superior to chain order, chain order is superior to residue order,
-    residue order is superior to atom order. In other words children order follows parents order.

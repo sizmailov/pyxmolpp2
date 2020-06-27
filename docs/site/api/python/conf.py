@@ -26,8 +26,13 @@ INPUT_MODULES = ['pyxmolpp2', 'pyxmolpp2.pipe']
 INPUT_PAGES = ['index.rst',
                'install.rst',
                'changelog.rst',
-               'examples.rst',
-               'overview.rst'
+               'overview.rst',
+               'examples/index.rst',
+               'examples/rmsd.rst',
+               'examples/pdb_files.rst',
+               'examples/reorder_atoms.rst',
+               'examples/torsion_angle.rst',
+               'examples/angles.rst',
                ]
 
 OUTPUT = f'../../../_/site/api/python'
@@ -36,8 +41,10 @@ LINKS_NAVBAR1 = [
     ('Install', 'install', [
         ('Changelog', 'changelog'),
     ]),
-    ('Overview', 'overview', []),
-    ('Examples', 'examples', []),
+    ('Docs', 'overview', [
+        ('Overview', 'overview'),
+        ('Examples', 'examples'),
+    ]),
     ('API', 'pyxmolpp2', [
         ('Modules', 'modules'),
         ('Classes', 'classes'),

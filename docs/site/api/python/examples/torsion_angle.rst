@@ -1,6 +1,9 @@
 Torsion Angles
 ^^^^^^^^^^^^^^
 
+:ref-prefix:
+    pyxmolpp2
+
 :ref:`TorsionAngle` represents a tuple of 4 atoms (``a-b-c-d``) that correspond to dihedral angle.
 In addition it might be able to rotate part of structure around ``b-c`` bond (where ``a`` is static, ``d`` is moving).
 
@@ -21,8 +24,8 @@ For standard protein residues angles can be constructed using :ref:`TorsionAngle
 .. py-exec::
     :context-id: torsion_angle
 
-    from pyxmolpp2.polymer import TorsionAngleFactory
-    from pyxmolpp2.geometry import Degrees
+    from pyxmolpp2 import TorsionAngleFactory
+    from pyxmolpp2 import Degrees
 
     residue48 = frame.molecules[0][48]
     print(residue48)
@@ -41,7 +44,7 @@ For standard protein residues angles can be constructed using :ref:`TorsionAngle
     :context-id: torsion_angle
 
     # first residue don't have omega angle
-    print(TorsionAngleFactory.omega(frame.asResidues[0]))
+    print(TorsionAngleFactory.omega(frame.residues[0]))
 
 Let's rotate ``psi_48`` angle:
 
@@ -60,27 +63,22 @@ Torsion angle constructor allow two forms:
 .. py-exec::
     :context-id: torsion_angle
 
+    from pyxmolpp2 import TorsionAngle, Atom
 
-    from pyxmolpp2.polymer import TorsionAngle, AtomName, Atom
-
-    r1 = frame.asResidues[1]
-    r2 = frame.asResidues[2]
+    r1 = frame.residues[1]
+    r2 = frame.residues[2]
 
     # Let's create a read-only phi of residue 2
-    phi_2_ro = TorsionAngle(r1[AtomName("C")],
-                            r2[AtomName("N")],
-                            r2[AtomName("CA")],
-                            r2[AtomName("C")],
-                            )
+    phi_2_ro = TorsionAngle(r1["C"], r2["N"], r2["CA"], r2["C"])
 
     # Check against factory angle:
     assert phi_2_ro.value().degrees == TorsionAngleFactory.phi(r2).value().degrees
 
-Attempt to set read-only agle will lead to ``RuntimeError``:
+Attempt to set read-only agle will lead to :ref:`GeomError`:
 
 .. py-exec::
     :context-id: torsion_angle
-    :raises: RuntimeError
+    :raises: GeomError
 
     phi_2_ro.set(Degrees(-130))
 
@@ -93,16 +91,11 @@ which returns a selection of affected atoms by our torsion angle
     :discard-context:
 
     def affected_phi_atoms(a: Atom, b: Atom, c: Atom, d: Atom):
-        from pyxmolpp2.polymer import rId
-        return a.chain.asResidues.filter(rId > a.rId).asAtoms
+        from pyxmolpp2 import rId
+        return a.molecule.residues.filter(rId > a.residue.id).atoms
 
-
-    phi_2_rw = TorsionAngle(r1[AtomName("C")],
-                            r2[AtomName("N")],
-                            r2[AtomName("CA")],
-                            r2[AtomName("C")],
-                            affected_phi_atoms
-                            )
+    phi_2_rw = TorsionAngle(r1["C"], r2["N"], r2["CA"], r2["C"],
+                            affected_phi_atoms)
 
     phi_2_rw.set(Degrees(-130))
 

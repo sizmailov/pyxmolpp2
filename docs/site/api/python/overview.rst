@@ -1,3 +1,6 @@
+Overview
+########
+
 :ref-prefix:
     pyxmolpp2
 
@@ -27,9 +30,6 @@
     from pyxmolpp2 import PdbFile, Frame, aName
     filename = os.path.join(os.environ["TEST_DATA_PATH"], "pdb/rcsb/1UBQ.pdb")
     frame = PdbFile(filename).frames()[0]
-
-Overview
-########
 
 Basics
 ======
