@@ -1,6 +1,3 @@
-import pyxmolpp2
-import glob
-
 PROJECT_TITLE = 'xmolpp2' # Change when C++ doc will be available
 PROJECT_SUBTITLE = f'Python API'
 

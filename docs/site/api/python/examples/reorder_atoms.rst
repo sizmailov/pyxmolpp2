@@ -1,6 +1,9 @@
 Reorder atoms/residues
 ######################
 
+:ref-prefix:
+    pyxmolpp2
+
 In this example we will see how to reorder atoms/residues/molecules
 
 .. py-exec::

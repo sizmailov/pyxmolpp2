@@ -1,7 +1,11 @@
 AngleValue
 ^^^^^^^^^^
 
-Protect yourself from missing 2pi/180.0
+:ref-prefix:
+    pyxmolpp2.AngleValue
+    pyxmolpp2
+
+Protect yourself from missing ``2π/180`` factor
 
 .. py-exec::
     :context-id: angles
@@ -38,7 +42,7 @@ AngleValue supports all basic arithmetic operations:
 
     print((angle_value_1*2 + angle_value_2/3).degrees)
 
-:ref:`pyxmolpp2.geometry` also defines :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` methods for convenience:
+:ref:`AngleValue` also has :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` methods for convenience:
 
 .. py-exec::
     :context-id: angles

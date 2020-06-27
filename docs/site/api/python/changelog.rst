@@ -1,6 +1,26 @@
-----------
 Change log
-----------
+##########
+
+:ref-prefix:
+    pyxmolpp2
+
+v1.0.0.dev3:
+  - Changed internal representation of frame data to flat layout
+  - Introduced lightweight continuous "spans"
+  - Added coordinates selections
+  - ``0.x`` submodules are flattened
+  - ``0.x`` ``Chain`` renamed to ``Molecule``
+  - Removed ``VectorXYZ`` in favor of numpy arrays
+  - Removed ``AtomName`` and others are replaced with bare strings
+  - :ref:`XYZ` become immutable
+  - ``LatticeVectors`` united with ``BestShiftFinder`` in :ref:`UnitCell`
+  - ``PdbRecords`` and others are removed from python API, replaced with :ref:`PdbFile.Dialect`
+  - Free functions ``distance``, ``angle``, ``dihedral_angle`` replaced with corresponding methods of :ref:`XYZ`
+  - ``asAtoms`` properties are renamed to ``atoms``, same for ``residues`` and ``molecules``
+  - :ref:`PdbFile` read files in AMBER compatible mode by default
+  - Introduced "pipe" trajectory processing, see :ref:`std:doc:overview`
+  - Added weighted versions of alignment and rmsd calculation
+  - A number of minor improvements
 
 v0.10.4:
   - Fix doc generation
@@ -16,7 +36,7 @@ v0.10.1:
   - Fix cmake module path
 
 v0.10.0:
-  - Add :ref:`pyxmolpp2.geometry.calc_autocorr_order_2_PRE()`
+  - Add :ref:`calc_autocorr_order_2_PRE()`
 
 v0.9.0:
   - Add support for netcdf (.nc) Amber trajectory files
@@ -35,44 +55,44 @@ v0.8.0:
   - sanitize acos/asin inputs
 
 v0.7.1:
-  - Fix :ref:`pyxmolpp2.geometry.Rotation3d.axis()`
+  - Fix ``Rotation3d.axis()``
 v0.7.0:
-  - Add Solvent Accessible Surface Area calculation procedure :ref:`pyxmolpp2.geometry.calc_sasa`, see :ref:`examples.sasa_calc`
-  - Allow numpy-style array indexing for selections, see :ref:`examples.array_indexing`
+  - Add Solvent Accessible Surface Area calculation procedure :ref:`calc_sasa`
+  - Allow numpy-style array indexing for selections, see ``array_indexing``
 
 v0.6.1:
   - Remove redundant quotes from ``str(AtomName)``
   - Explicitly set locale to avoid commas in float numbers
   - Update docs
 v0.6.0:
-  - Fix alignment shortcuts (:ref:`pyxmolpp2.polymer.AtomSelection.align_to`, :ref:`pyxmolpp2.polymer.AtomSelection.alignment_to`)
-  - Remove :ref:`pyxmolpp2.polymer.AtomSelection.alignment`
-  - Add :ref:`pyxmolpp2.geometry.VectorXYZ.to_numpy`, :ref:`pyxmolpp2.geometry.VectorXYZ.from_numpy`
-  - Show detailed message or read error in :ref:`pyxmolpp2.pdb.PdbFile.get_frames`
+  - Fix alignment shortcuts (``AtomSelection.align_to``, :ref:`AtomSelection.alignment_to`)
+  - Remove ``AtomSelection.alignment``
+  - Add ``VectorXYZ.to_numpy``, ``VectorXYZ.from_numpy``
+  - Show detailed message or read error in ``PdbFile.get_frames``
   - Use live examples in docs (do avoid divergence with sources)
 v0.5.0:
-  - Add convenient methods to :ref:`pyxmolpp2.polymer.AtomSelection`, :ref:`pyxmolpp2.geometry.VectorXYZ`
-  - Allow :ref:`pyxmolpp2.geometry.Rotation3d` construction from numpy array
-  - Allow :ref:`pyxmolpp2.polymer.AtomSelection` construction python lists of :ref:`pyxmolpp2.polymer.Atom`
-  - Make :ref:`pyxmolpp2.polymer.Atom` properties writable
+  - Add convenient methods to :ref:`AtomSelection`, ``VectorXYZ``
+  - Allow ``Rotation3d`` construction from numpy array
+  - Allow :ref:`AtomSelection` construction python lists of :ref:`Atom`
+  - Make :ref:`Atom` properties writable
   - Move PyCharm stubs to a separate package (:link:`https://github.com/sizmailov/pyxmolpp2-stubs`)
   - Automate PyPI upload and github-pages generation
 v0.4.0:
-  - Allow :ref:`pyxmolpp2.polymer.AtomSelection.transform` to accept :ref:`pyxmolpp2.geometry.Transformation3d`, :ref:`pyxmolpp2.geometry.UniformScale3d` ,
-    :ref:`pyxmolpp2.geometry.Rotation3d` and :ref:`pyxmolpp2.geometry.Translation3d`
+  - Allow ``AtomSelection.transform`` to accept ``Transformation3d``, ``UniformScale3d`` ,
+    ``Rotation3d`` and ``Translation3d``
   - Support ``.dat`` files created with charmm force field
 v0.3.0:
-  - Add :ref:`pyxmolpp2.geometry.calc_autocorr_order_2`
+  - Add :ref:`calc_autocorr_order_2`
 
 v0.2.0:
-  - Change :ref:`pyxmolpp2.pdb.PdbFile` interface
-  - Fix :ref:`pyxmolpp2.geometry.calc_alignment`
+  - Change ``PdbFile`` interface
+  - Fix ``calc_alignment``
   - Support selection slicing
   - Implement predicates on C++ side
-  - Implement convenient predicate generators (:ref:`pyxmolpp2.polymer.aName`, :ref:`pyxmolpp2.polymer.rId`, etc)
-  - Fix representation of :ref:`pyxmolpp2.geometry.XYZ`
-  - Add conversion method :ref:`pyxmolpp2.geometry.XYZ` -> :ref:`numpy.ndarray`
-  - Provide access to transformation matrices for :ref:`pyxmolpp2.geometry.Transformation3d` and :ref:`pyxmolpp2.geometry.Rotation3d`
+  - Implement convenient predicate generators (:ref:`aName`, :ref:`rId`, etc)
+  - Fix representation of :ref:`XYZ`
+  - Add conversion method :ref:`XYZ` -> :ref:`numpy.ndarray`
+  - Provide access to transformation matrices for ``Transformation3d`` and ``Rotation3d``
   - Add equality operations to Atom/Residue/Chain names
   - Minor improvements
   - Update docs

@@ -83,7 +83,7 @@ Attempt to set read-only agle will lead to :ref:`GeomError`:
     phi_2_ro.set(Degrees(-130))
 
 
-To make :ref:`TorsinAngle` writeable one need to pass to constructor a selector function
+To make :ref:`TorsionAngle` writeable one need to pass to constructor a selector function
 which returns a selection of affected atoms by our torsion angle
 
 .. py-exec::
