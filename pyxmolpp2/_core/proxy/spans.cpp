@@ -75,6 +75,8 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
                              })
       .def("alignment_to", [](Span& span, Sel& other) { return span.alignment_to(other); })
       .def("alignment_to", [](Span& span, Span& other) { return span.alignment_to(other); })
+      .def("align_to", [](Span& span, Sel& other) { span.apply(span.alignment_to(other)); })
+      .def("align_to", [](Span& span, Span& other) { span.apply(span.alignment_to(other)); })
       .def("rmsd", [](Span& span, Sel& other) { return span.rmsd(other); })
       .def("rmsd", [](Span& span, Span& other) { return span.rmsd(other); })
       .def("apply", [](Span& sel, Transformation3d& other) { return sel.apply(other); })
@@ -105,6 +107,19 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
           [](Span& span, AtomSmartSpan& rhs, bool weighted) {
             AtomSpan rhs_span(rhs);
             return span.alignment_to(rhs_span, weighted);
+          },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def(
+          "align_to",
+          [](Span& span, AtomSmartSelection& rhs, bool weighted) {
+            span.coords().apply(span.alignment_to(rhs, weighted));
+          },
+          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def(
+          "align_to",
+          [](Span& span, AtomSmartSpan& rhs, bool weighted) {
+            AtomSpan rhs_span(rhs);
+            span.coords().apply(span.alignment_to(rhs_span, weighted));
           },
           py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
       .def(

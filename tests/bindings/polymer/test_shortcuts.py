@@ -34,13 +34,13 @@ def test_shorthands():
     assert np.isclose(asel.coords.rmsd(asel2.coords), 0)
 
     asel2.coords.apply(T)
-    asel.coords.apply(asel.alignment_to(asel2))  # todo: replace with .align_to()
+    asel.align_to(asel2)
     assert np.isclose(asel.coords.rmsd(asel2.coords), 0)
 
     asel2.coords.apply(T)
     asel2.guess_mass()
     asel.guess_mass()
-    asel.coords.apply(asel.alignment_to(asel2, weighted=True))  # todo: replace with .align_to()
+    asel.align_to(asel2, weighted=True)
     assert np.isclose(asel.rmsd(asel2), 0)
     assert np.isclose(asel.rmsd(asel2, weighted=True), 0)
 
