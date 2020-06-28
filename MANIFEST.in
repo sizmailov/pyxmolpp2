@@ -6,13 +6,6 @@ include ./ VERSION
 include ./ *.cmake
 include ./tools/*.py
 
-global-exclude .git
-global-exclude .js
-global-exclude .html
-global-exclude .png
-global-exclude .dox
-global-exclude .pyc
-exclude __pycache__
 
 graft include
 graft src
@@ -21,6 +14,12 @@ graft _pyxmolpp2
 graft pyxmolpp2
 graft cmake
 
-
+global-exclude *.py[cod]
+global-exclude *.git
+global-exclude *.js
+global-exclude *.html
+global-exclude *.png
+global-exclude *.dox
+global-exclude __pycache__
 
 
