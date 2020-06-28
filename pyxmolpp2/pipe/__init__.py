@@ -40,3 +40,16 @@ class Align:
             else:
                 self.moved_coords = frame.coords
         self.moved_coords.apply(self.frame_coords.alignment_to(self.ref_coords))
+
+
+class ScaleUnitCell:
+    def __init__(self, summary_volume_filename):
+        import numpy as np
+        self.volume = np.genfromtxt(summary_volume_filename, usecols=[1])
+
+    def __ror__(self, trajectory: Sequence[Frame]):
+        return ProcessedTrajectory(trajectory, self)
+
+    def __call__(self, frame: Frame):
+        assert frame.index < len(self.volume), "Frame index is greater than supplied volume array"
+        frame.cell.scale_to_volume(self.volume[frame.index])
