@@ -95,20 +95,20 @@ before_deploy:
 
 
 deploy:
-  - provider: pages
-    verbose: true
-    local-dir: docs/_/site/api/python
-    cleanup: false
-    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-    keep-history: false
-    on:
-      tags: false
-      branch: master
-      condition: $DO_GH_PAGES
+#  - provider: pages
+#    verbose: true
+#    local-dir: docs/_/site/api/python
+#    cleanup: false
+#    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+#    keep-history: false
+#    on:
+#      tags: false
+#      branch: master
+#      condition: $DO_GH_PAGES
 
   - provider: pypi
     user: sizmailov
-    server: https://test.pypi.org/legacy/ # Remove for deployment to official PyPi repo
+    server: https://test.pypi.org/legacy/
     password:
       secure: "Nl30LxQNGWXsNTqMBwjHY9CAfDks4reOk0wV89iWjCK+4KjX3dwoa4vB0L+j/a0v8qAHSnwQYfNaFBWnUycwqgViOiDePEp8orM3UCxji/QSVFQ3oQQd6Xxzzpgem/N0pcyhf540xRypAnQyfOZP7vsRnvMyU3s8xRn3Vhws64niZGFtt7MaMfz/dew74ji3+nYrJdZTnuGXXj5oazUArxalVbO7Er3yNYTPEpZ4mo1+6PJEJrPqCyTkYBIRLv5F/JiX37wNv1CF2uKN9QtmB1folC266I5cEAZORvR5TEdP9RQrV32tv0kqt+bLnAFeV0x0zGlVYurgchXyiw3MsW1tPzZlVehjLqKOGxpoPAbZBclsIUfCy5ZG5Dj3qZ/kf2XlP9u+loqYqKMeAVoGNwwYCcZDY98C4RGdvW1AF96JJRLiMtPd3W8bB2lx2MeJRbN1BTDWy0C23NJ9/oluBO3LEBJk6RFZFDlB96viGPr/0Pd05RFPa7bKrdUApShue1AbmyVkDkT263f9Knbdh1VcJVxyoa0Jtg3qIofsdk2hvSKY+UkA3TO8f2Q3WHPIDFQPyLVSL4vNtZ7URdz9HnBKh/sQqWX3ssfOB7hXhCqjmUQ0af9PVUc689Vl2Z2TJKq2RREwDvJJBuQdTEF4ErxNXwwPdN4UG9ys+3Gg7ek="
     distributions: "sdist"
