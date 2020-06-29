@@ -4,7 +4,8 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
-v1.0.0.dev3:
+v1.0.0.dev4:
+  - Added :ref:`pipe.AssembleQuaternaryStructure`, :ref:`pipe.ScaleUnitCell`
   - Changed internal representation of frame data to flat layout
   - Introduced lightweight continuous "spans"
   - Added coordinates selections
