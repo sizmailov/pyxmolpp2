@@ -8,6 +8,7 @@ branches:
   only:
     - master
     - dev
+    - build-doc-travis
 
 git:
     submodules: false
@@ -76,7 +77,9 @@ script:
 
 
 after_success:
-#    - ( cd docs && bash build.sh ) # patched doxygen is required, disabled for now
+    - mkdir -p $HOME/bin && export PATH=$HOME/bin:$PATH;
+    - if [ ! -f $HOME/bin/doxygen ]; then wget "http://doxygen.nl/files/doxygen-1.8.17.linux.bin.tar.gz" && tar -xzf doxygen-1.8.17.linux.bin.tar.gz && cp doxygen-1.8.17/bin/doxygen $HOME/bin && doxygen -v; fi
+    - ( cd docs && bash build.sh )
     - python -m pip install gcovr
     - if [ "$BUILD_TYPE" == "Coverage" ]; then
         bash tools/run_coverage.sh ;
@@ -95,16 +98,16 @@ before_deploy:
 
 
 deploy:
-#  - provider: pages
-#    verbose: true
-#    local-dir: docs/_/site/api/python
-#    cleanup: false
-#    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-#    keep-history: false
-#    on:
-#      tags: false
-#      branch: master
-#      condition: $DO_GH_PAGES
+  - provider: pages
+    verbose: true
+    local-dir: docs/_/site/api/python
+    cleanup: false
+    github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+    keep-history: false
+    on:
+      tags: false
+      branch: master
+      condition: $DO_GH_PAGES
 
   - provider: pypi
     user: sizmailov
