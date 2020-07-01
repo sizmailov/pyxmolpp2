@@ -12,7 +12,7 @@ Installation
 Install dependencies
 --------------------
 
-``pyxmolpp2`` requires C++11 compiler, ``cmake`` and ``netcdf`` library to be installed on your system.
+``pyxmolpp2`` requires C++17 compiler, ``cmake`` and ``netcdf`` library to be installed on your system.
 
 E.g. on modern ubuntu you can install requried packages via
 
