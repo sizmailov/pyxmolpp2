@@ -1,5 +1,6 @@
 #include "trajectory.h"
 #include "iterator-helpers.h"
+#include "xmol/proxy/smart/CoordSmartSpan.h"
 
 namespace py = pybind11;
 using namespace xmol::trajectory;
@@ -91,6 +92,38 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
 
   pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index, "Zero-based index in trajectory");
 }
+
 void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFile>& pyTrajectoryInputFile) {
   pyTrajectoryInputFile.def(py::init<>());
+}
+
+void pyxmolpp::v1::PyTrajectoryInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
+  auto smart_coords = coordinates.smart();
+  PYBIND11_OVERLOAD_PURE(void,                /* Return type */
+                         TrajectoryInputFile, /* Parent class */
+                         read_coordinates,    /* Name of function in C++ (must match Python name) */
+                         index, smart_coords  /* Arguments */
+  );
+}
+
+size_t pyxmolpp::v1::PyTrajectoryInputFile::n_frames() const {
+  PYBIND11_OVERLOAD_PURE(size_t,              /* Return type */
+                         TrajectoryInputFile, /* Parent class */
+                         n_frames             /* Name of function in C++ (must match Python name) */
+  );
+}
+
+size_t pyxmolpp::v1::PyTrajectoryInputFile::n_atoms() const {
+  PYBIND11_OVERLOAD_PURE(size_t,              /* Return type */
+                         TrajectoryInputFile, /* Parent class */
+                         n_atoms              /* Name of function in C++ (must match Python name) */
+  );
+}
+
+void pyxmolpp::v1::PyTrajectoryInputFile::advance(size_t shift) {
+  PYBIND11_OVERLOAD_PURE(void,                /* Return type */
+                         TrajectoryInputFile, /* Parent class */
+                         advance,             /* Name of function in C++ (must match Python name) */
+                         shift                /* Argument */
+  );
 }
