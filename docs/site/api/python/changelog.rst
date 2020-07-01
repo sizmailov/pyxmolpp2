@@ -7,6 +7,7 @@ Change log
 v1.1.0.dev:
   - Renamed ``AngleValue.{fabs -> abs}``
   - Renamed ``TorsionAngle.{set -> rotate_to}``
+  - Fixed :ref:`TrajectoryInputFile` trampoline
 
 v1.0.0:
   - Added :ref:`pipe.AssembleQuaternaryStructure`, :ref:`pipe.ScaleUnitCell`
