@@ -49,7 +49,7 @@ Install
     # from github dev branch
     python -m pip install git+https://github.com/sizmailov/pyxmolpp2.git@dev
 
-See `install page <https://sizmailov.github.io/pyxmolpp2/install.html>`_ for more details
+See `install page <https://sizmailov.github.io/pyxmolpp2/api/python/install.html>`_ for more details
 
 -------------
 Documentation
