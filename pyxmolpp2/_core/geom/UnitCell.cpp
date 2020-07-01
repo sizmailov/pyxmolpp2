@@ -9,7 +9,7 @@ using namespace xmol::geom;
 
 void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::UnitCell>& pyUniCell) {
   py::class_<UnitCell::ClosestImage>(pyUniCell, "ClosestImage", "Result of closest periodic image search")
-      .def_readonly("distance",&UnitCell::ClosestImage::distance, "Distance to traget")
+      .def_readonly("distance",&UnitCell::ClosestImage::distance, "Distance to target")
       .def_readonly("pos",&UnitCell::ClosestImage::pos, "Position of closest image")
       .def_readonly("shift",&UnitCell::ClosestImage::shift, "Applied translation vector")
       .def_readonly("shift_int",&UnitCell::ClosestImage::shift_int, "Integer coefficients of applied translation vector")
@@ -34,7 +34,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::UnitCell>& pyUniCell) {
       .def_property_readonly("beta", &UnitCell::beta, "Angle between :math:`v_1` and :math:`v_3`")
       .def_property_readonly("gamma", &UnitCell::gamma, "Angle between :math:`v_1` and :math:`v_2`")
       .def("closest_image_to", &UnitCell::closest_image_to, py::arg("ref"), py::arg("var"),
-           R"pydoc(Closed periodic image to ``ref``
+           R"pydoc(Closest periodic image to `ref`
 
     :param ref: reference point
     :param var: variable point

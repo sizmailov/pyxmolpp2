@@ -23,6 +23,6 @@ void pyxmolpp::v1::populate(py::class_<PdbInputFile, xmol::trajectory::Trajector
       .def(
           "read_coordinates",
           [](PdbInputFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
-          py::arg("index"), py::arg("coords"), "Assign ``index`` frame coordinates to ``coords``")
+          py::arg("index"), py::arg("coords"), "Assign `index` frame coordinates to `coords`")
       .def("advance", &PdbInputFile::advance, "No-op");
 }

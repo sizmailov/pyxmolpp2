@@ -13,7 +13,7 @@ void pyxmolpp::v1::populate(py::class_<TrjtoolDatFile, xmol::trajectory::Traject
       .def(
           "read_coordinates",
           [](TrjtoolDatFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
-          "Assign ``index`` frame coordinates to ``coords``")
-      .def("advance", &TrjtoolDatFile::advance, py::arg("shift"), "Shift internal pointer by ``shift``");
+          "Assign `index` frame coordinates to `coords`")
+      .def("advance", &TrjtoolDatFile::advance, py::arg("shift"), "Shift internal pointer by `shift`");
   ;
 }

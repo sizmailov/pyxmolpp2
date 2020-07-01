@@ -13,7 +13,7 @@ void pyxmolpp::v1::populate(py::class_<AmberNetCDF, xmol::trajectory::Trajectory
       .def(
           "read_coordinates",
           [](AmberNetCDF& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
-          py::arg("index"), py::arg("coords"), "Assign ``index`` frame coordinates to ``coords``")
-      .def("advance", &AmberNetCDF::advance, py::arg("shift"), "Shift internal pointer by ``shift``");
+          py::arg("index"), py::arg("coords"), "Assign `index` frame coordinates to `coords`")
+      .def("advance", &AmberNetCDF::advance, py::arg("shift"), "Shift internal pointer by `shift`");
   ;
 }

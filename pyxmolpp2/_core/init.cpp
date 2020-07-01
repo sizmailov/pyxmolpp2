@@ -41,10 +41,10 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   init_predicates(v1);
 
-  auto pyCoordSpan = py::class_<CoordSmartSpan>(v1, "CoordSpan", "Continuous span of atomic coordinates in :ref:`Frame`");
-  auto pyAtomSpan = py::class_<AtomSmartSpan>(v1, "AtomSpan", "Continuous span of atoms in :ref:`Frame`");
-  auto pyResidueSpan = py::class_<ResidueSmartSpan>(v1, "ResidueSpan", "Continuous span of residues in :ref:`Frame`");
-  auto pyMoleculeSpan = py::class_<MoleculeSmartSpan>(v1, "MoleculeSpan", "Continuous span of molecules in :ref:`Frame`");
+  auto pyCoordSpan = py::class_<CoordSmartSpan>(v1, "CoordSpan", "Continuous span of atomic coordinate references");
+  auto pyAtomSpan = py::class_<AtomSmartSpan>(v1, "AtomSpan", "Continuous span of atom references");
+  auto pyResidueSpan = py::class_<ResidueSmartSpan>(v1, "ResidueSpan", "Continuous span of residue references");
+  auto pyMoleculeSpan = py::class_<MoleculeSmartSpan>(v1, "MoleculeSpan", "Continuous span of molecule references");
 
   auto pyCoordSelection = py::class_<CoordSmartSelection>(v1, "CoordSelection", "Ordered set of atomic coordinate references");
   auto pyAtomSelection = py::class_<AtomSmartSelection>(v1, "AtomSelection", "Ordered set of atom references");
