@@ -35,5 +35,5 @@ def test_operations():
     assert l.sin() == pytest.approx(math.sin(l.radians))
     assert l.cos() == pytest.approx(math.cos(l.radians))
     assert l.tan() == pytest.approx(math.tan(l.radians))
-    assert l.radians == pytest.approx(l.fabs().radians)
-    assert l.radians == pytest.approx((-l).fabs().radians)
+    assert l.radians == pytest.approx(l.abs().radians)
+    assert l.radians == pytest.approx((-l).abs().radians)
