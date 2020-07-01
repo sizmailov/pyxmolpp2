@@ -42,7 +42,7 @@ AngleValue supports all basic arithmetic operations:
 
     print((angle_value_1*2 + angle_value_2/3).degrees)
 
-:ref:`AngleValue` also has :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`fabs` methods for convenience:
+:ref:`AngleValue` also has :ref:`cos`, :ref:`sin`, :ref:`tan`, :ref:`abs` methods for convenience:
 
 .. py-exec::
     :context-id: angles
@@ -50,7 +50,7 @@ AngleValue supports all basic arithmetic operations:
     print( (angle_value_1).cos(),
            (angle_value_1).sin(),
            (angle_value_1).tan(),
-           (angle_value_1).fabs().degrees)
+           (angle_value_1).abs().degrees)
 
 .. py-exec::
     :context-id: angles

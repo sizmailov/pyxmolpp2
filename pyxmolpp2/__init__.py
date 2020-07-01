@@ -36,7 +36,6 @@ __all__ = [
     'SpanSplitError',
     'TorsionAngle',
     'TorsionAngleFactory',
-    'TorsionAngleName',
     'Trajectory',
     'TrajectoryDoubleTraverseError',
     'TrajectoryInputFile',

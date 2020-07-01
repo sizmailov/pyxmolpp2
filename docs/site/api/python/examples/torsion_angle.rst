@@ -52,7 +52,7 @@ Let's rotate ``psi_48`` angle:
     :context-id: torsion_angle
 
     # Residues 49-76 are affected by this rotation
-    psi_48.set(Degrees(150))
+    psi_48.rotate_to(Degrees(150))
     print(psi_48.value().degrees)
 
 
@@ -74,13 +74,13 @@ Torsion angle constructor allow two forms:
     # Check against factory angle:
     assert phi_2_ro.value().degrees == TorsionAngleFactory.phi(r2).value().degrees
 
-Attempt to set read-only agle will lead to :ref:`GeomError`:
+Attempt to set read-only angle will lead to :ref:`GeomError`:
 
 .. py-exec::
     :context-id: torsion_angle
     :raises: GeomError
 
-    phi_2_ro.set(Degrees(-130))
+    phi_2_ro.rotate_to(Degrees(-130))
 
 
 To make :ref:`TorsionAngle` writeable one need to pass to constructor a selector function
@@ -97,7 +97,7 @@ which returns a selection of affected atoms by our torsion angle
     phi_2_rw = TorsionAngle(r1["C"], r2["N"], r2["CA"], r2["C"],
                             affected_phi_atoms)
 
-    phi_2_rw.set(Degrees(-130))
+    phi_2_rw.rotate_to(Degrees(-130))
 
     print(phi_2_ro.value().degrees)
     print(phi_2_rw.value().degrees)

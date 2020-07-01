@@ -28,40 +28,40 @@ using namespace xmol::proxy::smart;
 
 void pyxmolpp::v1::init(pybind11::module& v1) {
 
-  auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ");
-  auto&& pyAngleValue = py::class_<AngleValue>(v1, "AngleValue");
-  auto&& pyUnitCell = py::class_<UnitCell>(v1, "UnitCell");
+  auto&& pyXYZ = py::class_<XYZ>(v1, "XYZ", "3D Vector");
+  auto&& pyAngleValue = py::class_<AngleValue>(v1, "AngleValue", "Angular value");
+  auto&& pyUnitCell = py::class_<UnitCell>(v1, "UnitCell", "Unit cell");
 
-  auto pyResidueId = py::class_<ResidueId>(v1, "ResidueId");
+  auto pyResidueId = py::class_<ResidueId>(v1, "ResidueId", "Residue id");
 
-  auto pyAtom = py::class_<AtomSmartRef>(v1, "Atom");
-  auto pyResidue = py::class_<ResidueSmartRef>(v1, "Residue");
-  auto pyMolecule = py::class_<MoleculeSmartRef>(v1, "Molecule");
-  auto pyFrame = py::class_<Frame>(v1, "Frame");
+  auto pyAtom = py::class_<AtomSmartRef>(v1, "Atom", "Atom reference");
+  auto pyResidue = py::class_<ResidueSmartRef>(v1, "Residue", "Residue reference");
+  auto pyMolecule = py::class_<MoleculeSmartRef>(v1, "Molecule", "Molecule reference");
+  auto pyFrame = py::class_<Frame>(v1, "Frame", "Molecular frame");
 
   init_predicates(v1);
 
-  auto pyCoordSpan = py::class_<CoordSmartSpan>(v1, "CoordSpan");
-  auto pyAtomSpan = py::class_<AtomSmartSpan>(v1, "AtomSpan");
-  auto pyResidueSpan = py::class_<ResidueSmartSpan>(v1, "ResidueSpan");
-  auto pyMoleculeSpan = py::class_<MoleculeSmartSpan>(v1, "MoleculeSpan");
+  auto pyCoordSpan = py::class_<CoordSmartSpan>(v1, "CoordSpan", "Continuous span of atomic coordinates in :ref:`Frame`");
+  auto pyAtomSpan = py::class_<AtomSmartSpan>(v1, "AtomSpan", "Continuous span of atoms in :ref:`Frame`");
+  auto pyResidueSpan = py::class_<ResidueSmartSpan>(v1, "ResidueSpan", "Continuous span of residues in :ref:`Frame`");
+  auto pyMoleculeSpan = py::class_<MoleculeSmartSpan>(v1, "MoleculeSpan", "Continuous span of molecules in :ref:`Frame`");
 
-  auto pyCoordSelection = py::class_<CoordSmartSelection>(v1, "CoordSelection");
-  auto pyAtomSelection = py::class_<AtomSmartSelection>(v1, "AtomSelection");
-  auto pyResidueSelection = py::class_<ResidueSmartSelection>(v1, "ResidueSelection");
-  auto pyMoleculeSelection = py::class_<MoleculeSmartSelection>(v1, "MoleculeSelection");
+  auto pyCoordSelection = py::class_<CoordSmartSelection>(v1, "CoordSelection", "Ordered set of atomic coordinate references");
+  auto pyAtomSelection = py::class_<AtomSmartSelection>(v1, "AtomSelection", "Ordered set of atom references");
+  auto pyResidueSelection = py::class_<ResidueSmartSelection>(v1, "ResidueSelection", "Ordered set of residue references");
+  auto pyMoleculeSelection = py::class_<MoleculeSmartSelection>(v1, "MoleculeSelection", "Ordered set of molecule references");
 
-  auto pyTranslation = py::class_<Translation3d>(v1, "Translation");
-  auto pyRotation = py::class_<Rotation3d>(v1, "Rotation");
-  auto pyUniformScale = py::class_<UniformScale3d>(v1, "UniformScale");
-  auto pyTransformation = py::class_<Transformation3d>(v1, "Transformation");
+  auto pyTranslation = py::class_<Translation3d>(v1, "Translation", "Translational transformation");
+  auto pyRotation = py::class_<Rotation3d>(v1, "Rotation", "Rotational transformation");
+  auto pyUniformScale = py::class_<UniformScale3d>(v1, "UniformScale", "Uniform scale transformation");
+  auto pyTransformation = py::class_<Transformation3d>(v1, "Transformation", "Generic transformation");
 
-  auto pyTrajectory = py::class_<trajectory::Trajectory>(v1, "Trajectory");
-  auto pyTrajectoryInputFile = py::class_<trajectory::TrajectoryInputFile, PyTrajectoryInputFile>(v1, "TrajectoryInputFile");
+  auto pyTrajectory = py::class_<trajectory::Trajectory>(v1, "Trajectory", "Trajectory of frames");
+  auto pyTrajectoryInputFile = py::class_<trajectory::TrajectoryInputFile, PyTrajectoryInputFile>(v1, "TrajectoryInputFile", "Trajectory input file ABC");
 
-  auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile");
-  auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile");
-  auto pyAmberNetCDF = py::class_<io::AmberNetCDF, trajectory::TrajectoryInputFile>(v1, "AmberNetCDF");
+  auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile", "PDB file");
+  auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile", "Trajtool trajectory file");
+  auto pyAmberNetCDF = py::class_<io::AmberNetCDF, trajectory::TrajectoryInputFile>(v1, "AmberNetCDF", "Amber trajectory file");
 
   py::implicitly_convertible<AtomSmartSpan,AtomSmartSelection>();
   py::implicitly_convertible<ResidueSmartSpan,ResidueSmartSelection>();

@@ -40,10 +40,10 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
             }
             self.extend(PyObjectTrajectoryInputFile(PyObjectTrajectoryInputFile(trajectory_file)));
           },
-          py::arg("trajectory_file"))
-      .def_property_readonly("n_atoms", &Trajectory::n_atoms)
-      .def_property_readonly("n_frames", &Trajectory::n_frames)
-      .def_property_readonly("size", &Trajectory::n_frames)
+          py::arg("trajectory_file"), "Extend trajectory")
+      .def_property_readonly("n_atoms", &Trajectory::n_atoms, "Number of atoms in frame")
+      .def_property_readonly("n_frames", &Trajectory::n_frames, "Number of frames")
+      .def_property_readonly("size", &Trajectory::n_frames, "Number of frames")
       .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
            [](Trajectory& trj, int idx) -> Trajectory::Frame {
@@ -89,7 +89,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
              return self.at(i);
            });
 
-  pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index);
+  pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index, "Zero-based index in trajectory");
 }
 void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFile>& pyTrajectoryInputFile) {
   pyTrajectoryInputFile.def(py::init<>());

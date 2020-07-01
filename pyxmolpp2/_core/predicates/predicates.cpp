@@ -22,20 +22,25 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
   using namespace xmol;
   namespace py = pybind11;
 
-  auto&& pyAtomPredicate = py::class_<AtomPredicate>(polymer, "AtomPredicate");
-  auto&& pyResiduePredicate = py::class_<ResiduePredicate>(polymer, "ResiduePredicate");
-  auto&& pyMoleculePredicate = py::class_<MoleculePredicate>(polymer, "MoleculePredicate");
+  auto&& pyAtomPredicate = py::class_<AtomPredicate>(polymer, "AtomPredicate", "Atom Preidcate");
+  auto&& pyResiduePredicate = py::class_<ResiduePredicate>(polymer, "ResiduePredicate", "Residue Predicate");
+  auto&& pyMoleculePredicate = py::class_<MoleculePredicate>(polymer, "MoleculePredicate", "Molecule Predicate");
 
   auto&& pyAtomNamePredicateGenerator = py::class_<AtomNamePredicateGenerator>(polymer, "AtomNamePredicateGenerator");
-  auto&& pyResidueNamePredicateGenerator = py::class_<ResidueNamePredicateGenerator>(polymer, "ResidueNamePredicateGenerator");
-  auto&& pyMoleculeNamePredicateGenerator = py::class_<MoleculeNamePredicateGenerator>(polymer, "MoleculeNamePredicateGenerator");
+  auto&& pyResidueNamePredicateGenerator =
+      py::class_<ResidueNamePredicateGenerator>(polymer, "ResidueNamePredicateGenerator");
+  auto&& pyMoleculeNamePredicateGenerator =
+      py::class_<MoleculeNamePredicateGenerator>(polymer, "MoleculeNamePredicateGenerator");
 
   auto&& pyAtomIdPredicateGenerator = py::class_<AtomIdPredicateGenerator>(polymer, "AtomIdPredicateGenerator");
-  auto&& pyResidueIdPredicateGenerator = py::class_<ResidueIdPredicateGenerator>(polymer, "ResidueIdPredicateGenerator");
-//  auto&& pyMoleculeIndexPredicateGenerator = py::class_<MoleculeIndexPredicateGenerator>(polymer, "MoleculeIndexPredicateGenerator");
+  auto&& pyResidueIdPredicateGenerator =
+      py::class_<ResidueIdPredicateGenerator>(polymer, "ResidueIdPredicateGenerator");
+  //  auto&& pyMoleculeIndexPredicateGenerator = py::class_<MoleculeIndexPredicateGenerator>(polymer,
+  //  "MoleculeIndexPredicateGenerator");
 
-  pyAtomPredicate.def(py::init([](std::function<bool(AtomSmartRef)>& predicate) {
-    return AtomPredicate([predicate](const AtomSmartRef& a) { return predicate(AtomSmartRef(const_cast<AtomSmartRef&>(a))); });
+  pyAtomPredicate
+      .def(py::init([](std::function<bool(AtomSmartRef)>& predicate) {
+        return AtomPredicate([predicate](const AtomSmartRef& a) { return predicate(AtomSmartRef(const_cast<AtomSmartRef&>(a))); });
   }))
 
   .def("__call__",[](AtomPredicate& pred, AtomSmartRef& ref){ return pred((ref));  })

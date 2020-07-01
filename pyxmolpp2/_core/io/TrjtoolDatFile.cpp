@@ -8,10 +8,12 @@ using namespace xmol::proxy::smart;
 void pyxmolpp::v1::populate(py::class_<TrjtoolDatFile, xmol::trajectory::TrajectoryInputFile>& pyTrjtoolDatFile) {
 
   pyTrjtoolDatFile.def(py::init<std::string>(), py::arg("filename"))
-      .def("n_frames", &TrjtoolDatFile::n_frames)
-      .def("n_atoms", &TrjtoolDatFile::n_atoms)
-      .def("read_coordinates",
-           [](TrjtoolDatFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); })
-      .def("advance", &TrjtoolDatFile::advance);
+      .def("n_frames", &TrjtoolDatFile::n_frames, "Number of frames")
+      .def("n_atoms", &TrjtoolDatFile::n_atoms, "Number of atoms per frame")
+      .def(
+          "read_coordinates",
+          [](TrjtoolDatFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
+          "Assign ``index`` frame coordinates to ``coords``")
+      .def("advance", &TrjtoolDatFile::advance, py::arg("shift"), "Shift internal pointer by ``shift``");
   ;
 }

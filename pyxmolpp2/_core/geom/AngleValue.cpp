@@ -17,17 +17,15 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::AngleValue>& pyAngleVal
       .def(py::self >= py::self)
       .def(py::self < py::self)
       .def(py::self > py::self)
-      .def_property_readonly("degrees", &AngleValue::degrees, py::return_value_policy::copy,
-                             "Return angle value in degrees")
-      .def_property_readonly("radians", &AngleValue::radians, py::return_value_policy::copy,
-                             "Return angle value in radians")
+      .def_property_readonly("degrees", &AngleValue::degrees, py::return_value_policy::copy, "Angle value in degrees")
+      .def_property_readonly("radians", &AngleValue::radians, py::return_value_policy::copy, "Angle value in radians")
       .def("to_standard_range", &AngleValue::to_standard_range, py::return_value_policy::copy,
-           "Return angle in range :math:`[-\\pi..\\pi)`")
+           "Wraps value to :math:`[-\\pi..\\pi)` range")
 
       .def("sin", [](AngleValue& value) { return sin(value); })
       .def("cos", [](AngleValue& value) { return cos(value); })
       .def("tan", [](AngleValue& value) { return tan(value); })
-      .def("fabs", [](AngleValue& value) { return fabs(value); });
+      .def("abs", [](AngleValue& value) { return fabs(value); });
 }
 
 void pyxmolpp::v1::define_angle_free_functions(pybind11::module& module) {
