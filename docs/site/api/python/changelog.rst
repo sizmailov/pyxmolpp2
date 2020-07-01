@@ -4,7 +4,11 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
-v1.0.0.dev4:
+v1.1.0.dev:
+  - Renamed ``AngleValue.{fabs -> abs}``
+  - Renamed ``TorsionAngle.{set -> rotate_to}``
+
+v1.0.0:
   - Added :ref:`pipe.AssembleQuaternaryStructure`, :ref:`pipe.ScaleUnitCell`
   - Changed internal representation of frame data to flat layout
   - Introduced lightweight continuous "spans"
