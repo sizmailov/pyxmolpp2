@@ -1,6 +1,7 @@
 #pragma once
 #include "xmol/proxy/spans.h"
 #include "xmol/fwd.h"
+#include "xmol/geom/fwd.h"
 
 namespace xmol::trajectory {
 
@@ -27,6 +28,13 @@ public:
    * Note: advance(0) prepares file to be read by @ref read_coordinates()
    * */
   virtual void advance(size_t shift) = 0;
+
+  /** Read unit cell at @p index.
+   *
+   * Input value of @p cell correspond to value from another frame (not necessarily preceding to this one)
+   * Precondition: @p index must match current position of internal data pointer
+   * */
+  virtual void update_unit_cell(size_t index, xmol::geom::UnitCell& cell) = 0;
 };
 
 } // namespace xmol::trajectory

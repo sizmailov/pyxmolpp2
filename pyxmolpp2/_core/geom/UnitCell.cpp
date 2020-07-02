@@ -25,7 +25,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::UnitCell>& pyUniCell) {
       .def("translation_vector", &UnitCell::translation_vector, py::arg("i"), py::arg("j"), py::arg("k"),
            R"(Returns :math:`i  \vec v_1 + j \vec  v_2 + k \vec  v_3`)")
       .def("scale_by", &UnitCell::scale_by, py::arg("factor"), "Scale cell by linear factor")
-      .def("scale_to_volume", &UnitCell::scale_to_volume, py::arg("volume"), "Scale ")
+      .def("scale_to_volume", &UnitCell::scale_to_volume, py::arg("volume"), "Scale cell to match volume")
       .def_property_readonly("volume", &UnitCell::volume, "Volume")
       .def_property_readonly("a", &UnitCell::a, "Length of :math:`v_1`")
       .def_property_readonly("b", &UnitCell::b, "Length of :math:`v_2`")

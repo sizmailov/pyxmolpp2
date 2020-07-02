@@ -1,6 +1,8 @@
 #include "xmol/io/AmberNetCDF.h"
 #include <iostream>
 #include <netcdf.h>
+#include <xmol/geom/AngleValue.h>
+#include <xmol/geom/UnitCell.h>
 
 using namespace xmol::io;
 
@@ -21,7 +23,7 @@ void AmberNetCDF::open() {
   if (m_is_open) {
     return;
   }
-  check_netcdf_call(nc_open(m_filename.c_str(), NC_NOWRITE, &ncid), NC_NOERR, "nc_open()");
+  check_netcdf_call(nc_open(m_filename.c_str(), NC_NOWRITE, &m_ncid), NC_NOERR, "nc_open()");
   m_is_open = true;
 }
 
@@ -32,7 +34,7 @@ AmberNetCDF::~AmberNetCDF() {
 }
 void AmberNetCDF::close() {
   if (m_is_open) {
-    check_netcdf_call(nc_close(ncid), NC_NOERR, "nc_close()");
+    check_netcdf_call(nc_close(m_ncid), NC_NOERR, "nc_close()");
   }
   this->m_is_open = false;
 }
@@ -53,11 +55,11 @@ std::string AmberNetCDF::read_global_string_attr(const char* name) {
   open();
   nc_type attr_info;
   size_t attr_len;
-  if (nc_inq_att(ncid, NC_GLOBAL, name, &attr_info, &attr_len) != NC_NOERR) {
+  if (nc_inq_att(m_ncid, NC_GLOBAL, name, &attr_info, &attr_len) != NC_NOERR) {
     return std::string("<MISSING>");
   }
   char buffer[attr_len];
-  check_netcdf_call(nc_get_att_text(ncid, NC_GLOBAL, name, buffer), NC_NOERR, "nc_get_att_text");
+  check_netcdf_call(nc_get_att_text(m_ncid, NC_GLOBAL, name, buffer), NC_NOERR, "nc_get_att_text");
   return std::string(buffer, attr_len);
 }
 
@@ -70,11 +72,8 @@ void xmol::io::AmberNetCDF::read_coordinates(size_t index, xmol::proxy::CoordSpa
   size_t start[] = {static_cast<size_t>(m_current_frame), 0, 0};
   size_t count[] = {1, static_cast<size_t>(n_atoms()), 3};
 
-  int coords_id;
-
-  nc_inq_varid(ncid, "coordinates", &coords_id);
-
-  check_netcdf_call(nc_get_vara_float(ncid, coords_id, start, count, m_buffer.data()), NC_NOERR, "nc_get_vara_float");
+  check_netcdf_call(nc_get_vara_float(m_ncid, m_coords_id, start, count, m_buffer.data()), NC_NOERR,
+                    "nc_get_vara_float");
   CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
   coordinates._eigen() = buffer_map.cast<double>();
 }
@@ -100,10 +99,34 @@ void AmberNetCDF::read_header() {
   };
 
   int atomid;
-  check_netcdf_call(nc_inq_dimid(ncid, "atom", &atomid), NC_NOERR, "nc_inq_dimid()");
-  check_netcdf_call(nc_inq_dimlen(ncid, atomid, &m_n_atoms), NC_NOERR, "nc_inq_dimlen()");
+  check_netcdf_call(nc_inq_dimid(m_ncid, "atom", &atomid), NC_NOERR, "nc_inq_dimid()");
+  check_netcdf_call(nc_inq_dimlen(m_ncid, atomid, &m_n_atoms), NC_NOERR, "nc_inq_dimlen()");
 
   int frames_id;
-  check_netcdf_call(nc_inq_unlimdim(ncid, &frames_id), NC_NOERR, "nc_inq_unlimdim()");
-  check_netcdf_call(nc_inq_dimlen(ncid, frames_id, &m_n_frames), NC_NOERR, "nc_inq_dimlen()");
+  check_netcdf_call(nc_inq_unlimdim(m_ncid, &frames_id), NC_NOERR, "nc_inq_unlimdim()");
+  check_netcdf_call(nc_inq_dimlen(m_ncid, frames_id, &m_n_frames), NC_NOERR, "nc_inq_dimlen()");
+
+  check_netcdf_call(nc_inq_varid(m_ncid, "coordinates", &m_coords_id), NC_NOERR, "nc_inq_varid");
+
+  // cell
+  auto cell_length_status = nc_inq_varid(m_ncid, "cell_lengths", &m_cell_lengths_id);
+  auto cell_angles_status = nc_inq_varid(m_ncid, "cell_angles", &m_cell_angles_id);
+
+  m_has_cell = cell_length_status == NC_NOERR && cell_angles_status == NC_NOERR;
+}
+
+void AmberNetCDF::update_unit_cell(size_t index, geom::UnitCell& cell) {
+  if (!m_has_cell) {
+    return;
+  }
+  float lengths[3];
+  float angles[3];
+  size_t start[] = {static_cast<size_t>(m_current_frame), 0};
+  size_t count[] = {1, 3};
+
+  check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_lengths_id, start, count, lengths), NC_NOERR, "nc_get_vara_float");
+  check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_angles_id, start, count, angles), NC_NOERR, "nc_get_vara_float");
+
+  cell = geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
+                        geom::Degrees(angles[2]));
 }

@@ -10,6 +10,7 @@ public:
 };
 
 class XYZ;
+class UnitCell;
 struct AngleValue;
 
 namespace affine {

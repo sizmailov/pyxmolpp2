@@ -3,6 +3,12 @@
 
 namespace xmol::io {
 
+/**
+ * AMBER NetCDF Trajectory
+ *
+ *
+ * Format description: https://ambermd.org/netcdf/nctraj.xhtml
+ * */
 class AmberNetCDF : public xmol::trajectory::TrajectoryInputFile {
 public:
   AmberNetCDF(const AmberNetCDF&) = delete;
@@ -12,20 +18,27 @@ public:
   explicit AmberNetCDF(const std::string& filename);
   ~AmberNetCDF();
 
-  size_t n_frames() const override;
-  size_t n_atoms() const override;
-  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) override;
-  void advance(size_t shift) override;
+  size_t n_frames() const final;
+  size_t n_atoms() const final;
+  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void advance(size_t shift) final;
+  void update_unit_cell(size_t index, geom::UnitCell& cell) final;
+
+  bool has_cell() const { return m_has_cell; }
 
 private:
   std::string m_filename;
 
-  mutable int ncid;
+  mutable int m_ncid;
+  mutable int m_coords_id;
+  mutable bool m_has_cell;
+  mutable int m_cell_lengths_id;
+  mutable int m_cell_angles_id;
   mutable bool m_is_open = false;
 
-  size_t m_current_frame=0;
-  size_t m_n_frames=0;
-  size_t m_n_atoms=0;
+  size_t m_current_frame = 0;
+  size_t m_n_frames = 0;
+  size_t m_n_atoms = 0;
 
   std::vector<float> m_buffer;
 

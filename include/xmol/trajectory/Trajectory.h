@@ -83,6 +83,7 @@ public:
     void update() {
       auto coords = m_frame.coords();
       m_traj->read_coordinates(m_pos, coords);
+      m_traj->update_unit_cell(m_pos, m_frame.cell);
       m_frame.index = m_pos.global_pos;
     }
     Trajectory* m_traj;
@@ -157,6 +158,10 @@ private:
 
   void read_coordinates(Position pos, proxy::CoordSpan& coords) {
     m_files[pos.file]->read_coordinates(pos.pos_in_file, coords);
+  }
+
+  void update_unit_cell(Position pos, geom::UnitCell& cell) {
+    m_files[pos.file]->update_unit_cell(pos.pos_in_file, cell);
   }
 
   void advance(Position& position, size_t end, size_t step);

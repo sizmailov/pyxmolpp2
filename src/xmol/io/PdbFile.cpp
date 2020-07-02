@@ -47,9 +47,7 @@ void PdbInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates)
     throw PdbReadError("Wrong of atoms in " + std::to_string(index) + " frame in `" + m_filename + "`. Expected " +
                        std::to_string(coordinates.size()));
   }
-  for (size_t i = 0; i < coordinates.size(); ++i) {
-    coordinates[i] = frame.coords()[i];
-  }
+  coordinates._eigen() = frame.coords()._eigen();
 }
 void PdbInputFile::advance(size_t shift) {
   m_current_frame += shift;
@@ -61,4 +59,7 @@ void PdbInputFile::advance(size_t shift) {
   if (m_frames.empty()) {
     read();
   }
+}
+void PdbInputFile::update_unit_cell(size_t index, xmol::geom::UnitCell& cell) {
+  cell = m_frames[index].cell;
 }
