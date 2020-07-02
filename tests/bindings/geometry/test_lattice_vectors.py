@@ -46,8 +46,16 @@ def test_closed_image():
     result = cell.closest_image_to(ref, var)
     # print(shift.x,shift.y,shift.z)
 
-
     assert result.pos.x == pytest.approx(ref.x)
     assert result.pos.y == pytest.approx(ref.y)
     assert result.pos.z == pytest.approx(ref.z)
     assert result.distance == pytest.approx(0)
+
+
+def test_to_tuple():
+    from pyxmolpp2 import UnitCell, XYZ
+    cell = UnitCell(XYZ(1, 4, 1), XYZ(5, 1, 1), XYZ(7, 1, 4))
+    v1, v2, v3 = tuple(cell)
+    assert v1.distance(XYZ(1, 4, 1)) == pytest.approx(0)
+    assert v2.distance(XYZ(5, 1, 1)) == pytest.approx(0)
+    assert v3.distance(XYZ(7, 1, 4)) == pytest.approx(0)

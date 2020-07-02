@@ -53,5 +53,14 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::UnitCell>& pyUniCell) {
                     double gamma = std::strtod(line.c_str() + 12 * 5, &end);
                     return UnitCell(a, b, c, Degrees(alpha), Degrees(beta), Degrees(gamma));
                   })
-      .def("__getitem__", &UnitCell::operator[], py::arg("i"), "Get i-th cell lattice vector");
+      .def("__len__", [](UnitCell&) { return 3; })
+      .def(
+          "__getitem__",
+          [](UnitCell& self, int i) {
+            if (i < 0 || i > 2) {
+              throw std::out_of_range("UnitCell index must be in [0, 1, 2], i=" +  std::to_string(i)+" provided");
+            }
+            return self[i];
+          },
+          py::arg("i"), "Get i-th cell lattice vector");
 }
