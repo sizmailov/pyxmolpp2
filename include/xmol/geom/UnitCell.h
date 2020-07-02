@@ -57,6 +57,7 @@ public:
   void scale_to_volume(double vol) { scale_by(::cbrt(vol / volume())); }
 
   [[nodiscard]] ClosestImage closest_image_to(const XYZ& ref, const XYZ& var) const;
+  [[nodiscard]] static UnitCell unit_cubic_cell(); // Returns cubic cell of volume 1
 
 private:
   std::array<XYZ, 3> v;

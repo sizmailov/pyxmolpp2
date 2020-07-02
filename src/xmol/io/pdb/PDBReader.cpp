@@ -171,6 +171,17 @@ template <typename Iterator> Frame readFrame(Iterator& it) {
   return result;
 }
 
+geom::UnitCell read_cell_from_cryst1_record(const PdbLine& line){
+  return geom::UnitCell(
+      line.getDouble(FieldName("a")),
+      line.getDouble(FieldName("b")),
+      line.getDouble(FieldName("c")),
+      geom::Degrees(line.getDouble(FieldName("alpha"))),
+      geom::Degrees(line.getDouble(FieldName("beta"))),
+      geom::Degrees(line.getDouble(FieldName("gamma")))
+  );
+}
+
 } // namespace
 
 Frame PdbReader::read_frame() { return read_frame(StandardPdbRecords::instance()); }
@@ -205,16 +216,20 @@ std::vector<Frame> PdbReader::read_frames() { return read_frames(StandardPdbReco
 std::vector<Frame> PdbReader::read_frames(const basic_PdbRecords& db) {
 
   std::vector<Frame> frames;
+  auto cell = geom::UnitCell::unit_cubic_cell(); // create dummy cell
 
   auto it = PdbLineInputIterator(*is, db);
   try {
     while (it != PdbLineSentinel{}) {
-      if (it->getRecordName() == RecordName("MODEL") || it->getRecordName() == RecordName("ATOM") ||
+      if (it->getRecordName()== RecordName("CRYST1")) {
+        cell = read_cell_from_cryst1_record(*it);
+      } else if (it->getRecordName() == RecordName("MODEL") || it->getRecordName() == RecordName("ATOM") ||
           it->getRecordName() == RecordName("HETATM")) {
         frames.push_back(readFrame(it));
-      } else {
-        ++it;
+        frames.back().cell = cell;
+        continue;
       }
+      ++it;
     }
   } catch (PdbFieldReadError& e) {
     std::string filler(std::min(std::max(e.colon_l, 0), 80), '~');

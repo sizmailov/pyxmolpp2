@@ -31,3 +31,5 @@ UnitCell::ClosestImage UnitCell::closest_image_to(const XYZ& ref, const XYZ& var
   result.pos = var + result.shift;
   return result;
 }
+
+UnitCell UnitCell::unit_cubic_cell() { return UnitCell(geom::XYZ(1, 0, 0), geom::XYZ(0, 1, 0), geom::XYZ(0, 0, 1)); }
