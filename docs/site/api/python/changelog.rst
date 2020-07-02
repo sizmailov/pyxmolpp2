@@ -1,13 +1,19 @@
 Change log
 ##########
 
+
+.. role:: text-dim
+    :class: m-text m-dim
+
 :ref-prefix:
     pyxmolpp2
 
-v1.1.0.dev:
+v1.1:
+  - New: Trajectory reads :ref:`Frame.cell` from input formats (:ref:`AmberNetCDF` | :ref:`PdbFile`)
   - Renamed ``AngleValue.{fabs -> abs}``
   - Renamed ``TorsionAngle.{set -> rotate_to}``
   - Fixed :ref:`TrajectoryInputFile` trampoline
+  - Added basic ``CRYST1`` pdb record support
 
 v1.0.0:
   - Added :ref:`pipe.AssembleQuaternaryStructure`, :ref:`pipe.ScaleUnitCell`
