@@ -133,9 +133,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
             return span.rmsd(rhs_span, weighted);
           },
           py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
-      .def("inertia_tensor", &Span::inertia_tensor)
-      .def("to_pdb", to_pdb_file<Span>, py::arg("path_or_buf"))
-      .def("to_pdb", to_pdb_stream<Span>, py::arg("path_or_buf"))
+      .def("inertia_tensor", &Span::inertia_tensor, "Inertia tensor")
+      .def("to_pdb", to_pdb_file<Span>, py::arg("path_or_buf"), "Write atoms as `.pdb` file")
+      .def("to_pdb", to_pdb_stream<Span>, py::arg("path_or_buf"), "Write atoms in PDB format")
       .def("__len__", &Span::size)
       .def("__contains__", [](Span& span, AtomSmartRef& ref) { return span.contains(ref); })
       .def("__getitem__",
