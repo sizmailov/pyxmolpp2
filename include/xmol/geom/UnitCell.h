@@ -42,11 +42,11 @@ public:
 
   const XYZ& operator[](int i) const { return v[i]; }
 
-  AngleValue alpha() { return v[0].angle(v[1]); } // todo: check
+  AngleValue alpha() { return v[1].angle(v[2]); }
 
-  AngleValue beta() { return v[1].angle(v[2]); } // todo: check
+  AngleValue beta() { return v[0].angle(v[2]); }
 
-  AngleValue gamma() { return v[0].angle(v[2]); } // todo: check
+  AngleValue gamma() { return v[0].angle(v[1]); }
 
   double a() { return v[0].len(); }
   double b() { return v[1].len(); }
