@@ -2,6 +2,7 @@
 
 #include "xmol/io/pdb/PdbReader.h"
 #include "xmol/io/pdb/PdbWriter.h"
+#include "xmol/Frame.h"
 
 using ::testing::Test;
 using namespace xmol::io::pdb;
@@ -41,4 +42,14 @@ TEST_F(PdbWriterTests, write) {
   EXPECT_DOUBLE_EQ(atom.r().x(), atom2.r().x());
   EXPECT_DOUBLE_EQ(atom.r().y(), atom2.r().y());
   EXPECT_DOUBLE_EQ(atom.r().z(), atom2.r().z());
+}
+TEST_F(PdbWriterTests, write_unit_cell) {
+  Frame frame;
+  std::stringstream ss;
+  PdbWriter writer(ss);
+  writer.write(frame);
+  EXPECT_EQ(ss.str(), "");
+  frame.cell = geom::UnitCell(111.11, 222.22, 333.333, geom::Degrees(60), geom::Degrees(90), geom::Degrees(120));
+  writer.write(frame);
+  EXPECT_EQ(ss.str(), "CRYST1  111.110  222.220  333.333  60.00  90.00 120.00                          \n");
 }

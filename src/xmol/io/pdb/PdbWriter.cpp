@@ -84,6 +84,22 @@ void PdbWriter::write(MoleculeRef& chain, const basic_PdbRecords& db) {
 }
 
 void PdbWriter::write(Frame& frame, const basic_PdbRecords& db) {
+  if (frame.cell.volume() != 1.0) {
+    std::string line(pdb_line_width, ' ');
+    line.replace(0, 6, "CRYST1");
+
+    auto& cryst_record = db.get_record(RecordName("CRYST1"));
+    auto write_field = write_field_t(cryst_record, line);
+
+    write_field("%9.3f", frame.cell.a(), FieldName("a"));
+    write_field("%9.3f", frame.cell.b(), FieldName("b"));
+    write_field("%9.3f", frame.cell.c(), FieldName("c"));
+    write_field("%7.2f", frame.cell.alpha().degrees(), FieldName("alpha"));
+    write_field("%7.2f", frame.cell.beta().degrees(), FieldName("beta"));
+    write_field("%7.2f", frame.cell.gamma().degrees(), FieldName("gamma"));
+
+    (*m_ostream) << line << "\n";
+  }
   for (auto& c : frame.molecules()) {
     this->write(c, db);
   }
