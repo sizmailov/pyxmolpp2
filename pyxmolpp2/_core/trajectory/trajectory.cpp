@@ -50,7 +50,6 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
       .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
            [](Trajectory& trj, int idx) -> Trajectory::Frame {
-             std::cout <<  __PRETTY_FUNCTION__  << std::endl;
              int i = idx;
              if (i < 0) {
                i += trj.n_frames();
