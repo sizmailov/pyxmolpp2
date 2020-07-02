@@ -1,5 +1,5 @@
 from make_polygly import make_polyglycine
-from pyxmolpp2 import TrajectoryInputFile, AtomSpan, Trajectory
+from pyxmolpp2 import TrajectoryInputFile, AtomSpan, Trajectory, UnitCell
 import numpy as np
 
 
@@ -21,6 +21,11 @@ class IotaTrajectory(TrajectoryInputFile):
     def advance(self, shift: int):
         pass
 
+    def read_unit_cell(self, index: int, previous: UnitCell) -> UnitCell:
+        result = UnitCell(previous)
+        result.scale_to_volume(index + 1)
+        return result
+
 
 def test_pseudo_trajectory():
     ref = make_polyglycine([('A', 10)])
@@ -30,3 +35,4 @@ def test_pseudo_trajectory():
 
     for frame in traj:
         assert np.allclose(frame.coords.values, frame.index)
+        assert np.isclose(frame.cell.volume, frame.index + 1)

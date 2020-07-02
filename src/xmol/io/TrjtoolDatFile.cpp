@@ -1,4 +1,5 @@
 #include "xmol/io/TrjtoolDatFile.h"
+#include "xmol/geom/UnitCell.h"
 #include "xmol/proxy/proxy.h"
 
 #include <utility>
@@ -89,3 +90,4 @@ void TrjtoolDatFile::advance(size_t shift) {
   const std::streamoff frame_begin = sizeof(float) * m_header.nitems * m_header.ndim * m_current_frame;
   m_stream->seekg(m_offset + frame_begin, std::ios::beg);
 }
+xmol::geom::UnitCell TrjtoolDatFile::read_unit_cell(size_t, const xmol::geom::UnitCell& previous) { return previous; }

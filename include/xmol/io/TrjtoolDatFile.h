@@ -23,7 +23,7 @@ public:
   [[nodiscard]] size_t n_atoms() const final;
   void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
   void advance(size_t shift) final;
-  void update_unit_cell(size_t shift, geom::UnitCell& cell) final {}; /// .dat files does not have about unit cell info
+  [[nodiscard]] geom::UnitCell read_unit_cell(size_t, const geom::UnitCell& previous) final;; /// .dat files does not have about unit cell info
 
 private:
   std::string m_filename;

@@ -22,8 +22,10 @@ public:
   void read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) final {
     ptr->read_coordinates(index, coordinates);
   }
-
-  void advance(size_t shift) override { ptr->advance(shift); }
+  void advance(size_t shift) final { ptr->advance(shift); }
+  geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& previous) final {
+    return ptr->read_unit_cell(index, previous);
+  }
 };
 } // namespace
 
@@ -35,11 +37,11 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
   pyTrajectory.def(py::init<Frame>())
       .def(
           "extend",
-          [](Trajectory& self, py::object trajectory_file) {
+          [](Trajectory& self, py::object& trajectory_file) {
             if (!py::isinstance<TrajectoryInputFile>(trajectory_file)) {
               throw py::type_error("trajectory_file must be derived from TrajectoryInputFile");
             }
-            self.extend(PyObjectTrajectoryInputFile(PyObjectTrajectoryInputFile(trajectory_file)));
+            self.extend(PyObjectTrajectoryInputFile(trajectory_file));
           },
           py::arg("trajectory_file"), "Extend trajectory")
       .def_property_readonly("n_atoms", &Trajectory::n_atoms, "Number of atoms in frame")
@@ -48,6 +50,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
       .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
            [](Trajectory& trj, int idx) -> Trajectory::Frame {
+             std::cout <<  __PRETTY_FUNCTION__  << std::endl;
              int i = idx;
              if (i < 0) {
                i += trj.n_frames();
@@ -125,5 +128,12 @@ void pyxmolpp::v1::PyTrajectoryInputFile::advance(size_t shift) {
                          TrajectoryInputFile, /* Parent class */
                          advance,             /* Name of function in C++ (must match Python name) */
                          shift                /* Argument */
+  );
+}
+xmol::geom::UnitCell pyxmolpp::v1::PyTrajectoryInputFile::read_unit_cell(size_t index, const geom::UnitCell& previous) {
+  PYBIND11_OVERLOAD_PURE(xmol::geom::UnitCell, /* Return type */
+                         TrajectoryInputFile,  /* Parent class */
+                         read_unit_cell,       /* Name of function in C++ (must match Python name) */
+                         index, previous       /* Arguments */
   );
 }

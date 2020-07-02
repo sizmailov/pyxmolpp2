@@ -27,8 +27,7 @@ public:
   [[nodiscard]] size_t n_atoms() const override;
   void read_coordinates(size_t index, proxy::CoordSpan& coordinates) override;
   void advance(size_t shift) override;
-  void update_unit_cell(size_t index, geom::UnitCell& cell) final;
-
+  [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& cell) final;
 
 private:
   std::string m_filename;

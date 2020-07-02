@@ -29,12 +29,12 @@ public:
    * */
   virtual void advance(size_t shift) = 0;
 
-  /** Read unit cell at @p index.
+  /** Read unit cell at `index`.
    *
-   * Input value of @p cell correspond to value from another frame (not necessarily preceding to this one)
-   * Precondition: @p index must match current position of internal data pointer
+   * Input value of `previous` corresponds to value from another frame (not necessarily preceding to this one)
+   * Precondition: `index` must match current position of internal data pointer
    * */
-  virtual void update_unit_cell(size_t index, xmol::geom::UnitCell& cell) = 0;
+  [[nodiscard]] virtual xmol::geom::UnitCell read_unit_cell(size_t index, const xmol::geom::UnitCell& previous) = 0;
 };
 
 } // namespace xmol::trajectory

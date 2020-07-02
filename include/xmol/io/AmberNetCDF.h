@@ -22,7 +22,7 @@ public:
   size_t n_atoms() const final;
   void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
   void advance(size_t shift) final;
-  void update_unit_cell(size_t index, geom::UnitCell& cell) final;
+  [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& previous) final;
 
   bool has_cell() const { return m_has_cell; }
 

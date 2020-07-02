@@ -115,9 +115,9 @@ void AmberNetCDF::read_header() {
   m_has_cell = cell_length_status == NC_NOERR && cell_angles_status == NC_NOERR;
 }
 
-void AmberNetCDF::update_unit_cell(size_t index, geom::UnitCell& cell) {
+xmol::geom::UnitCell AmberNetCDF::read_unit_cell(size_t index, const geom::UnitCell& previous) {
   if (!m_has_cell) {
-    return;
+    return previous;
   }
   float lengths[3];
   float angles[3];
@@ -127,6 +127,6 @@ void AmberNetCDF::update_unit_cell(size_t index, geom::UnitCell& cell) {
   check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_lengths_id, start, count, lengths), NC_NOERR, "nc_get_vara_float");
   check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_angles_id, start, count, angles), NC_NOERR, "nc_get_vara_float");
 
-  cell = geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
+  return geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
                         geom::Degrees(angles[2]));
 }

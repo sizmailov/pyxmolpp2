@@ -60,6 +60,6 @@ void PdbInputFile::advance(size_t shift) {
     read();
   }
 }
-void PdbInputFile::update_unit_cell(size_t index, xmol::geom::UnitCell& cell) {
-  cell = m_frames[index].cell;
+xmol::geom::UnitCell PdbInputFile::read_unit_cell(size_t index, const xmol::geom::UnitCell& cell) {
+  return m_frames[index].cell;
 }
