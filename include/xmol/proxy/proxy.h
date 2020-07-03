@@ -367,6 +367,13 @@ public:
     return *this;
   }
 
+  /// Van der Waals radius
+  [[nodiscard]] float vdw_radius() const { return m_atom->vdw_radius; };
+  AtomRef& vdw_radius(float value) {
+    m_atom->vdw_radius = value;
+    return *this;
+  }
+
   /// Atom name
   [[nodiscard]] const AtomName& name() const { return m_atom->name; };
   AtomRef& name(const AtomName& value) {

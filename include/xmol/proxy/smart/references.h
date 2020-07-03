@@ -29,6 +29,16 @@ public:
     return m_ref.mass(value);
   }
 
+  /// Van der Waals radius
+  [[nodiscard]] float vdw_radius() const {
+    check_precondition("vdw_radius()");
+    return m_ref.vdw_radius();
+  };
+  AtomRef& vdw_radius(float value) {
+    check_precondition("vdw_radius()");
+    return m_ref.vdw_radius(value);
+  }
+
   /// Atom name
   [[nodiscard]] const AtomName& name() const {
     check_precondition("name()");

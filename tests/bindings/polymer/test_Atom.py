@@ -16,6 +16,12 @@ def test_Frame():
     a.name = "CA"
     a.id = 1
     a.r = XYZ(1, 2, 3)
+    a.mass = 14.25
+    a.vdw_radius = 7.5
+
+    assert a.r.distance(XYZ(1 ,2, 3)) == 0
+    assert a.mass == 14.25
+    assert a.vdw_radius == 7.5
 
     assert a.residue == r
     assert a.molecule == c

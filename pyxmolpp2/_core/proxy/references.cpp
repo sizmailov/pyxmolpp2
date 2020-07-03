@@ -116,6 +116,7 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
   pyAtom.def(py::init<const SRef&>())
       .def_property("id", py::overload_cast<>(&SRef::id, py::const_), [](SRef& self, AtomId& id) { self.id(id); })
       .def_property("mass", py::overload_cast<>(&SRef::mass, py::const_), [](SRef& self, float value) { self.mass(value); })
+      .def_property("vdw_radius", py::overload_cast<>(&SRef::vdw_radius, py::const_), [](SRef& self, float value) { self.vdw_radius(value); })
       .def_property(
           "name", [](const SRef& self) { return self.name().str(); },
           [](SRef& self, std::string& name) { self.name(AtomName(name)); })

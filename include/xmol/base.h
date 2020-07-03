@@ -28,8 +28,9 @@ using MoleculeName = xmol::utils::ShortAsciiString<1, false, detail::ChainNameTa
 struct BaseAtom {
   AtomName name;                  /// Atom name
   AtomId id;                      /// Atom id
-  float mass = 1;                 /// Atomic mass in Daltons
   BaseResidue* residue = nullptr; /// Parent residue
+  float mass = 1.0;               /// Atomic mass in Daltons
+  float vdw_radius = 1.0;         /// Van der Waals radius
 };
 
 /// Storage of residue data
