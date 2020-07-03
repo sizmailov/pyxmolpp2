@@ -1,7 +1,7 @@
 #include "xmol/algo/sasa.h"
+#include "xmol/geom/SpatialIndex.h"
 #include <algorithm>
 #include <gsl/gsl_assert>
-#include <map>
 #include <numeric>
 
 using namespace xmol::geom;
@@ -23,12 +23,7 @@ void xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<d
                                            [](const double& a, const double& b) { return std::max(a, b); });
   const double neighbour_cell_size = (max_radii + solvent_radii) * 2;
 
-  std::map<std::tuple<int, int, int>, std::vector<int>> neighbour_index;
-
-  auto cell_index = [neighbour_cell_size](const XYZ& r) -> std::tuple<int, int, int> {
-    return std::make_tuple(int(std::round(r.x() / neighbour_cell_size)), int(std::round(r.y() / neighbour_cell_size)),
-                           int(std::round(r.z() / neighbour_cell_size)));
-  };
+  SpatialIndex spatial_index(coords, neighbour_cell_size);
 
   auto segments_length = [](std::vector<std::pair<double, double>>& segments) {
     double result = 0;
@@ -52,19 +47,6 @@ void xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<d
     return result;
   };
 
-  for (int i = 0; i < coords.size(); ++i) {
-    neighbour_index[cell_index(coords[i])].push_back(i);
-  }
-
-  for (auto& it : neighbour_index) {
-    int i, j, k;
-    std::tie(i, j, k) = it.first;
-  }
-
-
-  const int n_neigh_cells = std::ceil((2 * (max_radii + solvent_radii) / neighbour_cell_size));
-
-
   for (int i1 = 0; i1 < limit; ++i1) {
     int n = sasa_points_indices.empty() ? i1 : sasa_points_indices[i1];
     if (GSL_UNLIKELY(n < 0 && n >= coords.size())) {
@@ -75,26 +57,9 @@ void xmol::algo::calc_sasa(const future::Span<geom::XYZ>& coords, future::Span<d
     double atom_area = 4 * M_PI * Rn * Rn;
 
     double delta = 2 * Rn / n_samples;
-    int i, j, k;
-    std::tie(i, j, k) = cell_index(coords[n]);
-    std::vector<int> neigh_indecies;
     double max_distance = (coord_radii[n] + max_radii + 2 * solvent_radii);
-    double max_distance2 = max_distance * max_distance;
-    for (int di = -n_neigh_cells; di <= n_neigh_cells; ++di) {
-      for (int dj = -n_neigh_cells; dj <= n_neigh_cells; ++dj) {
-        for (int dk = -n_neigh_cells; dk <= n_neigh_cells; ++dk) {
-          auto it = neighbour_index.find(std::make_tuple(i + di, j + dj, k + dk));
-          if (it == neighbour_index.end()) {
-            continue;
-          }
-          for (int m : it->second) {
-            if (coords[n].distance2(coords[m]) < max_distance2) {
-              neigh_indecies.push_back(m);
-            }
-          }
-        }
-      }
-    }
+    std::vector<int> neigh_indecies = spatial_index.within(max_distance, coords[n]);
+
     for (int slice_i = 0; slice_i < n_samples; ++slice_i) {
       double dz = -Rn + delta / 2 + delta * slice_i;
       double Rn_ = std::sqrt(Rn * Rn - dz * dz);
