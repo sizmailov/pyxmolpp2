@@ -23,10 +23,10 @@ public:
   PdbInputFile& read();
   [[nodiscard]] const std::vector<Frame>& frames() const { return m_frames; }
 
-  [[nodiscard]] size_t n_frames() const override;
-  [[nodiscard]] size_t n_atoms() const override;
-  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) override;
-  void advance(size_t shift) override;
+  [[nodiscard]] size_t n_frames() const final;
+  [[nodiscard]] size_t n_atoms() const final;
+  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void advance(size_t shift) final;
   [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& cell) final;
 
 private:

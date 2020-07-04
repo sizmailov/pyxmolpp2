@@ -13,7 +13,7 @@ public:
   using std::runtime_error::runtime_error;
 };
 
-/// PDB file
+/// Gromacs `.xtc` input file
 class GromacsXtcFile : public trajectory::TrajectoryInputFile {
 public:
   explicit GromacsXtcFile(std::string filename, size_t n_frames);
