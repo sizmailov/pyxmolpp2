@@ -1,0 +1,38 @@
+#pragma once
+
+#include "xmol/Frame.h"
+#include "xmol/io/xdr/XtcReader.h"
+#include "xmol/trajectory/TrajectoryFile.h"
+
+#include <vector>
+
+namespace xmol::io {
+
+class XtcReadError : public std::runtime_error {
+public:
+  using std::runtime_error::runtime_error;
+};
+
+/// PDB file
+class GromacsXtcFile : public trajectory::TrajectoryInputFile {
+public:
+  explicit GromacsXtcFile(std::string filename, size_t n_frames);
+
+  [[nodiscard]] size_t n_frames() const final;
+  [[nodiscard]] size_t n_atoms() const final;
+  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void advance(size_t shift) final;
+  [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& cell) final { return cell; }
+
+private:
+  std::string m_filename;
+  std::unique_ptr<xdr::XtcReader> m_reader;
+  std::unique_ptr<xdr::XdrHandle> m_xdr;
+  std::vector<float> m_buffer;
+  int m_ahead_of_current_frame = 0;
+  size_t m_current_frame = 0;
+  size_t m_n_frames = 0;
+  size_t m_n_atoms = 0;
+};
+
+} // namespace xmol::io

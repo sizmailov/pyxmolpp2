@@ -189,3 +189,61 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
   m_error_str = "";
   return Status::OK;
 }
+
+// Frames have variable length in bytes, therefore we still need to make dummy reads
+auto XtcReader::advance(size_t n_frames) -> Status {
+
+  XtcHeader header{};
+  std::array<float, 9> box{};
+
+  std::array<int, 3> int3{};
+  for (int i = 0; i < n_frames; i++) {
+    if (!read_header(header)) {
+      return Status::ERROR;
+    }
+    if (!read_box(box)) {
+      return Status::ERROR;
+    }
+    int lsize;
+    if (m_xdr.read(lsize) != Status::OK) { // size
+      return Status::ERROR;
+    }
+
+    if (lsize <= 9) {
+      if (!m_xdr.read(box)) { // uncompressed coords
+        return Status::ERROR;
+      }
+      continue;
+    }
+
+    float precision;
+    m_xdr.read(precision); // precision
+
+    m_ip.resize(lsize);
+    m_buf.resize(lsize * 1.2);
+
+    if (!m_xdr.read(int3)) { // minints
+      return Status::ERROR;
+    }
+    if (!m_xdr.read(int3)) { // maxints
+      return Status::ERROR;
+    }
+
+    int smallidx;
+    if (!m_xdr.read(smallidx)) { // smallidx
+      return Status::ERROR;
+    }
+
+    int n_bytes;
+    if (!m_xdr.read(n_bytes)) { // nbytes
+      return Status::ERROR;
+    }
+
+    assert(m_buf.size() * sizeof(m_buf[0]) >= n_bytes);
+
+    if (m_xdr.read_opaque((char*)&m_buf[3], (unsigned int)n_bytes) == Status::ERROR) { // compressed coords
+      return Status::ERROR;
+    }
+  }
+  return Status::OK;
+}

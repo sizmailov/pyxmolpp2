@@ -36,6 +36,7 @@ public:
   auto read_header(XtcHeader& header) -> Status;
   auto read_box(const future::Span<float>& box) -> Status;
   auto read_coords(const future::Span<float>& flat_coords) -> Status;
+  auto advance(size_t n_frames) -> Status; /// Skip n_frame frames
   const char* last_error() const { return m_error_str; };
 
 private:
