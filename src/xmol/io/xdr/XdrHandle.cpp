@@ -4,15 +4,11 @@
 
 using namespace xmol::io::xdr;
 
-namespace xmol::io::xdr {
-
-} // namespace xmol::io::xdr
-
 auto XdrHandle::read_opaque(char* cp, unsigned int cnt) -> Status { return Status(xdr_opaque(&m_xdr, cp, cnt)); }
 
 XdrHandle::XdrHandle(const std::string& path, XdrHandle::Mode mode) : m_mode(mode) {
-  const char* mode_str;
-  xdr_op op;
+  const char* mode_str = "rb";
+  xdr_op op = xdr_op::XDR_DECODE;
   switch (mode) {
   case Mode::READ:
     mode_str = "rb";
