@@ -8,7 +8,7 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
-next:
+v1.3:
   - Removed: ``Trajectory.Frame``
   - New: Added :ref:`Frame.index`, :ref:`Frame.time` (note: time is not read from trajectory files (yet))
 

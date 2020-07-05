@@ -31,6 +31,7 @@ INPUT_PAGES = ['index.rst',
                'examples/torsion_angle.rst',
                'examples/dat_to_xtc.rst',
                'examples/angles.rst',
+               'examples/trajectory_formats.rst',
                ]
 
 OUTPUT = f'../../../_/site/api/python'
