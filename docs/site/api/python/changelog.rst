@@ -8,6 +8,10 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
+v1.2:
+  - New: Support for ``.xtc`` trajectory format (see :ref:`GromacsXtcFile`, :ref:`XtcWriter`)
+  - New: Added :ref:``Atom.vdw_radius`` property
+
 v1.1:
   - New: Trajectory reads :ref:`Frame.cell` from input formats (:ref:`AmberNetCDF` | :ref:`PdbFile`)
   - Renamed ``AngleValue.{fabs -> abs}``
