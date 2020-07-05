@@ -1,9 +1,8 @@
 #include "xmol/io/GromacsXtcFile.h"
 
 xmol::io::GromacsXtcFile::GromacsXtcFile(std::string filename, size_t n_frames)
-    : m_filename(filename), m_n_frames(n_frames) {
-  xdr::XdrHandle handle(filename, xdr::XdrHandle::Mode::READ);
-  xdr::XtcReader reader(handle);
+    : m_filename(std::move(filename)), m_n_frames(n_frames) {
+  xdr::XtcReader reader(filename);
   xdr::XtcHeader header{};
   reader.read_header(header);
   m_n_atoms = header.n_atoms;
@@ -12,7 +11,6 @@ size_t xmol::io::GromacsXtcFile::n_frames() const { return m_n_frames; }
 size_t xmol::io::GromacsXtcFile::n_atoms() const { return m_n_atoms; }
 
 void xmol::io::GromacsXtcFile::read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) {
-  assert(m_xdr);
   assert(m_reader);
   assert(m_current_frame == index);
   assert(m_buffer.size() == n_atoms() * 3);
@@ -46,16 +44,14 @@ void xmol::io::GromacsXtcFile::advance(size_t shift) {
 
   if (m_current_frame >= n_frames()) {
     m_reader.reset();
-    m_xdr.reset();
     m_buffer.clear();
     m_current_frame = 0;
     m_ahead_of_current_frame = 0;
     return;
   }
 
-  if (!m_xdr) {
-    m_xdr = std::make_unique<xdr::XdrHandle>(m_filename, xdr::XdrHandle::Mode::READ);
-    m_reader = std::make_unique<xdr::XtcReader>(*m_xdr);
+  if (!m_reader) {
+    m_reader = std::make_unique<xdr::XtcReader>(m_filename);
     m_buffer.resize(n_atoms() * 3);
   }
 

@@ -1,7 +1,5 @@
 #include "xmol/io/xdr/XtcWriter.h"
-#include "test_common.h"
 #include "xmol/Frame.h"
-#include "xmol/future/span.h"
 #include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/io/PdbInputFile.h"
 #include <gtest/gtest.h>
@@ -14,8 +12,7 @@ class XtcWriterTests : public Test {};
 
 TEST_F(XtcWriterTests, write_trajectory) {
   std::string filename = "temp.xtc";
-  XdrHandle xdr(filename, XdrHandle::Mode::WRITE);
-  XtcWriter writer(xdr);
+  XtcWriter writer(filename);
 
   Frame frame = io::PdbInputFile("pdb/rcsb/1PGB.pdb").frames()[0];
   for (int i = 0; i < 10; i++) {

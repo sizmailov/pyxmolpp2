@@ -10,8 +10,7 @@ class XdrReaderTests : public Test {};
 
 TEST_F(XdrReaderTests, sound) {
   std::string filename = "gromacs/xtc/1am7_corrected.xtc";
-  XdrHandle xdr(filename, XdrHandle::Mode::READ);
-  XtcReader reader(xdr);
+  XtcReader reader(filename);
   XtcHeader header{};
   std::array<float, 9> box{};
   std::vector<float> coords{};

@@ -31,7 +31,7 @@ struct XtcHeader {
 
 class XtcReader {
 public:
-  explicit XtcReader(XdrHandle& xdr) : m_xdr(xdr) {}
+  explicit XtcReader(const std::string& filename) : m_xdr(filename, XdrHandle::Mode::READ) {}
 
   auto read_header(XtcHeader& header) -> Status;
   auto read_box(const future::Span<float>& box) -> Status;
@@ -40,7 +40,7 @@ public:
   [[nodiscard]] const char* last_error() const { return m_error_str; };
 
 private:
-  XdrHandle& m_xdr;
+  XdrHandle m_xdr;
   const char* m_error_str = "";
   std::vector<int> m_ip;
   std::vector<int> m_buf;

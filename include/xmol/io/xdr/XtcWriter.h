@@ -15,7 +15,7 @@ public:
 
 class XtcWriter {
 public:
-  explicit XtcWriter(XdrHandle& handle) : m_xdr(handle){};
+  explicit XtcWriter(const std::string& filename) : m_xdr(filename, XdrHandle::Mode::WRITE){};
   void write(xmol::Frame& frame, float precision);
   [[nodiscard]] const char* last_error() const { return m_error_str; };
 
@@ -23,7 +23,7 @@ private:
   [[nodiscard]] auto write_header(const XtcHeader& header) -> Status;
   [[nodiscard]] auto write_box(const future::Span<const float>& box) -> Status;
   [[nodiscard]] auto write_coords(const future::Span<const float>& flat_coords, float precision) -> Status;
-  XdrHandle& m_xdr;
+  XdrHandle m_xdr;
   const char* m_error_str = "";
   std::vector<int> m_ip;
   std::vector<int> m_buf;

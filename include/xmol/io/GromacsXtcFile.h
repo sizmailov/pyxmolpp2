@@ -27,7 +27,6 @@ public:
 private:
   std::string m_filename;
   std::unique_ptr<xdr::XtcReader> m_reader;
-  std::unique_ptr<xdr::XdrHandle> m_xdr;
   std::vector<float> m_buffer;
   int m_ahead_of_current_frame = 0;
   size_t m_current_frame = 0;
