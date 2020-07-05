@@ -43,3 +43,4 @@ Each section is essentially a self-contained python script augmented with commen
 - :ref:`Reorder atoms <std:doc:examples/reorder_atoms>`
 - :ref:`Torsion angle <std:doc:examples/torsion_angle>`
 - :ref:`AngleValue <std:doc:examples/angles>`
+- :ref:`Convert trajectory to xtc format <std:doc:examples/dat_to_xtc>`
