@@ -1,3 +1,4 @@
+#pragma once
 #include "XdrHandle.h"
 #include "xmol/future/span.h"
 #include <iostream>

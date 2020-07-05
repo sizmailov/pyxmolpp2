@@ -2,7 +2,7 @@
 #include "xmol/Frame.h"
 #include "xtc_routines.h"
 
-void xmol::io::xdr::XtcWriter::write(Frame& frame, float precision) {
+void xmol::io::xdr::XtcWriter::write(Frame& frame) {
   XtcHeader header{};
   header.n_atoms = frame.n_atoms();
   header.step = 0; // fixme
@@ -27,7 +27,7 @@ void xmol::io::xdr::XtcWriter::write(Frame& frame, float precision) {
   m_flat_coords.resize(3 * frame.n_atoms());
   CoordEigenMatrixMapf buffer_map(m_flat_coords.data(), frame.n_atoms(), 3);
   buffer_map = frame.coords()._eigen().cast<float>() / 10.0; // .xtc values in nanometers, convert from angstroms
-  if (!write_coords(future::Span<const float>(m_flat_coords.data(), m_flat_coords.size()), precision)) {
+  if (!write_coords(future::Span<const float>(m_flat_coords.data(), m_flat_coords.size()), m_precision)) {
     throw XtcWriteError(m_error_str);
   }
 }

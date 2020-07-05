@@ -11,6 +11,7 @@
 #include "geom/UnitCell.h"
 #include "geom/XYZ.h"
 #include "io/AmberNetCDF.h"
+#include "io/GromacsXtcFile.h"
 #include "io/PdbFile.h"
 #include "io/TrjtoolDatFile.h"
 #include "predicates/predicates.h"
@@ -62,6 +63,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   auto pyPdbInputFile = py::class_<io::PdbInputFile, trajectory::TrajectoryInputFile>(v1, "PdbFile", "PDB file");
   auto pyTrjtoolDatFile = py::class_<io::TrjtoolDatFile, trajectory::TrajectoryInputFile>(v1, "TrjtoolDatFile", "Trajtool trajectory file");
   auto pyAmberNetCDF = py::class_<io::AmberNetCDF, trajectory::TrajectoryInputFile>(v1, "AmberNetCDF", "Amber trajectory file");
+  auto pyGromacsXtc = py::class_<io::GromacsXtcFile, trajectory::TrajectoryInputFile>(v1, "GromacsXtcFile", "Gromacs binary `.xtc` input file");
+  auto pyXtcWriter = py::class_<io::xdr::XtcWriter>(v1, "XtcWriter", "Writes frames in `.xtc` binary format");
 
   py::implicitly_convertible<AtomSmartSpan,AtomSmartSelection>();
   py::implicitly_convertible<ResidueSmartSpan,ResidueSmartSelection>();
@@ -101,6 +104,8 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   populate(pyPdbInputFile);
   populate(pyTrjtoolDatFile);
   populate(pyAmberNetCDF);
+  populate(pyGromacsXtc);
+  populate(pyXtcWriter);
 
   define_algo_functions(v1);
   init_TorsionAngle(v1);
@@ -111,5 +116,7 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
   py::register_exception<CoordSelectionSizeMismatchError>(v1, "CoordSelectionSizeMismatchError");
   py::register_exception<xmol::trajectory::TrajectoryDoubleTraverseError>(v1, "TrajectoryDoubleTraverseError");
   py::register_exception<xmol::geom::GeomError>(v1, "GeomError");
+  py::register_exception<xmol::io::XtcReadError>(v1, "XtcReadError");
+  py::register_exception<xmol::io::XtcWriteError>(v1, "XtcWriteError");
   py::register_exception<xmol::utils::DeadObserverAccessError>(v1, "DeadObserverAccessError");
 }

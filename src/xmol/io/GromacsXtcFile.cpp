@@ -2,7 +2,7 @@
 
 xmol::io::GromacsXtcFile::GromacsXtcFile(std::string filename, size_t n_frames)
     : m_filename(std::move(filename)), m_n_frames(n_frames) {
-  xdr::XtcReader reader(filename);
+  xdr::XtcReader reader(m_filename);
   xdr::XtcHeader header{};
   reader.read_header(header);
   m_n_atoms = header.n_atoms;

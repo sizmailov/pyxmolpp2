@@ -23,6 +23,9 @@ XdrHandle::XdrHandle(const std::string& path, XdrHandle::Mode mode) : m_mode(mod
     break;
   }
   m_file = std::fopen(path.c_str(), mode_str);
+  if (!m_file){
+    throw std::runtime_error("Can't open `" + path + "` in `" + mode_str + "` mode");
+  }
   xdrstdio_create(&m_xdr, m_file, op);
 }
 

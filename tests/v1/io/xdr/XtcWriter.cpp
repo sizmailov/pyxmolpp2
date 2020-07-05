@@ -12,12 +12,12 @@ class XtcWriterTests : public Test {};
 
 TEST_F(XtcWriterTests, write_trajectory) {
   std::string filename = "temp.xtc";
-  XtcWriter writer(filename);
+  XtcWriter writer(filename, 1000);
 
   Frame frame = io::PdbInputFile("pdb/rcsb/1PGB.pdb").frames()[0];
   for (int i = 0; i < 10; i++) {
     frame.coords().apply(geom::affine::Translation3d(XYZ(0.5, 0, 0)));
     frame.cell.scale_by(1.2);
-    writer.write(frame, 1000);
+    writer.write(frame);
   }
 }
