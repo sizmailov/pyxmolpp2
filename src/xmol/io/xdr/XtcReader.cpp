@@ -34,10 +34,12 @@ auto XtcReader::read_box(const xmol::future::Span<float>& box) -> Status {
 }
 
 auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Status {
-  unsigned sizeint[3], sizesmall[3], bitsizeint[3];
+  std::array<unsigned int, 3> sizeint{}, sizesmall{}, bitsizeint{};
   int flag, k;
   int small, smaller, i, is_smaller, run;
-  int *thiscoord, prevcoord[3];
+  int* thiscoord;
+
+  std::array<int, 3> prevcoord{};
 
   int lsize;
   unsigned int bitsize;
@@ -66,8 +68,8 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
   m_ip.resize(flat_coords.size());
   m_buf.resize(flat_coords.size() * 1.2);
 
-  std::array<int, 3> minint;
-  std::array<int, 3> maxint;
+  std::array<int, 3> minint{};
+  std::array<int, 3> maxint{};
 
   if (!m_xdr.read(minint)) {
     return Status::ERROR;
@@ -87,7 +89,7 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
     bitsizeint[2] = sizeofint(sizeint[2]);
     bitsize = 0; /* flag the use of large sizes */
   } else {
-    bitsize = sizeofints(3, sizeint);
+    bitsize = sizeofints(3, sizeint.data());
   }
 
   int smallidx;
@@ -114,7 +116,7 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
 
   float* lfp = flat_coords.data();
   int* lip = m_ip.data();
-  inv_precision = 1.0 / precision;
+  inv_precision = 1.0f / precision;
   run = 0;
   i = 0;
   while (i < lsize) {
@@ -125,7 +127,7 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
       thiscoord[1] = receivebits(m_buf.data(), bitsizeint[1]);
       thiscoord[2] = receivebits(m_buf.data(), bitsizeint[2]);
     } else {
-      receiveints(m_buf.data(), 3, bitsize, sizeint, thiscoord);
+      receiveints(m_buf.data(), 3, (int)bitsize, sizeint.data(), thiscoord);
     }
 
     i++;
@@ -148,7 +150,7 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
     if (run > 0) {
       thiscoord += 3;
       for (k = 0; k < run; k += 3) {
-        receiveints(m_buf.data(), 3, smallidx, sizesmall, thiscoord);
+        receiveints(m_buf.data(), 3, smallidx, sizesmall.data(), thiscoord);
         i++;
         thiscoord[0] += prevcoord[0] - small;
         thiscoord[1] += prevcoord[1] - small;
@@ -169,14 +171,14 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
           prevcoord[1] = thiscoord[1];
           prevcoord[2] = thiscoord[2];
         }
-        *lfp++ = thiscoord[0] * inv_precision;
-        *lfp++ = thiscoord[1] * inv_precision;
-        *lfp++ = thiscoord[2] * inv_precision;
+        *lfp++ = static_cast<float>(thiscoord[0]) * inv_precision;
+        *lfp++ = static_cast<float>(thiscoord[1]) * inv_precision;
+        *lfp++ = static_cast<float>(thiscoord[2]) * inv_precision;
       }
     } else {
-      *lfp++ = thiscoord[0] * inv_precision;
-      *lfp++ = thiscoord[1] * inv_precision;
-      *lfp++ = thiscoord[2] * inv_precision;
+      *lfp++ = static_cast<float>(thiscoord[0]) * inv_precision;
+      *lfp++ = static_cast<float>(thiscoord[1]) * inv_precision;
+      *lfp++ = static_cast<float>(thiscoord[2]) * inv_precision;
     }
     smallidx += is_smaller;
     if (is_smaller < 0) {
