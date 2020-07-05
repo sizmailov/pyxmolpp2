@@ -38,12 +38,12 @@ TEST_F(GromacsXtcTrajectoryFileTests, trajectory) {
 
   auto first = traj.at(0);
   for (int i = 0; i < first.atoms().size(); i++) {
-    ASSERT_LE((first.atoms()[i].r() * 10).distance(first_and_last[0].atoms()[i].r()), 1e-3)
+    ASSERT_LE((first.atoms()[i].r()).distance(first_and_last[0].atoms()[i].r()), 1e-3)
         << first.atoms()[i].r() << " vs. " << first_and_last[0].atoms()[i].r();
   }
   auto last = traj.at(50);
   for (int i = 0; i < last.atoms().size(); i++) {
-    ASSERT_LE((last.atoms()[i].r() * 10).distance(first_and_last[1].atoms()[i].r()), 1e-3)
+    ASSERT_LE((last.atoms()[i].r()).distance(first_and_last[1].atoms()[i].r()), 1e-3)
         << last.atoms()[i].r() << " vs. " << first_and_last[1].atoms()[i].r();
   }
 }

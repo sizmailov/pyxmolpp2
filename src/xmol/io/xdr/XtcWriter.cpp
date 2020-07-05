@@ -11,14 +11,14 @@ void xmol::io::xdr::XtcWriter::write(Frame& frame, float precision) {
     throw XtcWriteError(m_error_str);
   }
   std::array<const float, 9> box{
-      static_cast<float>(frame.cell[0].x()), static_cast<float>(frame.cell[0].y()),
+      static_cast<float>(frame.cell[0].x()) / 10, static_cast<float>(frame.cell[0].y()) / 10,
       static_cast<float>(frame.cell[0].z()),
 
-      static_cast<float>(frame.cell[1].x()), static_cast<float>(frame.cell[1].y()),
-      static_cast<float>(frame.cell[1].z()),
+      static_cast<float>(frame.cell[1].x()) / 10, static_cast<float>(frame.cell[1].y()) / 10,
+      static_cast<float>(frame.cell[1].z()) / 10,
 
-      static_cast<float>(frame.cell[2].x()), static_cast<float>(frame.cell[2].y()),
-      static_cast<float>(frame.cell[2].z()),
+      static_cast<float>(frame.cell[2].x()) / 10, static_cast<float>(frame.cell[2].y()) / 10,
+      static_cast<float>(frame.cell[2].z()) / 10,
   };
 
   if (!write_box(box)) {
@@ -26,7 +26,7 @@ void xmol::io::xdr::XtcWriter::write(Frame& frame, float precision) {
   }
   m_flat_coords.resize(3 * frame.n_atoms());
   CoordEigenMatrixMapf buffer_map(m_flat_coords.data(), frame.n_atoms(), 3);
-  buffer_map = frame.coords()._eigen().cast<float>();
+  buffer_map = frame.coords()._eigen().cast<float>() / 10.0; // .xtc values in nanometers, convert from angstroms
   if (!write_coords(future::Span<const float>(m_flat_coords.data(), m_flat_coords.size()), precision)) {
     throw XtcWriteError(m_error_str);
   }

@@ -36,7 +36,7 @@ void xmol::io::GromacsXtcFile::read_coordinates(size_t index, xmol::proxy::Coord
   }
 
   CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
-  coordinates._eigen() = buffer_map.cast<double>();
+  coordinates._eigen() = buffer_map.cast<double>() * 10; // .xtc values in nanometers, convert to angstroms
 
   m_ahead_of_current_frame = 1;
 }
