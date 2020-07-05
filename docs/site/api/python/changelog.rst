@@ -8,9 +8,13 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
+next:
+  - Removed: ``Trajectory.Frame``
+  - New: Added :ref:`Frame.index`, :ref:`Frame.time` (note: time is not read from trajectory files (yet))
+
 v1.2:
   - New: Support for ``.xtc`` trajectory format (see :ref:`GromacsXtcFile`, :ref:`XtcWriter`)
-  - New: Added :ref:``Atom.vdw_radius`` property
+  - New: Added :ref:`Atom.vdw_radius` property
 
 v1.1:
   - New: Trajectory reads :ref:`Frame.cell` from input formats (:ref:`AmberNetCDF` | :ref:`PdbFile`)
