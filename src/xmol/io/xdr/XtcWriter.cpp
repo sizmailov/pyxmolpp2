@@ -5,8 +5,8 @@
 void xmol::io::xdr::XtcWriter::write(Frame& frame) {
   XtcHeader header{};
   header.n_atoms = frame.n_atoms();
-  header.step = 0; // fixme
-  header.time = 0; // fixme
+  header.step = frame.index;
+  header.time = static_cast<float>(frame.time);
   if (!write_header(header)) {
     throw XtcWriteError(m_error_str);
   }
