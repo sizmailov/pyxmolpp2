@@ -2,6 +2,84 @@
 
 namespace xmol::io::xdr::xtc {
 
+void sendints(int buf[], const int num_of_ints, const int num_of_bits, unsigned int sizes[],
+                     unsigned int nums[]) {
+
+  int i;
+  unsigned int bytes[32], num_of_bytes, bytecnt, tmp;
+
+  tmp = nums[0];
+  num_of_bytes = 0;
+  do {
+    bytes[num_of_bytes++] = tmp & 0xff;
+    tmp >>= 8;
+  } while (tmp != 0);
+
+  for (i = 1; i < num_of_ints; i++) {
+    if (nums[i] >= sizes[i]) {
+      fprintf(stderr,
+              "major breakdown in sendints num %d doesn't "
+              "match size %d\n",
+              nums[i], sizes[i]);
+      exit(1);
+    }
+    /* use one step multiply */
+    tmp = nums[i];
+    for (bytecnt = 0; bytecnt < num_of_bytes; bytecnt++) {
+      tmp = bytes[bytecnt] * sizes[i] + tmp;
+      bytes[bytecnt] = tmp & 0xff;
+      tmp >>= 8;
+    }
+    while (tmp != 0) {
+      bytes[bytecnt++] = tmp & 0xff;
+      tmp >>= 8;
+    }
+    num_of_bytes = bytecnt;
+  }
+  if (num_of_bits >= num_of_bytes * 8) {
+    for (i = 0; i < num_of_bytes; i++) {
+      sendbits(buf, 8, bytes[i]);
+    }
+    sendbits(buf, num_of_bits - num_of_bytes * 8, 0);
+  } else {
+    for (i = 0; i < num_of_bytes - 1; i++) {
+      sendbits(buf, 8, bytes[i]);
+    }
+    sendbits(buf, num_of_bits - (num_of_bytes - 1) * 8, bytes[i]);
+  }
+}
+
+void sendbits(int buf[], int num_of_bits, int num) {
+
+  unsigned int cnt, lastbyte;
+  int lastbits;
+  unsigned char* cbuf;
+
+  cbuf = ((unsigned char*)buf) + 3 * sizeof(*buf);
+  cnt = (unsigned int)buf[0];
+  lastbits = buf[1];
+  lastbyte = (unsigned int)buf[2];
+  while (num_of_bits >= 8) {
+    lastbyte = (lastbyte << 8) | ((num >> (num_of_bits - 8)) /* & 0xff*/);
+    cbuf[cnt++] = lastbyte >> lastbits;
+    num_of_bits -= 8;
+  }
+  if (num_of_bits > 0) {
+    lastbyte = (lastbyte << num_of_bits) | num;
+    lastbits += num_of_bits;
+    if (lastbits >= 8) {
+      lastbits -= 8;
+      cbuf[cnt++] = lastbyte >> lastbits;
+    }
+  }
+  buf[0] = cnt;
+  buf[1] = lastbits;
+  buf[2] = lastbyte;
+  if (lastbits > 0) {
+    cbuf[cnt] = lastbyte << (8 - lastbits);
+  }
+}
+
 int receivebits(int buf[], int num_of_bits) {
 
   int cnt, num;

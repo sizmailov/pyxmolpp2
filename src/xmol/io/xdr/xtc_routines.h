@@ -11,6 +11,37 @@
 
 namespace xmol::io::xdr::xtc {
 
+/*____________________________________________________________________________
+ |
+ | sendints - send a small set of small integers in compressed format
+ |
+ | this routine is used internally by xdr3dfcoord, to send a set of
+ | small integers to the buffer.
+ | Multiplication with fixed (specified maximum ) sizes is used to get
+ | to one big, multibyte integer. Allthough the routine could be
+ | modified to handle sizes bigger than 16777216, or more than just
+ | a few integers, this is not done, because the gain in compression
+ | isn't worth the effort. Note that overflowing the multiplication
+ | or the byte buffer (32 bytes) is unchecked and causes bad results.
+ |
+ */
+
+void sendints(int buf[], const int num_of_ints, const int num_of_bits,
+                     unsigned int sizes[], unsigned int nums[]);
+
+/*____________________________________________________________________________
+ |
+ | sendbits - encode num into buf using the specified number of bits
+ |
+ | This routines appends the value of num to the bits already present in
+ | the array buf. You need to give it the number of bits to use and you
+ | better make sure that this number of bits is enough to hold the value
+ | Also num must be positive.
+ |
+*/
+
+void sendbits(int buf[], int num_of_bits, int num);
+
 /**__________________________________________________________________________
  |
  | receivebits - decode number from buf using specified number of bits
@@ -65,5 +96,7 @@ int sizeofints(const int num_of_ints, unsigned int sizes[]);
     4194304, 5284491, 6658042, 8388607, 10568983, 13316085, 16777216};
 
 [[maybe_unused]] constexpr int FIRSTIDX = 9;
+
+constexpr int SQR(int x) { return x * x; };
 
 } // namespace xmol::io::xdr::xtc
