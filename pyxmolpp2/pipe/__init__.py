@@ -18,7 +18,7 @@ class ProcessedTrajectory:
 
 
 class Align:
-    def __init__(self, by: AtomPredicate, reference: Trajectory.Frame = None, move_only: AtomPredicate = None):
+    def __init__(self, by: AtomPredicate, reference: Frame = None, move_only: AtomPredicate = None):
         self.by = by
         self.reference = reference
         self.move_only = move_only
@@ -26,12 +26,12 @@ class Align:
         self.moved_coords = None
         self.ref_coords = None
 
-    def __ror__(self, trajectory: Sequence[Trajectory.Frame]):
+    def __ror__(self, trajectory: Sequence[Frame]):
         if self.reference is None:
             self.reference = trajectory[0]
         return ProcessedTrajectory(trajectory, self)
 
-    def __call__(self, frame: Trajectory.Frame):
+    def __call__(self, frame: Frame):
         if self.frame_coords is None:
             self.frame_coords = frame.atoms.filter(self.by).coords
             self.ref_coords = self.reference.atoms.filter(self.by).coords
@@ -48,10 +48,10 @@ class ScaleUnitCell:
         import numpy as np
         self.volume = np.genfromtxt(summary_volume_filename, usecols=[1])
 
-    def __ror__(self, trajectory: Sequence[Trajectory.Frame]):
+    def __ror__(self, trajectory: Sequence[Frame]):
         return ProcessedTrajectory(trajectory, self)
 
-    def __call__(self, frame: Trajectory.Frame):
+    def __call__(self, frame: Frame):
         assert frame.index < len(self.volume), "Frame index is greater than supplied volume array"
         frame.cell.scale_to_volume(self.volume[frame.index])
 
@@ -67,7 +67,7 @@ class AssembleQuaternaryStructure:
         self.molecules_coords: List[CoordSelection] = []
         self.reference_mean_coords: List[XYZ] = []
 
-    def __ror__(self, trajectory: Sequence[Trajectory.Frame]):
+    def __ror__(self, trajectory: Sequence[Frame]):
         if self.reference is None:
             self.reference = trajectory[0]
         mols = self.reference.molecules.filter(self.molecules_selector)

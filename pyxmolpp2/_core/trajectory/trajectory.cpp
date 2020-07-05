@@ -28,7 +28,6 @@ public:
 
 void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
   auto&& pyTrajectoryIterator = py::class_<Trajectory::Iterator>(pyTrajectory, "Iterator");
-  auto&& pyTrajectoryFrame = py::class_<Trajectory::Frame, Frame>(pyTrajectory, "Frame");
   auto&& pyTrajectorySlice = py::class_<Trajectory::Slice>(pyTrajectory, "Slice");
 
   pyTrajectory.def(py::init<Frame>())
@@ -46,7 +45,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
       .def_property_readonly("size", &Trajectory::n_frames, "Number of frames")
       .def("__len__", &Trajectory::n_frames)
       .def("__getitem__",
-           [](Trajectory& trj, int idx) -> Trajectory::Frame {
+           [](Trajectory& trj, int idx) -> Frame {
              int i = idx;
              if (i < 0) {
                i += trj.n_frames();
@@ -78,7 +77,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
       py::keep_alive<0, 1>())
       .def("__len__", &Trajectory::Slice::size)
       .def("__getitem__",
-           [](Trajectory::Slice& self, int idx) -> Trajectory::Frame {
+           [](Trajectory::Slice& self, int idx) -> Frame {
              int i = idx;
              if (i < 0) {
                i += self.size();
@@ -88,8 +87,6 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
              }
              return self.at(i);
            });
-
-  pyTrajectoryFrame.def_readonly("index", &Trajectory::Frame::index, "Zero-based index in trajectory");
 }
 
 void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFile>& pyTrajectoryInputFile) {

@@ -7,6 +7,8 @@
 
 namespace xmol {
 
+using FrameIndex = int32_t;
+
 /// Molecular frame, owns all molecular data
 class Frame : public utils::Observable<proxy::smart::AtomSmartRef>,
               public utils::Observable<proxy::smart::ResidueSmartRef>,
@@ -98,6 +100,8 @@ public:
   std::optional<proxy::MoleculeRef> operator[](const char* name);
 
   geom::UnitCell cell = geom::UnitCell(XYZ(1, 0, 0), XYZ(0, 1, 0), XYZ(0, 0, 1));
+  FrameIndex index = 0; /// Sequential index in trajectory
+  double time = 0;      /// Time point in trajectory, a.u.
 
 private:
   BaseResidue& add_residue(BaseMolecule& mol);

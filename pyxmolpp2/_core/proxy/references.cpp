@@ -23,6 +23,8 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
       .def_property_readonly("residues", [](SRef& ref) { return ref.residues().smart(); })
       .def_property_readonly("molecules", [](SRef& ref) { return ref.molecules().smart(); })
       .def_readwrite("cell", &SRef::cell)
+      .def_readwrite("index", &SRef::index, "Zero-based index in trajectory")
+      .def_readwrite("time", &SRef::time, "Time point in trajectory, a.u.")
       .def("add_molecule", [](SRef& ref) { return ref.add_molecule().smart(); })
       .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
       .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))

@@ -5,7 +5,6 @@
 /// MD trajectory classes and utilites
 namespace xmol::trajectory {
 
-using FrameIndex = int32_t;
 
 class TrajectoryDoubleTraverseError : public std::runtime_error {
 public:
@@ -24,16 +23,6 @@ class Trajectory {
   };
 
 public:
-  class Frame : public xmol::Frame {
-  public:
-    Frame() = default;
-    Frame(Frame&&) = default;
-    Frame(const Frame&) = default;
-    Frame& operator=(Frame&&) = default;
-    Frame& operator=(const Frame&) = default;
-    explicit Frame(xmol::Frame frame) : xmol::Frame(std::move(frame)), index(0){};
-    FrameIndex index = 0;
-  };
 
   struct Sentinel {};
 
@@ -98,7 +87,7 @@ public:
     Iterator begin() { return Iterator(m_traj, m_begin, m_end, m_step); }
     Sentinel end() { return {}; }
 
-    Trajectory::Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
+    Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
     size_t size() const {
       if (m_begin.global_pos >= m_end) {
         return 0;
@@ -138,7 +127,7 @@ public:
   Iterator begin() { return Iterator(*this, Position{0, 0, 0}, n_frames(), 1); }
   Sentinel end() { return {}; }
 
-  Trajectory::Frame at(size_t i) { return *slice(i, i + 1, 1).begin(); }
+  Frame at(size_t i) { return *slice(i, i + 1, 1).begin(); }
 
   /// Slice of trajectory
   Slice slice(std::optional<size_t> begin = {}, std::optional<size_t> end = {}, size_t step = 1);
