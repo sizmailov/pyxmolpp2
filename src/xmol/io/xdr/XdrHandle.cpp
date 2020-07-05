@@ -5,6 +5,9 @@
 using namespace xmol::io::xdr;
 
 auto XdrHandle::read_opaque(char* cp, unsigned int cnt) -> Status { return Status(xdr_opaque(&m_xdr, cp, cnt)); }
+auto XdrHandle::write_opaque(const char* cp, unsigned int cnt) -> Status {
+  return Status(xdr_opaque(&m_xdr, const_cast<char*>(cp), cnt));
+}
 
 XdrHandle::XdrHandle(const std::string& path, XdrHandle::Mode mode) : m_mode(mode) {
   const char* mode_str = "rb";
@@ -15,8 +18,8 @@ XdrHandle::XdrHandle(const std::string& path, XdrHandle::Mode mode) : m_mode(mod
     op = xdr_op::XDR_DECODE;
     break;
   case Mode::WRITE:
-    op = xdr_op::XDR_ENCODE;
     mode_str = "wb";
+    op = xdr_op::XDR_ENCODE;
     break;
   }
   m_file = std::fopen(path.c_str(), mode_str);

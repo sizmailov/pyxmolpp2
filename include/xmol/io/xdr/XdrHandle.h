@@ -31,19 +31,20 @@ public:
     std::fclose(m_file);
   }
 
-  auto read_opaque(char* cp, unsigned int cnt) -> Status;
+  [[nodiscard]] auto read_opaque(char* cp, unsigned int cnt) -> Status;
+  [[nodiscard]] auto write_opaque(const char* cp, unsigned int cnt) -> Status;
 
-  auto read(int& value) -> Status;
-  auto write(const int& value) -> Status;
+  [[nodiscard]] auto read(int& value) -> Status;
+  [[nodiscard]] auto write(const int& value) -> Status;
 
-  auto read(float& value) -> Status;
-  auto write(const float& value) -> Status;
+  [[nodiscard]] auto read(float& value) -> Status;
+  [[nodiscard]] auto write(const float& value) -> Status;
 
-  auto read(const future::Span<float>& value) -> Status;
-  auto write(const future::Span<const float>& value) -> Status;
+  [[nodiscard]] auto read(const future::Span<float>& value) -> Status;
+  [[nodiscard]] auto write(const future::Span<const float>& value) -> Status;
 
-  auto read(const future::Span<int>& value) -> Status;
-  auto write(const future::Span<const int>& value) -> Status;
+  [[nodiscard]] auto read(const future::Span<int>& value) -> Status;
+  [[nodiscard]] auto write(const future::Span<const int>& value) -> Status;
 
 private:
   XDR m_xdr;

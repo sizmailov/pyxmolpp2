@@ -58,7 +58,10 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
   }
   float precision;
 
-  m_xdr.read(precision);
+  if (!m_xdr.read(precision)) {
+    m_error_str = "Can't read precision";
+    return Status::ERROR;
+  }
 
   m_ip.resize(flat_coords.size());
   m_buf.resize(flat_coords.size() * 1.2);
@@ -88,7 +91,10 @@ auto XtcReader::read_coords(const xmol::future::Span<float>& flat_coords) -> Sta
   }
 
   int smallidx;
-  m_xdr.read(smallidx);
+  if (!m_xdr.read(smallidx)){
+    m_error_str = "Can't read smallidx";
+    return Status::ERROR;
+  }
   smaller = magicints[std::max(FIRSTIDX, smallidx - 1)] / 2;
   small = magicints[smallidx] / 2;
   sizesmall[0] = sizesmall[1] = sizesmall[2] = magicints[smallidx];
@@ -217,7 +223,9 @@ auto XtcReader::advance(size_t n_frames) -> Status {
     }
 
     float precision;
-    m_xdr.read(precision); // precision
+    if (!m_xdr.read(precision)) {
+      return Status::ERROR;
+    }
 
     m_ip.resize(lsize);
     m_buf.resize(lsize * 1.2);

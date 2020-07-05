@@ -37,11 +37,11 @@ public:
   auto read_box(const future::Span<float>& box) -> Status;
   auto read_coords(const future::Span<float>& flat_coords) -> Status;
   auto advance(size_t n_frames) -> Status; /// Skip n_frame frames
-  const char* last_error() const { return m_error_str; };
+  [[nodiscard]] const char* last_error() const { return m_error_str; };
 
 private:
   XdrHandle& m_xdr;
-  const char* m_error_str;
+  const char* m_error_str = "";
   std::vector<int> m_ip;
   std::vector<int> m_buf;
 };
