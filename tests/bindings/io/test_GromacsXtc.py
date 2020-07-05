@@ -14,7 +14,7 @@ def test_read_one_file():
     assert inp.n_frames() == 51
     assert inp.n_atoms() == frame.atoms.size
     inp.advance(0)
-    inp.read_coordinates(0, frame.coords)
+    inp.read_frame(0, frame.coords, frame.cell)
 
 
 def test_writer():
@@ -27,4 +27,4 @@ def test_writer():
         frame.coords.apply(Translation(XYZ(1, 0, 0)))
         xtc_writer.write(frame)
     del xtc_writer
-    os.remove("text.xtc")
+    os.remove("test.xtc")

@@ -9,8 +9,7 @@ class PyTrajectoryInputFile : public xmol::trajectory::TrajectoryInputFile {
 public:
   [[nodiscard]] size_t n_frames() const override;
   [[nodiscard]] size_t n_atoms() const override;
-  void read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) override;
-  xmol::geom::UnitCell read_unit_cell(size_t index, const xmol::geom::UnitCell& previous) override;
+  void read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, xmol::geom::UnitCell& previous) override;
   void advance(size_t shift) override;
 };
 

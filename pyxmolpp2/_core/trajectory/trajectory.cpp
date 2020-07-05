@@ -19,13 +19,10 @@ public:
   [[nodiscard]] size_t n_frames() const final { return ptr->n_frames(); }
   [[nodiscard]] size_t n_atoms() const final { return ptr->n_atoms(); }
 
-  void read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) final {
-    ptr->read_coordinates(index, coordinates);
+  void read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, xmol::geom::UnitCell& cell) final {
+    ptr->read_frame(index, coordinates, cell);
   }
   void advance(size_t shift) final { ptr->advance(shift); }
-  geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& previous) final {
-    return ptr->read_unit_cell(index, previous);
-  }
 };
 } // namespace
 
@@ -99,12 +96,13 @@ void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFil
   pyTrajectoryInputFile.def(py::init<>());
 }
 
-void pyxmolpp::v1::PyTrajectoryInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
+void pyxmolpp::v1::PyTrajectoryInputFile::read_frame(size_t index, proxy::CoordSpan& coordinates,
+                                                     geom::UnitCell& cell) {
   auto smart_coords = coordinates.smart();
-  PYBIND11_OVERLOAD_PURE(void,                /* Return type */
-                         TrajectoryInputFile, /* Parent class */
-                         read_coordinates,    /* Name of function in C++ (must match Python name) */
-                         index, smart_coords  /* Arguments */
+  PYBIND11_OVERLOAD_PURE(void,                     /* Return type */
+                         TrajectoryInputFile,      /* Parent class */
+                         read_frame,               /* Name of function in C++ (must match Python name) */
+                         index, smart_coords, cell /* Arguments */
   );
 }
 
@@ -127,12 +125,5 @@ void pyxmolpp::v1::PyTrajectoryInputFile::advance(size_t shift) {
                          TrajectoryInputFile, /* Parent class */
                          advance,             /* Name of function in C++ (must match Python name) */
                          shift                /* Argument */
-  );
-}
-xmol::geom::UnitCell pyxmolpp::v1::PyTrajectoryInputFile::read_unit_cell(size_t index, const geom::UnitCell& previous) {
-  PYBIND11_OVERLOAD_PURE(xmol::geom::UnitCell, /* Return type */
-                         TrajectoryInputFile,  /* Parent class */
-                         read_unit_cell,       /* Name of function in C++ (must match Python name) */
-                         index, previous       /* Arguments */
   );
 }

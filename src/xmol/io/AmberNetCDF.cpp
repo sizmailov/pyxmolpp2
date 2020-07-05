@@ -65,17 +65,33 @@ std::string AmberNetCDF::read_global_string_attr(const char* name) {
 
 size_t xmol::io::AmberNetCDF::n_frames() const { return m_n_frames; }
 size_t xmol::io::AmberNetCDF::n_atoms() const { return m_n_atoms; }
-void xmol::io::AmberNetCDF::read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) {
+void xmol::io::AmberNetCDF::read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, geom::UnitCell& cell) {
   this->open();
-  m_buffer.resize(n_atoms() * 3);
+  {
+    m_buffer.resize(n_atoms() * 3);
 
-  size_t start[] = {static_cast<size_t>(m_current_frame), 0, 0};
-  size_t count[] = {1, static_cast<size_t>(n_atoms()), 3};
+    size_t start[] = {static_cast<size_t>(m_current_frame), 0, 0};
+    size_t count[] = {1, static_cast<size_t>(n_atoms()), 3};
 
-  check_netcdf_call(nc_get_vara_float(m_ncid, m_coords_id, start, count, m_buffer.data()), NC_NOERR,
-                    "nc_get_vara_float");
-  CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
-  coordinates._eigen() = buffer_map.cast<double>();
+    check_netcdf_call(nc_get_vara_float(m_ncid, m_coords_id, start, count, m_buffer.data()), NC_NOERR,
+                      "nc_get_vara_float");
+    CoordEigenMatrixMapf buffer_map(m_buffer.data(), n_atoms(), 3);
+    coordinates._eigen() = buffer_map.cast<double>();
+  }
+
+  if (m_has_cell) {
+    float lengths[3];
+    float angles[3];
+    size_t start[] = {static_cast<size_t>(m_current_frame), 0};
+    size_t count[] = {1, 3};
+
+    check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_lengths_id, start, count, lengths), NC_NOERR,
+                      "nc_get_vara_float");
+    check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_angles_id, start, count, angles), NC_NOERR, "nc_get_vara_float");
+
+    cell = geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
+                   geom::Degrees(angles[2]));
+  }
 }
 
 void xmol::io::AmberNetCDF::advance(size_t shift) {
@@ -113,20 +129,4 @@ void AmberNetCDF::read_header() {
   auto cell_angles_status = nc_inq_varid(m_ncid, "cell_angles", &m_cell_angles_id);
 
   m_has_cell = cell_length_status == NC_NOERR && cell_angles_status == NC_NOERR;
-}
-
-xmol::geom::UnitCell AmberNetCDF::read_unit_cell(size_t index, const geom::UnitCell& previous) {
-  if (!m_has_cell) {
-    return previous;
-  }
-  float lengths[3];
-  float angles[3];
-  size_t start[] = {static_cast<size_t>(m_current_frame), 0};
-  size_t count[] = {1, 3};
-
-  check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_lengths_id, start, count, lengths), NC_NOERR, "nc_get_vara_float");
-  check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_angles_id, start, count, angles), NC_NOERR, "nc_get_vara_float");
-
-  return geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
-                        geom::Degrees(angles[2]));
 }

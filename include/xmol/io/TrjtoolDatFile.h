@@ -21,9 +21,8 @@ public:
   explicit TrjtoolDatFile(std::string filename);
   [[nodiscard]] size_t n_frames() const final;
   [[nodiscard]] size_t n_atoms() const final;
-  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void read_frame(size_t index, proxy::CoordSpan& coordinates, geom::UnitCell& /* ignored */) final;
   void advance(size_t shift) final;
-  [[nodiscard]] geom::UnitCell read_unit_cell(size_t, const geom::UnitCell& previous) final;; /// .dat files does not have about unit cell info
 
 private:
   std::string m_filename;

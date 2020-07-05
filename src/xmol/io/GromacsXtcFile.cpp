@@ -10,7 +10,8 @@ xmol::io::GromacsXtcFile::GromacsXtcFile(std::string filename, size_t n_frames)
 size_t xmol::io::GromacsXtcFile::n_frames() const { return m_n_frames; }
 size_t xmol::io::GromacsXtcFile::n_atoms() const { return m_n_atoms; }
 
-void xmol::io::GromacsXtcFile::read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) {
+void xmol::io::GromacsXtcFile::read_frame(size_t index, xmol::proxy::CoordSpan& coordinates,
+                                          xmol::geom::UnitCell& cell) {
   assert(m_reader);
   assert(m_current_frame == index);
   assert(m_buffer.size() == n_atoms() * 3);
@@ -18,7 +19,6 @@ void xmol::io::GromacsXtcFile::read_coordinates(size_t index, xmol::proxy::Coord
 
   xdr::XtcHeader header{};
   std::array<float, 9> box{};
-
 
   auto status = xdr::Status::OK;
   status &= m_reader->read_header(header);
@@ -28,6 +28,9 @@ void xmol::io::GromacsXtcFile::read_coordinates(size_t index, xmol::proxy::Coord
       status &= m_reader->read_coords(m_buffer);
     }
   }
+
+  cell = xmol::geom::UnitCell(XYZ(box[0], box[1], box[2]) * 10, XYZ(box[3], box[4], box[5]) * 10,
+                              XYZ(box[6], box[7], box[8]) * 10); // convert nanometers to angstroms
 
   if (!status) {
     throw XtcReadError("Can't read frame #" + std::to_string(index) + ": " + std::string(m_reader->last_error()));

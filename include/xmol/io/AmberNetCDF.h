@@ -20,9 +20,8 @@ public:
 
   size_t n_frames() const final;
   size_t n_atoms() const final;
-  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void read_frame(size_t index, proxy::CoordSpan& coordinates, geom::UnitCell& cell) final;
   void advance(size_t shift) final;
-  [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& previous) final;
 
   bool has_cell() const { return m_has_cell; }
 

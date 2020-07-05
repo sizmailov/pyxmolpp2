@@ -20,9 +20,8 @@ public:
 
   [[nodiscard]] size_t n_frames() const final;
   [[nodiscard]] size_t n_atoms() const final;
-  void read_coordinates(size_t index, proxy::CoordSpan& coordinates) final;
+  void read_frame(size_t index, proxy::CoordSpan& coordinates, geom::UnitCell& cell) final;
   void advance(size_t shift) final;
-  [[nodiscard]] geom::UnitCell read_unit_cell(size_t index, const geom::UnitCell& cell) final { return cell; }
 
 private:
   std::string m_filename;

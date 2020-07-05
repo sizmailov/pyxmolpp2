@@ -15,11 +15,12 @@ public:
   /// Number of atoms per frame
   [[nodiscard]] virtual size_t n_atoms() const = 0;
 
-  /** Read @p index 'th  frame into @p coordinates
+  /** Read @p index 'th  frame into coordinates
    *
-   * Precondition: @p index must match current position of internal data pointer
+   * Note: trajectory without cell info should ignore `cell` argument.
+   * Precondition: index must match current position of internal data pointer
    * */
-  virtual void read_coordinates(size_t index, xmol::proxy::CoordSpan& coordinates) = 0;
+  virtual void read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, xmol::geom::UnitCell& cell) = 0;
 
   /** Advance internal data pointer by @p shift frames and be prepared to read coordinates
    *
@@ -29,12 +30,6 @@ public:
    * */
   virtual void advance(size_t shift) = 0;
 
-  /** Read unit cell at `index`.
-   *
-   * Input value of `previous` corresponds to value from another frame (not necessarily preceding to this one)
-   * Precondition: `index` must match current position of internal data pointer
-   * */
-  [[nodiscard]] virtual xmol::geom::UnitCell read_unit_cell(size_t index, const xmol::geom::UnitCell& previous) = 0;
 };
 
 } // namespace xmol::trajectory

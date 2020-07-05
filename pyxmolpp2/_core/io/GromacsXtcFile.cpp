@@ -12,9 +12,9 @@ void pyxmolpp::v1::populate(py::class_<GromacsXtcFile, xmol::trajectory::Traject
       .def("n_frames", &GromacsXtcFile::n_frames, "Number of frames")
       .def("n_atoms", &GromacsXtcFile::n_atoms, "Number of atoms per frame")
       .def(
-          "read_coordinates",
-          [](GromacsXtcFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
-          py::arg("index"), py::arg("coords"), "Assign `index` frame coordinates to `coords`")
+          "read_frame",
+          [](GromacsXtcFile& self, size_t index, CoordSmartSpan& span, xmol::geom::UnitCell& cell) { self.read_frame(index, span, cell); },
+          py::arg("index"), py::arg("coords"), py::arg("cell"), "Assign `index` frame coordinates to `coords`")
       .def("advance", &GromacsXtcFile::advance, py::arg("shift"), "Shift internal pointer by `shift`");
   ;
 }

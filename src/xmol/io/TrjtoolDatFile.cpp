@@ -21,7 +21,7 @@ TrjtoolDatFile::TrjtoolDatFile(std::string filename) : m_filename(std::move(file
 }
 size_t TrjtoolDatFile::n_frames() const { return m_n_frames; }
 size_t TrjtoolDatFile::n_atoms() const { return m_header.nitems; }
-void TrjtoolDatFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
+void TrjtoolDatFile::read_frame(size_t index, proxy::CoordSpan& coordinates, xmol::geom::UnitCell&) {
   assert(m_stream);
   assert(m_current_frame == index);
   assert(m_buffer.size() == n_atoms() * 3);
@@ -90,4 +90,3 @@ void TrjtoolDatFile::advance(size_t shift) {
   const std::streamoff frame_begin = sizeof(float) * m_header.nitems * m_header.ndim * m_current_frame;
   m_stream->seekg(m_offset + frame_begin, std::ios::beg);
 }
-xmol::geom::UnitCell TrjtoolDatFile::read_unit_cell(size_t, const xmol::geom::UnitCell& previous) { return previous; }

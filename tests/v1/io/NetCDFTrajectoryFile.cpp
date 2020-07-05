@@ -45,8 +45,7 @@ TEST_F(AmberNetCDFTrajectoryFileTests, read_coordinates_and_cell) {
     AmberNetCDF nc(nc_filename);
     EXPECT_TRUE(nc.has_cell());
     auto coords = frame.coords();
-    nc.read_coordinates(0, coords);
-    frame.cell = nc.read_unit_cell(0, frame.cell);
+    nc.read_frame(0, coords, frame.cell);
     EXPECT_LE(fabs(frame.cell.a() - 51.251), 1e-3);
     EXPECT_LE(fabs(frame.cell.b() - 51.251), 1e-3);
     EXPECT_LE(fabs(frame.cell.c() - 51.251), 1e-3);
@@ -58,9 +57,8 @@ TEST_F(AmberNetCDFTrajectoryFileTests, read_coordinates_and_cell) {
     AmberNetCDF nc(nve_nc_filename);
     EXPECT_TRUE(nc.has_cell());
     auto coords = nve_frame.coords();
-    nc.read_coordinates(0, coords);
     nve_frame.cell = geom::UnitCell::unit_cubic_cell();
-    nve_frame.cell = nc.read_unit_cell(0, nve_frame.cell);
+    nc.read_frame(0, coords, nve_frame.cell);
     EXPECT_LE(std::fabs(nve_frame.cell.volume() - 186679),  1);
   }
 }

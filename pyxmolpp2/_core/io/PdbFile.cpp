@@ -21,8 +21,10 @@ void pyxmolpp::v1::populate(py::class_<PdbInputFile, xmol::trajectory::Trajector
       .def("n_frames", &PdbInputFile::n_frames, "Number of frames")
       .def("n_atoms", &PdbInputFile::n_atoms, "Number of atoms in first frame")
       .def(
-          "read_coordinates",
-          [](PdbInputFile& self, size_t index, CoordSmartSpan& span) { self.read_coordinates(index, span); },
-          py::arg("index"), py::arg("coords"), "Assign `index` frame coordinates to `coords`")
+          "read_frame",
+          [](PdbInputFile& self, size_t index, CoordSmartSpan& span, xmol::geom::UnitCell& cell) {
+            self.read_frame(index, span, cell);
+          },
+          py::arg("index"), py::arg("coords"), py::arg("cell"), "Assign `index` frame coordinates to `coords`")
       .def("advance", &PdbInputFile::advance, "No-op");
 }

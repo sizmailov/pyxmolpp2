@@ -38,7 +38,7 @@ PdbInputFile& PdbInputFile::read() {
 
 size_t PdbInputFile::n_frames() const { return m_n_frames; }
 size_t PdbInputFile::n_atoms() const { return m_n_atoms; }
-void PdbInputFile::read_coordinates(size_t index, proxy::CoordSpan& coordinates) {
+void PdbInputFile::read_frame(size_t index, proxy::CoordSpan& coordinates, xmol::geom::UnitCell&) {
   assert(!m_frames.empty());
   assert(m_current_frame == index);
 
@@ -59,7 +59,4 @@ void PdbInputFile::advance(size_t shift) {
   if (m_frames.empty()) {
     read();
   }
-}
-xmol::geom::UnitCell PdbInputFile::read_unit_cell(size_t index, const xmol::geom::UnitCell& cell) {
-  return m_frames[index].cell;
 }
