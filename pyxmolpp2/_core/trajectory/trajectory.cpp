@@ -90,7 +90,15 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
 }
 
 void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFile>& pyTrajectoryInputFile) {
-  pyTrajectoryInputFile.def(py::init<>());
+  pyTrajectoryInputFile.def(py::init<>())
+      .def("n_frames", &TrajectoryInputFile::n_frames, "Number of frames")
+      .def("n_atoms", &TrajectoryInputFile::n_atoms, "Number of atoms per frame")
+      .def(
+          "read_frame",
+          [](TrajectoryInputFile& inputFile, size_t index, proxy::smart::CoordSmartSpan& coordinates,
+             geom::UnitCell& cell) -> void {},
+          py::arg("index"), py::arg("coords"), py::arg("cell"), "Read frame data at current data pointer position")
+      .def("advance", &TrajectoryInputFile::advance, "Shift internal data pointer", py::arg("shift"));
 }
 
 void pyxmolpp::v1::PyTrajectoryInputFile::read_frame(size_t index, proxy::CoordSpan& coordinates,
