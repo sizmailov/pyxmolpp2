@@ -105,23 +105,43 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
   .def("__or__",overload_cast<MoleculePredicate,MoleculePredicate,MoleculePredicate>(&MoleculePredicate::operator||))
   ;
 
-  // here we do not expose (const char*) overloads since it would be unreacheable from python side
   pyAtomNamePredicateGenerator
     .def(py::self==std::string{})
     .def(py::self!=std::string{})
     .def("is_in",overload_cast<AtomPredicate,AtomNamePredicateGenerator,std::set<std::string>>(&AtomNamePredicateGenerator::is_in))
+    .def("is_in",[](AtomNamePredicateGenerator& g, py::args& names){
+        std::set<AtomName> _names;
+        for (auto name: names){
+          _names.emplace(py::cast<std::string>(name));
+        }
+        return g.is_in(_names);
+      })
   ;
 
   pyResidueNamePredicateGenerator
     .def(py::self==std::string{})
     .def(py::self!=std::string{})
     .def("is_in",overload_cast<ResiduePredicate,ResidueNamePredicateGenerator,std::set<std::string>>(&ResidueNamePredicateGenerator::is_in))
+    .def("is_in",[](ResidueNamePredicateGenerator& g, py::args& names){
+      std::set<ResidueName> _names;
+      for (auto name: names){
+        _names.emplace(py::cast<std::string>(name));
+      }
+      return g.is_in(_names);
+    })
   ;
 
   pyMoleculeNamePredicateGenerator
     .def(py::self==std::string{})
     .def(py::self!=std::string{})
     .def("is_in",overload_cast<MoleculePredicate,MoleculeNamePredicateGenerator,std::set<std::string>>(&MoleculeNamePredicateGenerator::is_in))
+    .def("is_in",[](MoleculeNamePredicateGenerator& g, py::args& names){
+      std::set<MoleculeName> _names;
+      for (auto name: names){
+        _names.emplace(py::cast<std::string>(name));
+      }
+      return g.is_in(_names);
+    })
   ;
 
   pyAtomIdPredicateGenerator
@@ -132,6 +152,13 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
     .def(py::self<=AtomId{})
     .def(py::self>=AtomId{})
     .def("is_in",&AtomIdPredicateGenerator::is_in)
+    .def("is_in",[](AtomIdPredicateGenerator& g, py::args& ids){
+      std::set<AtomId> _ids;
+      for (auto id : ids){
+        _ids.emplace(py::cast<AtomId>(id));
+      }
+      return g.is_in(_ids);
+    })
     ;
 
   pyResidueIdPredicateGenerator
@@ -149,6 +176,17 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
     .def(py::self>=residueSerial_t{})
     .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<residueSerial_t>>(&ResidueIdPredicateGenerator::is_in))
     .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<ResidueId>>(&ResidueIdPredicateGenerator::is_in))
+    .def("is_in",[](ResidueIdPredicateGenerator& g, py::args& ids){
+      std::set<ResidueId> _ids;
+      for (auto id : ids){
+        if (py::isinstance<ResidueId>(id)){
+          _ids.emplace(py::cast<ResidueId>(id));
+        }else{
+          _ids.emplace(py::cast<residueSerial_t>(id));
+        }
+      }
+      return g.is_in(_ids);
+    })
     ;
 
   polymer.attr("aName") = aName;
