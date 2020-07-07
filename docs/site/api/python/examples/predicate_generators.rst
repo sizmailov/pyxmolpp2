@@ -67,4 +67,4 @@ An extra bonus generated :ref:`ResiduePredicate` can be naturally applied to ato
 
     print(frame.atoms.filter(rName == "GLY"))
     print(frame.atoms.filter(rId <= 10))
-    print(frame.atoms.filter( (rId <= 10) & ~rId.is_in(2,4,9) & ~rName.is_in("GLY", "GLY")))
+    print(frame.atoms.filter( (rId <= 10) & ~rId.is_in(2,4,9) & ~rName.is_in("GLY", "PRO")))
