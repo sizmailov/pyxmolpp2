@@ -1,12 +1,19 @@
 Change log
 ##########
 
+.. role:: py(code)
+    :language: py
 
 .. role:: text-dim
     :class: m-text m-dim
 
 :ref-prefix:
     pyxmolpp2
+
+next:
+  - Added nice `__str__` representation for elements and selections
+  - Allow ``*args`` in ``.is_in()`` method of predicate generators (e.g. :py:`aName.is_in("CA", "CB")`)
+  - Fixed :py:`rid in {rid} == False` bug
 
 v1.3:
   - Removed: ``Trajectory.Frame``

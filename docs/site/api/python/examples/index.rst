@@ -45,3 +45,4 @@ Each section is essentially a self-contained python script augmented with commen
 - :ref:`AngleValue <std:doc:examples/angles>`
 - :ref:`Reading trajectory in various format <std:doc:examples/trajectory_formats>`
 - :ref:`Convert trajectory to xtc format <std:doc:examples/dat_to_xtc>`
+- :ref:`Predicate generators <std:doc:examples/predicate_generators>`
