@@ -38,6 +38,7 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
            })
       .def(py::self == py::self)
       .def(py::self != py::self)
+      .def("__hash__", [](SRef& self){ return std::hash<SRef*>{}(&self); })
       .def("__str__", [](Frame& self) {
         return "Frame<n_mol=" + std::to_string(self.n_molecules()) + ", n_res=" + std::to_string(self.n_molecules()) +
                ", n_ats=" + std::to_string(self.n_atoms()) + ">";
@@ -78,6 +79,7 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
       .def("add_residue", [](SRef& ref) { return ref.add_residue().smart(); })
       .def(py::self == py::self)
       .def(py::self != py::self)
+      .def("__hash__", [](SRef& self){ return self.index(); })
       .def("__repr__",
            [](SRef& self) {
              return "Molecule<name=" + self.name().str() + ", size=" + std::to_string(self.size()) + ">";
@@ -114,6 +116,7 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
            })
       .def(py::self == py::self)
       .def(py::self != py::self)
+      .def("__hash__", [](SRef& self){ return self.index(); })
       .def("__repr__",
            [](SRef& self) {
              return "Residue<name=" + self.name().str() + ", size=" + std::to_string(self.size()) + ">";
@@ -140,6 +143,7 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
       .def_property_readonly("__eq__", &SRef::operator==)
       .def(py::self == py::self)
       .def(py::self != py::self)
+      .def("__hash__", [](SRef& self){ return self.index(); })
       .def("__repr__",
            [](SRef& self) {
              return "Atom<name=" + self.name().str() + ", id=" + std::to_string(self.id())  + ">";
