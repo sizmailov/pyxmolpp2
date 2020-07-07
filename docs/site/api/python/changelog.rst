@@ -12,8 +12,10 @@ Change log
 
 next:
   - Added nice `__str__` representation for elements and selections
+  - New: read ``time`` property from ``.xtc`` files
+  - Changed signature of :ref:`TrajectoryInputFile.read_frame`
   - Allow ``*args`` in ``.is_in()`` method of predicate generators (e.g. :py:`aName.is_in("CA", "CB")`)
-  - Fixed :py:`rid in {rid} == False` bug
+  - Fixed :py:`x in {x} == False` bug (:ref:`Atom`, :ref:`Residue`, :ref:`Molecule`, :ref:`ResidueId` were affected)
 
 v1.3:
   - Removed: ``Trajectory.Frame``
