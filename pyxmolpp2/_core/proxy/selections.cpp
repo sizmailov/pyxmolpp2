@@ -1,6 +1,7 @@
 #include "selections.h"
-#include "to_pdb_shortcuts.h"
 #include "iterator-helpers.h"
+#include "repr-helpers.h"
+#include "to_pdb_shortcuts.h"
 #include "xmol/geom/affine/Transformation3d.h"
 #include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
@@ -67,7 +68,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSelec
       .def("apply", [](Sel& sel, Rotation3d& other) { return sel.apply(other); })
       .def("apply", [](Sel& sel, Translation3d& other) { return sel.apply(other); })
       .def("mean", [](Sel& sel) { return sel.mean(); })
-      .def("inertia_tensor", &Sel::inertia_tensor);
+      .def("inertia_tensor", &Sel::inertia_tensor)
+      .def("__str__", [](Sel& self) { return "CoordSelection<size=" + std::to_string(self.size()) + ">"; });
+  ;
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelection>& pyAtomSelection) {
   using Sel = AtomSmartSelection;
@@ -154,7 +157,10 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
       .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
       .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
-      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); });
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); })
+      .def("__str__", [](Sel& self) {
+        return "AtomSelection<size=" + std::to_string(self.size()) + ", atoms=[" + to_string_3_elements(self) + "]>";
+      });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSelection>& pyResidueSelection) {
   using Sel = ResidueSmartSelection;
@@ -205,7 +211,11 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
       .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
       .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
-      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); });
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); })
+      .def("__str__", [](Sel& self) {
+        return "ResidueSelection<size=" + std::to_string(self.size()) + ", residues=[" + to_string_3_elements(self) +
+               "]>";
+      });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSelection>& pyMoleculeSelection) {
   using Sel = MoleculeSmartSelection;
@@ -256,5 +266,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
           "__iter__", [](Sel& s) { return common::make_smart_iterator(s.begin(), s.end()); }, py::keep_alive<0, 1>())
       .def("__or__", [](Sel& lhs, Sel& rhs) { return (lhs | rhs).smart(); })
       .def("__and__", [](Sel& lhs, Sel& rhs) { return (lhs & rhs).smart(); })
-      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); });
+      .def("__sub__", [](Sel& lhs, Sel& rhs) { return (lhs - rhs).smart(); })
+      .def("__str__", [](Sel& self) {
+        return "MoleculeSelection<size=" + std::to_string(self.size()) + ", molecules=[" + to_string_3_elements(self) + "]>";
+      });
+  ;
 }

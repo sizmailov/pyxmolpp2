@@ -38,13 +38,10 @@ void pyxmolpp::v1::populate(pybind11::class_<Frame>& pyFrame) {
            })
       .def(py::self == py::self)
       .def(py::self != py::self)
-      .def("__repr__",
-           [](Frame& self) {
-             std::ostringstream out;
-             out << "Frame<addr=" << std::hex << &self << std::dec << ", size=(" << self.n_molecules() << ", "
-                 << self.n_residues() << ", " << self.n_atoms() << ")>";
-             return out.str();
-           });
+      .def("__str__", [](Frame& self) {
+        return "Frame<n_mol=" + std::to_string(self.n_molecules()) + ", n_res=" + std::to_string(self.n_molecules()) +
+               ", n_ats=" + std::to_string(self.n_atoms()) + ">";
+      });
 }
 void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
   using SRef = MoleculeSmartRef;
@@ -80,7 +77,12 @@ void pyxmolpp::v1::populate(pybind11::class_<MoleculeSmartRef>& pyMolecule) {
            })
       .def("add_residue", [](SRef& ref) { return ref.add_residue().smart(); })
       .def(py::self == py::self)
-      .def(py::self != py::self);
+      .def(py::self != py::self)
+      .def("__repr__",
+           [](SRef& self) {
+             return "Molecule<name=" + self.name().str() + ", size=" + std::to_string(self.size()) + ">";
+           })
+      .def("__str__", [](SRef& self) { return to_string(self); });
 }
 void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
   using SRef = ResidueSmartRef;
@@ -94,13 +96,14 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
       .def_property_readonly("coords", [](SRef& ref) { return ref.coords().smart(); })
       .def_property_readonly("atoms", [](SRef& ref) { return ref.atoms().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("index", &SRef::index )
+      .def_property_readonly("index", &SRef::index)
       .def_property_readonly(
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def_property_readonly("next", [](SRef& ref) -> std::optional<SRef> { return ref.next(); })
       .def_property_readonly("prev", [](SRef& ref) -> std::optional<SRef> { return ref.prev(); })
       .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
       .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
+      .def("add_atom", [](SRef& ref) { return ref.add_atom().smart(); })
       .def("__getitem__",
            [](SRef& ref, const char* name) {
              auto r = ref[name];
@@ -109,9 +112,13 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
              }
              throw py::index_error("No atom with name " + std::string(name));
            })
-      .def("add_atom", [](SRef& ref) { return ref.add_atom().smart(); })
       .def(py::self == py::self)
-      .def(py::self != py::self);
+      .def(py::self != py::self)
+      .def("__repr__",
+           [](SRef& self) {
+             return "Residue<name=" + self.name().str() + ", size=" + std::to_string(self.size()) + ">";
+           })
+      .def("__str__", [](SRef& self) { return to_string(self); });
 }
 void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
   using SRef = AtomSmartRef;
@@ -125,12 +132,17 @@ void pyxmolpp::v1::populate(pybind11::class_<AtomSmartRef>& pyAtom) {
       .def_property("r", py::overload_cast<>(&SRef::r, py::const_), [](SRef& self, const XYZ& r) { self.r(r); })
       .def_property_readonly("residue", [](SRef& ref) { return ref.residue().smart(); })
       .def_property_readonly("molecule", [](SRef& ref) { return ref.molecule().smart(); })
-      .def_property_readonly("index", &SRef::index )
+      .def_property_readonly("index", &SRef::index)
       .def_property_readonly(
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
       .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
       .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def_property_readonly("__eq__", &SRef::operator==)
       .def(py::self == py::self)
-      .def(py::self != py::self);
+      .def(py::self != py::self)
+      .def("__repr__",
+           [](SRef& self) {
+             return "Atom<name=" + self.name().str() + ", id=" + std::to_string(self.id())  + ">";
+           })
+      .def("__str__", [](SRef& self) { return to_string(self); });
 }
