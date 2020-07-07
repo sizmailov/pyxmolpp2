@@ -55,6 +55,10 @@ struct ResidueId {
   ResidueInsertionCode iCode;
 };
 
+inline std::string to_string(const ResidueId& residueId) {
+  return std::to_string(residueId.serial) + residueId.iCode.str();
+}
+
 inline bool operator<(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs < ResidueId(rhs); }
 inline bool operator>(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs > ResidueId(rhs); }
 inline bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }

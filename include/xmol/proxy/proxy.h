@@ -468,4 +468,14 @@ template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
   bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
 };
 
+inline std::string to_string(const MoleculeRef& mol) { return mol.name().str(); }
+
+inline std::string to_string(const ResidueRef& res) {
+  return to_string(const_cast<ResidueRef&>(res).molecule()) + "." + res.name().str() + "-" + to_string(res.id());
+}
+
+inline std::string to_string(const AtomRef& atom) {
+  return to_string(const_cast<AtomRef&>(atom).residue()) + "." + atom.name().str();
+}
+
 } // namespace xmol::proxy
