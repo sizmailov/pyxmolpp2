@@ -34,6 +34,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::ResidueId>& pyResdiueId) {
           "iCode", [](ResidueId& self) { return self.iCode.str(); },
           [](ResidueId& self, const std::string& name) { self.iCode = ResidueInsertionCode(name); }, "Insertion code")
       .def("__str__", [](ResidueId& rid) { return std::to_string(rid.serial) + rid.iCode.str(); })
-      //      .def("__hash__", [](ResidueId& rid) { return std::hash<ResidueId>()(rid); })
-      ;
+      .def("__hash__", [](ResidueId& rid) {
+        return std::hash<residueSerial_t>{}(rid.serial)  ^ std::hash<ResidueInsertionCode>{}(rid.iCode);
+      });
 }
