@@ -25,7 +25,7 @@ public:
 
   [[nodiscard]] size_t n_frames() const final;
   [[nodiscard]] size_t n_atoms() const final;
-  void read_frame(size_t index, proxy::CoordSpan& coordinates, geom::UnitCell& /* ignored */) final;
+  void read_frame(size_t index, Frame& frame) final;
   void advance(size_t shift) final;
 
 private:

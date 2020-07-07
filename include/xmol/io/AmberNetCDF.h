@@ -15,12 +15,12 @@ public:
   AmberNetCDF& operator=(const AmberNetCDF&) = delete;
   AmberNetCDF(AmberNetCDF&&) = default;
   AmberNetCDF& operator=(AmberNetCDF&&) = default;
-  explicit AmberNetCDF(const std::string& filename);
+  explicit AmberNetCDF(std::string filename);
   ~AmberNetCDF();
 
   size_t n_frames() const final;
   size_t n_atoms() const final;
-  void read_frame(size_t index, proxy::CoordSpan& coordinates, geom::UnitCell& cell) final;
+  void read_frame(size_t index, Frame& frame) final;
   void advance(size_t shift) final;
 
   bool has_cell() const { return m_has_cell; }

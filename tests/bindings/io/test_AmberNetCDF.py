@@ -13,4 +13,4 @@ def test_read_netcdf():
     assert datfile.n_frames() == 10
     assert datfile.n_atoms() == frame.atoms.size
 
-    datfile.read_frame(0, frame.coords, frame.cell)
+    datfile.read_frame(0, frame)

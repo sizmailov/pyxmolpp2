@@ -20,7 +20,7 @@ public:
    * Note: trajectory without cell info should ignore `cell` argument.
    * Precondition: index must match current position of internal data pointer
    * */
-  virtual void read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, xmol::geom::UnitCell& cell) = 0;
+  virtual void read_frame(size_t index, Frame& frame) = 0;
 
   /** Advance internal data pointer by @p shift frames and be prepared to read coordinates
    *

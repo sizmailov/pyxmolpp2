@@ -19,9 +19,7 @@ public:
   [[nodiscard]] size_t n_frames() const final { return ptr->n_frames(); }
   [[nodiscard]] size_t n_atoms() const final { return ptr->n_atoms(); }
 
-  void read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, xmol::geom::UnitCell& cell) final {
-    ptr->read_frame(index, coordinates, cell);
-  }
+  void read_frame(size_t index, Frame& frame) final { ptr->read_frame(index, frame); }
   void advance(size_t shift) final { ptr->advance(shift); }
 };
 } // namespace
@@ -93,21 +91,17 @@ void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFil
   pyTrajectoryInputFile.def(py::init<>())
       .def("n_frames", &TrajectoryInputFile::n_frames, "Number of frames")
       .def("n_atoms", &TrajectoryInputFile::n_atoms, "Number of atoms per frame")
-      .def(
-          "read_frame",
-          [](TrajectoryInputFile& inputFile, size_t index, proxy::smart::CoordSmartSpan& coordinates,
-             geom::UnitCell& cell) -> void {},
-          py::arg("index"), py::arg("coords"), py::arg("cell"), "Read frame data at current data pointer position")
+      .def("read_frame", &TrajectoryInputFile::read_frame, py::arg("index"), py::arg("frame"),
+           "Assign `index` frame coordinates, cell, etc")
       .def("advance", &TrajectoryInputFile::advance, "Shift internal data pointer", py::arg("shift"));
 }
 
-void pyxmolpp::v1::PyTrajectoryInputFile::read_frame(size_t index, proxy::CoordSpan& coordinates,
-                                                     geom::UnitCell& cell) {
-  auto smart_coords = coordinates.smart();
-  PYBIND11_OVERLOAD_PURE(void,                     /* Return type */
-                         TrajectoryInputFile,      /* Parent class */
-                         read_frame,               /* Name of function in C++ (must match Python name) */
-                         index, smart_coords, cell /* Arguments */
+void pyxmolpp::v1::PyTrajectoryInputFile::read_frame(size_t index, Frame& frame) {
+  py::object pyFrame = py::cast<Frame>(frame, py::return_value_policy::reference);
+  PYBIND11_OVERLOAD_PURE(void,                /* Return type */
+                         TrajectoryInputFile, /* Parent class */
+                         read_frame,          /* Name of function in C++ (must match Python name) */
+                         index, pyFrame       /* Arguments */
   );
 }
 

@@ -38,16 +38,17 @@ PdbInputFile& PdbInputFile::read() {
 
 size_t PdbInputFile::n_frames() const { return m_n_frames; }
 size_t PdbInputFile::n_atoms() const { return m_n_atoms; }
-void PdbInputFile::read_frame(size_t index, proxy::CoordSpan& coordinates, xmol::geom::UnitCell&) {
+void PdbInputFile::read_frame(size_t index, Frame& frame) {
+  auto coordinates = frame.coords();
   assert(!m_frames.empty());
   assert(m_current_frame == index);
 
-  Frame& frame = m_frames[index];
-  if (coordinates.size() != frame.n_atoms()) {
+  Frame& _frame = m_frames[index];
+  if (coordinates.size() != _frame.n_atoms()) {
     throw PdbReadError("Wrong of atoms in " + std::to_string(index) + " frame in `" + m_filename + "`. Expected " +
                        std::to_string(coordinates.size()));
   }
-  coordinates._eigen() = frame.coords()._eigen();
+  coordinates._eigen() = _frame.coords()._eigen();
 }
 void PdbInputFile::advance(size_t shift) {
   m_current_frame += shift;

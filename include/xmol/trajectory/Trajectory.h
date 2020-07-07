@@ -70,8 +70,7 @@ public:
       }
     }
     void update() {
-      auto coords = m_frame.coords();
-      m_traj->read_frame(m_pos, coords, m_frame.cell);
+      m_traj->read_frame(m_pos, m_frame);
       m_frame.index = m_pos.global_pos;
     }
     Trajectory* m_traj;
@@ -144,8 +143,8 @@ private:
   std::vector<std::unique_ptr<TrajectoryInputFile>> m_files;
   int m_iterator_counter = 0;
 
-  void read_frame(Position pos, proxy::CoordSpan& coords, geom::UnitCell& cell) {
-    m_files[pos.file]->read_frame(pos.pos_in_file, coords, cell);
+  void read_frame(Position pos, Frame& frame) {
+    m_files[pos.file]->read_frame(pos.pos_in_file, frame);
   }
 
   void advance(Position& position, size_t end, size_t step);

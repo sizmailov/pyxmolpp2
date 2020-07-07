@@ -14,7 +14,7 @@ def test_read_one_file():
     assert inp.n_frames() == 51
     assert inp.n_atoms() == frame.atoms.size
     inp.advance(0)
-    inp.read_frame(0, frame.coords, frame.cell)
+    inp.read_frame(0, frame)
 
 
 def test_writer():

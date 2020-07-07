@@ -1,6 +1,6 @@
 #include "xmol/io/TrjtoolDatFile.h"
 #include "xmol/geom/UnitCell.h"
-#include "xmol/proxy/proxy.h"
+#include "xmol/Frame.h"
 
 #include <utility>
 
@@ -21,7 +21,8 @@ TrjtoolDatFile::TrjtoolDatFile(std::string filename) : m_filename(std::move(file
 }
 size_t TrjtoolDatFile::n_frames() const { return m_n_frames; }
 size_t TrjtoolDatFile::n_atoms() const { return m_header.nitems; }
-void TrjtoolDatFile::read_frame(size_t index, proxy::CoordSpan& coordinates, xmol::geom::UnitCell&) {
+void TrjtoolDatFile::read_frame(size_t index, Frame& frame) {
+  auto coordinates = frame.coords();
   assert(m_stream);
   assert(m_current_frame == index);
   assert(m_buffer.size() == n_atoms() * 3);

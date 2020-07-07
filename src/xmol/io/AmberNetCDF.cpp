@@ -1,8 +1,9 @@
 #include "xmol/io/AmberNetCDF.h"
+#include "xmol/Frame.h"
+#include "xmol/geom/AngleValue.h"
 #include <iostream>
 #include <netcdf.h>
-#include <xmol/geom/AngleValue.h>
-#include <xmol/geom/UnitCell.h>
+#include <utility>
 
 using namespace xmol::io;
 
@@ -14,7 +15,7 @@ inline void check_netcdf_call(int retval, int expected, const char* const nc_fun
 }
 } // namespace
 
-AmberNetCDF::AmberNetCDF(const std::string& filename) : m_filename(filename) {
+AmberNetCDF::AmberNetCDF(std::string filename) : m_filename(std::move(filename)) {
   read_header();
   close();
 }
@@ -65,7 +66,8 @@ std::string AmberNetCDF::read_global_string_attr(const char* name) {
 
 size_t xmol::io::AmberNetCDF::n_frames() const { return m_n_frames; }
 size_t xmol::io::AmberNetCDF::n_atoms() const { return m_n_atoms; }
-void xmol::io::AmberNetCDF::read_frame(size_t index, xmol::proxy::CoordSpan& coordinates, geom::UnitCell& cell) {
+void xmol::io::AmberNetCDF::read_frame(size_t index, Frame& frame) {
+  auto coordinates = frame.coords();
   this->open();
   {
     m_buffer.resize(n_atoms() * 3);
@@ -89,8 +91,8 @@ void xmol::io::AmberNetCDF::read_frame(size_t index, xmol::proxy::CoordSpan& coo
                       "nc_get_vara_float");
     check_netcdf_call(nc_get_vara_float(m_ncid, m_cell_angles_id, start, count, angles), NC_NOERR, "nc_get_vara_float");
 
-    cell = geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
-                   geom::Degrees(angles[2]));
+    frame.cell = geom::UnitCell(lengths[0], lengths[1], lengths[2], geom::Degrees(angles[0]), geom::Degrees(angles[1]),
+                                geom::Degrees(angles[2]));
   }
 }
 

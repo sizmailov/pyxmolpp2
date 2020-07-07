@@ -13,7 +13,7 @@ def test_read_trjtool():
     assert datfile.n_frames() == 1000
     assert datfile.n_atoms() == frame.atoms.size
     datfile.advance(0)
-    datfile.read_frame(0, frame.coords, frame.cell)
+    datfile.read_frame(0, frame)
 
 
 def test_raise_file_does_not_exists():
