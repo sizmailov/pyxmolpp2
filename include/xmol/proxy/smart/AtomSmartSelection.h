@@ -108,7 +108,7 @@ public:
     return m_selection.empty();
   }
 
-  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop={}, std::optional<size_t> step={}) {
     check_precondition("slice()");
     return m_selection.slice(start, stop, step);
   }

@@ -62,7 +62,7 @@ public:
   void apply(const geom::affine::Translation3d& t);
   XYZ mean();
 
-  CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  CoordSelection slice(std::optional<size_t> start, std::optional<size_t> stop={}, std::optional<size_t> step={});
 
   smart::CoordSmartSelection smart();
 
@@ -101,7 +101,7 @@ public:
 
   std::vector<AtomIndex> index() const;
 
-  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  AtomSelection slice(std::optional<size_t> start, std::optional<size_t> stop={}, std::optional<size_t> step={});
 
   /// Inplace union
   AtomSelection& operator|=(const AtomSelection& rhs) {
@@ -205,7 +205,7 @@ public:
   std::vector<ResidueIndex> index() const;
 
 
-  ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  ResidueSelection slice(std::optional<size_t> start, std::optional<size_t> stop={}, std::optional<size_t> step={});
 
   /// Create smart selection from this
   smart::ResidueSmartSelection smart();
@@ -272,7 +272,7 @@ public:
 
   std::vector<MoleculeIndex> index() const;
 
-  MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step);
+  MoleculeSelection slice(std::optional<size_t> start, std::optional<size_t> stop={}, std::optional<size_t> step={});
 
   /// Create smart selection from this
   smart::MoleculeSmartSelection smart();
