@@ -8,12 +8,13 @@ ResidueRef MoleculeRef::add_residue() { return ResidueRef(frame().add_residue(*m
 
 AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*m_residue)); }
 
-xmol::proxy::AtomRef::AtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
+xmol::proxy::AtomConstRef::AtomConstRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
     m_coord = &ptr->residue->molecule->frame->crd(*ptr);
   }
 }
-AtomRef::AtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
+
+AtomConstRef::AtomConstRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
 smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
 std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
@@ -28,7 +29,7 @@ std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
 std::optional<ResidueRef> MoleculeRef::operator[](residueSerial_t id) { return (*this)[ResidueId(id)]; }
 xmol::MoleculeIndex MoleculeRef::index() const noexcept { return frame().index_of(*m_molecule); }
 xmol::ResidueIndex ResidueRef::index() const noexcept { return frame().index_of(*m_residue); }
-xmol::AtomIndex AtomRef::index() const noexcept { return frame().index_of(*m_atom); }
+xmol::AtomIndex AtomRef::index() const noexcept { return frame().index_of(*atom_ptr()); }
 smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
 std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
   for (auto& a : atoms()) {

@@ -138,6 +138,7 @@ private:
   void check_references_integrity();
 
   friend proxy::AtomRef;
+  friend proxy::AtomConstRef;
   friend proxy::ResidueRef;
   friend proxy::MoleculeRef;
 

@@ -70,7 +70,7 @@ xmol::XYZ CoordSelection::mean() {
 CoordSelection AtomSelection::coords() {
   std::vector<CoordRef> result;
   for (auto& a : m_data) {
-    result.push_back(CoordRef(*a.m_coord));
+    result.push_back(CoordRef(*a.coord_ptr()));
   }
   return CoordSelection(*frame_ptr(), std::move(result), true);
 }
@@ -78,9 +78,9 @@ ResidueSelection AtomSelection::residues() {
   std::vector<ResidueRef> result;
   BaseResidue* prev = nullptr;
   for (auto& a : m_data) {
-    if (prev != a.m_atom->residue) {
-      result.push_back(ResidueRef{*a.m_atom->residue});
-      prev = a.m_atom->residue;
+    if (prev != a.atom_ptr()->residue) {
+      result.push_back(ResidueRef{*a.atom_ptr()->residue});
+      prev = a.atom_ptr()->residue;
     }
   }
   return ResidueSelection(std::move(result), true);
@@ -89,7 +89,7 @@ MoleculeSelection AtomSelection::molecules() {
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& a : m_data) {
-    BaseMolecule* mol = a.m_atom->residue->molecule;
+    BaseMolecule* mol = a.atom_ptr()->residue->molecule;
     if (prev != mol) {
       result.push_back(MoleculeRef{*mol});
       prev = mol;
@@ -112,7 +112,7 @@ CoordSelection ResidueSelection::coords() {
   std::vector<CoordRef> result;
   for (auto& r : m_data) {
     for (auto a : r.atoms()) {
-      result.push_back(CoordRef(*a.m_coord));
+      result.push_back(CoordRef(*a.coord_ptr()));
     }
   }
   return CoordSelection(*frame_ptr(), std::move(result), true);
@@ -141,7 +141,7 @@ CoordSelection MoleculeSelection::coords() {
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
       for (auto& a : r.atoms()) {
-        result.push_back(CoordRef(*a.m_coord));
+        result.push_back(CoordRef(*a.coord_ptr()));
       }
     }
   }
@@ -199,7 +199,7 @@ std::vector<xmol::AtomIndex> AtomSelection::index() const {
   if (!empty()) {
     result.reserve(size());
     for (auto& ref : m_data) {
-      result.push_back(frame_ptr()->index_of(*ref.m_atom));
+      result.push_back(frame_ptr()->index_of(*ref.atom_ptr()));
     }
   }
   return result;

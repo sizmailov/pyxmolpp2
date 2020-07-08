@@ -66,7 +66,7 @@ CoordSpan AtomSpan::coords() {
   if (empty()) {
     return {};
   }
-  return {begin()->frame(), begin()->m_coord, size()};
+  return {begin()->frame(), begin()->coord_ptr(), size()};
 }
 
 ResidueSpan AtomSpan::residues() {
@@ -117,8 +117,7 @@ ResidueSpan MoleculeSpan::residues() {
 }
 
 bool AtomSpan::contains(const AtomRef& ref) const {
-  return m_begin <= ref.m_atom && ref.m_atom < m_end;
-  ;
+  return m_begin <= ref.atom_ptr() && ref.atom_ptr() < m_end;
 }
 
 smart::AtomSmartSpan AtomSpan::smart() { return *this; }

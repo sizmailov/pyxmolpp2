@@ -5,10 +5,10 @@ namespace xmol::proxy {
 template <typename ARef> class AtomGettersMixin {
   using RRef = std::conditional_t<std::is_same_v<ARef,AtomRef>, ResidueRef, /*const*/ResidueRef>;
 public:
-  AtomGettersMixin() = default;
+  constexpr AtomGettersMixin() = default;
 
 #define REF_GETTER(NAME, EXPR)                                                                                         \
-  [[nodiscard]] auto& NAME() const {                                                                                   \
+  [[nodiscard]] constexpr auto& NAME() const {                                                                         \
     ref().check_invariants(#NAME);                                                                                     \
     return EXPR;                                                                                                       \
   }
@@ -23,7 +23,7 @@ public:
 #undef REF_GETTER
 
 #define VALUE_GETTER(NAME, EXPR)                                                                                       \
-  [[nodiscard]] auto NAME() const {                                                                                    \
+  [[nodiscard]] constexpr auto NAME() const {                                                                          \
     ref().check_invariants(#NAME);                                                                                     \
     return EXPR;                                                                                                       \
   }
@@ -38,7 +38,7 @@ private:
 
 template <typename ARef> class AtomSettersMixin : public AtomGettersMixin<ARef> {
 public:
-  AtomSettersMixin() = default;
+  constexpr AtomSettersMixin() = default;
 
   using AtomGettersMixin<ARef>::name;
   using AtomGettersMixin<ARef>::mass;
@@ -49,13 +49,13 @@ public:
   using AtomGettersMixin<ARef>::frame;
 
 #define PROXY_SETTER(NAME, TYPE, EXPR)                                                                                 \
-  [[maybe_unused]] ARef& NAME(TYPE value)& {                                                                           \
+  [[maybe_unused]] constexpr ARef& NAME(TYPE value)& {                                                                 \
     ref().check_invariants(#NAME);                                                                                     \
     EXPR;                                                                                                              \
     return ref();                                                                                                      \
   }                                                                                                                    \
                                                                                                                        \
-  [[maybe_unused]] ARef&& NAME(TYPE value)&& {                                                                         \
+  [[maybe_unused]] constexpr ARef&& NAME(TYPE value)&& {                                                               \
     ref().check_invariants(#NAME);                                                                                     \
     EXPR;                                                                                                              \
     return std::move(ref());                                                                                           \
@@ -72,8 +72,8 @@ public:
 #undef PROXY_SETTER
 
 private:
-  ARef& ref() & { return static_cast<ARef&>(*this); }
-  ARef&& ref() && { return static_cast<ARef&&>(*this); }
+  constexpr ARef& ref() & { return static_cast<ARef&>(*this); }
+  constexpr ARef&& ref() && { return static_cast<ARef&&>(*this); }
 };
 
 } // namespace xmol::proxy

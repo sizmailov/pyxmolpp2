@@ -6,10 +6,10 @@
 using namespace xmol::proxy::smart;
 
 struct AtomSmartSelection::AtomRefLessThanComparator {
-  bool operator()(AtomRef& a, XYZ* ptr) { return a.m_coord < ptr; }
-  bool operator()(XYZ* ptr, AtomRef& a) { return ptr < a.m_coord; }
-  bool operator()(AtomRef& a, BaseAtom* ptr) { return a.m_atom < ptr; }
-  bool operator()(BaseAtom* ptr, AtomRef& a) { return ptr < a.m_atom; }
+  bool operator()(AtomRef& a, XYZ* ptr) { return a.coord_ptr() < ptr; }
+  bool operator()(XYZ* ptr, AtomRef& a) { return ptr < a.coord_ptr(); }
+  bool operator()(AtomRef& a, BaseAtom* ptr) { return a.atom_ptr() < ptr; }
+  bool operator()(BaseAtom* ptr, AtomRef& a) { return ptr < a.atom_ptr(); }
 };
 
 void AtomSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
@@ -18,9 +18,9 @@ void AtomSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ
   auto it_end =
       std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, AtomRefLessThanComparator{});
   for (; it != it_end; ++it) {
-    assert(from_begin <= it->m_coord);
-    assert(it->m_coord < from_end);
-    it->m_coord = to_begin + (it->m_coord - from_begin);
+    assert(from_begin <= it->coord_ptr());
+    assert(it->coord_ptr() < from_end);
+    it->coord_ptr() = to_begin + (it->coord_ptr() - from_begin);
   }
 }
 
@@ -30,9 +30,9 @@ void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from
   auto it_end =
       std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, AtomRefLessThanComparator{});
   for (; it != it_end; ++it) {
-    assert(from_begin <= it->m_atom);
-    assert(it->m_atom < from_end);
-    it->m_atom = to_begin + (it->m_atom - from_begin);
+    assert(from_begin <= it->atom_ptr());
+    assert(it->atom_ptr() < from_end);
+    it->atom_ptr() = to_begin + (it->atom_ptr() - from_begin);
   }
 }
 

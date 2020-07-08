@@ -343,25 +343,56 @@ private:
   ResidueRef() = default; /// constructs object in invalid state (with nullptrs)
 };
 
+class AtomConstRef : public AtomGettersMixin<AtomConstRef> {
+public:
+  constexpr AtomConstRef(const AtomConstRef& rhs) = default;
+  constexpr AtomConstRef(AtomConstRef&& rhs) noexcept = default;
+  constexpr AtomConstRef& operator=(const AtomConstRef& rhs) = default;
+  constexpr AtomConstRef& operator=(AtomConstRef&& rhs) noexcept = default;
+
+private:
+  XYZ* m_coord = nullptr;
+  BaseAtom* m_atom = nullptr;
+
+  constexpr XYZ* const coord_ptr() const { return m_coord; }
+  constexpr XYZ* const& coord_ptr() { return m_coord; }
+  constexpr BaseAtom* const atom_ptr() const { return m_atom; }
+  constexpr BaseAtom* const& atom_ptr() { return m_atom; }
+
+  constexpr void check_invariants(const char*) const {};
+
+  constexpr void advance() {
+    ++m_atom;
+    ++m_coord;
+  }
+
+  constexpr AtomConstRef() = default; // constructs object in invalid state (with nullptrs)
+
+  explicit AtomConstRef(BaseAtom& atom);
+  AtomConstRef(BaseAtom* ptr, BaseAtom* end);
+
+  friend AtomRef;
+};
+
 /** @brief Lightweight atom reference
  *
  * Provides access to @ref XYZ and @ref BaseAtom parts of atom
  *
  * For ref-counting reference see @ref smart::AtomSmartRef
  * */
-class AtomRef : public AtomSettersMixin<AtomRef>  {
+class AtomRef : public AtomSettersMixin<AtomRef> {
 public:
-  AtomRef(const AtomRef& rhs) = default;
-  AtomRef(AtomRef&& rhs) noexcept = default;
-  AtomRef& operator=(const AtomRef& rhs) = default;
-  AtomRef& operator=(AtomRef&& rhs) noexcept = default;
+  constexpr AtomRef(const AtomRef& rhs) = default;
+  constexpr AtomRef(AtomRef&& rhs) noexcept = default;
+  constexpr AtomRef& operator=(const AtomRef& rhs) = default;
+  constexpr AtomRef& operator=(AtomRef&& rhs) noexcept = default;
 
   using AtomSettersMixin::frame;
   /// Parent frame
-  Frame& frame() { return *m_atom->residue->molecule->frame; };
+  Frame& frame() { return *atom_ptr()->residue->molecule->frame; };
 
   /// Parent frame
-  const Frame& frame() const { return *m_atom->residue->molecule->frame; }
+  const Frame& frame() const { return *atom_ptr()->residue->molecule->frame; }
 
   /// Index of the atom in frame (0-based)
   [[nodiscard]] AtomIndex index() const noexcept;
@@ -370,23 +401,23 @@ public:
   smart::AtomSmartRef smart();
 
   /// Check if references point to same data
-  bool operator!=(const AtomRef& rhs) const {
-    return m_atom != rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
+  constexpr bool operator!=(const AtomRef& rhs) const {
+    return atom_ptr() != rhs.atom_ptr(); // comparing only one pair of pointers since they always must be in sync
   }
 
   /// Check if references point to same data
-  bool operator==(const AtomRef& rhs) const {
-    return m_atom == rhs.m_atom; // comparing only one pair of pointers since they always must be in sync
+  constexpr bool operator==(const AtomRef& rhs) const {
+    return atom_ptr() == rhs.atom_ptr(); // comparing only one pair of pointers since they always must be in sync
   }
 
-protected:
-  XYZ* m_coord = nullptr;
-  BaseAtom* m_atom = nullptr;
-
 private:
-  XYZ* coord_ptr() const { return m_coord; }
-  BaseAtom* atom_ptr() const { return m_atom; }
-  void check_invariants(const char*) const {};
+  AtomConstRef m_cref;
+
+  [[nodiscard]] constexpr XYZ* coord_ptr() const { return m_cref.m_coord; }
+  [[nodiscard]] constexpr XYZ*& coord_ptr() { return m_cref.m_coord; }
+  [[nodiscard]] constexpr BaseAtom* atom_ptr() const { return m_cref.m_atom; }
+  [[nodiscard]] constexpr BaseAtom*& atom_ptr() { return m_cref.m_atom; }
+  constexpr void check_invariants(const char*) const {};
 
   friend AtomGettersMixin<AtomRef>;
   friend AtomSettersMixin<AtomRef>;
@@ -401,14 +432,11 @@ private:
   friend smart::AtomSmartRef;
   friend smart::AtomSmartSelection;
   friend smart::AtomSmartSpan;
-  explicit AtomRef(BaseAtom& atom);
+  explicit AtomRef(BaseAtom& atom) : m_cref(atom){}
 
-  AtomRef(BaseAtom* ptr, BaseAtom* end);
-  void advance() {
-    ++m_atom;
-    ++m_coord;
-  }
-  AtomRef() = default; // constructs object in invalid state (with nullptrs)
+  AtomRef(BaseAtom* ptr, BaseAtom* end) : m_cref(ptr, end) {}
+  void advance() { m_cref.advance(); }
+  constexpr AtomRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
 template <> struct Selection<proxy::CoordRef>::LessThanComparator {
@@ -416,7 +444,7 @@ template <> struct Selection<proxy::CoordRef>::LessThanComparator {
 };
 
 template <> struct Selection<proxy::AtomRef>::LessThanComparator {
-  bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2) { return p1.m_atom < p2.m_atom; }
+  bool operator()(const proxy::AtomRef& p1, const proxy::AtomRef& p2) { return p1.atom_ptr() < p2.atom_ptr(); }
 };
 
 template <> struct Selection<proxy::ResidueRef>::LessThanComparator {

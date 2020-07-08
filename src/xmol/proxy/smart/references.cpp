@@ -7,13 +7,13 @@ AtomSmartRef::AtomSmartRef(AtomRef atom) : FrameObserver<AtomSmartRef>(&atom.fra
   frame().reg(*this);
 }
 void AtomSmartRef::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
-  if (from_begin <= m_ref.m_coord && m_ref.m_coord < from_end) {
-    m_ref.m_coord = to_begin + (m_ref.m_coord - from_begin);
+  if (from_begin <= m_ref.coord_ptr() && m_ref.coord_ptr() < from_end) {
+    m_ref.coord_ptr() = to_begin + (m_ref.coord_ptr() - from_begin);
   }
 }
 void AtomSmartRef::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, BaseAtom* to_begin) {
-  if (from_begin <= m_ref.m_atom && m_ref.m_atom < from_end) {
-    m_ref.m_atom = to_begin + (m_ref.m_atom - from_begin);
+  if (from_begin <= m_ref.atom_ptr() && m_ref.atom_ptr() < from_end) {
+    m_ref.atom_ptr() = to_begin + (m_ref.atom_ptr() - from_begin);
   }
 }
 
