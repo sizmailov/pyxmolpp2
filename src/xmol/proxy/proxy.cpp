@@ -6,7 +6,7 @@ using namespace xmol::proxy;
 
 ResidueRef MoleculeRef::add_residue() { return ResidueRef(frame().add_residue(*m_molecule)); }
 
-AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*m_residue)); }
+AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*res_ptr())); }
 
 xmol::proxy::AtomConstRef::AtomConstRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
@@ -28,7 +28,7 @@ std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
 }
 std::optional<ResidueRef> MoleculeRef::operator[](residueSerial_t id) { return (*this)[ResidueId(id)]; }
 xmol::MoleculeIndex MoleculeRef::index() const noexcept { return frame().index_of(*m_molecule); }
-xmol::ResidueIndex ResidueRef::index() const noexcept { return frame().index_of(*m_residue); }
+xmol::ResidueIndex ResidueRef::index() const noexcept { return frame().index_of(*res_ptr()); }
 xmol::AtomIndex AtomRef::index() const noexcept { return frame().index_of(*atom_ptr()); }
 smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
 std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {

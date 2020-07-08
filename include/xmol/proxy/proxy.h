@@ -1,8 +1,9 @@
 #pragma once
 #include "../base.h"
 #include "Selection.h"
-#include "spans.h"
 #include "mixins/AtomRefMixin.h"
+#include "mixins/ResidueRefMixin.h"
+#include "spans.h"
 
 /** @file
  * Lightweight proxy reference classes for Atom, Residue and Molecule.
@@ -209,6 +210,7 @@ private:
   friend ResidueRef;
   friend ResidueSelection;
   friend Selection<MoleculeRef>::LessThanComparator;
+  friend ResidueGettersMixin<ResidueRef>;
   friend smart::MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
   BaseMolecule* m_molecule;
@@ -218,86 +220,48 @@ private:
   MoleculeRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
+class ResidueConstRef : public ResidueGettersMixin<ResidueConstRef> {
+public:
+  constexpr ResidueConstRef(const ResidueConstRef& rhs) = default;
+  constexpr ResidueConstRef(ResidueConstRef&& rhs) noexcept = default;
+  constexpr ResidueConstRef& operator=(const ResidueConstRef& rhs) = default;
+  constexpr ResidueConstRef& operator=(ResidueConstRef&& rhs) noexcept = default;
+
+private:
+  BaseResidue* m_residue = nullptr;
+
+  constexpr void check_invariants(const char*) const {};
+
+  constexpr BaseResidue* const res_ptr() const { return m_residue; }
+  constexpr BaseResidue* const& res_ptr() { return m_residue; }
+
+  constexpr explicit ResidueConstRef(BaseResidue& residue) : m_residue(&residue){};
+  constexpr ResidueConstRef(BaseResidue* ptr, BaseResidue*) : m_residue(ptr){};
+  constexpr void advance() { ++m_residue; }
+  constexpr ResidueConstRef() = default; /// constructs object in invalid state (with nullptrs)
+
+  friend ResidueRef;
+};
+
 /** @brief Lightweight residue reference
  *
  * For ref-counting reference see @ref smart::ResidueSmartRef
  * */
-class ResidueRef {
+class ResidueRef : public ResidueSettersMixin<ResidueRef> {
 public:
-  /// Residue name
-  [[nodiscard]] const ResidueName& name() const {
-    assert(m_residue);
-    return m_residue->name;
-  }
-  ResidueRef& name(const ResidueName& name) {
-    assert(m_residue);
-    m_residue->name = name;
-    return *this;
-  }
-
-  ResidueRef& name(const char* name) {
-    assert(m_residue);
-    m_residue->name = ResidueName(name);
-    return *this;
-  }
-
-  /// Residue id
-  [[nodiscard]] const ResidueId& id() const { return m_residue->id; };
-  ResidueRef& id(const ResidueId& value) {
-    m_residue->id = value;
-    return *this;
-  }
-
-  ResidueRef& id(int serial) {
-    m_residue->id = serial;
-    return *this;
-  }
-
-  /// Check if residue has no atoms
-  [[nodiscard]] bool empty() const {
-    assert(m_residue);
-    return m_residue->atoms.m_begin == m_residue->atoms.m_end;
-  }
-
-  /// Number of atoms in the residue
-  [[nodiscard]] size_t size() const {
-    assert(m_residue);
-    return m_residue->atoms.m_end - m_residue->atoms.m_begin;
-  }
+  constexpr ResidueRef(const ResidueRef& rhs) = default;
+  constexpr ResidueRef(ResidueRef&& rhs) noexcept = default;
+  constexpr ResidueRef& operator=(const ResidueRef& rhs) = default;
+  constexpr ResidueRef& operator=(ResidueRef&& rhs) noexcept = default;
 
   /// Index of the residue in frame (0-based)
   [[nodiscard]] ResidueIndex index() const noexcept;
 
-  /// Parent molecule
-  MoleculeRef molecule() { return MoleculeRef(*m_residue->molecule); }
-
-  /// Parent frame
-  Frame& frame() { return *m_residue->molecule->frame; }
-
-  /// Parent frame
-  const Frame& frame() const { return *m_residue->molecule->frame; }
-
   /// Atoms of the residue
-  AtomSpan atoms() { return AtomSpan{m_residue->atoms}; }
+  AtomSpan atoms() { return AtomSpan{res_ptr()->atoms}; }
 
   /// Atom coordinates of the molecule
   CoordSpan coords() { return atoms().coords(); }
-
-  /// Next residue in the molecule
-  std::optional<ResidueRef> next() {
-    if (m_residue + 1 < m_residue->molecule->residues.begin() + molecule().size()) {
-      return ResidueRef(*(m_residue + 1));
-    }
-    return {};
-  }
-
-  /// Previous residue in the molecule
-  std::optional<ResidueRef> prev() {
-    if (m_residue - 1 >= m_residue->molecule->residues.begin()) {
-      return ResidueRef(*(m_residue - 1));
-    }
-    return {};
-  }
 
   /// Get children atom by name
   std::optional<AtomRef> operator[](const AtomName& name);
@@ -309,10 +273,8 @@ public:
   smart::ResidueSmartRef smart();
 
   /// Check if references point to same data
-  bool operator!=(const ResidueRef& rhs) const { return m_residue != rhs.m_residue; }
-  bool operator==(const ResidueRef& rhs) const { return m_residue == rhs.m_residue; }
-
-
+  bool operator!=(const ResidueRef& rhs) const { return res_ptr() != rhs.res_ptr(); }
+  bool operator==(const ResidueRef& rhs) const { return res_ptr() == rhs.res_ptr(); }
 
   /// @brief Adds atom to the end of the reside and return its reference
   ///
@@ -323,6 +285,8 @@ public:
   AtomRef add_atom();
 
 private:
+  ResidueConstRef c_ref;
+
   friend AtomRef;
   friend AtomSelection;
   friend Frame;
@@ -332,15 +296,25 @@ private:
   friend ResidueSpan;
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
+
   friend AtomGettersMixin<AtomRef>;
   friend AtomGettersMixin<smart::AtomSmartRef>;
+
+  friend ResidueGettersMixin<ResidueRef>;
+  friend ResidueSettersMixin<ResidueRef>;
   friend smart::ResidueSmartRef;
   friend smart::ResidueSmartSelection;
-  explicit ResidueRef(BaseResidue& residue) : m_residue(&residue){};
-  BaseResidue* m_residue = nullptr;
-  ResidueRef(BaseResidue* ptr, BaseResidue* end) : m_residue(ptr){};
-  void advance() { ++m_residue; }
-  ResidueRef() = default; /// constructs object in invalid state (with nullptrs)
+
+  constexpr void check_invariants(const char*) const {};
+
+  constexpr BaseResidue* res_ptr() const { return c_ref.m_residue; }
+  constexpr BaseResidue*& res_ptr() { return c_ref.m_residue; }
+
+  constexpr explicit ResidueRef(BaseResidue& residue) : c_ref(residue){};
+
+  constexpr ResidueRef(BaseResidue* ptr, BaseResidue*) : c_ref(*ptr){};
+  constexpr void advance() { c_ref.advance(); }
+  constexpr ResidueRef() = default; /// constructs object in invalid state (with nullptrs)
 };
 
 class AtomConstRef : public AtomGettersMixin<AtomConstRef> {
@@ -448,7 +422,7 @@ template <> struct Selection<proxy::AtomRef>::LessThanComparator {
 };
 
 template <> struct Selection<proxy::ResidueRef>::LessThanComparator {
-  bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2) { return p1.m_residue < p2.m_residue; }
+  bool operator()(const proxy::ResidueRef& p1, const proxy::ResidueRef& p2) { return p1.res_ptr() < p2.res_ptr(); }
 };
 
 template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {

@@ -5,8 +5,8 @@
 using namespace xmol::proxy::smart;
 
 struct ResidueSmartSelection::ResidueRefLessThanComparator {
-  bool operator()(ResidueRef& a, BaseResidue* ptr) { return a.m_residue < ptr; }
-  bool operator()(BaseResidue* ptr, ResidueRef& a) { return ptr < a.m_residue; }
+  bool operator()(ResidueRef& a, BaseResidue* ptr) { return a.res_ptr() < ptr; }
+  bool operator()(BaseResidue* ptr, ResidueRef& a) { return ptr < a.res_ptr(); }
 };
 
 void ResidueSmartSelection::on_base_residues_move(BaseResidue *from_begin, BaseResidue *from_end, BaseResidue *to_begin) {
@@ -15,9 +15,9 @@ void ResidueSmartSelection::on_base_residues_move(BaseResidue *from_begin, BaseR
   auto it_end =
       std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, ResidueRefLessThanComparator{});
   for (; it != it_end; ++it) {
-    assert(from_begin <= it->m_residue);
-    assert(it->m_residue < from_end);
-    it->m_residue = to_begin + (it->m_residue - from_begin);
+    assert(from_begin <= it->res_ptr());
+    assert(it->res_ptr() < from_end);
+    it->res_ptr() = to_begin + (it->res_ptr() - from_begin);
   }
 }
 

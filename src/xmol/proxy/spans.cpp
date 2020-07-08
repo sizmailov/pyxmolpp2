@@ -191,7 +191,7 @@ Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*t
   }
 }
 
-bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
+bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.res_ptr() && ref.res_ptr() < m_end; }
 smart::ResidueSmartSpan ResidueSpan::smart() { return *this; }
 
 ResidueSpan& ResidueSpan::operator&=(const ResidueSpan& rhs) {

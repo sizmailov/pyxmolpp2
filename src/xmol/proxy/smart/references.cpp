@@ -18,8 +18,8 @@ void AtomSmartRef::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from_end, 
 }
 
 void ResidueSmartRef::on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin) {
-  if (from_begin <= m_ref.m_residue && m_ref.m_residue < from_end) {
-    m_ref.m_residue = to_begin + (m_ref.m_residue - from_begin);
+  if (from_begin <= m_ref.res_ptr() && m_ref.res_ptr() < from_end) {
+    m_ref.res_ptr() = to_begin + (m_ref.res_ptr() - from_begin);
   }
 }
 

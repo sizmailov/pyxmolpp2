@@ -101,9 +101,9 @@ MoleculeSelection ResidueSelection::molecules() {
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& r : m_data) {
-    if (prev != r.m_residue->molecule) {
-      result.push_back(MoleculeRef{*r.m_residue->molecule});
-      prev = r.m_residue->molecule;
+    if (prev != r.res_ptr()->molecule) {
+      result.push_back(MoleculeRef{*r.res_ptr()->molecule});
+      prev = r.res_ptr()->molecule;
     }
   }
   return MoleculeSelection(std::move(result), true);
@@ -184,7 +184,7 @@ std::vector<xmol::ResidueIndex> ResidueSelection::index() const {
   if (!empty()) {
     result.reserve(size());
     for (auto& ref : m_data) {
-      result.push_back(frame_ptr()->index_of(*ref.m_residue));
+      result.push_back(frame_ptr()->index_of(*ref.res_ptr()));
     }
   }
   return result;
