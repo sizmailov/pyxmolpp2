@@ -220,7 +220,7 @@ std::vector<xmol::ResidueIndex> ResidueSpan::index() const {
 }
 
 bool MoleculeSpan::contains(const MoleculeRef& ref) const {
-  return m_begin <= ref.m_molecule && ref.m_molecule < m_end;
+  return m_begin <= ref.mol_ptr() && ref.mol_ptr() < m_end;
 }
 smart::MoleculeSmartSpan MoleculeSpan::smart() { return *this; }
 

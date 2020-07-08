@@ -2,6 +2,7 @@
 #include "../base.h"
 #include "Selection.h"
 #include "mixins/AtomRefMixin.h"
+#include "mixins/MoleculeRefMixin.h"
 #include "mixins/ResidueRefMixin.h"
 #include "spans.h"
 
@@ -109,74 +110,55 @@ private:
   CoordRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
+class MoleculeConstRef : public MoleculeGettersMixin<MoleculeConstRef> {
+public:
+  constexpr MoleculeConstRef(const MoleculeConstRef& rhs) = default;
+  constexpr MoleculeConstRef(MoleculeConstRef&& rhs) noexcept = default;
+  constexpr MoleculeConstRef& operator=(const MoleculeConstRef& rhs) = default;
+  constexpr MoleculeConstRef& operator=(MoleculeConstRef&& rhs) noexcept = default;
+
+private:
+  BaseMolecule* m_molecule = nullptr;
+
+  constexpr void check_invariants(const char*) const {};
+
+  constexpr BaseMolecule* const mol_ptr() const { return m_molecule; }
+  constexpr BaseMolecule* const& mol_ptr() { return m_molecule; }
+
+  constexpr explicit MoleculeConstRef(BaseMolecule& Molecule) : m_molecule(&Molecule){};
+  constexpr MoleculeConstRef(BaseMolecule* ptr, BaseMolecule*) : m_molecule(ptr){};
+  constexpr void advance() { ++m_molecule; }
+  constexpr MoleculeConstRef() = default; /// constructs object in invalid state (with nullptrs)
+
+  friend MoleculeRef;
+};
+
 /** @brief Lightweight molecule reference
  *
  * For ref-counting reference see @ref smart::MoleculeSmartRef
  * */
-class MoleculeRef {
+class MoleculeRef : public MoleculeSettersMixin<MoleculeRef> {
 public:
-  /// Molecule name
-  [[nodiscard]] const MoleculeName& name() const {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    return m_molecule->name;
-  }
-
-  MoleculeRef& name(const MoleculeName& name) {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    m_molecule->name = name;
-    return *this;
-  }
-
-  MoleculeRef& name(const char* name) {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    m_molecule->name = MoleculeName(name);
-    return *this;
-  }
-
-  MoleculeRef& name(const std::string& name) {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    m_molecule->name = MoleculeName(name);
-    return *this;
-  }
-
-  /// Check if molecule has no residues
-  [[nodiscard]] bool empty() const {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    return m_molecule->residues.m_begin == m_molecule->residues.m_end;
-  }
-
-  /// Number of residues in molecule
-  [[nodiscard]] size_t size() const {
-    assert(m_molecule);
-    assert(m_molecule->frame);
-    return m_molecule->residues.m_end - m_molecule->residues.m_begin;
-  }
-
   /// Index of the molecule in frame
   [[nodiscard]] MoleculeIndex index() const noexcept;
 
   /// Parent frame
-  Frame& frame() { return *m_molecule->frame; };
+  Frame& frame() { return *mol_ptr()->frame; };
 
   /// Parent frame
-  const Frame& frame() const { return *m_molecule->frame; };
+  const Frame& frame() const { return *mol_ptr()->frame; };
 
   /// Residues of the molecule
-  ResidueSpan residues() { return ResidueSpan{m_molecule->residues}; }
+  ResidueSpan residues() { return ResidueSpan{mol_ptr()->residues}; }
 
   /// Atoms of the molecule
   AtomSpan atoms() {
     if (empty())
       return {};
-    assert(m_molecule->residues.m_begin);
-    assert(m_molecule->residues.m_end);
-    return AtomSpan(m_molecule->residues.m_begin->atoms.m_begin,
-                       (m_molecule->residues.m_begin + size() - 1)->atoms.m_end);
+    assert(mol_ptr()->residues.m_begin);
+    assert(mol_ptr()->residues.m_end);
+    return AtomSpan(mol_ptr()->residues.m_begin->atoms.m_begin,
+                       (mol_ptr()->residues.m_begin + size() - 1)->atoms.m_end);
   }
 
   /// Atom coordinates of the molecule
@@ -186,8 +168,8 @@ public:
   smart::MoleculeSmartRef smart();
 
   /// Check if references point to same data
-  bool operator!=(const MoleculeRef& rhs) const { return m_molecule != rhs.m_molecule; }
-  bool operator==(const MoleculeRef& rhs) const { return m_molecule == rhs.m_molecule; }
+  constexpr bool operator!=(const MoleculeRef& rhs) const { return mol_ptr() != rhs.mol_ptr(); }
+  constexpr bool operator==(const MoleculeRef& rhs) const { return mol_ptr() == rhs.mol_ptr(); }
 
   std::optional<proxy::ResidueRef> operator[](const ResidueId& id);
   std::optional<proxy::ResidueRef> operator[](residueSerial_t id);
@@ -201,6 +183,12 @@ public:
   ResidueRef add_residue();
 
 private:
+  MoleculeConstRef m_cref;
+
+  constexpr void check_invariants(const char*) const {};
+  constexpr BaseMolecule* mol_ptr() const { return m_cref.m_molecule; }
+  constexpr BaseMolecule*& mol_ptr() { return m_cref.m_molecule; }
+
   friend AtomRef;
   friend AtomSelection;
   friend Frame;
@@ -211,13 +199,17 @@ private:
   friend ResidueSelection;
   friend Selection<MoleculeRef>::LessThanComparator;
   friend ResidueGettersMixin<ResidueRef>;
+
+  friend MoleculeSettersMixin<MoleculeRef>;
+  friend MoleculeGettersMixin<MoleculeRef>;
+
   friend smart::MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
-  BaseMolecule* m_molecule;
-  explicit MoleculeRef(BaseMolecule& molecule) : m_molecule(&molecule){};
-  MoleculeRef(BaseMolecule* ptr, BaseMolecule* end) : m_molecule(ptr){};
-  void advance() { ++m_molecule; };
-  MoleculeRef() = default; // constructs object in invalid state (with nullptrs)
+
+  constexpr explicit MoleculeRef(BaseMolecule& molecule) : m_cref(molecule){};
+  constexpr MoleculeRef(BaseMolecule* ptr, BaseMolecule*) : m_cref(*ptr){};
+  constexpr void advance() { m_cref.advance(); };
+  constexpr MoleculeRef() = default; // constructs object in invalid state (with nullptrs)
 };
 
 class ResidueConstRef : public ResidueGettersMixin<ResidueConstRef> {
@@ -426,7 +418,7 @@ template <> struct Selection<proxy::ResidueRef>::LessThanComparator {
 };
 
 template <> struct Selection<proxy::MoleculeRef>::LessThanComparator {
-  bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.m_molecule < p2.m_molecule; }
+  bool operator()(const proxy::MoleculeRef& p1, const proxy::MoleculeRef& p2) { return p1.mol_ptr() < p2.mol_ptr(); }
 };
 
 inline std::string to_string(const MoleculeRef& mol) { return mol.name().str(); }

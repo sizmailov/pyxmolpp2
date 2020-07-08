@@ -5,8 +5,8 @@
 using namespace xmol::proxy::smart;
 
 struct MoleculeSmartSelection::MoleculeRefLessThanComparator {
-  bool operator()(MoleculeRef& a, BaseMolecule* ptr) { return a.m_molecule < ptr; }
-  bool operator()(BaseMolecule* ptr, MoleculeRef& a) { return ptr < a.m_molecule; }
+  bool operator()(MoleculeRef& a, BaseMolecule* ptr) { return a.mol_ptr() < ptr; }
+  bool operator()(BaseMolecule* ptr, MoleculeRef& a) { return ptr < a.mol_ptr(); }
 };
 
 void MoleculeSmartSelection::on_base_molecules_move(BaseMolecule *from_begin, BaseMolecule *from_end, BaseMolecule *to_begin) {
@@ -15,9 +15,9 @@ void MoleculeSmartSelection::on_base_molecules_move(BaseMolecule *from_begin, Ba
   auto it_end =
       std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, MoleculeRefLessThanComparator{});
   for (; it != it_end; ++it) {
-    assert(from_begin <= it->m_molecule);
-    assert(it->m_molecule < from_end);
-    it->m_molecule = to_begin + (it->m_molecule - from_begin);
+    assert(from_begin <= it->mol_ptr());
+    assert(it->mol_ptr() < from_end);
+    it->mol_ptr() = to_begin + (it->mol_ptr() - from_begin);
   }
 }
 

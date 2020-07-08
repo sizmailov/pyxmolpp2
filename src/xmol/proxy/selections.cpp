@@ -169,7 +169,7 @@ std::vector<xmol::MoleculeIndex> MoleculeSelection::index() const {
   if (!empty()) {
     result.reserve(size());
     for (auto& ref : m_data) {
-      result.push_back(frame_ptr()->index_of(*ref.m_molecule));
+      result.push_back(frame_ptr()->index_of(*ref.mol_ptr()));
     }
   }
   return result;
