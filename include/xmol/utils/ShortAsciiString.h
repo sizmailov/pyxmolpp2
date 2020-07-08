@@ -18,19 +18,16 @@ public:
       typename std::conditional<MAX_LENGTH <= 2, typename std::conditional<MAX_LENGTH <= 1, uint8_t, uint16_t>::type,
                                 uint32_t>::type,
       uint64_t>::type;
-  static const int max_length = MAX_LENGTH;
+  static constexpr int max_length = MAX_LENGTH;
 
-  inline ShortAsciiString() : m_value(0){};
+  constexpr inline ShortAsciiString() : m_value(0){};
 
-  explicit ShortAsciiString(const std::string& aName)
-      : m_value(to_uint(aName.c_str())) {}
+  constexpr explicit ShortAsciiString(const std::string& aName) : m_value(to_uint(aName.c_str())) {}
 
-//  inline explicit ShortAsciiString(const char* aName)
-//      : m_value(to_uint(aName)) {}
+  //  inline explicit ShortAsciiString(const char* aName)
+  //      : m_value(to_uint(aName)) {}
 
-  template<int N>
-  constexpr inline explicit ShortAsciiString(const char (&aName)[N]) noexcept
-      : m_value(0) {
+  template <int N> constexpr inline explicit ShortAsciiString(const char (&aName)[N]) noexcept : m_value(0) {
     static_assert(N<=MAX_LENGTH+1 || ALLOW_CONSTRUCT_TRUNCATION);
     const char* ptr = aName;
     for (int i = 0; *ptr != '\0' && i < MAX_LENGTH; ++i, ++ptr) {
@@ -43,55 +40,38 @@ public:
     return m_value >> (8*i) & 255;
   }
 
-  inline explicit ShortAsciiString(const char* aName, int exact_length)
-      : m_value(to_uint(aName, exact_length)) {}
+  constexpr explicit ShortAsciiString(const char* aName, int exact_length) : m_value(to_uint(aName, exact_length)) {}
 
-  inline ShortAsciiString(const ShortAsciiString& other)
-      : m_value(other.m_value){};
-  inline ShortAsciiString(ShortAsciiString&& other) noexcept
-      : m_value(other.m_value) {
-    other.m_value = 0;
-  };
+  constexpr ShortAsciiString(const ShortAsciiString& other) : m_value(other.m_value){};
+  constexpr ShortAsciiString(ShortAsciiString&& other) noexcept : m_value(other.m_value) { other.m_value = 0; };
 
-  inline ShortAsciiString& operator=(const ShortAsciiString& other) {
+  constexpr ShortAsciiString& operator=(const ShortAsciiString& other) {
     m_value = other.m_value;
     return *this;
   }
-  inline ShortAsciiString& operator=(ShortAsciiString&& other) noexcept {
+  constexpr ShortAsciiString& operator=(ShortAsciiString&& other) noexcept {
     m_value = other.m_value;
     other.m_value = 0;
     return *this;
   }
 
-  ShortAsciiString& operator=(const std::string& aName) {
+  constexpr ShortAsciiString& operator=(const std::string& aName) {
     m_value = to_uint(aName.c_str());
     return *this;
   }
-  inline ShortAsciiString& operator=(const char* aName) {
+  constexpr ShortAsciiString& operator=(const char* aName) {
     m_value = to_uint(aName);
     return *this;
   }
 
-  inline bool operator==(const ShortAsciiString& other) const {
-    return m_value == other.m_value;
-  }
-  inline bool operator!=(const ShortAsciiString& other) const {
-    return m_value != other.m_value;
-  }
-  inline bool operator==(const char* other) const {
-    return m_value == ShortAsciiString(other).m_value;
-  }
-  inline bool operator!=(const char* other) const {
-    return m_value != ShortAsciiString(other).m_value;
-  }
-  inline bool operator<(const ShortAsciiString& other) const {
-    return m_value < other.m_value;
-  }
-  inline bool operator>(const ShortAsciiString& other) const {
-    return m_value > other.m_value;
-  }
+  constexpr bool operator==(const ShortAsciiString& other) const { return m_value == other.m_value; }
+  constexpr bool operator!=(const ShortAsciiString& other) const { return m_value != other.m_value; }
+  constexpr bool operator==(const char* other) const { return m_value == ShortAsciiString(other).m_value; }
+  constexpr bool operator!=(const char* other) const { return m_value != ShortAsciiString(other).m_value; }
+  constexpr bool operator<(const ShortAsciiString& other) const { return m_value < other.m_value; }
+  constexpr bool operator>(const ShortAsciiString& other) const { return m_value > other.m_value; }
 
-  std::string str() const {
+  [[nodiscard]] std::string str() const {
 
     uint_type tmp = m_value;
 
@@ -109,7 +89,7 @@ public:
   constexpr inline uint_type value() const { return m_value; }
 
 private:
-  inline uint_type static to_uint(const char* aName) {
+  constexpr inline uint_type static to_uint(const char* aName) {
     uint_type value = 0;
     const char* origin = aName;
     for (int i = 0; *aName != '\0' && i < MAX_LENGTH; ++i, ++aName) {
@@ -120,7 +100,7 @@ private:
                : throw std::runtime_error("ShortName::too_long: len(`" + std::string(origin, MAX_LENGTH) + "`...) > " +
                                           std::to_string(MAX_LENGTH));
   }
-  inline uint_type static to_uint(const char* aName, int length) {
+  constexpr inline uint_type static to_uint(const char* aName, int length) {
     assert(length <= MAX_LENGTH);
     uint_type value = 0;
     const char* end = aName + length;

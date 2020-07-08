@@ -17,37 +17,37 @@ using ResidueInsertionCode = utils::ShortAsciiString<1, false, detail::Insertion
 
 using residueSerial_t = int32_t;
 struct ResidueId {
-  ResidueId() : ResidueId(0, ResidueInsertionCode("")) {}
-  explicit ResidueId(residueSerial_t serial) : serial(serial) {}
-  ResidueId(residueSerial_t serial, ResidueInsertionCode iCode) : serial(serial), iCode(std::move(iCode)) {}
+  constexpr ResidueId() : ResidueId(0, ResidueInsertionCode("")) {}
+  constexpr explicit ResidueId(residueSerial_t serial) : serial(serial) {}
+  constexpr ResidueId(residueSerial_t serial, ResidueInsertionCode iCode) : serial(serial), iCode(std::move(iCode)) {}
 
-  ResidueId(const ResidueId& other) = default;
-  ResidueId(ResidueId&& other) = default;
+  constexpr ResidueId(const ResidueId& other) = default;
+  constexpr ResidueId(ResidueId&& other) = default;
 
-  ResidueId& operator=(const ResidueId& other) = default;
-  ResidueId& operator=(ResidueId&& other) = default;
-  ResidueId& operator=(const residueSerial_t& id) {
+  constexpr ResidueId& operator=(const ResidueId& other) = default;
+  constexpr ResidueId& operator=(ResidueId&& other) = default;
+  constexpr ResidueId& operator=(const residueSerial_t& id) {
     this->serial = id;
     iCode = ResidueInsertionCode{};
     return *this;
   };
 
-  inline bool operator<(const ResidueId& other) const {
+  constexpr bool operator<(const ResidueId& other) const {
     return std::tie(serial, iCode) < std::tie(other.serial, other.iCode);
   }
-  inline bool operator>(const ResidueId& other) const {
+  constexpr bool operator>(const ResidueId& other) const {
     return std::tie(serial, iCode) > std::tie(other.serial, other.iCode);
   }
-  inline bool operator==(const ResidueId& other) const {
+  constexpr bool operator==(const ResidueId& other) const {
     return std::tie(serial, iCode) == std::tie(other.serial, other.iCode);
   }
-  inline bool operator!=(const ResidueId& other) const {
+  constexpr bool operator!=(const ResidueId& other) const {
     return std::tie(serial, iCode) != std::tie(other.serial, other.iCode);
   }
-  inline bool operator<=(const ResidueId& other) const {
+  constexpr bool operator<=(const ResidueId& other) const {
     return std::tie(serial, iCode) <= std::tie(other.serial, other.iCode);
   }
-  inline bool operator>=(const ResidueId& other) const {
+  constexpr bool operator>=(const ResidueId& other) const {
     return std::tie(serial, iCode) >= std::tie(other.serial, other.iCode);
   }
 
@@ -59,18 +59,18 @@ inline std::string to_string(const ResidueId& residueId) {
   return std::to_string(residueId.serial) + residueId.iCode.str();
 }
 
-inline bool operator<(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs < ResidueId(rhs); }
-inline bool operator>(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs > ResidueId(rhs); }
-inline bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }
-inline bool operator!=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs != ResidueId(rhs); }
-inline bool operator<=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <= ResidueId(rhs); }
-inline bool operator>=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >= ResidueId(rhs); }
+constexpr bool operator<(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs < ResidueId(rhs); }
+constexpr bool operator>(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs > ResidueId(rhs); }
+constexpr bool operator==(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs == ResidueId(rhs); }
+constexpr bool operator!=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs != ResidueId(rhs); }
+constexpr bool operator<=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs <= ResidueId(rhs); }
+constexpr bool operator>=(const ResidueId& lhs, const residueSerial_t& rhs) { return lhs >= ResidueId(rhs); }
 
-inline bool operator<(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) < rhs; }
-inline bool operator>(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) > rhs; }
-inline bool operator==(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) == rhs; }
-inline bool operator!=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) != rhs; }
-inline bool operator<=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <= rhs; }
-inline bool operator>=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >= rhs; }
+constexpr bool operator<(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) < rhs; }
+constexpr bool operator>(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) > rhs; }
+constexpr bool operator==(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) == rhs; }
+constexpr bool operator!=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) != rhs; }
+constexpr bool operator<=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) <= rhs; }
+constexpr bool operator>=(const residueSerial_t& lhs, const ResidueId& rhs) { return ResidueId(lhs) >= rhs; }
 
 } // namespace xmol
