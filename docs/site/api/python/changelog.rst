@@ -10,7 +10,7 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
-next:
+v1.4:
   - Added nice `__str__` representation for elements and selections
   - New: read :ref:`Frame.time` from ``.xtc`` files
   - Changed signature of :ref:`TrajectoryInputFile.read_frame`
