@@ -74,8 +74,8 @@ void pyxmolpp::v1::populate(pybind11::class_<Trajectory>& pyTrajectory) {
       "__iter__", [](Trajectory::Slice& self) { return common::make_iterator(self.begin(), self.end()); },
       py::keep_alive<0, 1>())
       .def("__len__", &Trajectory::Slice::size)
-      .def_property_readonly("n_atoms", &Trajectory::Slice::n_atoms)
-      .def_property_readonly("n_frames", &Trajectory::Slice::n_frames)
+      .def_property_readonly("n_atoms", &Trajectory::Slice::n_atoms, "Number of atoms in frame")
+      .def_property_readonly("n_frames", &Trajectory::Slice::n_frames, "Number of frames")
       .def("__getitem__",
            [](Trajectory::Slice& self, int idx) -> Frame {
              int i = idx;

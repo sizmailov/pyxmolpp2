@@ -46,24 +46,26 @@ def get_property_type(prop, module_name):
 
     strip_module_name = module_name is not None
 
-    for line in prop.fget.__doc__.split("\n"):
-        if strip_module_name:
-            line = line.replace(module_name + ".", "")
-        m = re.match(r"\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*", line)
-        if m:
-            getter_rtype = m.group("rtype")
-            break
-
-    if prop.fset is not None:
-        for line in prop.fset.__doc__.split("\n"):
+    if prop.fget.__doc__:
+        for line in prop.fget.__doc__.split("\n"):
             if strip_module_name:
                 line = line.replace(module_name + ".", "")
             m = re.match(r"\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*", line)
             if m:
-                args = m.group("args")
-                # replace first argument with self
-                setter_args = ",".join(["self"]+args.split(",")[1:])
+                getter_rtype = m.group("rtype")
                 break
+
+    if prop.fset is not None:
+        if prop.fset.__doc__:
+            for line in prop.fset.__doc__.split("\n"):
+                if strip_module_name:
+                    line = line.replace(module_name + ".", "")
+                m = re.match(r"\s*\((?P<args>[^\(\)]*)\)\s*->\s*(?P<rtype>[^\(\)]+)\s*", line)
+                if m:
+                    args = m.group("args")
+                    # replace first argument with self
+                    setter_args = ",".join(["self"]+args.split(",")[1:])
+                    break
 
     return getter_rtype, setter_args
 
