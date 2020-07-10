@@ -86,9 +86,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::CoordSmartSpan>
       .def("apply", [](Span& sel, Translation3d& other) { return sel.apply(other); })
       .def("mean", [](Span& sel) { return sel.mean(); })
       .def("inertia_tensor", &Span::inertia_tensor)
-      .def("__str__", [](Span& self) {
-        return "CoordsSpan<size=" + std::to_string(self.size())>+">";
-      });
+      .def("__str__", [](Span& self) { return "CoordsSpan<size=" + std::to_string(self.size()) + ">"; });
 }
 void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>& pyAtomSpan) {
   using Span = AtomSmartSpan;
