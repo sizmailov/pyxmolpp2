@@ -1,11 +1,13 @@
 from typing import Sequence
 from pyxmolpp2 import Frame, PdbFile, TrjtoolDatFile, Trajectory, XYZ
-from pyxmolpp2.pipe import ProcessedTrajectory, Align, ScaleUnitCell
+from pyxmolpp2.pipe import ProcessedTrajectory, Align, ScaleUnitCell, TrajectoryProcessor
 import os
 import numpy as np
+from trajectory.test_python_input_file import IotaTrajectory
+from make_polygly import make_polyglycine
 
 
-class AngstromsToNanometers:
+class AngstromsToNanometers(TrajectoryProcessor):
     def __init__(self):
         self.frame_coords = None
 
@@ -16,6 +18,9 @@ class AngstromsToNanometers:
         if self.frame_coords is None:
             self.frame_coords = frame.coords
         self.frame_coords.values[:] = self.frame_coords.values * 10
+
+    def copy(self):
+        return AngstromsToNanometers()
 
 
 def test_pipes():
@@ -45,6 +50,17 @@ def test_pipes():
     for frame in traj[0:10] | Align(by=lambda a: True) | AngstromsToNanometers():
         assert frame.coords.mean().distance(first_geom_center * 10) < 0.001
     del frame
+
+
+def test_pipe_slice():
+    ref = make_polyglycine([('A', 10)])
+
+    traj = Trajectory(ref)
+    traj.extend(IotaTrajectory(natoms=ref.atoms.size, nframes=10))
+
+    for frame in (traj | AngstromsToNanometers())[:10]:
+        assert np.allclose(frame.coords.values / 10, frame.index)
+        assert np.isclose(frame.time, frame.index * 15)
 
 
 def test_unit_cell_scale():

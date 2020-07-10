@@ -1,10 +1,18 @@
-from typing import Sequence, Callable, List
-from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, PdbFile, TrjtoolDatFile, Trajectory, XYZ, CoordSelection, \
-    Molecule, AtomSelection, Translation
+from typing import Sequence, List
+from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation
+
+
+class TrajectoryProcessor:
+
+    def copy(self):
+        raise NotImplementedError()
+
+    def __call__(self, frame: Frame):
+        raise NotImplementedError()
 
 
 class ProcessedTrajectory:
-    def __init__(self, trajectory: Sequence[Frame], processor: Callable[[Frame], None]):
+    def __init__(self, trajectory: Sequence[Frame], processor: TrajectoryProcessor):
         self.trajectory = trajectory
         self.processor = processor
 
@@ -14,7 +22,10 @@ class ProcessedTrajectory:
             yield frame
 
     def __getitem__(self, index):
-        return self.trajectory[index]
+        if isinstance(index, slice):
+            return ProcessedTrajectory(self.trajectory[index], self.processor.copy())
+        else:
+            return self.processor(self.trajectory[index])
 
 
 class Align:
@@ -42,8 +53,15 @@ class Align:
                 self.moved_coords = frame.coords
         self.moved_coords.apply(self.frame_coords.alignment_to(self.ref_coords))
 
+    def copy(self):
+        return Align(by=self.by, reference=self.reference, move_only=self.move_only)
 
-class ScaleUnitCell:
+
+class ScaleUnitCell(TrajectoryProcessor):
+
+    def copy(self):
+        return self
+
     def __init__(self, summary_volume_filename):
         import numpy as np
         self.volume = np.genfromtxt(summary_volume_filename, usecols=[1])
@@ -56,7 +74,8 @@ class ScaleUnitCell:
         frame.cell.scale_to_volume(self.volume[frame.index])
 
 
-class AssembleQuaternaryStructure:
+class AssembleQuaternaryStructure(TrajectoryProcessor):
+
     def __init__(self, of: MoleculePredicate, by: AtomPredicate, reference: Frame = None):
         self.molecules_selector = of
         self.reference = reference
@@ -101,3 +120,7 @@ class AssembleQuaternaryStructure:
             closest = frame.cell.closest_image_to(ref_point, mol_point)
             if closest.shift.distance(XYZ()) > 0:
                 mol.coords.apply(Translation(closest.shift))
+
+    def copy(self):
+        return AssembleQuaternaryStructure(of=self.molecules_selector, by=self.reference_atoms_selector,
+                                           reference=self.reference)
