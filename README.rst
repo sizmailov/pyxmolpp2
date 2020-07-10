@@ -2,34 +2,25 @@
 A tool to process MD trajectories
 #################################
 
-.. |master_build| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=master
+.. |travis| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=master
     :alt: master status
     :target: https://travis-ci.com/sizmailov/pyxmolpp2
 
 
-.. |master_coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master/graph/badge.svg
+.. |coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master/graph/badge.svg
     :alt: master coverage
     :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master
 
-
-.. |dev_build| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=dev
-    :alt: dev status
-    :target: https://travis-ci.com/sizmailov/pyxmolpp2
-
-
-.. |dev_coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/dev/graph/badge.svg
-    :alt: dev coverage
-    :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/dev
-
-.. image:: https://badge.fury.io/py/pyxmolpp2.svg
+.. |pypi| image:: https://badge.fury.io/py/pyxmolpp2.svg
+    :alt: PyPI package
     :target: https://badge.fury.io/py/pyxmolpp2
 
-================= =================
-    **master**         **dev**
-================= =================
-|master_build|    |dev_build|
-|master_coverage| |dev_coverage|
-================= =================
+.. |gitter| image:: https://badges.gitter.im/pyxmolpp2/Lobby.svg
+   :alt: Join the chat at https://gitter.im/pyxmolpp2/Lobby
+   :target: https://gitter.im/pyxmolpp2/Lobby
+
+
+|pypi| |gitter| |travis| |coverage|
 
 -----
 About
