@@ -87,12 +87,21 @@ public:
     Sentinel end() { return {}; }
 
     Frame at(size_t i) { return m_traj.at(m_begin.global_pos + m_step * i); }
+
+    /// Total number of frames in slice
     size_t size() const {
       if (m_begin.global_pos >= m_end) {
         return 0;
       }
       return (m_end - m_begin.global_pos + m_step - 1) / m_step;
     }
+
+    /// Alias for size()
+    [[nodiscard]] size_t n_frames() const { return size(); };
+
+    /// Number of atoms in frame
+    [[nodiscard]] size_t n_atoms() const { return m_traj.n_atoms(); }
+
 
   private:
     friend Trajectory;

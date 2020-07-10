@@ -1,5 +1,5 @@
-from typing import Sequence, List
-from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation
+from typing import Sequence, List, Union
+from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation, Trajectory
 
 
 class TrajectoryProcessor:
@@ -12,7 +12,8 @@ class TrajectoryProcessor:
 
 
 class ProcessedTrajectory:
-    def __init__(self, trajectory: Sequence[Frame], processor: TrajectoryProcessor):
+    def __init__(self, trajectory: Union[Trajectory, Trajectory.Slice, "ProcessedTrajectory"],
+                 processor: TrajectoryProcessor):
         self.trajectory = trajectory
         self.processor = processor
 
@@ -25,6 +26,21 @@ class ProcessedTrajectory:
             return ProcessedTrajectory(self.trajectory[index], self.processor.copy())
         else:
             return self.processor(self.trajectory[index])
+
+    def __len__(self):
+        return len(self.trajectory)
+
+    @property
+    def size(self):
+        return len(self)
+
+    @property
+    def n_frames(self):
+        return len(self)
+
+    @property
+    def n_atoms(self):
+        return self.trajectory.n_atoms
 
 
 class Align(TrajectoryProcessor):
