@@ -78,9 +78,16 @@ class ScaleUnitCell(TrajectoryProcessor):
     def copy(self):
         return self
 
-    def __init__(self, summary_volume_filename):
-        import numpy as np
-        self.volume = np.genfromtxt(summary_volume_filename, usecols=[1])
+    def __init__(self, summary_volume_filename, column=1, max_rows=None):
+        try:
+            # Use faster pandas.read_csv() if available
+            import pandas as pd
+            self.volume = \
+                pd.read_csv(summary_volume_filename,
+                            sep=r"\s+", header=None, usecols=[column], nrows=max_rows)[0].values
+        except ImportError:
+            import numpy as np
+            self.volume = np.genfromtxt(summary_volume_filename, usecols=[column], max_rows=max_rows)
 
     def __ror__(self, trajectory: Sequence[Frame]):
         return ProcessedTrajectory(trajectory, self)
