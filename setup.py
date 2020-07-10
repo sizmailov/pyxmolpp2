@@ -81,6 +81,9 @@ setup(
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
+    install_requires=[
+        "numpy",
+    ],
     classifiers=[
         'License :: OSI Approved :: MIT License',
     ],

@@ -10,6 +10,10 @@ Change log
 :ref-prefix:
     pyxmolpp2
 
+v1.5:
+  - Added abstract base class for trajectory processors :ref:`pipe.TrajectoryProcessor`
+  - Trajectory pipe processors are required to be copyable to facilitate slices of :ref:`pipe.ProcessedTrajectory`
+
 v1.4:
   - Added nice `__str__` representation for elements and selections
   - New: read :ref:`Frame.time` from ``.xtc`` files
