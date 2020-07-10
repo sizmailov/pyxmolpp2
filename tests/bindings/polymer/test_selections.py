@@ -10,6 +10,7 @@ def test_dead_selection_access():
     rsel = frame.residues
     msel = frame.molecules
 
+
     del frame
 
     with pytest.raises(DeadFrameAccessError):
@@ -66,3 +67,16 @@ def test_dead_selection_access():
 
     with pytest.raises(DeadFrameAccessError):
         msel.residues
+
+
+def test_str():
+    frame = make_polyglycine([("A", 20)])
+
+    assert "size=" in str(frame.coords[::3])
+    assert "size=" in str(frame.atoms[::3])
+    assert "size=" in str(frame.residues[::3])
+    assert "size=" in str(frame.molecules[::3])
+    assert "size=" in str(frame.atoms)
+    assert "size=" in str(frame.residues)
+    assert "size=" in str(frame.molecules)
+    assert "size=" in str(frame.coords)
