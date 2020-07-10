@@ -18,6 +18,7 @@ class AngstromsToNanometers(TrajectoryProcessor):
         if self.frame_coords is None:
             self.frame_coords = frame.coords
         self.frame_coords.values[:] = self.frame_coords.values * 10
+        return frame
 
     def copy(self):
         return AngstromsToNanometers()

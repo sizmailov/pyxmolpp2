@@ -7,7 +7,7 @@ class TrajectoryProcessor:
     def copy(self):
         raise NotImplementedError()
 
-    def __call__(self, frame: Frame):
+    def __call__(self, frame: Frame) -> Frame:
         raise NotImplementedError()
 
 
@@ -18,8 +18,7 @@ class ProcessedTrajectory:
 
     def __iter__(self):
         for frame in self.trajectory:
-            self.processor(frame)
-            yield frame
+            yield self.processor(frame)
 
     def __getitem__(self, index):
         if isinstance(index, slice):
@@ -28,7 +27,7 @@ class ProcessedTrajectory:
             return self.processor(self.trajectory[index])
 
 
-class Align:
+class Align(TrajectoryProcessor):
     def __init__(self, by: AtomPredicate, reference: Frame = None, move_only: AtomPredicate = None):
         self.by = by
         self.reference = reference
@@ -52,6 +51,7 @@ class Align:
             else:
                 self.moved_coords = frame.coords
         self.moved_coords.apply(self.frame_coords.alignment_to(self.ref_coords))
+        return frame
 
     def copy(self):
         return Align(by=self.by, reference=self.reference, move_only=self.move_only)
@@ -72,6 +72,7 @@ class ScaleUnitCell(TrajectoryProcessor):
     def __call__(self, frame: Frame):
         assert frame.index < len(self.volume), "Frame index is greater than supplied volume array"
         frame.cell.scale_to_volume(self.volume[frame.index])
+        return frame
 
 
 class AssembleQuaternaryStructure(TrajectoryProcessor):
@@ -120,6 +121,7 @@ class AssembleQuaternaryStructure(TrajectoryProcessor):
             closest = frame.cell.closest_image_to(ref_point, mol_point)
             if closest.shift.distance(XYZ()) > 0:
                 mol.coords.apply(Translation(closest.shift))
+        return frame
 
     def copy(self):
         return AssembleQuaternaryStructure(of=self.molecules_selector, by=self.reference_atoms_selector,
