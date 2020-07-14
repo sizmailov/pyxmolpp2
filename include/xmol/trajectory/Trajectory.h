@@ -5,7 +5,6 @@
 /// MD trajectory classes and utilites
 namespace xmol::trajectory {
 
-
 class TrajectoryDoubleTraverseError : public std::runtime_error {
 public:
   using std::runtime_error::runtime_error;
@@ -159,7 +158,10 @@ private:
   void advance(Position& position, size_t end, size_t step);
 
   void extend_unique_ptr(std::unique_ptr<TrajectoryInputFile>&& input_file) {
-    assert(n_atoms() == input_file->n_atoms());
+    if (n_atoms() != input_file->n_atoms()) {
+      throw std::runtime_error("Trajectory::extend(): n_atoms() mismatch: " + std::to_string(n_atoms()) +
+                               " != " + std::to_string(input_file->n_atoms()));
+    }
     m_n_frames += input_file->n_frames();
     m_files.push_back(std::move(input_file));
   }

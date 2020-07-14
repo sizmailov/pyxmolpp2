@@ -94,3 +94,13 @@ def test_trajectory_integer_indexing():
 
     assert frame1 != frame2
     assert frame1 != frame3
+
+
+def test_trajectory_bad_n_atoms():
+    from pyxmolpp2 import PdbFile, TrjtoolDatFile as DatFile, Trajectory
+
+    frame = PdbFile(os.environ["TEST_DATA_PATH"] + "/pdb/rcsb/1PGB.pdb").frames()[0]
+
+    trj = Trajectory(frame)
+    with pytest.raises(RuntimeError):
+        trj.extend(DatFile(os.environ["TEST_DATA_PATH"] + "/trjtool/GB1/run00001.dat"))
