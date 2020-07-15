@@ -11,7 +11,7 @@ Change log
     pyxmolpp2
 
 v1.6:
-  - Added `AtomSpan.mean` and `AtomSelection.mean` to calculate mass/geom center of atom selections
+  - Added :ref:`AtomSpan.mean` and :ref:`AtomSelection.mean` to calculate mass/geom center of atom selections
 
 v1.5:
   - Added abstract base class for trajectory processors :ref:`pipe.TrajectoryProcessor`
