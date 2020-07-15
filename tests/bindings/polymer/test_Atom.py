@@ -455,6 +455,25 @@ def test_bad_selection_construction_from_list():
         MoleculeSelection([a for a in frame.residues])
 
 
+def test_atoms_mean():
+    from pyxmolpp2 import XYZ, AtomSelection
+
+    frame = make_polyglycine([("A", 1)])
+    frame.coords.values[:] = XYZ(4, 3, 7).values
+    atoms = frame.atoms
+    assert atoms.mean().distance(XYZ(4, 3, 7)) == 0
+    assert atoms.mean(weighted=True).distance(XYZ(4, 3, 7)) == 0
+    atoms[0].mass = 0
+    atoms[0].r = XYZ(1, 1, 1)
+    assert atoms.mean(weighted=True).distance(XYZ(4, 3, 7)) == pytest.approx(0)
+    assert atoms.mean(weighted=False).distance((XYZ(4, 3, 7) * 6 + XYZ(1, 1, 1)) / 7) == pytest.approx(0)
+    atoms = AtomSelection(frame.atoms)
+    atoms[1].mass = 0
+    atoms[1].r = XYZ(1, 1, 1)
+    assert atoms.mean(weighted=True).distance(XYZ(4, 3, 7)) == pytest.approx(0)
+    assert atoms.mean(weighted=False).distance((XYZ(4, 3, 7) * 5 + 2 * XYZ(1, 1, 1)) / 7) == pytest.approx(0)
+
+
 def test_frame_buf_output():
     from io import StringIO
     frame = make_polyglycine([("A", 20)])

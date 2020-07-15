@@ -125,6 +125,7 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
             return span.rmsd(rhs_span, weighted);
           },
           py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+      .def("mean", &Sel::mean, py::arg("weighted")=false, "Mean coordinates")
       .def("inertia_tensor", &Sel::inertia_tensor)
       .def("to_pdb", to_pdb_file<Sel>, py::arg("path_or_buf"))
       .def("to_pdb", to_pdb_stream<Sel>, py::arg("path_or_buf"))
