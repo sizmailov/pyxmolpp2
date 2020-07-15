@@ -192,6 +192,21 @@ Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*t
   }
 }
 
+[[nodiscard]] xmol::XYZ AtomSpan::mean(bool weighted) {
+  if (weighted) {
+    double mass = 0;
+    XYZ sum{};
+    for (auto& a : *this) {
+      sum += a.r() * a.mass();
+      mass += a.mass();
+    }
+    return sum / mass;
+  } else {
+    CoordSpan span = this->coords();
+    return span.mean();
+  }
+}
+
 bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.m_residue && ref.m_residue < m_end; }
 smart::ResidueSmartSpan ResidueSpan::smart() { return *this; }
 

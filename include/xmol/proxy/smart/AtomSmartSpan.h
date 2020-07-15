@@ -90,6 +90,11 @@ public:
     return m_span.rmsd(rhs, weighted);
   }
 
+  XYZ mean(bool weighted=false) {
+    check_precondition("mean()");
+    return m_span.mean(weighted);
+  }
+
   AtomRef operator[](size_t i) {
     check_precondition("operator[]()");
     return m_span[i];

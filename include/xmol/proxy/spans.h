@@ -83,6 +83,8 @@ public:
   [[nodiscard]] double rmsd(AtomSelection& rhs, bool weighted=false);
   [[nodiscard]] double rmsd(AtomSpan& rhs, bool weighted=false);
 
+  [[nodiscard]] XYZ mean(bool weighted=false);
+
   /// Intersect inplace
   AtomSpan& operator&=(const AtomSpan& rhs);
 

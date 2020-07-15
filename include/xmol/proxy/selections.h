@@ -142,6 +142,8 @@ public:
   [[nodiscard]] double rmsd(AtomSelection& rhs, bool weighted=false);
   [[nodiscard]] double rmsd(AtomSpan& rhs, bool weighted=false);
 
+  [[nodiscard]] XYZ mean(bool weighted=false);
+
 private:
   inline void check_invariants(const char* func_name) {
     if (!empty() && &m_data.front().frame() != &m_data.back().frame()) {

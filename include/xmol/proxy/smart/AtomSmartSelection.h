@@ -137,6 +137,11 @@ public:
     return m_selection.rmsd(rhs, weighted);
   }
 
+  XYZ mean(bool weighted=false) {
+    check_precondition("mean()");
+    return m_selection.mean(weighted);
+  }
+
   AtomRef& operator[](size_t i) {
     check_precondition("operator[]()");
     return m_selection[i];

@@ -249,6 +249,21 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
   }
 }
 
+[[nodiscard]] xmol::XYZ AtomSelection::mean(bool weighted) {
+    if (weighted) {
+        double mass = 0;
+        XYZ sum{};
+        for (auto& a : *this) {
+            sum += a.r() * a.mass();
+            mass += a.mass();
+        }
+        return sum / mass;
+    } else {
+        auto span = this->coords();
+        return span.mean();
+    }
+}
+
 namespace xmol::proxy {
 
 AtomSelection operator|(const AtomSelection& lhs, const AtomSelection& rhs) { return AtomSelection(lhs) |= rhs; }
