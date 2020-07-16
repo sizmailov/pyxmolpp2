@@ -45,7 +45,7 @@ public:
   AtomRef add_atom();
 
 private:
-  ResidueConstRef c_ref;
+  ConstResidueRef c_ref;
 
   friend AtomRef;
   friend AtomSelection;

@@ -4,19 +4,19 @@
 
 namespace xmol::proxy {
 
-class CoordConstRef : public CoordGettersMixin<CoordConstRef> {
+class ConstCoordRef : public CoordGettersMixin<ConstCoordRef> {
 public:
-  constexpr CoordConstRef(const CoordConstRef& rhs) = default;
-  constexpr CoordConstRef(CoordConstRef&& rhs) noexcept = default;
-  constexpr CoordConstRef& operator=(const CoordConstRef& rhs) = default;
-  constexpr CoordConstRef& operator=(CoordConstRef&& rhs) noexcept = default;
+  constexpr ConstCoordRef(const ConstCoordRef& rhs) = default;
+  constexpr ConstCoordRef(ConstCoordRef&& rhs) noexcept = default;
+  constexpr ConstCoordRef& operator=(const ConstCoordRef& rhs) = default;
+  constexpr ConstCoordRef& operator=(ConstCoordRef&& rhs) noexcept = default;
 
-  bool operator!=(const CoordConstRef& rhs) const {
+  bool operator!=(const ConstCoordRef& rhs) const {
     return coord_ptr() != rhs.coord_ptr(); // comparing only one pair of pointers since they always must be in sync
   }
 
   /// Check if references point to same data
-  bool operator==(const CoordConstRef& rhs) const {
+  bool operator==(const ConstCoordRef& rhs) const {
     return coord_ptr() == rhs.coord_ptr(); // comparing only one pair of pointers since they always must be in sync
   }
 
@@ -30,13 +30,13 @@ private:
 
   constexpr void advance() { ++m_coord; }
 
-  constexpr CoordConstRef() = default; // constructs object in invalid state (with nullptrs)
+  constexpr ConstCoordRef() = default; // constructs object in invalid state (with nullptrs)
 
-  explicit CoordConstRef(XYZ& coord);
-  CoordConstRef(XYZ* ptr, XYZ* end);
+  explicit ConstCoordRef(XYZ& coord);
+  ConstCoordRef(XYZ* ptr, XYZ* end);
 
 private:
-  friend CoordGettersMixin<CoordConstRef>;
+  friend CoordGettersMixin<ConstCoordRef>;
   friend CoordRef;
 };
 } // namespace xmol::proxy

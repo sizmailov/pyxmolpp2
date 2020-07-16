@@ -7,12 +7,12 @@
 
 namespace xmol::proxy {
 
-class ResidueConstRef : public ResidueGettersMixin<ResidueConstRef> {
+class ConstResidueRef : public ResidueGettersMixin<ConstResidueRef> {
 public:
-  constexpr ResidueConstRef(const ResidueConstRef& rhs) = default;
-  constexpr ResidueConstRef(ResidueConstRef&& rhs) noexcept = default;
-  constexpr ResidueConstRef& operator=(const ResidueConstRef& rhs) = default;
-  constexpr ResidueConstRef& operator=(ResidueConstRef&& rhs) noexcept = default;
+  constexpr ConstResidueRef(const ConstResidueRef& rhs) = default;
+  constexpr ConstResidueRef(ConstResidueRef&& rhs) noexcept = default;
+  constexpr ConstResidueRef& operator=(const ConstResidueRef& rhs) = default;
+  constexpr ConstResidueRef& operator=(ConstResidueRef&& rhs) noexcept = default;
 
 private:
   BaseResidue* m_residue = nullptr;
@@ -22,10 +22,10 @@ private:
   constexpr BaseResidue* const res_ptr() const { return m_residue; }
   constexpr BaseResidue* const& res_ptr() { return m_residue; }
 
-  constexpr explicit ResidueConstRef(BaseResidue& residue) : m_residue(&residue){};
-  constexpr ResidueConstRef(BaseResidue* ptr, BaseResidue*) : m_residue(ptr){};
+  constexpr explicit ConstResidueRef(BaseResidue& residue) : m_residue(&residue){};
+  constexpr ConstResidueRef(BaseResidue* ptr, BaseResidue*) : m_residue(ptr){};
   constexpr void advance() { ++m_residue; }
-  constexpr ResidueConstRef() = default; /// constructs object in invalid state (with nullptrs)
+  constexpr ConstResidueRef() = default; /// constructs object in invalid state (with nullptrs)
 
   friend ResidueRef;
 };

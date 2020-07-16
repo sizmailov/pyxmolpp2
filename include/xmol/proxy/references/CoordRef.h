@@ -28,7 +28,7 @@ public:
   operator const XYZ&() const { return *m_cref.m_coord; }
 
 protected:
-  CoordConstRef m_cref;
+  ConstCoordRef m_cref;
 
 private:
   friend CoordGettersMixin<CoordRef>;

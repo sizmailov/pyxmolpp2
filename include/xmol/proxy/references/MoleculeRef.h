@@ -48,7 +48,7 @@ public:
   ResidueRef add_residue();
 
 private:
-  MoleculeConstRef m_cref;
+  ConstMoleculeRef m_cref;
 
   constexpr void check_invariants(const char*) const {};
   constexpr BaseMolecule* mol_ptr() const { return m_cref.m_molecule; }

@@ -19,9 +19,9 @@ struct BaseMolecule;
 namespace proxy {
 
 class CoordRef;
-class AtomConstRef;
-class ResidueConstRef;
-class MoleculeConstRef;
+class ConstAtomRef;
+class ConstResidueRef;
+class ConstMoleculeRef;
 class AtomRef;
 class ResidueRef;
 class MoleculeRef;

@@ -8,13 +8,13 @@ ResidueRef MoleculeRef::add_residue() { return ResidueRef(frame().add_residue(*m
 
 AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*res_ptr())); }
 
-xmol::proxy::AtomConstRef::AtomConstRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
+xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
     m_coord = &ptr->residue->molecule->frame->crd(*ptr);
   }
 }
 
-AtomConstRef::AtomConstRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
+ConstAtomRef::ConstAtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
 smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
 std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
@@ -52,8 +52,8 @@ template class xmol::proxy::Selection<MoleculeRef>;
 CoordRef::CoordRef(XYZ& coord) : m_cref(coord) {}
 CoordRef::CoordRef(xmol::XYZ* ptr, xmol::XYZ*) : m_cref(ptr, nullptr) {}
 
-CoordConstRef::CoordConstRef(XYZ& coord) : m_coord(&coord) {}
-CoordConstRef::CoordConstRef(xmol::XYZ* ptr, xmol::XYZ*) : m_coord(ptr) {}
+ConstCoordRef::ConstCoordRef(XYZ& coord) : m_coord(&coord) {}
+ConstCoordRef::ConstCoordRef(xmol::XYZ* ptr, xmol::XYZ*) : m_coord(ptr) {}
 
 std::string xmol::proxy::to_string(const AtomRef& atom) {
   return to_string(const_cast<AtomRef&>(atom).residue()) + "." + atom.name().str();

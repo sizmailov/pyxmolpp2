@@ -24,8 +24,8 @@ public:
   /// Create smart reference from this
   smart::AtomSmartRef smart();
 
-  const AtomConstRef& const_() const& { return m_cref; }
-  const AtomConstRef&& const_() const&& { return std::move(m_cref); };
+  const ConstAtomRef& const_() const& { return m_cref; }
+  const ConstAtomRef&& const_() const&& { return std::move(m_cref); };
 
   /// Check if references point to same data
   constexpr bool operator!=(const AtomRef& rhs) const {
@@ -38,7 +38,7 @@ public:
   }
 
 private:
-  AtomConstRef m_cref;
+  ConstAtomRef m_cref;
 
   [[nodiscard]] constexpr XYZ* coord_ptr() const { return m_cref.m_coord; }
   [[nodiscard]] constexpr XYZ*& coord_ptr() { return m_cref.m_coord; }

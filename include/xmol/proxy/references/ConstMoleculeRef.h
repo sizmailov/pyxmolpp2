@@ -7,12 +7,12 @@
 
 namespace xmol::proxy {
 
-class MoleculeConstRef : public MoleculeGettersMixin<MoleculeConstRef> {
+class ConstMoleculeRef : public MoleculeGettersMixin<ConstMoleculeRef> {
 public:
-  constexpr MoleculeConstRef(const MoleculeConstRef& rhs) = default;
-  constexpr MoleculeConstRef(MoleculeConstRef&& rhs) noexcept = default;
-  constexpr MoleculeConstRef& operator=(const MoleculeConstRef& rhs) = default;
-  constexpr MoleculeConstRef& operator=(MoleculeConstRef&& rhs) noexcept = default;
+  constexpr ConstMoleculeRef(const ConstMoleculeRef& rhs) = default;
+  constexpr ConstMoleculeRef(ConstMoleculeRef&& rhs) noexcept = default;
+  constexpr ConstMoleculeRef& operator=(const ConstMoleculeRef& rhs) = default;
+  constexpr ConstMoleculeRef& operator=(ConstMoleculeRef&& rhs) noexcept = default;
 
 private:
   BaseMolecule* m_molecule = nullptr;
@@ -22,10 +22,10 @@ private:
   constexpr BaseMolecule* const mol_ptr() const { return m_molecule; }
   constexpr BaseMolecule* const& mol_ptr() { return m_molecule; }
 
-  constexpr explicit MoleculeConstRef(BaseMolecule& Molecule) : m_molecule(&Molecule){};
-  constexpr MoleculeConstRef(BaseMolecule* ptr, BaseMolecule*) : m_molecule(ptr){};
+  constexpr explicit ConstMoleculeRef(BaseMolecule& Molecule) : m_molecule(&Molecule){};
+  constexpr ConstMoleculeRef(BaseMolecule* ptr, BaseMolecule*) : m_molecule(ptr){};
   constexpr void advance() { ++m_molecule; }
-  constexpr MoleculeConstRef() = default; /// constructs object in invalid state (with nullptrs)
+  constexpr ConstMoleculeRef() = default; /// constructs object in invalid state (with nullptrs)
 
   friend MoleculeRef;
 };

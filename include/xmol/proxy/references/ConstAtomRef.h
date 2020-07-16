@@ -7,12 +7,12 @@
 
 namespace xmol::proxy {
 
-class AtomConstRef : public AtomGettersMixin<AtomConstRef> {
+class ConstAtomRef : public AtomGettersMixin<ConstAtomRef> {
 public:
-  constexpr AtomConstRef(const AtomConstRef& rhs) = default;
-  constexpr AtomConstRef(AtomConstRef&& rhs) noexcept = default;
-  constexpr AtomConstRef& operator=(const AtomConstRef& rhs) = default;
-  constexpr AtomConstRef& operator=(AtomConstRef&& rhs) noexcept = default;
+  constexpr ConstAtomRef(const ConstAtomRef& rhs) = default;
+  constexpr ConstAtomRef(ConstAtomRef&& rhs) noexcept = default;
+  constexpr ConstAtomRef& operator=(const ConstAtomRef& rhs) = default;
+  constexpr ConstAtomRef& operator=(ConstAtomRef&& rhs) noexcept = default;
 
 private:
 
@@ -31,10 +31,10 @@ private:
     ++m_coord;
   }
 
-  constexpr AtomConstRef() = default; // constructs object in invalid state (with nullptrs)
+  constexpr ConstAtomRef() = default; // constructs object in invalid state (with nullptrs)
 
-  explicit AtomConstRef(BaseAtom& atom);
-  AtomConstRef(BaseAtom* ptr, BaseAtom* end);
+  explicit ConstAtomRef(BaseAtom& atom);
+  ConstAtomRef(BaseAtom* ptr, BaseAtom* end);
 
   friend AtomRef;
 };
