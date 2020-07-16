@@ -38,7 +38,7 @@ public:
     if (ref().res_ptr() + 1 < ref().res_ptr()->molecule->residues.begin() + molecule().size()) {
       return ResidueRef(*(ref().res_ptr() + 1));
     }
-    return {};
+    return std::nullopt;
   }
 
   /// Previous residue in the molecule
@@ -46,7 +46,7 @@ public:
     if (ref().res_ptr() >= ref().res_ptr()->molecule->residues.begin() + 1 ) {
       return ResidueRef(*(ref().res_ptr() - 1));
     }
-    return {};
+    return std::nullopt;
   }
 
 private:
