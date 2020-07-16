@@ -142,12 +142,6 @@ public:
   /// Index of the molecule in frame
   [[nodiscard]] MoleculeIndex index() const noexcept;
 
-  /// Parent frame
-  Frame& frame() { return *mol_ptr()->frame; };
-
-  /// Parent frame
-  const Frame& frame() const { return *mol_ptr()->frame; };
-
   /// Residues of the molecule
   ResidueSpan residues() { return ResidueSpan{mol_ptr()->residues}; }
 
@@ -353,18 +347,14 @@ public:
   constexpr AtomRef& operator=(const AtomRef& rhs) = default;
   constexpr AtomRef& operator=(AtomRef&& rhs) noexcept = default;
 
-  using AtomSettersMixin::frame;
-  /// Parent frame
-  Frame& frame() { return *atom_ptr()->residue->molecule->frame; };
-
-  /// Parent frame
-  const Frame& frame() const { return *atom_ptr()->residue->molecule->frame; }
-
   /// Index of the atom in frame (0-based)
   [[nodiscard]] AtomIndex index() const noexcept;
 
   /// Create smart reference from this
   smart::AtomSmartRef smart();
+
+  const AtomConstRef& const_() const& { return m_cref; }
+  const AtomConstRef&& const_() const&& { return std::move(m_cref); };
 
   /// Check if references point to same data
   constexpr bool operator!=(const AtomRef& rhs) const {

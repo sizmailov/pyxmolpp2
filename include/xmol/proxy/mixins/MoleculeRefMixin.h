@@ -17,7 +17,7 @@ public:
   }
 
   REF_GETTER(name, ref().mol_ptr()->name);
-  REF_GETTER(frame, ref().molecule().frame());
+  REF_GETTER(frame, *ref().mol_ptr()->frame);
 
 #undef REF_GETTER
 
