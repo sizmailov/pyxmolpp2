@@ -19,7 +19,7 @@ def test_operators():
         return np.array([xyz.x, xyz.y, xyz.z])
 
     a = XYZ(5, 8, 1)
-    a.x, a.y, a.z = 9, 8, 7
+    a.values = 9, 8, 7
 
     assert a.x == 9
     assert a.y == 8

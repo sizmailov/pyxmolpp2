@@ -28,9 +28,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::geom::XYZ>& pyXYZ) {
              return "[" + std::to_string(xyz.x()) + ", " + std::to_string(xyz.y()) + ", " + std::to_string(xyz.z()) +
                     "]";
            })
-      .def_property("x", &XYZ::x, &XYZ::set_x, "x coordinate")
-      .def_property("y", &XYZ::y, &XYZ::set_y, "y coordinate")
-      .def_property("z", &XYZ::z, &XYZ::set_z, "z coordinate")
+      .def_property_readonly("x", &XYZ::x, "x coordinate")
+      .def_property_readonly("y", &XYZ::y, "y coordinate")
+      .def_property_readonly("z", &XYZ::z, "z coordinate")
       .def("len", &XYZ::len, "Vector length")
       .def("len2", &XYZ::len2, "Vector length squared")
       .def_property(

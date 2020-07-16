@@ -359,12 +359,12 @@ def test_selection_strides():
 
 
 def test_frame_copy():
-    from pyxmolpp2 import Frame
+    from pyxmolpp2 import Frame, XYZ
     frame = make_polyglycine([("A", 2)])
     frame2 = Frame(frame)
 
-    frame.atoms[0].r.x = 1
-    frame2.atoms[0].r.x = 2
+    frame.atoms[0].r = XYZ(1, 2, 3)
+    frame2.atoms[0].r = XYZ(4, 5, 6)
 
     assert frame.atoms[0].r.x != frame2.atoms[0].r.x
 
