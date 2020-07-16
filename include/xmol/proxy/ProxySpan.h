@@ -73,7 +73,7 @@ protected:
   T* m_begin = nullptr;
   T* m_end = nullptr;
 
-  /// Precondition: rhs and this must point to same allocation
+  // Precondition: rhs and this must point to same allocation
   void intersect(const ProxySpan& rhs) {
     assert(rhs.m_begin < rhs.m_end);
     assert(m_begin < m_end);

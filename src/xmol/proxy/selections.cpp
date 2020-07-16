@@ -12,7 +12,7 @@ std::vector<xmol::CoordIndex> CoordSelection::index() const {
   if (!empty()) {
     result.reserve(size());
     for (auto& coord : m_data) {
-      result.push_back(m_frame->index_of(*coord.m_coord));
+      result.push_back(m_frame->index_of(*coord.coord_ptr()));
     }
   }
   return result;

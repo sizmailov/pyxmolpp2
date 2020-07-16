@@ -6,8 +6,8 @@
 using namespace xmol::proxy::smart;
 
 struct CoordSmartSelection::CoordRefLessThanComparator {
-  bool operator()(CoordRef& a, XYZ* ptr) { return a.m_coord < ptr; }
-  bool operator()(XYZ* ptr, CoordRef& a) { return ptr < a.m_coord; }
+  bool operator()(CoordRef& a, XYZ* ptr) { return a.coord_ptr() < ptr; }
+  bool operator()(XYZ* ptr, CoordRef& a) { return ptr < a.coord_ptr(); }
 };
 
 void CoordSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ* to_begin) {
@@ -16,9 +16,9 @@ void CoordSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XY
   auto it_end =
       std::upper_bound(m_selection.m_data.begin(), m_selection.m_data.end(), from_end, CoordRefLessThanComparator{});
   for (; it != it_end; ++it) {
-    assert(from_begin <= it->m_coord);
-    assert(it->m_coord < from_end);
-    it->m_coord = to_begin + (it->m_coord - from_begin);
+    assert(from_begin <= it->coord_ptr());
+    assert(it->coord_ptr() < from_end);
+    it->coord_ptr() = to_begin + (it->coord_ptr() - from_begin);
   }
 }
 

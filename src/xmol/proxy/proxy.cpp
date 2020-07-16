@@ -49,5 +49,15 @@ template class xmol::proxy::Selection<AtomRef>;
 template class xmol::proxy::Selection<ResidueRef>;
 template class xmol::proxy::Selection<MoleculeRef>;
 
-CoordRef::CoordRef(XYZ& coord) : m_coord(&coord) {}
-CoordRef::CoordRef(xmol::XYZ* ptr, xmol::XYZ*) : m_coord(ptr) {}
+CoordRef::CoordRef(XYZ& coord) : m_cref(coord) {}
+CoordRef::CoordRef(xmol::XYZ* ptr, xmol::XYZ*) : m_cref(ptr, nullptr) {}
+
+CoordConstRef::CoordConstRef(XYZ& coord) : m_coord(&coord) {}
+CoordConstRef::CoordConstRef(xmol::XYZ* ptr, xmol::XYZ*) : m_coord(ptr) {}
+
+std::string xmol::proxy::to_string(const AtomRef& atom) {
+  return to_string(const_cast<AtomRef&>(atom).residue()) + "." + atom.name().str();
+}
+std::string xmol::proxy::to_string(const ResidueRef& res) {
+  return to_string(const_cast<ResidueRef&>(res).molecule()) + "." + res.name().str() + "-" + to_string(res.id());
+}
