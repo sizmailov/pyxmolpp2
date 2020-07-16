@@ -1,5 +1,5 @@
 #include "xmol/proxy/smart/CoordSmartSpan.h"
-#include "xmol/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/FrameObserverImpl.h"
 #include "xmol/geom/affine/Transformation3d.h"
 
 using namespace xmol::proxy::smart;

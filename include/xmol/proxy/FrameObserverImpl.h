@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Frame.h"
+#include "xmol/Frame.h"
 
 namespace xmol::proxy::smart {
 

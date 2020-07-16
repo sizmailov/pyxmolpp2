@@ -1,7 +1,8 @@
 #pragma once
-#include "../../fwd.h"
-#include "../selections.h"
-#include "FrameObserver.h"
+
+#include "xmol/fwd.h"
+#include "xmol/proxy/selections.h"
+#include "xmol/proxy/FrameObserver.h"
 
 namespace xmol::proxy::smart {
 

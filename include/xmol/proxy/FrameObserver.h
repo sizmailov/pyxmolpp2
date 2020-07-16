@@ -1,5 +1,5 @@
 #pragma once
-#include "../../fwd.h"
+#include "xmol/fwd.h"
 
 namespace xmol::proxy::smart {
 

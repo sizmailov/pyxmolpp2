@@ -1,6 +1,6 @@
 #include "xmol/proxy/smart/AtomSmartSpan.h"
 #include "xmol/geom/affine/Transformation3d.h"
-#include "xmol/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/FrameObserverImpl.h"
 
 using namespace xmol::proxy::smart;
 

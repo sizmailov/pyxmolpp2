@@ -1,5 +1,5 @@
 #include "xmol/proxy/smart/MoleculeSmartSpan.h"
-#include "xmol/proxy/smart/FrameObserverImpl.h"
+#include "xmol/proxy/FrameObserverImpl.h"
 
 using namespace xmol::proxy::smart;
 

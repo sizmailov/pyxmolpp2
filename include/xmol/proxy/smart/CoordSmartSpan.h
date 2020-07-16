@@ -1,6 +1,7 @@
 #pragma once
-#include "../spans-impl.h"
-#include "FrameObserver.h"
+
+#include "xmol/proxy/spans-impl.h"
+#include "xmol/proxy/FrameObserver.h"
 
 namespace xmol::proxy::smart {
 
