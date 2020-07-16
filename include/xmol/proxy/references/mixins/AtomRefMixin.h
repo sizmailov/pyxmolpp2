@@ -42,6 +42,7 @@ public:
 
   using AtomGettersMixin<ARef>::name;
   using AtomGettersMixin<ARef>::mass;
+  using AtomGettersMixin<ARef>::vdw_radius;
   using AtomGettersMixin<ARef>::id;
   using AtomGettersMixin<ARef>::r;
   using AtomGettersMixin<ARef>::residue;
