@@ -1,7 +1,9 @@
 #pragma once
 #include "xmol/geom/fwd.h"
 #include "xmol/proxy/selections.h"
-#include "xmol/proxy/smart/references.h"
+#include "xmol/proxy/references/AtomSmartRef.h"
+#include "xmol/proxy/references/ResidueSmartRef.h"
+#include "xmol/proxy/references/MoleculeSmartRef.h"
 #include "xmol/proxy/spans.h"
 #include <pybind11/cast.h>
 #include <pybind11/pybind11.h>
@@ -158,7 +160,7 @@ struct type_caster<
     : type_caster_base<
           iterator_state<xmol::proxy::AtomSpan::Iterator, xmol::proxy::AtomSpan::Iterator, false, Policy>> {
 public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::AtomSmartRef>::name + _("]");
+  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::AtomSmartRef>::name + _("]");
 };
 
 template <return_value_policy Policy>
@@ -167,7 +169,7 @@ struct type_caster<
     : type_caster_base<
           iterator_state<xmol::proxy::ResidueSpan::Iterator, xmol::proxy::ResidueSpan::Iterator, false, Policy>> {
 public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::ResidueSmartRef>::name + _("]");
+  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::ResidueSmartRef>::name + _("]");
 };
 
 template <return_value_policy Policy>
@@ -176,7 +178,7 @@ struct type_caster<
     : type_caster_base<iterator_state<xmol::proxy::MoleculeSpan::Iterator, xmol::proxy::MoleculeSpan::Iterator,
                                       false, Policy>> {
 public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::MoleculeSmartRef>::name + _("]");
+  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::MoleculeSmartRef>::name + _("]");
 };
 
 } // namespace pybind11::detail

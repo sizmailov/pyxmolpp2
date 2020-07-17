@@ -2,6 +2,7 @@
 #include "xmol/ProteinTorsionAngleFactory.h"
 #include "xmol/TorsionAngle.h"
 #include "xmol/proxy/smart/selections.h"
+#include "xmol/proxy/references/ResidueSmartRef.h"
 
 #include "pybind11/functional.h"
 #include "pybind11/stl.h"
@@ -21,7 +22,7 @@ void pyxmolpp::v1::init_TorsionAngle(pybind11::module& polymer) {
       .def(py::init([](AtomSmartRef& a, AtomSmartRef& b, AtomSmartRef& c, AtomSmartRef& d,
                        std::function<AtomSmartSelection(AtomSmartRef&, AtomSmartRef&, AtomSmartRef&, AtomSmartRef&)>&
                            selector) {
-             return TorsionAngle(a, b, c, d, [selector, a, b, c, d](AtomRef&, AtomRef&, AtomRef&, AtomRef&) mutable {
+             return TorsionAngle(a, b, c, d, [selector, a, b, c, d](const AtomRef&, const AtomRef&, const AtomRef&, const AtomRef&) mutable {
                return selector(a, b, c, d);
              });
            }),

@@ -20,7 +20,7 @@ void AtomSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XYZ
   for (; it != it_end; ++it) {
     assert(from_begin <= it->coord_ptr());
     assert(it->coord_ptr() < from_end);
-    it->coord_ptr() = to_begin + (it->coord_ptr() - from_begin);
+    it->rebase(from_begin, to_begin);
   }
 }
 
@@ -32,7 +32,7 @@ void AtomSmartSelection::on_base_atoms_move(BaseAtom* from_begin, BaseAtom* from
   for (; it != it_end; ++it) {
     assert(from_begin <= it->atom_ptr());
     assert(it->atom_ptr() < from_end);
-    it->atom_ptr() = to_begin + (it->atom_ptr() - from_begin);
+    it->rebase(from_begin, to_begin);
   }
 }
 
@@ -58,4 +58,4 @@ auto AtomSmartSelection::alignment_to(xmol::proxy::AtomSelection& rhs, bool weig
   return m_selection.alignment_to(rhs, weighted);
 }
 
-template class xmol::proxy::smart::FrameObserver<AtomSmartSelection>;
+template class xmol::proxy::FrameObserver<AtomSmartSelection>;

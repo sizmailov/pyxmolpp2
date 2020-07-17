@@ -20,7 +20,7 @@ public:
     auto res = mol.add_residue();
     const int n = 880;
     for (int i = 0; i < n; ++i) {
-      res.add_atom();
+      static_cast<void>(res.add_atom());
     }
     Trajectory traj(std::move(frame));
     traj.extend(io::TrjtoolDatFile(filename));

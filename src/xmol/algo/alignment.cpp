@@ -66,77 +66,82 @@ template <typename Atoms> Eigen::Matrix3d calc_intertia_tensor_atoms_impl(Atoms&
 
 } // namespace
 
-Transformation3d xmol::algo::calc_alignment(proxy::CoordSpan& reference, proxy::CoordSpan& variable) {
+Transformation3d xmol::algo::calc_alignment(const proxy::CoordSpan& reference, const proxy::CoordSpan& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
-Transformation3d xmol::algo::calc_alignment(proxy::CoordSpan& reference, proxy::CoordSelection& variable) {
+Transformation3d xmol::algo::calc_alignment(const proxy::CoordSpan& reference, const proxy::CoordSelection& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
-Transformation3d xmol::algo::calc_alignment(proxy::CoordSelection& reference, proxy::CoordSpan& variable) {
+Transformation3d xmol::algo::calc_alignment(const proxy::CoordSelection& reference, const proxy::CoordSpan& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
-Transformation3d xmol::algo::calc_alignment(proxy::CoordSelection& reference, proxy::CoordSelection& variable) {
+Transformation3d xmol::algo::calc_alignment(const proxy::CoordSelection& reference,
+                                            const proxy::CoordSelection& variable) {
   return calc_alignment_impl(reference._eigen(), variable._eigen());
 }
-Transformation3d xmol::algo::calc_alignment(proxy::AtomSpan& reference, proxy::AtomSpan& variable) {
+Transformation3d xmol::algo::calc_alignment(const proxy::AtomSpan& reference, const proxy::AtomSpan& variable) {
   return calc_alignment_atoms_impl(reference, variable);
 }
-Transformation3d xmol::algo::calc_alignment(xmol::proxy::AtomSpan& reference, xmol::proxy::AtomSelection& variable) {
+Transformation3d xmol::algo::calc_alignment(const xmol::proxy::AtomSpan& reference,
+                                            const xmol::proxy::AtomSelection& variable) {
   return calc_alignment_atoms_impl(reference, variable);
 }
-Transformation3d xmol::algo::calc_alignment(xmol::proxy::AtomSelection& reference, xmol::proxy::AtomSpan& variable) {
+Transformation3d xmol::algo::calc_alignment(const xmol::proxy::AtomSelection& reference,
+                                            const xmol::proxy::AtomSpan& variable) {
   return calc_alignment_atoms_impl(reference, variable);
 }
-Transformation3d xmol::algo::calc_alignment(xmol::proxy::AtomSelection& reference,
-                                            xmol::proxy::AtomSelection& variable) {
+Transformation3d xmol::algo::calc_alignment(const xmol::proxy::AtomSelection& reference,
+                                            const xmol::proxy::AtomSelection& variable) {
   return calc_alignment_atoms_impl(reference, variable);
 }
 
-double xmol::algo::calc_rmsd(proxy::CoordSpan& reference, proxy::CoordSpan& variable) {
+double xmol::algo::calc_rmsd(const proxy::CoordSpan& reference, const proxy::CoordSpan& variable) {
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
-double xmol::algo::calc_rmsd(proxy::CoordSpan& reference, proxy::CoordSelection& variable) {
+double xmol::algo::calc_rmsd(const proxy::CoordSpan& reference, const proxy::CoordSelection& variable) {
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
-double xmol::algo::calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSpan& variable) {
+double xmol::algo::calc_rmsd(const proxy::CoordSelection& reference, const proxy::CoordSpan& variable) {
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
-double xmol::algo::calc_rmsd(proxy::CoordSelection& reference, proxy::CoordSelection& variable) {
+double xmol::algo::calc_rmsd(const proxy::CoordSelection& reference, const proxy::CoordSelection& variable) {
   return calc_rmsd_impl(reference._eigen(), variable._eigen());
 }
 
-double xmol::algo::calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSpan& variable) {
+double xmol::algo::calc_weighted_rmsd(const proxy::AtomSpan& reference, const proxy::AtomSpan& variable) {
   return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_weighted_rmsd(proxy::AtomSpan& reference, proxy::AtomSelection& variable) {
+double xmol::algo::calc_weighted_rmsd(const proxy::AtomSpan& reference, const proxy::AtomSelection& variable) {
   return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSpan& variable) {
+double xmol::algo::calc_weighted_rmsd(const proxy::AtomSelection& reference, const proxy::AtomSpan& variable) {
   return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
-double xmol::algo::calc_weighted_rmsd(proxy::AtomSelection& reference, proxy::AtomSelection& variable) {
+double xmol::algo::calc_weighted_rmsd(const proxy::AtomSelection& reference, const proxy::AtomSelection& variable) {
   return calc_weighted_rmsd_atoms_impl(reference, variable);
 }
 
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coords) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::CoordSelection& coords) {
   return calc_inertia_tensor_impl(coords._eigen());
 }
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSpan& coords) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::CoordSpan& coords) {
   return calc_inertia_tensor_impl(coords._eigen());
 }
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSelection& coords, const future::Span<double>& mass) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::CoordSelection& coords,
+                                                const future::Span<double>& mass) {
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.m_begin, mass.size(), 1);
   return calc_inertia_tensor_impl(coords._eigen(), mass_map);
 }
 
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::CoordSpan& coords, const future::Span<double>& mass) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::CoordSpan& coords,
+                                                const future::Span<double>& mass) {
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>> mass_map(mass.m_begin, mass.size(), 1);
   return calc_inertia_tensor_impl(coords._eigen(), mass_map);
 }
 
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::AtomSelection& atoms) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::AtomSelection& atoms) {
   return calc_intertia_tensor_atoms_impl(atoms);
 }
-Eigen::Matrix3d xmol::algo::calc_inertia_tensor(xmol::proxy::AtomSpan& atoms) {
+Eigen::Matrix3d xmol::algo::calc_inertia_tensor(const xmol::proxy::AtomSpan& atoms) {
   return calc_intertia_tensor_atoms_impl(atoms);
 }

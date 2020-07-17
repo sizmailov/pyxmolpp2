@@ -235,31 +235,31 @@ public:
     return ResiduePredicate([ids](const ResidueRef& r){ return ids.count(r.id())==1 ;});
   }
 
-  ResiduePredicate operator==(const residueSerial_t& id) const {
+  ResiduePredicate operator==(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() == id;});
   }
 
-  ResiduePredicate operator!=(const residueSerial_t& id) const {
+  ResiduePredicate operator!=(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() != id;});
   }
 
-  ResiduePredicate operator<=(const residueSerial_t& id) const {
+  ResiduePredicate operator<=(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() <= id;});
   }
 
-  ResiduePredicate operator<(const residueSerial_t& id) const {
+  ResiduePredicate operator<(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() < id;});
   }
 
-  ResiduePredicate operator>=(const residueSerial_t& id) const {
+  ResiduePredicate operator>=(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() >= id;});
   }
 
-  ResiduePredicate operator>(const residueSerial_t& id) const {
+  ResiduePredicate operator>(const ResidueIdSerial& id) const {
     return ResiduePredicate([id](const ResidueRef& r){ return r.id() > id;});
   }
 
-  ResiduePredicate is_in(const std::set<residueSerial_t>& ids) const {
+  ResiduePredicate is_in(const std::set<ResidueIdSerial>& ids) const {
     return ResiduePredicate([ids](const ResidueRef& r){ return r.id().iCode.value()==0 && ids.count(r.id().serial)==1 ;});
   }
 

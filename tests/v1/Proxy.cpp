@@ -43,11 +43,11 @@ TEST_F(ProxyTests, span_count) {
   ASSERT_EQ(m4.atoms().size(), 0);
   ASSERT_EQ(m4.residues().size(), 0);
 
-  ASSERT_EQ(&r0.name(), &m1.residues()[0].name());
-  ASSERT_EQ(&r1.name(), &m2.residues()[0].name());
-  ASSERT_EQ(&r2.name(), &m3.residues()[0].name());
-  ASSERT_EQ(&r3.name(), &m3.residues()[1].name());
-  ASSERT_EQ(&r4.name(), &m3.residues()[2].name());
+  ASSERT_EQ(r0.index(), m1.residues()[0].index());
+  ASSERT_EQ(r1.index(), m2.residues()[0].index());
+  ASSERT_EQ(r2.index(), m3.residues()[0].index());
+  ASSERT_EQ(r3.index(), m3.residues()[1].index());
+  ASSERT_EQ(r4.index(), m3.residues()[2].index());
 
   auto atoms = frame.atoms();
   int i = 0;
@@ -57,7 +57,7 @@ TEST_F(ProxyTests, span_count) {
 
   for (MoleculeSmartRef& m : std::array{m1, m2, m3, m4}) {
     for (auto& a : m.atoms()) {
-      ASSERT_EQ(&a.molecule().name(), &m.name())
+      ASSERT_EQ(a.molecule().index(), m.index())
           << a.molecule().name().str() << "." << a.residue().name().str() << "." << a.name().str() << std::endl;
     }
   }
@@ -91,7 +91,7 @@ TEST_F(ProxyTests, span_conversions) {
   EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 0);
   EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 0);
 
-  res.add_atom();
+  static_cast<void>(res.add_atom());
 
   EXPECT_EQ(frame.molecules().size(), 1);
   EXPECT_EQ(frame.molecules().residues().size(), 1);
@@ -117,7 +117,7 @@ TEST_F(ProxyTests, span_conversions) {
   EXPECT_EQ(frame.molecules().residues().atoms().residues().size(), 1);
   EXPECT_EQ(frame.molecules().residues().atoms().residues().molecules().size(), 1);
 
-  res2.add_atom();
+  static_cast<void>(res2.add_atom());
 
   EXPECT_EQ(frame.molecules().size(), 2);
   EXPECT_EQ(frame.molecules().residues().size(), 2);
@@ -131,11 +131,11 @@ TEST_F(ProxyTests, dead_frame_access_from_molecule_ref) {
   MoleculeSmartRef mol = frame.add_molecule();
   MoleculeRef plain_ref = mol;
   frame = {};
-  EXPECT_THROW(mol.frame(), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(mol.frame()), DeadFrameAccessError);
   EXPECT_THROW(mol.residues(), DeadFrameAccessError);
   EXPECT_THROW(mol.atoms(), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.name()), DeadFrameAccessError);
-  EXPECT_THROW(mol.name({}), DeadFrameAccessError);
+  EXPECT_THROW(mol.name(""), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.size()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.empty()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol != plain_ref), DeadFrameAccessError);
@@ -148,11 +148,11 @@ TEST_F(ProxyTests, dead_frame_access_from_residue_ref) {
   ResidueSmartRef residue = mol.add_residue();
   ResidueRef plain_ref = residue;
   frame = {};
-  EXPECT_THROW(residue.frame(), DeadFrameAccessError);
-  EXPECT_THROW(residue.molecule(), DeadFrameAccessError);
-  EXPECT_THROW(residue.atoms(), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(residue.frame()), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(residue.molecule()), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(residue.atoms()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(residue.name()), DeadFrameAccessError);
-  EXPECT_THROW(residue.name({}), DeadFrameAccessError);
+  EXPECT_THROW(residue.name(""), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(residue.id()), DeadFrameAccessError);
   EXPECT_THROW(residue.id({}), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(residue.size()), DeadFrameAccessError);
@@ -172,7 +172,7 @@ TEST_F(ProxyTests, dead_frame_access_from_atom_ref) {
   EXPECT_THROW(static_cast<void>(atom.molecule()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.residue()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.name()), DeadFrameAccessError);
-  EXPECT_THROW(atom.name({}), DeadFrameAccessError);
+  EXPECT_THROW(atom.name(""), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.id()), DeadFrameAccessError);
   EXPECT_THROW(atom.id({}), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.r()), DeadFrameAccessError);

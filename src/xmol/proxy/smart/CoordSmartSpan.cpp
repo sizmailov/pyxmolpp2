@@ -32,4 +32,4 @@ xmol::geom::affine::Transformation3d CoordSmartSpan::alignment_to(xmol::proxy::C
   return m_span.alignment_to(other);
 }
 
-template class xmol::proxy::smart::FrameObserver<CoordSmartSpan>;
+template class xmol::proxy::FrameObserver<CoordSmartSpan>;

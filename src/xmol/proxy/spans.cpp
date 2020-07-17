@@ -8,42 +8,43 @@
 
 using namespace xmol::proxy;
 
-smart::CoordSmartSpan CoordSpan::smart() { return smart::CoordSmartSpan(*this); }
+smart::CoordSmartSpan CoordSpan::smart() const { return smart::CoordSmartSpan(*this); }
 
-xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSpan& other) {
+xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSpan& other) const {
   return xmol::algo::calc_alignment(other, *this);
 }
-xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSelection& other) {
+xmol::geom::affine::Transformation3d CoordSpan::alignment_to(CoordSelection& other) const {
   return xmol::algo::calc_alignment(other, *this);
 }
 
-double CoordSpan::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *this); }
-double CoordSpan::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
-Eigen::Matrix3d CoordSpan::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
+double CoordSpan::rmsd(CoordSpan& other) const { return xmol::algo::calc_rmsd(other, *this); }
+double CoordSpan::rmsd(CoordSelection& other) const { return xmol::algo::calc_rmsd(other, *this); }
+Eigen::Matrix3d CoordSpan::inertia_tensor() const { return xmol::algo::calc_inertia_tensor(*this); }
 
-void CoordSpan::apply(const geom::affine::Transformation3d& t) {
+void CoordSpan::apply(const geom::affine::Transformation3d& t) const {
   auto map = this->_eigen();
   map = (t.get_underlying_matrix() * map.transpose()).transpose().rowwise() + t.get_translation()._eigen();
 }
-void CoordSpan::apply(const geom::affine::UniformScale3d& t) { this->_eigen().array() *= t.scale(); }
-void CoordSpan::apply(const geom::affine::Rotation3d& t) {
+void CoordSpan::apply(const geom::affine::UniformScale3d& t) const { this->_eigen().array() *= t.scale(); }
+void CoordSpan::apply(const geom::affine::Rotation3d& t) const {
   auto map = this->_eigen();
   map = (t.get_underlying_matrix() * map.transpose()).transpose();
 }
-void CoordSpan::apply(const geom::affine::Translation3d& t) {
+void CoordSpan::apply(const geom::affine::Translation3d& t) const {
   auto map = this->_eigen();
   map = map.rowwise() + t.dr()._eigen();
 }
 
-xmol::geom::XYZ CoordSpan::mean() { return XYZ(_eigen().colwise().mean()); }
-CoordSelection CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+xmol::geom::XYZ CoordSpan::mean() const { return XYZ(_eigen().colwise().mean()); }
+CoordSelection CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                                std::optional<size_t> step) const {
   if (empty()) {
     return {};
   }
   return CoordSelection(*m_frame, slice_impl(start, stop, step), true);
 }
 
-CoordSpan CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+CoordSpan CoordSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) const {
   if (empty()) {
     return {};
   }
@@ -62,36 +63,36 @@ std::vector<xmol::CoordIndex> CoordSpan::index() const {
   return result;
 }
 
-CoordSpan AtomSpan::coords() {
+CoordSpan AtomSpan::coords() const {
   if (empty()) {
     return {};
   }
   return {begin()->frame(), begin()->coord_ptr(), size()};
 }
 
-ResidueSpan AtomSpan::residues() {
+ResidueSpan AtomSpan::residues() const {
   if (empty()) {
     return {};
   }
   return ResidueSpan(m_begin->residue, (m_begin + size() - 1)->residue + 1);
 }
 
-MoleculeSpan AtomSpan::molecules() {
+MoleculeSpan AtomSpan::molecules() const {
   if (empty()) {
     return {};
   }
   return MoleculeSpan(m_begin->residue->molecule, (m_begin + size() - 1)->residue->molecule + 1);
 }
 
-CoordSpan ResidueSpan::coords() { return atoms().coords(); }
+CoordSpan ResidueSpan::coords() const { return atoms().coords(); }
 
-AtomSpan ResidueSpan::atoms() {
+AtomSpan ResidueSpan::atoms() const {
   if (empty()) {
     return {};
   }
   return AtomSpan(m_begin->atoms.m_begin, (m_begin + size() - 1)->atoms.m_end);
 }
-MoleculeSpan ResidueSpan::molecules() {
+MoleculeSpan ResidueSpan::molecules() const {
   if (empty()) {
     return {};
   }
@@ -120,18 +121,19 @@ bool AtomSpan::contains(const AtomRef& ref) const {
   return m_begin <= ref.atom_ptr() && ref.atom_ptr() < m_end;
 }
 
-smart::AtomSmartSpan AtomSpan::smart() { return *this; }
+smart::AtomSmartSpan AtomSpan::smart() const { return *this; }
 
 AtomSpan& AtomSpan::operator&=(const AtomSpan& rhs) {
   intersect(rhs);
   return *this;
 }
 
-AtomSelection AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop, std::optional<size_t> step) {
+AtomSelection AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
+                              std::optional<size_t> step) const {
   return AtomSelection(slice_impl(start, stop, step), true);
 }
 
-AtomSpan AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+AtomSpan AtomSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) const {
   return AtomSpan(slice_impl(start, stop));
 }
 
@@ -147,9 +149,9 @@ std::vector<xmol::AtomIndex> AtomSpan::index() const {
   return result;
 }
 
-void AtomSpan::guess_mass() { algo::heuristic::guess_mass(*this); }
+void AtomSpan::guess_mass() const { algo::heuristic::guess_mass(*this); }
 
-Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*this); }
+Eigen::Matrix3d AtomSpan::inertia_tensor() const { return algo::calc_inertia_tensor(*this); }
 
 [[nodiscard]] xmol::geom::affine::Transformation3d AtomSpan::alignment_to(AtomSpan& rhs, bool weighted){
   if (weighted){
@@ -192,7 +194,7 @@ Eigen::Matrix3d AtomSpan::inertia_tensor() { return algo::calc_inertia_tensor(*t
 }
 
 bool ResidueSpan::contains(const ResidueRef& ref) const { return m_begin <= ref.res_ptr() && ref.res_ptr() < m_end; }
-smart::ResidueSmartSpan ResidueSpan::smart() { return *this; }
+smart::ResidueSmartSpan ResidueSpan::smart() const { return *this; }
 
 ResidueSpan& ResidueSpan::operator&=(const ResidueSpan& rhs) {
   intersect(rhs);
@@ -200,11 +202,11 @@ ResidueSpan& ResidueSpan::operator&=(const ResidueSpan& rhs) {
 }
 
 ResidueSelection ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                    std::optional<size_t> step) {
+                                    std::optional<size_t> step) const {
   return ResidueSelection(slice_impl(start, stop, step), true);
 }
 
-ResidueSpan ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+ResidueSpan ResidueSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) const {
   return ResidueSpan(slice_impl(start, stop));
 }
 std::vector<xmol::ResidueIndex> ResidueSpan::index() const {
@@ -222,18 +224,18 @@ std::vector<xmol::ResidueIndex> ResidueSpan::index() const {
 bool MoleculeSpan::contains(const MoleculeRef& ref) const {
   return m_begin <= ref.mol_ptr() && ref.mol_ptr() < m_end;
 }
-smart::MoleculeSmartSpan MoleculeSpan::smart() { return *this; }
+smart::MoleculeSmartSpan MoleculeSpan::smart() const { return *this; }
 
 MoleculeSpan& MoleculeSpan::operator&=(const MoleculeSpan& rhs) {
   intersect(rhs);
   return *this;
 }
 MoleculeSelection MoleculeSpan::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                         std::optional<size_t> step) {
+                                         std::optional<size_t> step) const {
   return MoleculeSelection(slice_impl(start, stop, step), true);
 }
 
-MoleculeSpan MoleculeSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) {
+MoleculeSpan MoleculeSpan::slice(std::optional<size_t> start, std::optional<size_t> stop) const {
   return MoleculeSpan(slice_impl(start, stop));
 }
 std::vector<xmol::MoleculeIndex> MoleculeSpan::index() const {

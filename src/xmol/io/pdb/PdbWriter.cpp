@@ -8,11 +8,11 @@ using namespace xmol::io;
 using namespace xmol;
 using namespace xmol::proxy;
 
-void PdbWriter::write(AtomRef& atom) { this->write(atom, StandardPdbRecords::instance()); }
+void PdbWriter::write(const AtomRef& atom) { this->write(atom, StandardPdbRecords::instance()); }
 
-void PdbWriter::write(ResidueRef& residue) { this->write(residue, StandardPdbRecords::instance()); }
+void PdbWriter::write(const ResidueRef& residue) { this->write(residue, StandardPdbRecords::instance()); }
 
-void PdbWriter::write(MoleculeRef& chain) { this->write(chain, StandardPdbRecords::instance()); }
+void PdbWriter::write(const MoleculeRef& chain) { this->write(chain, StandardPdbRecords::instance()); }
 
 void PdbWriter::write(Frame& frame) { this->write(frame, StandardPdbRecords::instance()); }
 namespace {
@@ -36,7 +36,7 @@ namespace {
     std::string& line;
   };
 }
-void PdbWriter::write(AtomRef& atom, const basic_PdbRecords& db) {
+void PdbWriter::write(const AtomRef& atom, const basic_PdbRecords& db) {
 
   std::string line(pdb_line_width, ' ');
 
@@ -71,12 +71,12 @@ void PdbWriter::write(AtomRef& atom, const basic_PdbRecords& db) {
   (*m_ostream) << line <<"\n";
 }
 
-void PdbWriter::write(ResidueRef& residue, const basic_PdbRecords& db) {
+void PdbWriter::write(const ResidueRef& residue, const basic_PdbRecords& db) {
   for (auto& a : residue.atoms()) {
     this->write(a, db);
   }
 }
-void PdbWriter::write(MoleculeRef& chain, const basic_PdbRecords& db) {
+void PdbWriter::write(const MoleculeRef& chain, const basic_PdbRecords& db) {
   for (auto& r : chain.residues()) {
     this->write(r, db);
   }
@@ -105,37 +105,37 @@ void PdbWriter::write(Frame& frame, const basic_PdbRecords& db) {
   }
 }
 
-void PdbWriter::write(AtomSelection& atomSelection, const basic_PdbRecords& db) {
+void PdbWriter::write(const AtomSelection& atomSelection, const basic_PdbRecords& db) {
   for (auto& a : atomSelection) {
     this->write(a, db);
   }
 }
-void PdbWriter::write(ResidueSelection& residueSelection, const basic_PdbRecords& db) {
+void PdbWriter::write(const ResidueSelection& residueSelection, const basic_PdbRecords& db) {
   for (auto& r : residueSelection) {
     this->write(r, db);
   }
   (*m_ostream) << ("TER\n");
 }
 
-void PdbWriter::write(MoleculeSelection& chainSelection, const basic_PdbRecords& db) {
+void PdbWriter::write(const MoleculeSelection& chainSelection, const basic_PdbRecords& db) {
   for (auto& c : chainSelection) {
     this->write(c, db);
   }
 }
 
-void PdbWriter::write(AtomSpan& atomSpan, const basic_PdbRecords& db) {
+void PdbWriter::write(const AtomSpan& atomSpan, const basic_PdbRecords& db) {
   for (auto& a : atomSpan) {
     this->write(a, db);
   }
 }
-void PdbWriter::write(ResidueSpan& residueSpan, const basic_PdbRecords& db) {
+void PdbWriter::write(const ResidueSpan& residueSpan, const basic_PdbRecords& db) {
   for (auto& r : residueSpan) {
     this->write(r, db);
   }
   (*m_ostream) << ("TER\n");
 }
 
-void PdbWriter::write(MoleculeSpan& chainSpan, const basic_PdbRecords& db) {
+void PdbWriter::write(const MoleculeSpan& chainSpan, const basic_PdbRecords& db) {
   for (auto& c : chainSpan) {
     this->write(c, db);
   }

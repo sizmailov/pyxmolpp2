@@ -1,7 +1,7 @@
 #pragma once
 #include "xmol/fwd.h"
 
-namespace xmol::proxy::smart {
+namespace xmol::proxy {
 
 /** Frame Observer
 
@@ -23,7 +23,7 @@ public:
 
 protected:
   explicit FrameObserver(Frame* frame) : m_frame(frame) {}
-  [[nodiscard]] bool is_bound_to_frame() const { return m_frame; }
+  [[nodiscard]] constexpr bool is_bound_to_frame() const { return m_frame; }
 
   void on_frame_move(Frame& from, Frame& to);
   void on_frame_delete();

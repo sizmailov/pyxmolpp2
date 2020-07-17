@@ -43,8 +43,8 @@ TEST_F(AtomTests, add_residues) {
 TEST_F(AtomTests, add_residues_2) {
   Frame frame;
   auto mol1 = frame.add_molecule();
-  mol1.add_residue();
-  frame.add_molecule();
+  static_cast<void>(mol1.add_residue());
+  static_cast<void>(frame.add_molecule());
 }
 
 TEST_F(AtomTests, add_atoms) {
@@ -381,7 +381,7 @@ TEST_F(AtomTests, access_after_resize) {
   auto chain_a = frame.atoms()[0].smart();
   auto res = chain_a.residue().smart();
   static_cast<void>(res);
-  chain_a.residue().add_atom();
+  static_cast<void>(chain_a.residue().add_atom());
   auto chain_b = frame.atoms()[0].smart();
 
   EXPECT_EQ(chain_a, chain_b);

@@ -53,7 +53,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
       }
       return std::optional<four_atoms>{};
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& /*prev_c*/, AtomRef& n, AtomRef& /*ca*/, AtomRef& c) {
+    TorsionAngle::AffectedAtomsSelector selector = [](const AtomRef& /*prev_c*/, const AtomRef& n, const AtomRef& /*ca*/,const AtomRef& c) {
       std::vector<AtomRef> result;
       for (auto&& a : n.residue().atoms()) {
         if (a.name() != AtomName("NH") && a.name() != AtomName("N") && a.name() != AtomName("CA")) {
@@ -85,7 +85,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
       }
       return std::optional<four_atoms>{};
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& n, AtomRef& /*ca*/, AtomRef& c, AtomRef& /*next_n*/) {
+    TorsionAngle::AffectedAtomsSelector selector = [](const AtomRef& n, const AtomRef& /*ca*/,const  AtomRef& c,const  AtomRef& /*next_n*/) {
       std::vector<AtomRef> result;
       for (auto& a : n.residue().atoms()) {
         if (a.name() == AtomName("O")) {
@@ -115,8 +115,8 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
       }
       return std::optional<four_atoms>{};
     };
-    TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& /*prev_ca*/, AtomRef& /*prev_c*/, AtomRef& n,
-                                                      AtomRef& /*ca*/) {
+    TorsionAngle::AffectedAtomsSelector selector = [](const AtomRef& /*prev_ca*/, const AtomRef& /*prev_c*/, const AtomRef& n,
+                                                      const AtomRef& /*ca*/) {
       std::vector<AtomRef> result;
 
       for (auto& a : n.residue().atoms()) {
@@ -150,7 +150,7 @@ void TorsionAngleFactory::define_protein_side_chain_angle(xmol::ResidueName resi
     }
     return std::optional<four_atoms>{};
   };
-  TorsionAngle::AffectedAtomsSelector selector = [affected_atoms](AtomRef& a, AtomRef&, AtomRef&, AtomRef&) {
+  TorsionAngle::AffectedAtomsSelector selector = [affected_atoms](const AtomRef& a, const AtomRef&, const AtomRef&, const AtomRef&) {
     return a.residue().atoms().filter(
         [&affected_atoms](const AtomRef& x) { return affected_atoms.count(x.name()) == 1; });
   };

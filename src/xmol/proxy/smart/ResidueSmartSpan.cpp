@@ -22,4 +22,4 @@ xmol::proxy::smart::ResidueSmartSpan::ResidueSmartSpan(xmol::proxy::ResidueSpan 
   }
 }
 
-template class xmol::proxy::smart::FrameObserver<ResidueSmartSpan>;
+template class xmol::proxy::FrameObserver<ResidueSmartSpan>;

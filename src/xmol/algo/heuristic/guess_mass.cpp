@@ -3,12 +3,12 @@
 #include "xmol/proxy/selections.h"
 #include "xmol/proxy/spans.h"
 
-void xmol::algo::heuristic::guess_mass(xmol::proxy::AtomSpan& atoms) {
+void xmol::algo::heuristic::guess_mass(const xmol::proxy::AtomSpan& atoms) {
   for (auto&& a : atoms) {
     a.mass(guess_mass(a.name()));
   }
 }
-void xmol::algo::heuristic::guess_mass(xmol::proxy::AtomSelection& atoms) {
+void xmol::algo::heuristic::guess_mass(const xmol::proxy::AtomSelection& atoms) {
   for (auto&& a : atoms) {
     a.mass(guess_mass(a.name()));
   }

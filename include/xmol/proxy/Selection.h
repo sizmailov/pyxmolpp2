@@ -11,10 +11,12 @@ template <typename T> class Selection {
 public:
   struct LessThanComparator {
     /// Intentionally left unimplemented. Must be specialized individually
-    bool operator()(const T& p1, const T& p2);
+    bool operator()(const T& p1, const T& p2) const;
   };
   struct EqualComparator {
-    bool operator()(const T& p1, const T& p2) { return !LessThanComparator{}(p1, p2) && !LessThanComparator{}(p2, p1); }
+    bool operator()(const T& p1, const T& p2) const {
+      return !LessThanComparator{}(p1, p2) && !LessThanComparator{}(p2, p1);
+    }
   };
 
   Selection() = default;
@@ -43,12 +45,12 @@ public:
     }
   }
 
-  [[nodiscard]] auto begin() { return m_data.begin(); }
-  [[nodiscard]] auto end() { return m_data.end(); }
+  [[nodiscard]] auto begin() const { return m_data.begin(); }
+  [[nodiscard]] auto end() const { return m_data.end(); }
   [[nodiscard]] size_t size() const { return m_data.size(); }
   [[nodiscard]] size_t empty() const { return m_data.empty(); }
 
-  T& operator[](size_t i) {
+  const T& operator[](size_t i) const {
     assert(i >= 0);
     assert(i < size());
     return m_data[i];
@@ -61,9 +63,9 @@ protected:
   void substract(const Selection& rhs);
   void intersect(const Selection& rhs);
 
-  template <typename Predicate>[[nodiscard]] std::vector<T> internal_filter(Predicate&& p) {
+  template <typename Predicate>[[nodiscard]] std::vector<T> internal_filter(Predicate&& p) const {
     std::vector<T> result;
-    for (auto& x : *this) { // todo: change to "const auto&" when const references arrive
+    for (const auto& x : *this) {
       if (p(x)) {
         result.push_back(x);
       }
@@ -72,7 +74,7 @@ protected:
   }
 
   [[nodiscard]] std::vector<T> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,
-                                          std::optional<size_t> step) {
+                                          std::optional<size_t> step) const {
     if (!stop) {
       stop = size();
     }

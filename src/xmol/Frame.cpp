@@ -1,9 +1,9 @@
 #include "xmol/Frame.h"
-#include "xmol/proxy/smart/references.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 
 using namespace xmol;
+using namespace xmol::proxy;
 using namespace xmol::proxy::smart;
 
 BaseResidue& Frame::add_residue(BaseMolecule& mol) {

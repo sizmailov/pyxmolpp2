@@ -4,14 +4,15 @@
 #include "pybind11/operators.h"
 #include "pybind11/stl.h"
 
-#include "xmol/proxy/smart/references.h"
-#include "xmol/predicates/predicates.h"
 #include "xmol/predicates/predicate_generators.h"
+#include "xmol/predicates/predicates.h"
+#include "xmol/proxy/references/AtomSmartRef.h"
+#include "xmol/proxy/references/MoleculeSmartRef.h"
+#include "xmol/proxy/references/ResidueSmartRef.h"
 
 namespace {
 
-template<typename Ret, typename Left, typename Right>
-using overload_cast = Ret (Left::*)(const Right&) const;
+template <typename Ret, typename Left, typename Right> using overload_cast = Ret (Left::*)(const Right&) const;
 
 }
 
@@ -161,28 +162,28 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
     })
     ;
 
-  pyResidueIdPredicateGenerator
-    .def(py::self==ResidueId{})
-    .def(py::self!=ResidueId{})
-    .def(py::self<ResidueId{})
-    .def(py::self>ResidueId{})
-    .def(py::self<=ResidueId{})
-    .def(py::self>=ResidueId{})
-    .def(py::self==residueSerial_t{})
-    .def(py::self!=residueSerial_t{})
-    .def(py::self<residueSerial_t{})
-    .def(py::self>residueSerial_t{})
-    .def(py::self<=residueSerial_t{})
-    .def(py::self>=residueSerial_t{})
-    .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<residueSerial_t>>(&ResidueIdPredicateGenerator::is_in))
-    .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<ResidueId>>(&ResidueIdPredicateGenerator::is_in))
+  pyResidueIdPredicateGenerator.def(py::self == ResidueId{})
+      .def(py::self != ResidueId{})
+      .def(py::self < ResidueId{})
+      .def(py::self > ResidueId{})
+      .def(py::self <= ResidueId{})
+      .def(py::self >= ResidueId{})
+      .def(py::self == ResidueIdSerial{})
+      .def(py::self != ResidueIdSerial{})
+      .def(py::self < ResidueIdSerial{})
+      .def(py::self > ResidueIdSerial{})
+      .def(py::self <= ResidueIdSerial{})
+      .def(py::self >= ResidueIdSerial{})
+      .def("is_in", overload_cast<ResiduePredicate, ResidueIdPredicateGenerator, std::set<ResidueIdSerial>>(
+                        &ResidueIdPredicateGenerator::is_in))
+      .def("is_in",overload_cast<ResiduePredicate,ResidueIdPredicateGenerator,std::set<ResidueId>>(&ResidueIdPredicateGenerator::is_in))
     .def("is_in",[](ResidueIdPredicateGenerator& g, py::args& ids){
       std::set<ResidueId> _ids;
       for (auto id : ids){
         if (py::isinstance<ResidueId>(id)){
           _ids.emplace(py::cast<ResidueId>(id));
         }else{
-          _ids.emplace(py::cast<residueSerial_t>(id));
+          _ids.emplace(py::cast<ResidueIdSerial>(id));
         }
       }
       return g.is_in(_ids);

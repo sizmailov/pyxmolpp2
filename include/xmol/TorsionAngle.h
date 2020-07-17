@@ -1,7 +1,7 @@
 #pragma once
 
 #include "geom/AngleValue.h"
-#include "proxy/smart/references.h"
+#include "xmol/proxy/references/AtomSmartRef.h"
 #include <functional>
 #include <optional>
 #include <set>
@@ -12,8 +12,8 @@ namespace xmol {
 class TorsionAngle {
 public:
   using ARef = proxy::AtomRef;
-  using ASRef = proxy::smart::AtomSmartRef;
-  using AffectedAtomsSelector = std::function<proxy::AtomSelection(ARef&, ARef&, ARef&, ARef&)>;
+  using ASRef = proxy::AtomSmartRef;
+  using AffectedAtomsSelector = std::function<proxy::AtomSelection(const ARef&, const ARef&,const  ARef&,const  ARef&)>;
 
   TorsionAngle(ARef a, ARef b, ARef c, ARef d);
   TorsionAngle(ARef a, ARef b, ARef c, ARef d, AffectedAtomsSelector rotatedAtomsGetter);

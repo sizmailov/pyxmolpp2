@@ -20,12 +20,12 @@ TEST_F(TorsionAngleTests, test1) {
   Frame frame;
   MoleculeRef mol = frame.add_molecule().name("A");
   ResidueRef r = mol.add_residue().name("LYS").id(1);
-  smart::AtomSmartRef a = r.add_atom().name("A").id(0).r(XYZ(1, 0, 0));
-  smart::AtomSmartRef b = r.add_atom().name("B").id(1).r(XYZ(0, 0, 0));
-  smart::AtomSmartRef c = r.add_atom().name("C").id(2).r(XYZ(0, 0, 1));
-  smart::AtomSmartRef d = r.add_atom().name("D").id(3).r(XYZ(0, 1, 1));
+  AtomSmartRef a = r.add_atom().name("A").id(0).r(XYZ(1, 0, 0));
+  AtomSmartRef b = r.add_atom().name("B").id(1).r(XYZ(0, 0, 0));
+  AtomSmartRef c = r.add_atom().name("C").id(2).r(XYZ(0, 0, 1));
+  AtomSmartRef d = r.add_atom().name("D").id(3).r(XYZ(0, 1, 1));
 
-  auto t = TorsionAngle(a, b, c, d, [](AtomRef& a, AtomRef& b, AtomRef& c, AtomRef& d) {
+  auto t = TorsionAngle(a, b, c, d, [](const AtomRef& a, const AtomRef& b, const AtomRef& c, const AtomRef& d) {
     AtomRef atoms[] = {d};
     return AtomSelection(atoms);
   });
@@ -42,7 +42,7 @@ TEST_F(TorsionAngleTests, test1) {
   EXPECT_TRUE(fabs(d.r().z() - 1) < 1e-10);
 
   auto throws1 = [&] {
-    auto t2 = TorsionAngle(a, b, c, d, [](AtomRef& a, AtomRef& b, AtomRef& c, AtomRef& d) {
+    auto t2 = TorsionAngle(a, b, c, d, [](const AtomRef& a, const AtomRef& b, const AtomRef& c, const AtomRef& d)  {
       AtomRef atoms[] = {a, d};
       return AtomSelection(atoms);
     });
@@ -50,7 +50,7 @@ TEST_F(TorsionAngleTests, test1) {
 
   EXPECT_THROW(throws1(), GeomError);
   auto throws2 = [&] {
-    auto t3 = TorsionAngle(a, b, c, d, [](AtomRef& a, AtomRef& b, AtomRef& c, AtomRef& d) {
+    auto t3 = TorsionAngle(a, b, c, d, [](const AtomRef& a, const AtomRef& b, const AtomRef& c, const AtomRef& d)  {
       AtomRef atoms[] = {b, c};
       return AtomSelection(atoms);
     });

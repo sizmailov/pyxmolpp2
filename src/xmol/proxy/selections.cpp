@@ -18,18 +18,18 @@ std::vector<xmol::CoordIndex> CoordSelection::index() const {
   return result;
 }
 
-xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSpan& other) {
+xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSpan& other) const {
   return xmol::algo::calc_alignment(other, *this);
 }
-xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSelection& other) {
+xmol::geom::affine::Transformation3d CoordSelection::alignment_to(CoordSelection& other) const {
   return xmol::algo::calc_alignment(other, *this);
 }
 
-double CoordSelection::rmsd(CoordSpan& other) { return xmol::algo::calc_rmsd(other, *this); }
-double CoordSelection::rmsd(CoordSelection& other) { return xmol::algo::calc_rmsd(other, *this); }
-Eigen::Matrix3d CoordSelection::inertia_tensor() { return xmol::algo::calc_inertia_tensor(*this); }
+double CoordSelection::rmsd(CoordSpan& other) const { return xmol::algo::calc_rmsd(other, *this); }
+double CoordSelection::rmsd(CoordSelection& other) const { return xmol::algo::calc_rmsd(other, *this); }
+Eigen::Matrix3d CoordSelection::inertia_tensor() const { return xmol::algo::calc_inertia_tensor(*this); }
 
-xmol::CoordEigenMatrix CoordSelection::_eigen() {
+xmol::CoordEigenMatrix CoordSelection::_eigen() const {
   CoordEigenMatrix matrix(size(), 3);
   size_t i = 0;
   for (auto& x : *this) {
@@ -38,7 +38,7 @@ xmol::CoordEigenMatrix CoordSelection::_eigen() {
   return matrix;
 }
 
-void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
+void CoordSelection::_eigen(const CoordEigenMatrix& matrix) const {
   if (size() != matrix.outerSize()) {
     throw CoordSelectionSizeMismatchError("Selection size must match matrix");
   }
@@ -48,33 +48,35 @@ void CoordSelection::_eigen(const CoordEigenMatrix& matrix) {
   }
 }
 
-void CoordSelection::apply(const geom::affine::Transformation3d& t) {
+void CoordSelection::apply(const geom::affine::Transformation3d& t) const {
   auto map = this->_eigen();
   this->_eigen((t.get_underlying_matrix() * map.transpose()).transpose().rowwise() + t.get_translation()._eigen());
 }
-void CoordSelection::apply(const geom::affine::UniformScale3d& t) { this->_eigen(this->_eigen().array() * t.scale()); }
-void CoordSelection::apply(const geom::affine::Rotation3d& t) {
+void CoordSelection::apply(const geom::affine::UniformScale3d& t) const {
+  this->_eigen(this->_eigen().array() * t.scale());
+}
+void CoordSelection::apply(const geom::affine::Rotation3d& t) const {
   this->_eigen((t.get_underlying_matrix() * this->_eigen().transpose()).transpose());
 }
-void CoordSelection::apply(const geom::affine::Translation3d& t) {
+void CoordSelection::apply(const geom::affine::Translation3d& t) const {
   this->_eigen(this->_eigen().rowwise() + t.dr()._eigen());
 }
-xmol::XYZ CoordSelection::mean() {
+xmol::XYZ CoordSelection::mean() const {
   XYZ result;
   for (auto& r : *this) {
-    result += r;
+    result += static_cast<XYZ>(r);
   }
   return result / size();
 }
 
-CoordSelection AtomSelection::coords() {
+CoordSelection AtomSelection::coords() const {
   std::vector<CoordRef> result;
   for (auto& a : m_data) {
     result.push_back(CoordRef(*a.coord_ptr()));
   }
   return CoordSelection(*frame_ptr(), std::move(result), true);
 }
-ResidueSelection AtomSelection::residues() {
+ResidueSelection AtomSelection::residues() const {
   std::vector<ResidueRef> result;
   BaseResidue* prev = nullptr;
   for (auto& a : m_data) {
@@ -85,7 +87,7 @@ ResidueSelection AtomSelection::residues() {
   }
   return ResidueSelection(std::move(result), true);
 }
-MoleculeSelection AtomSelection::molecules() {
+MoleculeSelection AtomSelection::molecules() const {
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& a : m_data) {
@@ -97,7 +99,7 @@ MoleculeSelection AtomSelection::molecules() {
   }
   return MoleculeSelection(std::move(result), true);
 }
-MoleculeSelection ResidueSelection::molecules() {
+MoleculeSelection ResidueSelection::molecules() const {
   std::vector<MoleculeRef> result;
   BaseMolecule* prev = nullptr;
   for (auto& r : m_data) {
@@ -108,7 +110,7 @@ MoleculeSelection ResidueSelection::molecules() {
   }
   return MoleculeSelection(std::move(result), true);
 }
-CoordSelection ResidueSelection::coords() {
+CoordSelection ResidueSelection::coords() const {
   std::vector<CoordRef> result;
   for (auto& r : m_data) {
     for (auto a : r.atoms()) {
@@ -117,7 +119,7 @@ CoordSelection ResidueSelection::coords() {
   }
   return CoordSelection(*frame_ptr(), std::move(result), true);
 }
-AtomSelection ResidueSelection::atoms() {
+AtomSelection ResidueSelection::atoms() const {
   std::vector<AtomRef> result;
   for (auto& r : m_data) {
     for (auto a : r.atoms()) {
@@ -126,7 +128,7 @@ AtomSelection ResidueSelection::atoms() {
   }
   return AtomSelection(std::move(result), true);
 }
-ResidueSelection MoleculeSelection::residues() {
+ResidueSelection MoleculeSelection::residues() const {
   std::vector<ResidueRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
@@ -136,7 +138,7 @@ ResidueSelection MoleculeSelection::residues() {
   return ResidueSelection(std::move(result), true);
 }
 
-CoordSelection MoleculeSelection::coords() {
+CoordSelection MoleculeSelection::coords() const {
   std::vector<CoordRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
@@ -147,7 +149,7 @@ CoordSelection MoleculeSelection::coords() {
   }
   return CoordSelection(*frame_ptr(), std::move(result), true);
 }
-AtomSelection MoleculeSelection::atoms() {
+AtomSelection MoleculeSelection::atoms() const {
   std::vector<AtomRef> result;
   for (auto& m : m_data) {
     for (auto& r : m.residues()) {
@@ -159,9 +161,9 @@ AtomSelection MoleculeSelection::atoms() {
   return AtomSelection(std::move(result), true);
 }
 
-smart::MoleculeSmartSelection MoleculeSelection::smart() { return smart::MoleculeSmartSelection(*this); }
+smart::MoleculeSmartSelection MoleculeSelection::smart() const { return smart::MoleculeSmartSelection(*this); }
 MoleculeSelection MoleculeSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                           std::optional<size_t> step) {
+                                           std::optional<size_t> step) const {
   return MoleculeSelection(slice_impl(start, stop, step));
 }
 std::vector<xmol::MoleculeIndex> MoleculeSelection::index() const {
@@ -174,9 +176,9 @@ std::vector<xmol::MoleculeIndex> MoleculeSelection::index() const {
   }
   return result;
 }
-smart::ResidueSmartSelection ResidueSelection::smart() { return smart::ResidueSmartSelection(*this); }
+smart::ResidueSmartSelection ResidueSelection::smart() const { return smart::ResidueSmartSelection(*this); }
 ResidueSelection ResidueSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                         std::optional<size_t> step) {
+                                         std::optional<size_t> step) const {
   return ResidueSelection(slice_impl(start, stop, step));
 }
 std::vector<xmol::ResidueIndex> ResidueSelection::index() const {
@@ -189,9 +191,9 @@ std::vector<xmol::ResidueIndex> ResidueSelection::index() const {
   }
   return result;
 }
-smart::AtomSmartSelection AtomSelection::smart() { return smart::AtomSmartSelection(*this); }
+smart::AtomSmartSelection AtomSelection::smart() const { return smart::AtomSmartSelection(*this); }
 AtomSelection AtomSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                   std::optional<size_t> step) {
+                                   std::optional<size_t> step) const {
   return AtomSelection(slice_impl(start, stop, step));
 }
 std::vector<xmol::AtomIndex> AtomSelection::index() const {
@@ -205,11 +207,11 @@ std::vector<xmol::AtomIndex> AtomSelection::index() const {
   return result;
 }
 
-void AtomSelection::guess_mass() { algo::heuristic::guess_mass(*this); }
+void AtomSelection::guess_mass() const { algo::heuristic::guess_mass(*this); }
 
-Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tensor(*this); }
+Eigen::Matrix3d AtomSelection::inertia_tensor() const { return algo::calc_inertia_tensor(*this); }
 
-[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs, bool weighted) {
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSpan& rhs, bool weighted) const {
   if (weighted) {
     return algo::calc_alignment(rhs, *this);
   } else {
@@ -219,7 +221,8 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
   }
 }
 
-[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs, bool weighted) {
+[[nodiscard]] xmol::geom::affine::Transformation3d AtomSelection::alignment_to(AtomSelection& rhs,
+                                                                               bool weighted) const {
   if (weighted) {
     return algo::calc_alignment(rhs, *this);
   } else {
@@ -229,7 +232,7 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
   }
 }
 
-[[nodiscard]] double AtomSelection::rmsd(AtomSelection& rhs, bool weighted) {
+[[nodiscard]] double AtomSelection::rmsd(AtomSelection& rhs, bool weighted) const {
   if (weighted) {
     return algo::calc_weighted_rmsd(rhs, *this);
   } else {
@@ -239,7 +242,7 @@ Eigen::Matrix3d AtomSelection::inertia_tensor() { return algo::calc_inertia_tens
   }
 }
 
-[[nodiscard]] double AtomSelection::rmsd(AtomSpan& rhs, bool weighted) {
+[[nodiscard]] double AtomSelection::rmsd(AtomSpan& rhs, bool weighted) const {
   if (weighted) {
     return algo::calc_weighted_rmsd(rhs, *this);
   } else {
@@ -275,9 +278,9 @@ MoleculeSelection operator&(const MoleculeSelection& lhs, const MoleculeSelectio
   return MoleculeSelection(lhs) &= rhs;
 }
 
-smart::CoordSmartSelection CoordSelection::smart() { return smart::CoordSmartSelection(*this); }
+smart::CoordSmartSelection CoordSelection::smart() const { return smart::CoordSmartSelection(*this); }
 CoordSelection CoordSelection::slice(std::optional<size_t> start, std::optional<size_t> stop,
-                                     std::optional<size_t> step) {
+                                     std::optional<size_t> step) const {
   if (empty()) {
     return {};
   }

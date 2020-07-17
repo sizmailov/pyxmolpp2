@@ -56,13 +56,13 @@ public:
   [[nodiscard]] size_t size() const { return m_end - m_begin; };
   [[nodiscard]] size_t empty() const { return m_end == m_begin; };
 
-  [[nodiscard]] Proxy operator[](size_t i) {
+  [[nodiscard]] Proxy operator[](size_t i) const {
     assert(i < size());
     return Proxy(*(m_begin + i));
   }
 
-  [[nodiscard]] Iterator begin() { return Iterator(m_begin, m_end); }
-  [[nodiscard]] Iterator end() { return Iterator(m_end, m_end); }
+  [[nodiscard]] Iterator begin() const { return Iterator(m_begin, m_end); }
+  [[nodiscard]] Iterator end() const { return Iterator(m_end, m_end); }
 
 protected:
   inline void rebase(T* from, T* to) {
@@ -81,9 +81,9 @@ protected:
     m_end = std::min(rhs.m_end, m_end);
   }
 
-  template <typename Predicate>[[nodiscard]] std::vector<Proxy> internal_filter(Predicate&& p) {
+  template <typename Predicate>[[nodiscard]] std::vector<Proxy> internal_filter(Predicate&& p) const {
     std::vector<Proxy> result;
-    for (auto& x : *this) {
+    for (const auto& x : *this) {
       if (p(x)) {
         result.push_back(x);
       }
@@ -91,7 +91,7 @@ protected:
     return result;
   }
 
-  [[nodiscard]] future::Span<T> slice_impl(std::optional<size_t> start, std::optional<size_t> stop) {
+  [[nodiscard]] future::Span<T> slice_impl(std::optional<size_t> start, std::optional<size_t> stop) const {
     if (!stop || stop > size()) {
       stop = size();
     }
@@ -102,7 +102,7 @@ protected:
   }
 
   [[nodiscard]] std::vector<Proxy> slice_impl(std::optional<size_t> start, std::optional<size_t> stop,
-                                              std::optional<size_t> step) {
+                                              std::optional<size_t> step) const {
     if (!stop || stop > size()) {
       stop = size();
     }

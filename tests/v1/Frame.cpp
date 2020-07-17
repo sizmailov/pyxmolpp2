@@ -268,7 +268,7 @@ TEST_F(FrameTests, frame_forward_construction) {
     for (int j = 0; j < n_residues_per_molecule; ++j) {
       auto residue = molecule.add_residue().smart();
       for (int k = 0; k < n_atoms_per_residue; ++k) {
-        residue.add_atom();
+        static_cast<void>(residue.add_atom());
       }
     }
   }

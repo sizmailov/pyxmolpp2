@@ -3,7 +3,9 @@
 #include "repr-helpers.h"
 #include "to_pdb_shortcuts.h"
 #include "xmol/geom/affine/Transformation3d.h"
-#include "xmol/proxy/smart/references.h"
+#include "xmol/proxy/references/AtomSmartRef.h"
+#include "xmol/proxy/references/ResidueSmartRef.h"
+#include "xmol/proxy/references/MoleculeSmartRef.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 

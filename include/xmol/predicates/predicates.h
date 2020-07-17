@@ -21,11 +21,11 @@ public:
   MoleculePredicate& operator=(const MoleculePredicate&) = default;
   MoleculePredicate& operator=(MoleculePredicate&&) = default;
 
-  bool operator()(MoleculeRef& MoleculeRef) const { return m_predicate(MoleculeRef); }
+  bool operator()(const MoleculeRef& MoleculeRef) const { return m_predicate(MoleculeRef); }
 
-  bool operator()(ResidueRef& ResidueRef) const { return m_predicate(ResidueRef.molecule()); }
+  bool operator()(const ResidueRef& ResidueRef) const { return m_predicate(ResidueRef.molecule()); }
 
-  bool operator()(AtomRef& AtomRef) const { return m_predicate(AtomRef.molecule()); };
+  bool operator()(const AtomRef& AtomRef) const { return m_predicate(AtomRef.molecule()); };
 
   MoleculePredicate operator!() const {
     auto pred = m_predicate;
@@ -60,9 +60,9 @@ public:
   ResiduePredicate& operator=(const ResiduePredicate&) = default;
   ResiduePredicate& operator=(ResiduePredicate&&) = default;
 
-  bool operator()(ResidueRef& ResidueRef) const { return m_predicate(ResidueRef); }
+  bool operator()(const ResidueRef& ResidueRef) const { return m_predicate(ResidueRef); }
 
-  bool operator()(AtomRef& AtomRef) const { return m_predicate(AtomRef.residue()); }
+  bool operator()(const AtomRef& AtomRef) const { return m_predicate(AtomRef.residue()); }
 
   ResiduePredicate operator!() const {
     auto pred = m_predicate;

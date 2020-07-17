@@ -120,7 +120,7 @@ public:
   }
 
 
-  ResidueRef& operator[](size_t i) {
+  const ResidueRef& operator[](size_t i) const{
     check_precondition("operator[]()");
     return m_selection[i];
   }

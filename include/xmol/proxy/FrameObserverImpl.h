@@ -1,7 +1,7 @@
 #pragma once
 #include "xmol/Frame.h"
 
-namespace xmol::proxy::smart {
+namespace xmol::proxy {
 
 template <typename Observer>
 FrameObserver<Observer>::FrameObserver(FrameObserver<Observer>&& rhs) noexcept : m_frame(rhs.m_frame) {

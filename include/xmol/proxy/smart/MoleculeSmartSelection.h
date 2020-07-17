@@ -119,7 +119,7 @@ public:
     return m_selection.index();
   }
 
-  MoleculeRef& operator[](size_t i) {
+  const MoleculeRef& operator[](size_t i) const{
     check_precondition("operator[]()");
     return m_selection[i];
   }

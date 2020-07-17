@@ -39,4 +39,4 @@ auto AtomSmartSpan::alignment_to(xmol::proxy::AtomSelection& rhs, bool weighted)
   return m_span.alignment_to(rhs, weighted);
 }
 
-template class xmol::proxy::smart::FrameObserver<AtomSmartSpan>;
+template class xmol::proxy::FrameObserver<AtomSmartSpan>;

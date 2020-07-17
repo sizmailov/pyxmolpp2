@@ -138,7 +138,7 @@ public:
     return m_selection.rmsd(rhs, weighted);
   }
 
-  AtomRef& operator[](size_t i) {
+  const AtomRef& operator[](size_t i) const {
     check_precondition("operator[]()");
     return m_selection[i];
   }

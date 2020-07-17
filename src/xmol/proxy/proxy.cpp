@@ -4,9 +4,9 @@
 
 using namespace xmol::proxy;
 
-ResidueRef MoleculeRef::add_residue() { return ResidueRef(frame().add_residue(*mol_ptr())); }
+ResidueRef MoleculeRef::add_residue() const { return ResidueRef(frame().add_residue(*mol_ptr())); }
 
-AtomRef ResidueRef::add_atom() { return proxy::AtomRef(frame().add_atom(*res_ptr())); }
+AtomRef ResidueRef::add_atom() const { return proxy::AtomRef(frame().add_atom(*res_ptr())); }
 
 xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
@@ -16,8 +16,8 @@ xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(p
 
 ConstAtomRef::ConstAtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
-smart::MoleculeSmartRef MoleculeRef::smart() { return smart::MoleculeSmartRef(*this); }
-std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
+MoleculeSmartRef MoleculeRef::smart() const { return MoleculeSmartRef(*this); }
+std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) const {
   // todo: benchmark vs mappings (number of residues might be high)
   for (auto& r : residues()) {
     if (r.id() == id) {
@@ -26,12 +26,11 @@ std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) {
   }
   return {};
 }
-std::optional<ResidueRef> MoleculeRef::operator[](residueSerial_t id) { return (*this)[ResidueId(id)]; }
-xmol::MoleculeIndex MoleculeRef::index() const noexcept { return frame().index_of(*mol_ptr()); }
-xmol::ResidueIndex ResidueRef::index() const noexcept { return frame().index_of(*res_ptr()); }
-xmol::AtomIndex AtomRef::index() const noexcept { return frame().index_of(*atom_ptr()); }
-smart::ResidueSmartRef ResidueRef::smart() { return smart::ResidueSmartRef(*this); }
-std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
+std::optional<ResidueRef> MoleculeRef::operator[](ResidueIdSerial id) const { return (*this)[ResidueId(id)]; }
+xmol::MoleculeIndex MoleculeRef::index() const { return frame().index_of(*mol_ptr()); }
+xmol::ResidueIndex ResidueRef::index() const { return frame().index_of(*res_ptr()); }
+ResidueSmartRef ResidueRef::smart() const { return ResidueSmartRef(*this); }
+std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) const {
   for (auto& a : atoms()) {
     if (a.name() == name) {
       return a;
@@ -39,10 +38,10 @@ std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) {
   }
   return {};
 }
-std::optional<AtomRef> ResidueRef::operator[](const char* name) { return operator[](AtomName(name)); }
-std::optional<AtomRef> ResidueRef::operator[](const std::string& name) { return operator[](AtomName(name)); }
+std::optional<AtomRef> ResidueRef::operator[](const char* name) const { return operator[](AtomName(name)); }
+std::optional<AtomRef> ResidueRef::operator[](const std::string& name) const { return operator[](AtomName(name)); }
 
-smart::AtomSmartRef AtomRef::smart() { return smart::AtomSmartRef(*this); }
+AtomSmartRef AtomRef::smart() const { return AtomSmartRef(*this); }
 
 template class xmol::proxy::Selection<CoordRef>;
 template class xmol::proxy::Selection<AtomRef>;

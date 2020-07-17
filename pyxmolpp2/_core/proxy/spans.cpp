@@ -4,7 +4,9 @@
 #include "to_pdb_shortcuts.h"
 #include "xmol/Frame.h"
 #include "xmol/geom/affine/Transformation3d.h"
-#include "xmol/proxy/smart/references.h"
+#include "xmol/proxy/references/AtomSmartRef.h"
+#include "xmol/proxy/references/MoleculeSmartRef.h"
+#include "xmol/proxy/references/ResidueSmartRef.h"
 #include "xmol/proxy/smart/selections.h"
 #include "xmol/proxy/smart/spans.h"
 #include "xmol/proxy/spans-impl.h"
@@ -12,8 +14,8 @@
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
-#include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <variant>
 

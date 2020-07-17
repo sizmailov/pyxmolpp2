@@ -23,4 +23,4 @@ xmol::proxy::smart::MoleculeSmartSpan::MoleculeSmartSpan(xmol::proxy::MoleculeSp
 }
 
 
-template class xmol::proxy::smart::FrameObserver<MoleculeSmartSpan>;
+template class xmol::proxy::FrameObserver<MoleculeSmartSpan>;

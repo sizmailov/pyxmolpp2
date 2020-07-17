@@ -8,16 +8,72 @@ namespace xmol::proxy {
  *
  * For ref-counting reference see @ref smart::MoleculeSmartRef
  * */
-class MoleculeRef : public MoleculeSettersMixin<MoleculeRef> {
+class MoleculeRef {
 public:
+  [[nodiscard]] constexpr MoleculeName name() const {
+    check_invariants("name");
+    return mol_ptr()->name;
+  }
+
+  template <int N>[[maybe_unused]] constexpr const MoleculeRef& name(const char (&value)[N]) const& {
+    check_invariants("name");
+    mol_ptr()->name = MoleculeName(value);
+    return *this;
+  }
+
+  template <int N>[[maybe_unused]] constexpr MoleculeRef name(const char (&value)[N]) const&& {
+    check_invariants("name");
+    mol_ptr()->name = MoleculeName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] const MoleculeRef& name(const std::string& value) const& {
+    check_invariants("name");
+    mol_ptr()->name = MoleculeName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] MoleculeRef name(const std::string& value) const&& {
+    check_invariants("name");
+    mol_ptr()->name = MoleculeName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr const MoleculeRef& name(const MoleculeName& value) const& {
+    check_invariants("name");
+    mol_ptr()->name = value;
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr MoleculeRef name(const MoleculeName& value) const&& {
+    check_invariants("name");
+    mol_ptr()->name = value;
+    return *this;
+  }
+
+  [[nodiscard]] constexpr bool empty() const {
+    check_invariants("empty");
+    return mol_ptr()->residues.m_begin == mol_ptr()->residues.m_end;
+  }
+
+  [[nodiscard]] constexpr size_t size() const {
+    check_invariants("size");
+    return mol_ptr()->residues.m_end - mol_ptr()->residues.m_begin;
+  }
+
+  [[nodiscard]] constexpr Frame& frame() const {
+    check_invariants("frame");
+    return *mol_ptr()->frame;
+  }
+
   /// Index of the molecule in frame
-  [[nodiscard]] MoleculeIndex index() const noexcept;
+  [[nodiscard]] MoleculeIndex index() const;
 
   /// Residues of the molecule
-  ResidueSpan residues() { return ResidueSpan{mol_ptr()->residues}; }
+  [[nodiscard]] ResidueSpan residues() const { return ResidueSpan{mol_ptr()->residues}; }
 
   /// Atoms of the molecule
-  AtomSpan atoms() {
+  [[nodiscard]] AtomSpan atoms() const {
     if (empty())
       return {};
     assert(mol_ptr()->residues.m_begin);
@@ -27,17 +83,17 @@ public:
   }
 
   /// Atom coordinates of the molecule
-  CoordSpan coords() { return atoms().coords(); }
+  [[nodiscard]] CoordSpan coords() const { return atoms().coords(); }
 
   /// Create smart reference from this
-  smart::MoleculeSmartRef smart();
+  [[nodiscard]] MoleculeSmartRef smart() const;
 
   /// Check if references point to same data
   constexpr bool operator!=(const MoleculeRef& rhs) const { return mol_ptr() != rhs.mol_ptr(); }
   constexpr bool operator==(const MoleculeRef& rhs) const { return mol_ptr() == rhs.mol_ptr(); }
 
-  std::optional<proxy::ResidueRef> operator[](const ResidueId& id);
-  std::optional<proxy::ResidueRef> operator[](residueSerial_t id);
+  std::optional<proxy::ResidueRef> operator[](const ResidueId& id) const ;
+  std::optional<proxy::ResidueRef> operator[](ResidueIdSerial id) const ;
 
   /// @brief Adds residue to the end of the molecule and return its reference
   ///
@@ -45,14 +101,13 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_residues() call prevents references invalidation
-  ResidueRef add_residue();
+  [[nodiscard]] ResidueRef add_residue() const;
 
 private:
   ConstMoleculeRef m_cref;
 
   constexpr void check_invariants(const char*) const {};
-  constexpr BaseMolecule* mol_ptr() const { return m_cref.m_molecule; }
-  constexpr BaseMolecule*& mol_ptr() { return m_cref.m_molecule; }
+  [[nodiscard]] constexpr BaseMolecule* mol_ptr() const { return m_cref.m_molecule; }
 
   friend AtomRef;
   friend AtomSelection;
@@ -63,17 +118,14 @@ private:
   friend ResidueRef;
   friend ResidueSelection;
   friend Selection<MoleculeRef>::LessThanComparator;
-  friend ResidueGettersMixin<ResidueRef>;
 
-  friend MoleculeSettersMixin<MoleculeRef>;
-  friend MoleculeGettersMixin<MoleculeRef>;
-
-  friend smart::MoleculeSmartRef;
+  friend MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
 
   constexpr explicit MoleculeRef(BaseMolecule& molecule) : m_cref(molecule){};
   constexpr MoleculeRef(BaseMolecule* ptr, BaseMolecule*) : m_cref(*ptr){};
   constexpr void advance() { m_cref.advance(); };
+  void rebase(BaseMolecule* from, BaseMolecule* to) { m_cref.rebase(from, to); }
   constexpr MoleculeRef() = default; // constructs object in invalid state (with nullptrs)
 };
 

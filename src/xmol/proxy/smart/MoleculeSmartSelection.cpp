@@ -17,7 +17,7 @@ void MoleculeSmartSelection::on_base_molecules_move(BaseMolecule *from_begin, Ba
   for (; it != it_end; ++it) {
     assert(from_begin <= it->mol_ptr());
     assert(it->mol_ptr() < from_end);
-    it->mol_ptr() = to_begin + (it->mol_ptr() - from_begin);
+    it->rebase(from_begin, to_begin);
   }
 }
 
@@ -28,4 +28,4 @@ xmol::proxy::smart::MoleculeSmartSelection::MoleculeSmartSelection(xmol::proxy::
   }
 }
 
-template class xmol::proxy::smart::FrameObserver<MoleculeSmartSelection>;
+template class xmol::proxy::FrameObserver<MoleculeSmartSelection>;

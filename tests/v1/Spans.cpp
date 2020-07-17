@@ -105,21 +105,21 @@ TEST_F(SpanTests, split_exceptinos) {
   auto residues = frame.residues().smart();
   auto molecules = frame.molecules().smart();
 
-  residues[residues.size() - 1].add_atom();
-  molecules[molecules.size() - 1].add_residue();
-  frame.add_molecule();
+  static_cast<void>(residues[residues.size() - 1].add_atom());
+  static_cast<void>(molecules[molecules.size() - 1].add_residue());
+  static_cast<void>(frame.add_molecule());
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
 
-  residues[0].add_atom();
+  static_cast<void>(residues[0].add_atom());
   EXPECT_THROW(static_cast<void>(atoms.size()), SpanSplitError);
   EXPECT_NO_THROW(static_cast<void>(residues.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));
 
   atoms = frame.atoms(); // restore to check that residues creation doesn't affect atoms
 
-  molecules[0].add_residue();
+  static_cast<void>(molecules[0].add_residue());
   EXPECT_THROW(static_cast<void>(residues.size()), SpanSplitError);
   EXPECT_NO_THROW(static_cast<void>(atoms.size()));
   EXPECT_NO_THROW(static_cast<void>(molecules.size()));

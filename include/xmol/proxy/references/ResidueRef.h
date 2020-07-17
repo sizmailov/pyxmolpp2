@@ -8,33 +8,144 @@ namespace xmol::proxy {
  *
  * For ref-counting reference see @ref smart::ResidueSmartRef
  * */
-class ResidueRef : public ResidueSettersMixin<ResidueRef> {
+class ResidueRef {
 public:
   constexpr ResidueRef(const ResidueRef& rhs) = default;
   constexpr ResidueRef(ResidueRef&& rhs) noexcept = default;
   constexpr ResidueRef& operator=(const ResidueRef& rhs) = default;
   constexpr ResidueRef& operator=(ResidueRef&& rhs) noexcept = default;
 
-  /// Index of the residue in frame (0-based)
-  [[nodiscard]] ResidueIndex index() const noexcept;
+  [[nodiscard]] constexpr ResidueId id() const {
+    check_invariants("id");
+    return res_ptr()->id;
+  }
+
+  [[maybe_unused]] constexpr const ResidueRef& id(const ResidueId& value) const& {
+    check_invariants("id");
+    res_ptr()->id = value;
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr ResidueRef id(const ResidueId& value) const&& {
+    check_invariants("id");
+    res_ptr()->id = value;
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr const ResidueRef& id(const ResidueIdSerial& value) const& {
+    check_invariants("id");
+    res_ptr()->id = value;
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr ResidueRef id(const ResidueIdSerial& value) const&& {
+    check_invariants("id");
+    res_ptr()->id = value;
+    return *this;
+  }
+
+  [[nodiscard]] constexpr ResidueName name() const {
+    check_invariants("name");
+    return res_ptr()->name;
+  }
+
+  template <int N>[[maybe_unused]] constexpr const ResidueRef& name(const char (&value)[N]) const& {
+    check_invariants("name");
+    res_ptr()->name = ResidueName(value);
+    return *this;
+  }
+
+  template <int N>[[maybe_unused]] constexpr ResidueRef name(const char (&value)[N]) const&& {
+    check_invariants("name");
+    res_ptr()->name = ResidueName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] const ResidueRef& name(const std::string& value) const& {
+    check_invariants("name");
+    res_ptr()->name = ResidueName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] const ResidueRef name(const std::string& value) const&& {
+    check_invariants("name");
+    res_ptr()->name = ResidueName(value);
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr const ResidueRef& name(const ResidueName& value) const& {
+    check_invariants("name");
+    res_ptr()->name = value;
+    return *this;
+  }
+
+  [[maybe_unused]] constexpr ResidueRef name(const ResidueName& value) const&& {
+    check_invariants("name");
+    res_ptr()->name = value;
+    return *this;
+  }
+
+  [[nodiscard]] ResidueIndex index() const;
+
+  [[nodiscard]] constexpr bool empty() const {
+    check_invariants("empty");
+    return res_ptr()->atoms.m_begin == res_ptr()->atoms.m_end;
+  }
+
+  [[nodiscard]] constexpr size_t size() const {
+    check_invariants("size");
+    return res_ptr()->atoms.m_end - res_ptr()->atoms.m_begin;
+  }
+
+  [[nodiscard]] constexpr MoleculeRef molecule() const {
+    check_invariants("molecule");
+    return MoleculeRef(*res_ptr()->molecule);
+  }
+
+  [[nodiscard]] constexpr Frame& frame() const {
+    check_invariants("frame");
+    return *res_ptr()->molecule->frame;
+  }
 
   /// Atoms of the residue
-  AtomSpan atoms() { return AtomSpan{res_ptr()->atoms}; }
+  [[nodiscard]] AtomSpan atoms() const { return AtomSpan{res_ptr()->atoms}; }
 
   /// Atom coordinates of the molecule
-  CoordSpan coords() { return atoms().coords(); }
+  [[nodiscard]] CoordSpan coords() const { return atoms().coords(); }
+
+  /// Next residue in the molecule
+  [[nodiscard]] std::optional<ResidueRef> next() const {
+    if (res_ptr() + 1 < res_ptr()->molecule->residues.begin() + molecule().size()) {
+      return ResidueRef(*(c_ref.m_residue + 1));
+    }
+    return std::nullopt;
+  }
+
+  /// Previous residue in the molecule
+  [[nodiscard]] std::optional<ResidueRef> prev() const {
+    if (res_ptr() >= res_ptr()->molecule->residues.begin() + 1) {
+      return ResidueRef(*(c_ref.m_residue - 1));
+    }
+    return std::nullopt;
+  }
 
   /// Get children atom by name
-  std::optional<AtomRef> operator[](const AtomName& name);
-  std::optional<proxy::AtomRef> operator[](const char* name);
-  std::optional<proxy::AtomRef> operator[](const std::string& name);
+  [[nodiscard]] std::optional<AtomRef> operator[](const AtomName& name) const;
+  [[nodiscard]] std::optional<AtomRef> operator[](const char* name) const;
+  [[nodiscard]] std::optional<AtomRef> operator[](const std::string& name) const;
 
   /// Create smart reference from this
-  smart::ResidueSmartRef smart();
+  [[nodiscard]] ResidueSmartRef smart() const;
 
   /// Check if references point to same data
-  bool operator!=(const ResidueRef& rhs) const { return res_ptr() != rhs.res_ptr(); }
-  bool operator==(const ResidueRef& rhs) const { return res_ptr() == rhs.res_ptr(); }
+  [[nodiscard]] constexpr bool operator!=(const ResidueRef& rhs) const {
+    check_invariants("operator!=");
+    return res_ptr() != rhs.res_ptr();
+  }
+  [[nodiscard]] constexpr bool operator==(const ResidueRef& rhs) const {
+    check_invariants("operator==");
+    return res_ptr() == rhs.res_ptr();
+  }
 
   /// @brief Adds atom to the end of the reside and return its reference
   ///
@@ -42,7 +153,7 @@ public:
   /// proxy::ResidueSelection
   ///
   /// Appropriate Frame::reserve_atoms() call prevents references invalidation
-  AtomRef add_atom();
+  [[nodiscard]] AtomRef add_atom() const;
 
 private:
   ConstResidueRef c_ref;
@@ -57,23 +168,18 @@ private:
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
 
-  friend AtomGettersMixin<AtomRef>;
-  friend AtomGettersMixin<smart::AtomSmartRef>;
-
-  friend ResidueGettersMixin<ResidueRef>;
-  friend ResidueSettersMixin<ResidueRef>;
-  friend smart::ResidueSmartRef;
+  friend ResidueSmartRef;
   friend smart::ResidueSmartSelection;
 
   constexpr void check_invariants(const char*) const {};
 
-  constexpr BaseResidue* res_ptr() const { return c_ref.m_residue; }
-  constexpr BaseResidue*& res_ptr() { return c_ref.m_residue; }
+  [[nodiscard]] constexpr BaseResidue* res_ptr() const { return c_ref.m_residue; }
 
   constexpr explicit ResidueRef(BaseResidue& residue) : c_ref(residue){};
 
   constexpr ResidueRef(BaseResidue* ptr, BaseResidue*) : c_ref(*ptr){};
   constexpr void advance() { c_ref.advance(); }
+  void rebase(BaseResidue* from, BaseResidue* to) { c_ref.rebase(from, to); }
   constexpr ResidueRef() = default; /// constructs object in invalid state (with nullptrs)
 };
 

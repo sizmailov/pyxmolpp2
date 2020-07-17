@@ -28,8 +28,8 @@ TorsionAngle::AffectedAtomsSelector make_atom_selector(const std::vector<std::st
   for (auto& name : names) {
     names_set.insert(AtomName(name));
   }
-  return [names_set](proxy::AtomRef& /*a*/, proxy::AtomRef& /*b*/, proxy::AtomRef& /*c*/,
-                     proxy::AtomRef& d) -> proxy::AtomSelection {
+  return [names_set](const proxy::AtomRef& /*a*/, const proxy::AtomRef& /*b*/, const proxy::AtomRef& /*c*/,
+                     const proxy::AtomRef& d) -> proxy::AtomSelection {
     return d.residue().atoms().filter([&](const proxy::AtomRef& x) { return names_set.count(x.name()) != 0; });
   };
 };

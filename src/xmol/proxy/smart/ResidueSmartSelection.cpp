@@ -17,7 +17,7 @@ void ResidueSmartSelection::on_base_residues_move(BaseResidue *from_begin, BaseR
   for (; it != it_end; ++it) {
     assert(from_begin <= it->res_ptr());
     assert(it->res_ptr() < from_end);
-    it->res_ptr() = to_begin + (it->res_ptr() - from_begin);
+    it->rebase(from_begin, to_begin);
   }
 }
 
@@ -28,4 +28,4 @@ xmol::proxy::smart::ResidueSmartSelection::ResidueSmartSelection(xmol::proxy::Re
   }
 }
 
-template class xmol::proxy::smart::FrameObserver<ResidueSmartSelection>;
+template class xmol::proxy::FrameObserver<ResidueSmartSelection>;

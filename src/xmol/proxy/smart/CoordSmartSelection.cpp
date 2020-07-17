@@ -18,7 +18,7 @@ void CoordSmartSelection::on_coordinates_move(XYZ* from_begin, XYZ* from_end, XY
   for (; it != it_end; ++it) {
     assert(from_begin <= it->coord_ptr());
     assert(it->coord_ptr() < from_end);
-    it->coord_ptr() = to_begin + (it->coord_ptr() - from_begin);
+    it->rebase(from_begin, to_begin);
   }
 }
 
@@ -38,4 +38,4 @@ xmol::geom::affine::Transformation3d CoordSmartSelection::alignment_to(xmol::pro
   return m_selection.alignment_to(other);
 }
 
-template class xmol::proxy::smart::FrameObserver<CoordSmartSelection>;
+template class xmol::proxy::FrameObserver<CoordSmartSelection>;

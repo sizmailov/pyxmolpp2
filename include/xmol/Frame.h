@@ -1,6 +1,9 @@
 #pragma once
 #include "base.h"
-#include "proxy/smart/references.h" // <- can be moved to .cpp
+#include "proxy/references/CoordRef.h"
+#include "proxy/references/AtomSmartRef.h"
+#include "proxy/references/ResidueSmartRef.h"
+#include "proxy/references/MoleculeSmartRef.h"
 #include "xmol/geom/UnitCell.h"
 #include "xmol/utils/Observable.h"
 #include <vector>
@@ -10,9 +13,9 @@ namespace xmol {
 using FrameIndex = int32_t;
 
 /// Molecular frame, owns all molecular data
-class Frame : public utils::Observable<proxy::smart::AtomSmartRef>,
-              public utils::Observable<proxy::smart::ResidueSmartRef>,
-              public utils::Observable<proxy::smart::MoleculeSmartRef>,
+class Frame : public utils::Observable<proxy::AtomSmartRef>,
+              public utils::Observable<proxy::ResidueSmartRef>,
+              public utils::Observable<proxy::MoleculeSmartRef>,
               public utils::Observable<proxy::smart::AtomSmartSelection>,
               public utils::Observable<proxy::smart::ResidueSmartSelection>,
               public utils::Observable<proxy::smart::MoleculeSmartSelection>,
@@ -137,8 +140,13 @@ private:
 
   void check_references_integrity();
 
-  friend proxy::AtomRef;
+//  friend proxy::ConstCoordRef;
   friend proxy::ConstAtomRef;
+  friend proxy::ConstResidueRef;
+  friend proxy::ConstMoleculeRef;
+
+//  friend proxy::CoordRef;
+  friend proxy::AtomRef;
   friend proxy::ResidueRef;
   friend proxy::MoleculeRef;
 
@@ -152,9 +160,9 @@ private:
   friend proxy::ResidueSelection;
   friend proxy::MoleculeSelection;
 
-  friend proxy::smart::AtomSmartRef;
-  friend proxy::smart::ResidueSmartRef;
-  friend proxy::smart::MoleculeSmartRef;
+  friend proxy::AtomSmartRef;
+  friend proxy::ResidueSmartRef;
+  friend proxy::MoleculeSmartRef;
 
   friend proxy::smart::CoordSmartSelection;
   friend proxy::smart::AtomSmartSelection;
