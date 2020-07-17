@@ -76,6 +76,10 @@ public:
   //  ConstCoordSpan coords() { return atoms().coords(); }
 
 private:
+
+  template<typename>
+  friend class proxy::api::ConstAtomAPI;
+
   BaseResidue* m_residue = nullptr;
 
   constexpr void check_invariants(const char*) const {};

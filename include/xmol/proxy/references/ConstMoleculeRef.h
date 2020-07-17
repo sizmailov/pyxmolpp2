@@ -69,6 +69,9 @@ private:
   friend ConstAtomRef;
   friend MoleculeRef;
   friend ConstResidueRef;
+
+  template<typename>
+  friend class proxy::api::ConstAtomAPI;
 };
 
 }

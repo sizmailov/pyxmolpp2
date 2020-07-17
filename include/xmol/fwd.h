@@ -38,10 +38,14 @@ class MoleculeSpan;
 
 /// Reference counting (smart) proxies
 
-
 class AtomSmartRef;
 class ResidueSmartRef;
 class MoleculeSmartRef;
+
+namespace api {
+template <typename Derived> class ConstAtomAPI;
+template <typename Derived, typename ARef = AtomRef> class AtomAPI;
+} // namespace references::api
 
 namespace smart {
 

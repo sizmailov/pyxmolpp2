@@ -167,7 +167,7 @@ TEST_F(ProxyTests, dead_frame_access_from_atom_ref) {
   MoleculeSmartRef mol = frame.add_molecule().smart();
   ResidueSmartRef residue = mol.add_residue().smart();
   AtomSmartRef atom = residue.add_atom().smart();
-  AtomRef plain_ref = atom;
+  AtomSmartRef atom2 = atom;
   frame = {};
   EXPECT_THROW(static_cast<void>(atom.frame()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.molecule()), DeadFrameAccessError);
@@ -178,6 +178,7 @@ TEST_F(ProxyTests, dead_frame_access_from_atom_ref) {
   EXPECT_THROW(atom.id({}), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(atom.r()), DeadFrameAccessError);
   EXPECT_THROW(atom.r({}), DeadFrameAccessError);
-  EXPECT_THROW(static_cast<void>(atom != plain_ref), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(atom == atom2), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(atom != atom2), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(static_cast<AtomRef>(atom)), DeadFrameAccessError);
 }

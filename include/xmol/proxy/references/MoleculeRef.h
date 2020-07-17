@@ -119,6 +119,9 @@ private:
   friend ResidueSelection;
   friend Selection<MoleculeRef>::LessThanComparator;
 
+  template<typename, typename>
+  friend class proxy::api::AtomAPI;
+
   friend MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
 

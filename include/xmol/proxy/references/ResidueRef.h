@@ -158,7 +158,9 @@ public:
 private:
   ConstResidueRef c_ref;
 
-  friend AtomRef;
+  template<typename, typename>
+  friend class proxy::api::AtomAPI;
+
   friend AtomSelection;
   friend Frame;
   friend MoleculeRef;
