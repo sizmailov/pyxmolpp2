@@ -20,10 +20,10 @@ TEST_F(TorsionAngleTests, test1) {
   Frame frame;
   MoleculeRef mol = frame.add_molecule().name("A");
   ResidueRef r = mol.add_residue().name("LYS").id(1);
-  AtomSmartRef a = r.add_atom().name("A").id(0).r(XYZ(1, 0, 0));
-  AtomSmartRef b = r.add_atom().name("B").id(1).r(XYZ(0, 0, 0));
-  AtomSmartRef c = r.add_atom().name("C").id(2).r(XYZ(0, 0, 1));
-  AtomSmartRef d = r.add_atom().name("D").id(3).r(XYZ(0, 1, 1));
+  AtomSmartRef a{r.add_atom().name("A").id(0).r(XYZ(1, 0, 0))};
+  AtomSmartRef b{r.add_atom().name("B").id(1).r(XYZ(0, 0, 0))};
+  AtomSmartRef c{r.add_atom().name("C").id(2).r(XYZ(0, 0, 1))};
+  AtomSmartRef d{r.add_atom().name("D").id(3).r(XYZ(0, 1, 1))};
 
   auto t = TorsionAngle(a, b, c, d, [](const AtomRef& a, const AtomRef& b, const AtomRef& c, const AtomRef& d) {
     AtomRef atoms[] = {d};

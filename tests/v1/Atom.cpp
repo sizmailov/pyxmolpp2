@@ -392,7 +392,7 @@ TEST_F(AtomTests, refcount_2) {
   Frame frame;
   auto c = frame.add_molecule().name("A").smart();
   for (int i = 0; i < 5; i++)
-    c = frame.add_molecule();
+    c = frame.add_molecule().smart();
 }
 
 TEST_F(AtomTests, residue_prev_next) {

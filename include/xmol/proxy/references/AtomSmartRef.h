@@ -8,7 +8,7 @@ namespace xmol::proxy {
 /// Smart Atom reference proxy
 class AtomSmartRef : public FrameObserver<AtomSmartRef> {
 public:
-  AtomSmartRef(AtomRef atom);
+  explicit AtomSmartRef(AtomRef atom);
 
   [[nodiscard]] const XYZ& r() const {
     check_invariants("r");

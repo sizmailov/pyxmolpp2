@@ -8,7 +8,7 @@ namespace xmol::proxy {
 /// Smart Molecule reference proxy
 class MoleculeSmartRef : public FrameObserver<MoleculeSmartRef> {
 public:
-  MoleculeSmartRef(MoleculeRef mol);
+  explicit MoleculeSmartRef(MoleculeRef mol);
 
   [[nodiscard]] constexpr MoleculeName name() const {
     check_invariants("name");

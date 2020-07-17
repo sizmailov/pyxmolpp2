@@ -10,7 +10,7 @@ namespace xmol::proxy {
 /// Smart Residue reference proxy
 class ResidueSmartRef : public FrameObserver<ResidueSmartRef> {
 public:
-  ResidueSmartRef(ResidueRef res);
+  explicit ResidueSmartRef(ResidueRef res);
 
   [[nodiscard]] constexpr ResidueId id() const {
     check_invariants("id");
