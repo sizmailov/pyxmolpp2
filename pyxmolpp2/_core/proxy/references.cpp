@@ -103,8 +103,22 @@ void pyxmolpp::v1::populate(pybind11::class_<ResidueSmartRef>& pyResidue) {
       .def_property_readonly("index", &SRef::index)
       .def_property_readonly(
           "frame", [](SRef& ref) -> Frame& { return ref.frame(); }, py::return_value_policy::reference)
-      .def_property_readonly("next", [](SRef& ref) -> std::optional<SRef> { return ref.next(); })
-      .def_property_readonly("prev", [](SRef& ref) -> std::optional<SRef> { return ref.prev(); })
+      .def_property_readonly("next",
+                             [](SRef& ref) -> std::optional<SRef> {
+                               auto next = ref.next();
+                               if (next) {
+                                 return next->smart();
+                               }
+                               return std::nullopt;
+                             })
+      .def_property_readonly("prev",
+                             [](SRef& ref) -> std::optional<SRef> {
+                               auto prev = ref.prev();
+                               if (prev) {
+                                 return prev->smart();
+                               }
+                               return std::nullopt;
+                             })
       .def("to_pdb", to_pdb_file<SRef>, py::arg("path_or_buf"))
       .def("to_pdb", to_pdb_stream<SRef>, py::arg("path_or_buf"))
       .def("add_atom", [](SRef& ref) { return ref.add_atom().smart(); })

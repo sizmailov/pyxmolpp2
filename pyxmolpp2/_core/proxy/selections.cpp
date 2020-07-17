@@ -89,7 +89,10 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSelect
       .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
       .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
-      .def("filter", [](Sel& sel, const std::function<bool(const AtomSmartRef&)>& f) { return sel.filter(f).smart(); })
+      .def("filter",
+           [](Sel& sel, const std::function<bool(const AtomSmartRef&)>& f) {
+             return sel.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("index", &Sel::index)
       .def("guess_mass", &Sel::guess_mass)
       .def(
@@ -177,7 +180,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSel
       .def_property_readonly("size", &Sel::size)
       .def_property_readonly("empty", &Sel::empty)
       .def("filter",
-           [](Sel& sel, const std::function<bool(const ResidueSmartRef&)>& f) { return sel.filter(f).smart(); })
+           [](Sel& sel, const std::function<bool(const ResidueSmartRef&)>& f) {
+             return sel.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("molecules", [](Sel& sel) { return sel.molecules().smart(); })
@@ -232,7 +237,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSe
       .def_property_readonly("size", &Sel::size)
       .def_property_readonly("empty", &Sel::empty)
       .def("filter",
-           [](Sel& sel, const std::function<bool(const MoleculeSmartRef&)>& f) { return sel.filter(f).smart(); })
+           [](Sel& sel, const std::function<bool(const MoleculeSmartRef&)>& f) {
+             return sel.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("coords", [](Sel& sel) { return sel.coords().smart(); })
       .def_property_readonly("atoms", [](Sel& sel) { return sel.atoms().smart(); })
       .def_property_readonly("residues", [](Sel& sel) { return sel.residues().smart(); })

@@ -146,7 +146,7 @@ public:
   }
 
   /// Create smart reference from this
-  AtomSmartRef smart() const;
+  [[nodiscard]] AtomSmartRef smart() const;
 
   /// Check if references point to same data
   constexpr bool operator!=(const AtomRef& rhs) const {

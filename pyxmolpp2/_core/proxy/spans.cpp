@@ -98,7 +98,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def_property_readonly("size", &Span::size)
       .def_property_readonly("empty", &Span::empty)
       .def("filter",
-           [](Span& span, const std::function<bool(const AtomSmartRef&)>& f) { return span.filter(f).smart(); })
+           [](Span& span, const std::function<bool(const AtomSmartRef&)>& f) {
+             return span.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
@@ -185,7 +187,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::ResidueSmartSpa
       .def_property_readonly("size", &Span::size)
       .def_property_readonly("empty", &Span::empty)
       .def("filter",
-           [](Span& span, const std::function<bool(const ResidueSmartRef&)>& f) { return span.filter(f).smart(); })
+           [](Span& span, const std::function<bool(const ResidueSmartRef&)>& f) {
+             return span.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("molecules", [](Span& span) { return span.molecules().smart(); })
@@ -235,7 +239,9 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::MoleculeSmartSp
       .def_property_readonly("size", &Span::size)
       .def_property_readonly("empty", &Span::empty)
       .def("filter",
-           [](Span& span, const std::function<bool(const MoleculeSmartRef&)>& f) { return span.filter(f).smart(); })
+           [](Span& span, const std::function<bool(const MoleculeSmartRef&)>& f) {
+             return span.filter([f](const auto& a) -> bool { return f(a.smart()); }).smart();
+           })
       .def_property_readonly("coords", [](Span& span) { return span.coords().smart(); })
       .def_property_readonly("atoms", [](Span& span) { return span.atoms().smart(); })
       .def_property_readonly("residues", [](Span& span) { return span.residues().smart(); })

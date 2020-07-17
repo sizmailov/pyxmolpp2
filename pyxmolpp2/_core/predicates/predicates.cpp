@@ -41,7 +41,7 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
 
   pyAtomPredicate
       .def(py::init([](std::function<bool(AtomSmartRef)>& predicate) {
-        return AtomPredicate([predicate](const AtomSmartRef& a) { return predicate(AtomSmartRef(const_cast<AtomSmartRef&>(a))); });
+        return AtomPredicate([predicate](const AtomRef& a) { return predicate(AtomSmartRef(a)); });
   }))
 
   .def("__call__",[](AtomPredicate& pred, AtomSmartRef& ref){ return pred((ref));  })
@@ -61,7 +61,7 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
   ;
 
   pyResiduePredicate.def(py::init([](std::function<bool(ResidueSmartRef)>& predicate) {
-    return ResiduePredicate([predicate](const ResidueSmartRef& a) { return predicate(ResidueSmartRef(const_cast<ResidueSmartRef&>(a))); });
+    return ResiduePredicate([predicate](const ResidueRef& a) { return predicate(ResidueSmartRef(a)); });
   }))
 
   .def("__call__",[](ResiduePredicate& pred, ResidueSmartRef& ref){ return pred(ref);  })
@@ -84,7 +84,7 @@ void pyxmolpp::v1::init_predicates(pybind11::module& polymer) {
 
 
   pyMoleculePredicate.def(py::init([](std::function<bool(MoleculeSmartRef)>& predicate) {
-    return MoleculePredicate([predicate](const MoleculeSmartRef& a) { return predicate(MoleculeSmartRef(const_cast<MoleculeSmartRef&>(a))); });
+    return MoleculePredicate([predicate](const MoleculeRef& a) { return predicate(MoleculeSmartRef(a)); });
   }))
 
   .def("__call__",[](MoleculePredicate& pred, MoleculeSmartRef& ref){ return pred((ref));  })

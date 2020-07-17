@@ -33,7 +33,7 @@ py::detail::iterator_state<Iterator, Sentinel, false, Policy> make_smart_iterato
                 s.first_or_done = true;
                 throw py::stop_iteration();
               }
-              return *s.it;
+              return s.it->smart();
             },
             std::forward<Extra>(extra)..., Policy);
   }
