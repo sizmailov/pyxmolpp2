@@ -19,8 +19,16 @@ public:
   /// Create smart reference from this
   [[nodiscard]] ResidueSmartRef smart() const;
 
+  const ConstResidueRef& const_() const {
+    return m_ref;
+  }
+
+  operator const ConstResidueRef& () const {
+    return m_ref;
+  }
+
 private:
-  ConstResidueRef c_ref;
+  ConstResidueRef m_ref;
 
   template<typename, typename>
   friend class proxy::api::AtomAPI;
@@ -34,6 +42,7 @@ private:
   friend ResidueSelection;
   friend Selection<ResidueRef>::LessThanComparator;
 
+  friend ConstResidueSmartRef;
   friend ResidueSmartRef;
   friend smart::ResidueSmartSelection;
 
@@ -48,13 +57,13 @@ private:
 
   constexpr void check_invariants(const char*) const {};
 
-  [[nodiscard]] constexpr BaseResidue* res_ptr() const { return c_ref.m_residue; }
+  [[nodiscard]] constexpr BaseResidue* res_ptr() const { return m_ref.m_residue; }
 
-  constexpr explicit ResidueRef(BaseResidue& residue) : c_ref(residue){};
+  constexpr explicit ResidueRef(BaseResidue& residue) : m_ref(residue){};
 
-  constexpr ResidueRef(BaseResidue* ptr, BaseResidue*) : c_ref(*ptr){};
-  constexpr void advance() { c_ref.advance(); }
-  void rebase(BaseResidue* from, BaseResidue* to) { c_ref.rebase(from, to); }
+  constexpr ResidueRef(BaseResidue* ptr, BaseResidue*) : m_ref(*ptr){};
+  constexpr void advance() { m_ref.advance(); }
+  void rebase(BaseResidue* from, BaseResidue* to) { m_ref.rebase(from, to); }
   constexpr ResidueRef() = default; /// constructs object in invalid state (with nullptrs)
 };
 

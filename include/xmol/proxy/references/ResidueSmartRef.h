@@ -1,20 +1,16 @@
 #pragma once
 
-#include "AtomRef.h"
-#include "MoleculeRef.h"
-#include "ResidueRef.h"
+#include "ConstResidueSmartRef.h"
 #include "xmol/proxy/FrameObserver.h"
 
 namespace xmol::proxy {
 
 /// Smart Residue reference proxy
-class ResidueSmartRef : public FrameObserver<ResidueSmartRef>, public api::ResidueAPI<ResidueSmartRef>{
+class ResidueSmartRef : public api::ResidueAPI<ResidueSmartRef> {
 public:
-  explicit ResidueSmartRef(ResidueRef res);
+  explicit ResidueSmartRef(const ResidueRef& res) : m_ref(res){}
 
-  using api::ResidueAPI<ResidueSmartRef>::frame; // disambiguate from FrameObserver::frame;
-
-  operator const ResidueRef&() const &{
+  operator const ResidueRef&() const& {
     check_invariants("operator ResidueRef&");
     return m_ref;
   };
@@ -25,17 +21,15 @@ public:
   };
 
 private:
-  ResidueRef m_ref;
+  ConstResidueSmartRef m_ref;
 
   void on_base_residues_move(BaseResidue* from_begin, BaseResidue* from_end, BaseResidue* to_begin);
 
   constexpr void check_invariants(const char* func_name) const {
-    if (!is_bound_to_frame()) {
-      throw DeadFrameAccessError(std::string("ResidueSmartRef::") + func_name);
-    }
+    m_ref.check_invariants(func_name);
   }
 
-  [[nodiscard]] constexpr BaseResidue* res_ptr() const { return m_ref.res_ptr(); }
+  [[nodiscard]] constexpr BaseResidue* res_ptr() const { return m_ref.m_ref.res_ptr(); }
 
   friend api::ResidueAPI<ResidueSmartRef>;
   friend api::ConstResidueAPI<ResidueSmartRef>;

@@ -66,7 +66,7 @@ TEST_F(FrameTests, frame_move_assignement) {
         ASSERT_EQ(frame.n_atoms(), 0);
 
         ASSERT_EQ(frame.n_references<MoleculeSmartRef>(), 0);
-        ASSERT_EQ(frame.n_references<ResidueSmartRef>(), 0);
+        ASSERT_EQ(frame.n_references<ConstResidueSmartRef>(), 0);
         ASSERT_EQ(frame.n_references<ConstAtomSmartRef>(), 0);
 
         ASSERT_EQ(frame2.n_molecules(), 3);
@@ -74,7 +74,7 @@ TEST_F(FrameTests, frame_move_assignement) {
         ASSERT_EQ(frame2.n_atoms(), 4);
 
         ASSERT_EQ(frame2.n_references<MoleculeSmartRef>(), 3);
-        ASSERT_EQ(frame2.n_references<ResidueSmartRef>(), 4);
+        ASSERT_EQ(frame2.n_references<ConstResidueSmartRef>(), 4);
         ASSERT_EQ(frame2.n_references<ConstAtomSmartRef>(), 4);
 
         ASSERT_EQ(a1.name(), AtomName("X"));
@@ -84,17 +84,17 @@ TEST_F(FrameTests, frame_move_assignement) {
       }
 
       ASSERT_EQ(frame2.n_references<MoleculeSmartRef>(), 3);
-      ASSERT_EQ(frame2.n_references<ResidueSmartRef>(), 4);
+      ASSERT_EQ(frame2.n_references<ConstResidueSmartRef>(), 4);
       ASSERT_EQ(frame2.n_references<ConstAtomSmartRef>(), 0);
     }
 
     ASSERT_EQ(frame2.n_references<MoleculeSmartRef>(), 3);
-    ASSERT_EQ(frame2.n_references<ResidueSmartRef>(), 0);
+    ASSERT_EQ(frame2.n_references<ConstResidueSmartRef>(), 0);
     ASSERT_EQ(frame2.n_references<ConstAtomSmartRef>(), 0);
   }
 
   ASSERT_EQ(frame2.n_references<MoleculeSmartRef>(), 0);
-  ASSERT_EQ(frame2.n_references<ResidueSmartRef>(), 0);
+  ASSERT_EQ(frame2.n_references<ConstResidueSmartRef>(), 0);
   ASSERT_EQ(frame2.n_references<ConstAtomSmartRef>(), 0);
 }
 
@@ -119,7 +119,7 @@ TEST_F(FrameTests, frame_move_construction) {
   ASSERT_EQ(frame.n_atoms(), 0);
 
   ASSERT_EQ(frame.n_references<MoleculeSmartRef>(), 0);
-  ASSERT_EQ(frame.n_references<ResidueSmartRef>(), 0);
+  ASSERT_EQ(frame.n_references<ConstResidueSmartRef>(), 0);
   ASSERT_EQ(frame.n_references<ConstAtomSmartRef>(), 0);
 
   ASSERT_EQ(frame2.n_molecules(), 3);
@@ -127,7 +127,7 @@ TEST_F(FrameTests, frame_move_construction) {
   ASSERT_EQ(frame2.n_atoms(), 4);
 
   ASSERT_EQ(frame2.n_references<MoleculeSmartRef>(), 3);
-  ASSERT_EQ(frame2.n_references<ResidueSmartRef>(), 4);
+  ASSERT_EQ(frame2.n_references<ConstResidueSmartRef>(), 4);
   ASSERT_EQ(frame2.n_references<ConstAtomSmartRef>(), 4);
 
   ASSERT_EQ(a1.name(), AtomName("X"));

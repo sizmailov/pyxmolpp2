@@ -40,6 +40,7 @@ class MoleculeSpan;
 
 class ConstAtomSmartRef;
 class AtomSmartRef;
+class ConstResidueSmartRef;
 class ResidueSmartRef;
 class MoleculeSmartRef;
 
