@@ -138,7 +138,7 @@ Frame& Frame::operator=(Frame&& other) {
     notify_frame_delete();
     utils::Observable<ConstAtomSmartRef>::operator=(std::move(other));
     utils::Observable<ConstResidueSmartRef>::operator=(std::move(other));
-    utils::Observable<MoleculeSmartRef>::operator=(std::move(other));
+    utils::Observable<ConstMoleculeSmartRef>::operator=(std::move(other));
     utils::Observable<AtomSmartSelection>::operator=(std::move(other));
     utils::Observable<ResidueSmartSelection>::operator=(std::move(other));
     utils::Observable<MoleculeSmartSelection>::operator=(std::move(other));
@@ -210,7 +210,7 @@ Frame::Frame(const Frame& other)
 Frame::Frame(Frame&& other)
     : utils::Observable<ConstAtomSmartRef>(std::move(other)),
       utils::Observable<ConstResidueSmartRef>(std::move(other)),
-      utils::Observable<MoleculeSmartRef>(std::move(other)),
+      utils::Observable<ConstMoleculeSmartRef>(std::move(other)),
       utils::Observable<AtomSmartSelection>(std::move(other)),
       utils::Observable<ResidueSmartSelection>(std::move(other)),
       utils::Observable<MoleculeSmartSelection>(std::move(other)),
@@ -337,7 +337,7 @@ void Frame::notify_residues_move(BaseResidue* old_begin, BaseResidue* old_end, B
 }
 void Frame::notify_molecules_move(BaseMolecule* old_begin, BaseMolecule* old_end, BaseMolecule* new_begin) const {
   if (old_begin != new_begin) {
-    utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
+    utils::Observable<ConstMoleculeSmartRef>::notify(&ConstMoleculeSmartRef::on_base_molecules_move, old_begin, old_end,
                                                     new_begin);
     utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_base_molecules_move, old_begin,
                                                           old_end, new_begin);
@@ -360,7 +360,7 @@ void Frame::notify_coordinates_move(XYZ* old_begin, XYZ* old_end, XYZ* new_begin
 void Frame::notify_frame_moved(Frame& other) {
   utils::Observable<ConstAtomSmartRef>::notify(&ConstAtomSmartRef::on_frame_move, other, *this);
   utils::Observable<ConstResidueSmartRef>::notify(&ConstResidueSmartRef::on_frame_move, other, *this);
-  utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_move, other, *this);
+  utils::Observable<ConstMoleculeSmartRef>::notify(&ConstMoleculeSmartRef::on_frame_move, other, *this);
   utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_move, other, *this);
   utils::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_move, other, *this);
   utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_move, other, *this);
@@ -374,7 +374,7 @@ void Frame::notify_frame_moved(Frame& other) {
 void Frame::notify_frame_delete() const {
   utils::Observable<ConstAtomSmartRef>::notify(&ConstAtomSmartRef::on_frame_delete);
   utils::Observable<ConstResidueSmartRef>::notify(&ConstResidueSmartRef::on_frame_delete);
-  utils::Observable<MoleculeSmartRef>::notify(&MoleculeSmartRef::on_frame_delete);
+  utils::Observable<ConstMoleculeSmartRef>::notify(&ConstMoleculeSmartRef::on_frame_delete);
   utils::Observable<AtomSmartSelection>::notify(&AtomSmartSelection::on_frame_delete);
   utils::Observable<ResidueSmartSelection>::notify(&ResidueSmartSelection::on_frame_delete);
   utils::Observable<MoleculeSmartSelection>::notify(&MoleculeSmartSelection::on_frame_delete);

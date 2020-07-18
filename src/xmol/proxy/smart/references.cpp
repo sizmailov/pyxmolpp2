@@ -30,18 +30,18 @@ ConstResidueSmartRef::ConstResidueSmartRef(const ResidueRef& residue)
   residue.frame().reg(*this);
 }
 
-void MoleculeSmartRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end,
+void ConstMoleculeSmartRef::on_base_molecules_move(BaseMolecule* from_begin, BaseMolecule* from_end,
                                               BaseMolecule* to_begin) {
   if (from_begin <= m_ref.mol_ptr() && m_ref.mol_ptr() < from_end) {
     m_ref.rebase(from_begin, to_begin);
   }
 }
 
-MoleculeSmartRef::MoleculeSmartRef(proxy::MoleculeRef molecule)
-    : FrameObserver<MoleculeSmartRef>(&molecule.frame()), m_ref(molecule) {
-  frame().reg(*this);
+ConstMoleculeSmartRef::ConstMoleculeSmartRef(const MoleculeRef& molecule)
+    : FrameObserver<ConstMoleculeSmartRef>(&molecule.frame()), m_ref(molecule) {
+  molecule.frame().reg(*this);
 }
 
 template class xmol::proxy::FrameObserver<xmol::proxy::ConstAtomSmartRef>;
 template class xmol::proxy::FrameObserver<xmol::proxy::ConstResidueSmartRef>;
-template class xmol::proxy::FrameObserver<xmol::proxy::MoleculeSmartRef>;
+template class xmol::proxy::FrameObserver<xmol::proxy::ConstMoleculeSmartRef>;

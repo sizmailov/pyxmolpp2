@@ -13,6 +13,15 @@ public:
 
   /// Create smart reference from this
   [[nodiscard]] MoleculeSmartRef smart() const;
+
+  [[nodiscard]] const ConstMoleculeRef& const_() const{
+    return m_cref;
+  }
+
+  operator const ConstMoleculeRef&()const{
+    return m_cref;
+  }
+
 private:
   ConstMoleculeRef m_cref;
 
@@ -37,6 +46,7 @@ private:
   template<typename, typename>
   friend class proxy::api::ResidueAPI;
 
+  friend ConstMoleculeSmartRef;
   friend MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
 

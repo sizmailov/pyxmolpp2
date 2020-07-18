@@ -39,8 +39,10 @@ class MoleculeSpan;
 /// Reference counting (smart) proxies
 
 class ConstAtomSmartRef;
-class AtomSmartRef;
 class ConstResidueSmartRef;
+class ConstMoleculeSmartRef;
+
+class AtomSmartRef;
 class ResidueSmartRef;
 class MoleculeSmartRef;
 

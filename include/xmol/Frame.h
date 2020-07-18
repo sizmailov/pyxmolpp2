@@ -15,7 +15,7 @@ using FrameIndex = int32_t;
 /// Molecular frame, owns all molecular data
 class Frame : public utils::Observable<proxy::ConstAtomSmartRef>,
               public utils::Observable<proxy::ConstResidueSmartRef>,
-              public utils::Observable<proxy::MoleculeSmartRef>,
+              public utils::Observable<proxy::ConstMoleculeSmartRef>,
               public utils::Observable<proxy::smart::AtomSmartSelection>,
               public utils::Observable<proxy::smart::ResidueSmartSelection>,
               public utils::Observable<proxy::smart::MoleculeSmartSelection>,
@@ -178,7 +178,7 @@ private:
 
   friend proxy::ConstAtomSmartRef;
   friend proxy::ConstResidueSmartRef;
-  friend proxy::MoleculeSmartRef;
+  friend proxy::ConstMoleculeSmartRef;
 
   friend proxy::smart::CoordSmartSelection;
   friend proxy::smart::AtomSmartSelection;
