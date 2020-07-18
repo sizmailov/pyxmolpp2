@@ -12,7 +12,7 @@ class ResidueSmartRef : public FrameObserver<ResidueSmartRef>, public api::Resid
 public:
   explicit ResidueSmartRef(ResidueRef res);
 
-  using api::ResidueAPI<ResidueSmartRef>::frame; // disambiguate with FrameObserver::frame;
+  using api::ResidueAPI<ResidueSmartRef>::frame; // disambiguate from FrameObserver::frame;
 
   operator const ResidueRef&() const &{
     check_invariants("operator ResidueRef&");

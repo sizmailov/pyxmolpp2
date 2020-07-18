@@ -43,6 +43,9 @@ private:
   template<typename, typename>
   friend class api::ConstResidueAPI;
 
+  template<typename, typename>
+  friend class api::MoleculeAPI;
+
   constexpr void check_invariants(const char*) const {};
 
   [[nodiscard]] constexpr BaseResidue* res_ptr() const { return c_ref.m_residue; }

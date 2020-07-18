@@ -10,7 +10,7 @@ class AtomSmartRef : public FrameObserver<AtomSmartRef>, public api::AtomAPI<Ato
 public:
   explicit AtomSmartRef(AtomRef atom);
 
-  using api::AtomAPI<AtomSmartRef>::frame; // disambiguate with FrameObserver::frame
+  using api::AtomAPI<AtomSmartRef>::frame; // disambiguate from FrameObserver::frame
 
   operator AtomRef() const&& {
     check_invariants("operator AtomRef()");

@@ -129,16 +129,17 @@ TEST_F(ProxyTests, span_conversions) {
 TEST_F(ProxyTests, dead_frame_access_from_molecule_ref) {
   auto frame = Frame{};
   MoleculeSmartRef mol{frame.add_molecule()};
-  MoleculeRef plain_ref = mol;
+  MoleculeSmartRef mol2 = mol;
   frame = {};
   EXPECT_THROW(static_cast<void>(mol.frame()), DeadFrameAccessError);
-  EXPECT_THROW(mol.residues(), DeadFrameAccessError);
-  EXPECT_THROW(mol.atoms(), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(mol.residues()), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(mol.atoms()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.name()), DeadFrameAccessError);
   EXPECT_THROW(mol.name(""), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.size()), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(mol.empty()), DeadFrameAccessError);
-  EXPECT_THROW(static_cast<void>(mol != plain_ref), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(mol == mol2), DeadFrameAccessError);
+  EXPECT_THROW(static_cast<void>(mol != mol2), DeadFrameAccessError);
   EXPECT_THROW(static_cast<void>(static_cast<MoleculeRef>(mol)), DeadFrameAccessError);
 }
 

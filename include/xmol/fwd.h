@@ -46,7 +46,9 @@ namespace api {
 template <typename Derived> class ConstAtomAPI;
 template <typename Derived, typename ARef = AtomRef> class AtomAPI;
 template <typename Derived, typename RRef = ConstResidueRef> class ConstResidueAPI;
-template <typename Derived, typename ARef = ResidueRef> class ResidueAPI;
+template <typename Derived, typename RRef = ResidueRef> class ResidueAPI;
+template <typename Derived, typename MRef = ConstMoleculeRef> class ConstMoleculeAPI;
+template <typename Derived, typename MRef = MoleculeRef> class MoleculeAPI;
 } // namespace references::api
 
 namespace smart {

@@ -145,10 +145,18 @@ private:
 
   template<typename, typename>
   friend class proxy::api::ConstResidueAPI;
+
   template<typename, typename>
   friend class proxy::api::ResidueAPI;
 
-//  friend proxy::ConstCoordRef;
+  template<typename, typename>
+  friend class proxy::api::MoleculeAPI;
+
+  template<typename, typename>
+  friend class proxy::api::ConstMoleculeAPI;
+
+
+  //  friend proxy::ConstCoordRef;
   friend proxy::ConstAtomRef;
   friend proxy::ConstResidueRef;
   friend proxy::ConstMoleculeRef;

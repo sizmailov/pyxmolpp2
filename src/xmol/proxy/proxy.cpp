@@ -4,7 +4,6 @@
 
 using namespace xmol::proxy;
 
-ResidueRef MoleculeRef::add_residue() const { return ResidueRef(frame().add_residue(*mol_ptr())); }
 
 xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
@@ -15,19 +14,7 @@ xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(p
 ConstAtomRef::ConstAtomRef(BaseAtom& atom) : m_coord(&atom.residue->molecule->frame->crd(atom)), m_atom(&atom) {}
 
 MoleculeSmartRef MoleculeRef::smart() const { return MoleculeSmartRef(*this); }
-std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) const {
-  // todo: benchmark vs mappings (number of residues might be high)
-  for (auto& r : residues()) {
-    if (r.id() == id) {
-      return r;
-    }
-  }
-  return {};
-}
-std::optional<ResidueRef> MoleculeRef::operator[](ResidueIdSerial id) const { return (*this)[ResidueId(id)]; }
-xmol::MoleculeIndex MoleculeRef::index() const { return frame().index_of(*mol_ptr()); }
 ResidueSmartRef ResidueRef::smart() const { return ResidueSmartRef(*this); }
-
 AtomSmartRef AtomRef::smart() const { return AtomSmartRef(*this); }
 
 template class xmol::proxy::Selection<CoordRef>;
