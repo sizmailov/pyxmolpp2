@@ -43,6 +43,10 @@ private:
   friend smart::AtomSmartSpan;
   friend api::AtomAPI<AtomRef>;
   friend api::ConstAtomAPI<AtomRef>;
+
+  template<typename, typename>
+  friend class api::ResidueAPI;
+
   explicit AtomRef(BaseAtom& atom) : m_cref(atom) {}
 
   AtomRef(BaseAtom* ptr, BaseAtom* end) : m_cref(ptr, end) {}

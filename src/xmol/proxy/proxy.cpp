@@ -6,8 +6,6 @@ using namespace xmol::proxy;
 
 ResidueRef MoleculeRef::add_residue() const { return ResidueRef(frame().add_residue(*mol_ptr())); }
 
-AtomRef ResidueRef::add_atom() const { return proxy::AtomRef(frame().add_atom(*res_ptr())); }
-
 xmol::proxy::ConstAtomRef::ConstAtomRef(BaseAtom* ptr, BaseAtom* end) : m_atom(ptr) {
   if (ptr != end) {
     m_coord = &ptr->residue->molecule->frame->crd(*ptr);
@@ -28,18 +26,7 @@ std::optional<ResidueRef> MoleculeRef::operator[](const xmol::ResidueId& id) con
 }
 std::optional<ResidueRef> MoleculeRef::operator[](ResidueIdSerial id) const { return (*this)[ResidueId(id)]; }
 xmol::MoleculeIndex MoleculeRef::index() const { return frame().index_of(*mol_ptr()); }
-xmol::ResidueIndex ResidueRef::index() const { return frame().index_of(*res_ptr()); }
 ResidueSmartRef ResidueRef::smart() const { return ResidueSmartRef(*this); }
-std::optional<AtomRef> ResidueRef::operator[](const xmol::AtomName& name) const {
-  for (auto& a : atoms()) {
-    if (a.name() == name) {
-      return a;
-    }
-  }
-  return {};
-}
-std::optional<AtomRef> ResidueRef::operator[](const char* name) const { return operator[](AtomName(name)); }
-std::optional<AtomRef> ResidueRef::operator[](const std::string& name) const { return operator[](AtomName(name)); }
 
 AtomSmartRef AtomRef::smart() const { return AtomSmartRef(*this); }
 

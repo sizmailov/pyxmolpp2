@@ -72,6 +72,8 @@ private:
 
   template<typename>
   friend class proxy::api::ConstAtomAPI;
+  template<typename, typename>
+  friend class proxy::api::ConstResidueAPI;
 };
 
 }

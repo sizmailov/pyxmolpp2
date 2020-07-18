@@ -140,8 +140,14 @@ private:
 
   void check_references_integrity();
 
-  template<typename T>
+  template<typename>
   friend class proxy::api::ConstAtomAPI;
+
+  template<typename, typename>
+  friend class proxy::api::ConstResidueAPI;
+  template<typename, typename>
+  friend class proxy::api::ResidueAPI;
+
 //  friend proxy::ConstCoordRef;
   friend proxy::ConstAtomRef;
   friend proxy::ConstResidueRef;

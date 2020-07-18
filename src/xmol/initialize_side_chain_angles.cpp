@@ -14,7 +14,7 @@ std::pair<ResidueName, TorsionAngleName> make_key(const char* rname, const char*
   return std::make_pair(ResidueName(rname), TorsionAngleName(angle_name));
 };
 TorsionAngleFactory::residue_to_atoms make_atoms_refs(const char* an, const char* bn, const char* cn, const char* dn) {
-  return [an, bn, cn, dn](proxy::ResidueRef& r) {
+  return [an, bn, cn, dn](const proxy::ResidueRef& r) {
     auto [a, b, c, d] = std::make_tuple(r[an], r[bn], r[cn], r[dn]);
     if (a && b && c && d) {
       return std::optional<TorsionAngleFactory::four_atoms>(std::make_tuple(*a, *b, *c, *d));

@@ -121,6 +121,8 @@ private:
 
   template<typename, typename>
   friend class proxy::api::AtomAPI;
+  template<typename, typename>
+  friend class proxy::api::ResidueAPI;
 
   friend MoleculeSmartRef;
   friend smart::MoleculeSmartSelection;
