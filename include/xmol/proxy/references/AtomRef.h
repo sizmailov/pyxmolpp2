@@ -3,7 +3,6 @@
 #include "ConstAtomRef.h"
 #include "MoleculeRef.h"
 #include "ResidueRef.h"
-#include "api/AtomAPI.h"
 
 namespace xmol::proxy {
 
