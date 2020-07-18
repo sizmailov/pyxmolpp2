@@ -21,6 +21,9 @@ public:
 
   /// Create smart reference from this
   [[nodiscard]] AtomSmartRef smart() const;
+  [[nodiscard]] const ConstAtomRef& const_() const { return m_cref; }
+
+  explicit operator const ConstAtomRef&() const { return m_cref; }
 
 private:
   ConstAtomRef m_cref;
@@ -35,10 +38,10 @@ private:
   friend Frame;
   friend MoleculeSelection;
   friend ProxySpan<AtomRef, BaseAtom>;
-  friend ResidueRef;
   friend ResidueSelection;
   friend Selection<proxy::AtomRef>::LessThanComparator;
   friend AtomSmartRef;
+  friend ConstAtomSmartRef;
   friend smart::AtomSmartSelection;
   friend smart::AtomSmartSpan;
   friend api::AtomAPI<AtomRef>;

@@ -13,7 +13,7 @@ namespace xmol {
 using FrameIndex = int32_t;
 
 /// Molecular frame, owns all molecular data
-class Frame : public utils::Observable<proxy::AtomSmartRef>,
+class Frame : public utils::Observable<proxy::ConstAtomSmartRef>,
               public utils::Observable<proxy::ResidueSmartRef>,
               public utils::Observable<proxy::MoleculeSmartRef>,
               public utils::Observable<proxy::smart::AtomSmartSelection>,
@@ -176,7 +176,7 @@ private:
   friend proxy::ResidueSelection;
   friend proxy::MoleculeSelection;
 
-  friend proxy::AtomSmartRef;
+  friend proxy::ConstAtomSmartRef;
   friend proxy::ResidueSmartRef;
   friend proxy::MoleculeSmartRef;
 
