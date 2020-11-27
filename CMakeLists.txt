@@ -64,7 +64,7 @@ add_dependencies(xmolpp2 write_version_info)
 #target_compile_definitions(xmolpp2 PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_libraries(xmolpp2 stdc++ m)
+    target_link_libraries(xmolpp2 PUBLIC stdc++ m)
 endif()
 
 
