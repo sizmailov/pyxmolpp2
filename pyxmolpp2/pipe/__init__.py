@@ -7,8 +7,31 @@ class TrajectoryProcessor:
     def copy(self):
         raise NotImplementedError()
 
+    def __or__(self, other: 'TrajectoryProcessor'):
+        return TrajectoryProcessorPair(self, other)
+
     def __call__(self, frame: Frame) -> Frame:
         raise NotImplementedError()
+
+
+class StatelessTrajectoryProcessor(TrajectoryProcessor):
+    def __ror__(self, trajectory: Sequence[Frame]):
+        return ProcessedTrajectory(trajectory, self)
+
+    def copy(self):
+        return self
+
+
+class TrajectoryProcessorPair(StatelessTrajectoryProcessor):
+
+    def __call__(self, frame: Frame) -> Frame:
+        frame = self.first(frame)
+        frame = self.second(frame)
+        return frame
+
+    def __init__(self, first: TrajectoryProcessor, second: TrajectoryProcessor):
+        self.first = first
+        self.second = second
 
 
 class ProcessedTrajectory:
@@ -73,10 +96,7 @@ class Align(TrajectoryProcessor):
         return Align(by=self.by, reference=self.reference, move_only=self.move_only)
 
 
-class ScaleUnitCell(TrajectoryProcessor):
-
-    def copy(self):
-        return self
+class ScaleUnitCell(StatelessTrajectoryProcessor):
 
     def __init__(self, summary_volume_filename, column=1, max_rows=None):
         try:
@@ -88,9 +108,6 @@ class ScaleUnitCell(TrajectoryProcessor):
         except ImportError:
             import numpy as np
             self.volume = np.genfromtxt(summary_volume_filename, usecols=[column], max_rows=max_rows)
-
-    def __ror__(self, trajectory: Sequence[Frame]):
-        return ProcessedTrajectory(trajectory, self)
 
     def __call__(self, frame: Frame):
         assert frame.index < len(self.volume), "Frame index is greater than supplied volume array"
