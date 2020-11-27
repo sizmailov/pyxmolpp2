@@ -84,7 +84,7 @@ class ScaleUnitCell(TrajectoryProcessor):
             import pandas as pd
             self.volume = \
                 pd.read_csv(summary_volume_filename,
-                            sep=r"\s+", header=None, usecols=[column], nrows=max_rows)[0].values
+                            sep=r"\s+", header=None, usecols=[column], nrows=max_rows).iloc[:, 0].values
         except ImportError:
             import numpy as np
             self.volume = np.genfromtxt(summary_volume_filename, usecols=[column], max_rows=max_rows)
