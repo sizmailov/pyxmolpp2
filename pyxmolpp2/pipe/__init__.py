@@ -215,3 +215,16 @@ class AssembleQuaternaryStructure(TrajectoryProcessor):
     def copy(self):
         return AssembleQuaternaryStructure(of=self.molecules_selector, by=self.reference_atoms_selector,
                                            reference=self.reference)
+
+
+class Run:
+    """
+    Serves for declarative trajectory processing style
+
+    Example:
+        >> traj | (processor_1 | processor_2) | Run()
+    """
+
+    def __ror__(self, trajectory):
+        for _ in trajectory:
+            pass
