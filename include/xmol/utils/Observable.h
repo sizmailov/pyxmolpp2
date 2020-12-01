@@ -2,10 +2,11 @@
 
 #include <cassert>
 #include <functional>
-#include <gsl/gsl_assert>
 #include <map>
 #include <type_traits>
 #include <vector>
+
+#include <gsl/assert>
 
 namespace xmol::utils {
 
