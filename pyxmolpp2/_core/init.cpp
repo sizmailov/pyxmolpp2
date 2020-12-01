@@ -14,6 +14,7 @@
 #include "io/GromacsXtcFile.h"
 #include "io/PdbFile.h"
 #include "io/TrjtoolDatFile.h"
+#include "pipe/pipe.h"
 #include "predicates/predicates.h"
 #include "proxy/references.h"
 #include "proxy/selections.h"
@@ -100,6 +101,10 @@ void pyxmolpp::v1::init(pybind11::module& v1) {
 
   populate(pyTrajectory);
   populate(pyTrajectoryInputFile);
+
+  // underscore in `_pipe` help disambiguate from pure python pyxmolpp2.pipe
+  auto pipe = v1.def_submodule("_pipe");
+  populate_pipe(pipe);
 
   populate(pyPdbInputFile);
   populate(pyTrjtoolDatFile);

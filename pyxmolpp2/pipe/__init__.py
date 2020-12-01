@@ -1,6 +1,7 @@
 import sys
 from typing import Sequence, List, Union
 from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation, Trajectory
+from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsv
 
 
 class TrajectoryProcessor:
@@ -228,3 +229,7 @@ class Run:
     def __ror__(self, trajectory):
         for _ in trajectory:
             pass
+
+
+class WriteVectorsToCsv(_WriteVectorsToCsv, TrajectoryProcessor):
+    pass
