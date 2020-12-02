@@ -71,7 +71,7 @@ public:
   Align(xmol::predicates::AtomPredicate by, std::optional<xmol::Frame> reference,
         std::optional<xmol::predicates::AtomPredicate> move_only)
       : m_align_atoms_selector(std::move(by)), m_reference(std::move(reference)),
-        m_moved_atoms_selector(std::move(move_only)) {}
+        m_moved_atoms_selector(std::move(move_only)), m_moved_coords(std::nullopt) {}
 
   Align copy() { return Align(m_align_atoms_selector, m_reference, m_moved_atoms_selector); }
 
@@ -95,15 +95,20 @@ public:
 
   bool after_last_iteration() {
     m_frame_coords = {};
-    m_moved_coords = {};
+    m_moved_coords = std::nullopt;
     m_ref_copy_coords = {};
     m_reference_copy = {};
     return false;
   }
 
   Frame& operator()(Frame& frame) {
-    auto alignment = m_frame_coords->alignment_to(*m_ref_copy_coords);
-    m_moved_coords->apply(alignment);
+    const auto alignment = m_frame_coords->alignment_to(*m_ref_copy_coords);
+    std::visit([&alignment](auto&& coords){
+      using T = std::decay_t<decltype(coords)>;
+      if constexpr (!std::is_same_v<std::nullopt_t,T>){
+        coords.apply(alignment);
+      }
+    }, m_moved_coords);
     return frame;
   }
 
@@ -114,8 +119,8 @@ private:
 
   // "state" of processor during trajectory traverse
   std::optional<xmol::proxy::CoordSelection> m_frame_coords;
-  std::optional<xmol::proxy::CoordSelection> m_moved_coords;
   std::optional<xmol::proxy::CoordSelection> m_ref_copy_coords;
+  std::variant<std::nullopt_t, xmol::proxy::CoordSelection, xmol::proxy::CoordSpan> m_moved_coords;
   std::optional<xmol::Frame> m_reference_copy;
 };
 
