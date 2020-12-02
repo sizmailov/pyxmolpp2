@@ -1,7 +1,9 @@
 import sys
+import warnings
+
 from typing import Sequence, List, Union
 from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation, Trajectory
-from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsv
+from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsvCxx, Align as _AlignCxx
 
 
 class TrajectoryProcessor:
@@ -103,8 +105,11 @@ class ProcessedTrajectory:
         return self.trajectory.n_atoms
 
 
-class Align(TrajectoryProcessor):
+class _AlignPython(TrajectoryProcessor):
+    """Illustrates implementation of Align in pure python"""
+
     def __init__(self, by: AtomPredicate, reference: Frame = None, move_only: AtomPredicate = None):
+        warnings.warn("pipe._AlignPython serves illustration puposes only, use more performant pipe.Align instead")
         self.align_atoms_selector = by
         self.reference = reference
         self.moved_atoms_selector = move_only
@@ -137,6 +142,10 @@ class Align(TrajectoryProcessor):
 
     def copy(self):
         return Align(by=self.align_atoms_selector, reference=self.reference, move_only=self.moved_atoms_selector)
+
+
+class Align(_AlignCxx, TrajectoryProcessor):
+    pass
 
 
 class ScaleUnitCell(StatelessTrajectoryProcessor):
@@ -231,5 +240,5 @@ class Run:
             pass
 
 
-class WriteVectorsToCsv(_WriteVectorsToCsv, TrajectoryProcessor):
+class WriteVectorsToCsv(_WriteVectorsToCsvCxx, TrajectoryProcessor):
     pass
