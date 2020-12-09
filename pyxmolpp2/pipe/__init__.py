@@ -8,7 +8,7 @@ from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsvCxx, Al
 
 class TrajectoryProcessor:
 
-    def copy(self):
+    def copy(self) -> 'TrajectoryProcessor':
         raise NotImplementedError()
 
     def before_first_iteration(self, frame: Frame):

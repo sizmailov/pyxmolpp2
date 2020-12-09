@@ -9,8 +9,8 @@
 #include <xmol/Frame.h>
 #include <xmol/geom/affine/Transformation3d.h>
 #include <xmol/predicates/predicates.h>
-#include <xmol/proxy/spans-impl.h>
 #include <xmol/proxy/selections.h>
+#include <xmol/proxy/spans-impl.h>
 
 namespace py = pybind11;
 using namespace xmol;
@@ -88,7 +88,7 @@ public:
     }
     if (m_moved_atoms_selector) {
       m_moved_coords = frame.atoms().filter(*m_moved_atoms_selector).coords();
-    }else{
+    } else {
       m_moved_coords = frame.coords();
     }
   }
@@ -103,12 +103,14 @@ public:
 
   Frame& operator()(Frame& frame) {
     const auto alignment = m_frame_coords->alignment_to(*m_ref_copy_coords);
-    std::visit([&alignment](auto&& coords){
-      using T = std::decay_t<decltype(coords)>;
-      if constexpr (!std::is_same_v<std::nullopt_t,T>){
-        coords.apply(alignment);
-      }
-    }, m_moved_coords);
+    std::visit(
+        [&alignment](auto&& coords) {
+          using T = std::decay_t<decltype(coords)>;
+          if constexpr (!std::is_same_v<std::nullopt_t, T>) {
+            coords.apply(alignment);
+          }
+        },
+        m_moved_coords);
     return frame;
   }
 
@@ -124,17 +126,14 @@ private:
   std::optional<xmol::Frame> m_reference_copy;
 };
 
-template<typename Processor>
-py::class_<Processor>& bind_trajectory_processor(py::class_<Processor>& trajectory_processor){
+template <typename Processor>
+py::class_<Processor>& bind_trajectory_processor(py::class_<Processor>& trajectory_processor) {
   // Binds common trajectory processor interface
   // Note: Constructor(s) should be bound separately!
-  trajectory_processor
-      .def("__call__", &Processor::operator(), py::arg("frame"))
+  trajectory_processor.def("__call__", &Processor::operator(), py::arg("frame"))
       .def(
           "after_last_iteration",
-          [](Processor& self, py::object&, py::object&, py::object&) -> bool {
-            return self.after_last_iteration();
-          },
+          [](Processor& self, py::object&, py::object&, py::object&) -> bool { return self.after_last_iteration(); },
           py::arg("exc_type"), py::arg("exc_value"), py::arg("traceback"))
       .def("before_first_iteration", &Processor::before_first_iteration, py::arg("frame"))
       .def("copy", &Processor::copy);
@@ -153,8 +152,27 @@ void pyxmolpp::v1::populate_pipe(py::module& pipe) {
 
   py::class_<Align> pyAlign(pipe, "Align");
 
+  using atom_pred_t = std::function<bool(xmol::proxy::smart::AtomSmartRef&)>;
   bind_trajectory_processor(pyAlign)
       .def(py::init<xmol::predicates::AtomPredicate, std::optional<xmol::Frame>,
-          std::optional<xmol::predicates::AtomPredicate>>(),
-           py::arg("by"), py::arg("reference")=std::nullopt, py::arg("move_only")=std::nullopt);
+                    std::optional<xmol::predicates::AtomPredicate>>(),
+           py::arg("by"), py::arg("reference") = std::nullopt, py::arg("move_only") = std::nullopt)
+      .def(py::init([](atom_pred_t by, std::optional<xmol::Frame> reference,
+                       std::optional<atom_pred_t> move_only) -> Align {
+             std::optional<xmol::predicates::AtomPredicate> move_only_wrapper = {};
+             if (move_only.has_value()) {
+               move_only_wrapper = xmol::predicates::AtomPredicate(
+                   [move_only = std::move(*move_only)](const xmol::proxy::AtomRef& a) -> bool {
+                     xmol::proxy::smart::AtomSmartRef smart_a = a;
+                     return move_only(smart_a);
+                   });
+             }
+
+             return Align(xmol::predicates::AtomPredicate([by = std::move(by)](const xmol::proxy::AtomRef& a) -> bool {
+                            xmol::proxy::smart::AtomSmartRef smart_a = a;
+                            return by(smart_a);
+                          }),
+                          std::move(reference), std::move(move_only_wrapper));
+           }),
+           py::arg("by"), py::arg("reference") = std::nullopt, py::arg("move_only") = std::nullopt);
 }
