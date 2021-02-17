@@ -1,5 +1,6 @@
 #include "xmol/geom/affine/Transformation3d.h"
-#include "gsl/gsl_assert"
+
+#include <gsl/assert>
 #include <iostream>
 
 using namespace xmol::geom;

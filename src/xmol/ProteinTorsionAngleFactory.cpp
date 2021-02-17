@@ -56,7 +56,7 @@ void TorsionAngleFactory::_define_protein_backbone_angles(ResidueName residueNam
     TorsionAngle::AffectedAtomsSelector selector = [](AtomRef& /*prev_c*/, AtomRef& n, AtomRef& /*ca*/, AtomRef& c) {
       std::vector<AtomRef> result;
       for (auto&& a : n.residue().atoms()) {
-        if (a.name() != AtomName("NH") && a.name() != AtomName("N") && a.name() != AtomName("CA")) {
+        if (a.name() != AtomName("H") && a.name() != AtomName("N") && a.name() != AtomName("CA")) {
           result.push_back(a);
         }
       }

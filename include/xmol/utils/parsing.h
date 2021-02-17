@@ -1,10 +1,11 @@
 #pragma once
 
 #include <cstring>
-#include <gsl/gsl_assert>
 #include <string>
 #include <tuple>
 #include <utility>
+
+#include <gsl/assert>
 
 namespace xmol::utils {
 

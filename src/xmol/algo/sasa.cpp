@@ -1,8 +1,9 @@
 #include "xmol/algo/sasa.h"
 #include "xmol/geom/SpatialIndex.h"
 #include <algorithm>
-#include <gsl/gsl_assert>
 #include <numeric>
+
+#include <gsl/assert>
 
 using namespace xmol::geom;
 

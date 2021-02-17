@@ -11,12 +11,14 @@ class AngstromsToNanometers(TrajectoryProcessor):
     def __init__(self):
         self.frame_coords = None
 
-    def __ror__(self, trajectory: Sequence[Frame]):
-        return ProcessedTrajectory(trajectory, self)
+    def before_first_iteration(self, frame: Frame):
+        self.frame_coords = frame.coords
+
+    def after_last_iteration(self, exc_type, exc_value, traceback) -> bool:
+        self.frame_coords = None
+        return False
 
     def __call__(self, frame: Frame):
-        if self.frame_coords is None:
-            self.frame_coords = frame.coords
         self.frame_coords.values[:] = self.frame_coords.values * 10
         return frame
 
