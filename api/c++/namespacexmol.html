@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>xmol namespace | XMOLPP2 C++ API</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <span id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">
+        <a href="../..">XMOLPP2</a> <span class="m-breadcrumb">|</span> <a href="index.html" class="m-thin">C++ API</a>
+      </span>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-6 m-col-m-none">
+            <li><a href="pages.html">Pages</a></li>
+            <li><a href="namespaces.html">Namespaces</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="3">
+            <li><a href="annotated.html">Classes</a></li>
+            <li><a href="files.html">Files</a></li>
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          xmol <span class="m-thin">namespace</span>
+        </h1>
+        <p>Reworked original xmol.</p>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#namespaces">Namespaces</a></li>
+                <li><a href="#nested-classes">Classes</a></li>
+                <li><a href="#typedef-members">Typedefs</a></li>
+                <li><a href="#func-members">Functions</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <section id="namespaces">
+          <h2><a href="#namespaces">Namespaces</a></h2>
+          <dl class="m-doc">
+            <dt>namespace <a href="namespacexmol_1_1algo.html" class="m-doc">algo</a></dt>
+            <dd><span></span></dd>
+            <dt>namespace <a href="namespacexmol_1_1detail.html" class="m-doc">detail</a></dt>
+            <dd><span></span></dd>
+            <dt>namespace <a href="namespacexmol_1_1future.html" class="m-doc">future</a></dt>
+            <dd>Backported C++20 features.</dd>
+            <dt>namespace <a href="namespacexmol_1_1geom.html" class="m-doc">geom</a></dt>
+            <dd>Atomic-agnostic geom procedures.</dd>
+            <dt>namespace <a href="namespacexmol_1_1io.html" class="m-doc">io</a></dt>
+            <dd><span></span></dd>
+            <dt>namespace <a href="namespacexmol_1_1predicates.html" class="m-doc">predicates</a></dt>
+            <dd><span></span></dd>
+            <dt>namespace <a href="namespacexmol_1_1proxy.html" class="m-doc">proxy</a></dt>
+            <dd>Proxy references to frame.</dd>
+            <dt>namespace <a href="namespacexmol_1_1trajectory.html" class="m-doc">trajectory</a></dt>
+            <dd>MD trajectory classes and utilites.</dd>
+            <dt>namespace <a href="namespacexmol_1_1utils.html" class="m-doc">utils</a></dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="nested-classes">
+          <h2><a href="#nested-classes">Classes</a></h2>
+          <dl class="m-doc">
+            <dt>
+              struct <a href="structxmol_1_1BaseAtom.html" class="m-doc">BaseAtom</a>
+            </dt>
+            <dd>Storage of atomic data except coords.</dd>
+            <dt>
+              struct <a href="structxmol_1_1BaseMolecule.html" class="m-doc">BaseMolecule</a>
+            </dt>
+            <dd>Storage of molecule data.</dd>
+            <dt>
+              struct <a href="structxmol_1_1BaseResidue.html" class="m-doc">BaseResidue</a>
+            </dt>
+            <dd>Storage of residue data.</dd>
+            <dt>
+              class <a href="classxmol_1_1DeadFrameAccessError.html" class="m-doc">DeadFrameAccessError</a>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              class <a href="classxmol_1_1Frame.html" class="m-doc">Frame</a>
+            </dt>
+            <dd>Molecular frame, owns all molecular data.</dd>
+            <dt>
+              struct <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              class <a href="classxmol_1_1TorsionAngle.html" class="m-doc">TorsionAngle</a>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              class <a href="classxmol_1_1TorsionAngleFactory.html" class="m-doc">TorsionAngleFactory</a>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="typedef-members">
+          <h2><a href="#typedef-members">Typedefs</a></h2>
+          <dl class="m-doc">
+            <dt>
+              using <a href="#ae803c3924d915d5adba7c3724886f7d3" class="m-doc">XYZ</a> = <a href="classxmol_1_1geom_1_1XYZ.html" class="m-doc">xmol::<wbr />geom::<wbr />XYZ</a>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#aa7b69a82da8aec183179b2c423ab241e" class="m-doc">CoordEigenVector</a> = XYZ::Vector_t
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a0946d8a66bda34073cb75052bf52c531" class="m-doc">CoordEigenMatrix</a> = Eigen::Matrix&lt;double, Eigen::Dynamic, 3, Eigen::RowMajor&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a45d6be86288c8a2c30ca9fa599cd02ab" class="m-doc">CoordEigenMatrixf</a> = Eigen::Matrix&lt;float, Eigen::Dynamic, 3, Eigen::RowMajor&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#ad530b7f12c757a1dbf632ce63780af82" class="m-doc">CoordEigenMatrixMap</a> = Eigen::Map&lt;CoordEigenMatrix&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a62556f9cf481a306e9b12d81ceff0c7a" class="m-doc">CoordEigenMatrixMapf</a> = Eigen::Map&lt;CoordEigenMatrixf&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#abce8461bad62ba592cab717f488909af" class="m-doc">AtomId</a> = int32_t
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#ab2770f6985f0946ee6a648bb600761b7" class="m-doc">AtomName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;4, false, <a href="structxmol_1_1detail_1_1AtomNameTag.html" class="m-doc">detail::<wbr />AtomNameTag</a>&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a0b29e1a8fb092e66725a8686a9777892" class="m-doc">ResidueName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;3, false, <a href="structxmol_1_1detail_1_1ResidueNameTag.html" class="m-doc">detail::<wbr />ResidueNameTag</a>&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a59f8944254b4f19db011ba11ba3e5a9a" class="m-doc">MoleculeName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;1, false, <a href="structxmol_1_1detail_1_1ChainNameTag.html" class="m-doc">detail::<wbr />ChainNameTag</a>&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a720fa11e19a72e519e8be3fbc8d0ffae" class="m-doc">ResidueInsertionCode</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">utils::<wbr />ShortAsciiString</a>&lt;1, false, <a href="structxmol_1_1detail_1_1InsertionCodeTag.html" class="m-doc">detail::<wbr />InsertionCodeTag</a>&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a461ea87d060456726240fe752836bf47" class="m-doc">residueSerial_t</a> = int32_t
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a8980e7f532ebbd9da4001035487ca178" class="m-doc">FrameIndex</a> = int32_t
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a532b9134f6db2c5d577879796dac4820" class="m-doc">Index</a> = int
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#ab3ab8ac62f61df31fc8df90f48eecd5b" class="m-doc">AtomIndex</a> = Index
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#aa1cd003bb4864e61501c28eb8835e536" class="m-doc">ResidueIndex</a> = Index
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a6814c35f9da961262f17e21d7a4a1e51" class="m-doc">MoleculeIndex</a> = Index
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a09a7431d9998ab0e8071751134b99cff" class="m-doc">CoordIndex</a> = Index
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a081b556a56e9790791464a9c4ef3bbc9" class="m-doc">TorsionAngleName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">utils::<wbr />ShortAsciiString</a>&lt;4, true, <a href="structxmol_1_1detail_1_1TorsionAngleNameTag.html" class="m-doc">detail::<wbr />TorsionAngleNameTag</a>&gt;
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="func-members">
+          <h2><a href="#func-members">Functions</a></h2>
+          <dl class="m-doc">
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a10dab8a798a90095c23135b554af475c" class="m-doc">to_string</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; residueId) -&gt; std::string</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a4b744edd6c5143f7cdcd0e3ded51edda" class="m-doc">operator&lt;</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a7a469690fc95c7fa98e2285d1ced314f" class="m-doc">operator&gt;</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a9fece3d6dbbbe748447028ded7931914" class="m-doc">operator==</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#acfb1831430e75e137c78de5bf7fdf405" class="m-doc">operator!=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#aad42f0039a7466c8439e0b69ba80910a" class="m-doc">operator&lt;=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a27e5780e598f5f7d3351824db8ca69aa" class="m-doc">operator&gt;=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a6d0ca74494f015dd7dfced30a1c606b9" class="m-doc">operator&lt;</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a8dde45483baf7514aef7f4d36b269539" class="m-doc">operator&gt;</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#aae078eafbd5f138ea7e7e1165eb907e0" class="m-doc">operator==</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#aaa1eeb114d6a6f950421b4058e0cc698" class="m-doc">operator!=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#ab5f30e3b75dee107a353b614eb1c4349" class="m-doc">operator&lt;=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a113562e373905fecf959bc3b7561aac7" class="m-doc">operator&gt;=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Typedef documentation</h2>
+          <section class="m-doc-details" id="ae803c3924d915d5adba7c3724886f7d3"><div>
+            <h3>
+              using xmol::<wbr /><a href="#ae803c3924d915d5adba7c3724886f7d3" class="m-doc-self">XYZ</a> = <a href="classxmol_1_1geom_1_1XYZ.html" class="m-doc">xmol::<wbr />geom::<wbr />XYZ</a>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="aa7b69a82da8aec183179b2c423ab241e"><div>
+            <h3>
+              using xmol::<wbr /><a href="#aa7b69a82da8aec183179b2c423ab241e" class="m-doc-self">CoordEigenVector</a> = XYZ::Vector_t
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a0946d8a66bda34073cb75052bf52c531"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a0946d8a66bda34073cb75052bf52c531" class="m-doc-self">CoordEigenMatrix</a> = Eigen::Matrix&lt;double, Eigen::Dynamic, 3, Eigen::RowMajor&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a45d6be86288c8a2c30ca9fa599cd02ab"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a45d6be86288c8a2c30ca9fa599cd02ab" class="m-doc-self">CoordEigenMatrixf</a> = Eigen::Matrix&lt;float, Eigen::Dynamic, 3, Eigen::RowMajor&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="ad530b7f12c757a1dbf632ce63780af82"><div>
+            <h3>
+              using xmol::<wbr /><a href="#ad530b7f12c757a1dbf632ce63780af82" class="m-doc-self">CoordEigenMatrixMap</a> = Eigen::Map&lt;CoordEigenMatrix&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a62556f9cf481a306e9b12d81ceff0c7a"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a62556f9cf481a306e9b12d81ceff0c7a" class="m-doc-self">CoordEigenMatrixMapf</a> = Eigen::Map&lt;CoordEigenMatrixf&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="abce8461bad62ba592cab717f488909af"><div>
+            <h3>
+              using xmol::<wbr /><a href="#abce8461bad62ba592cab717f488909af" class="m-doc-self">AtomId</a> = int32_t
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="ab2770f6985f0946ee6a648bb600761b7"><div>
+            <h3>
+              using xmol::<wbr /><a href="#ab2770f6985f0946ee6a648bb600761b7" class="m-doc-self">AtomName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;4, false, <a href="structxmol_1_1detail_1_1AtomNameTag.html" class="m-doc">detail::<wbr />AtomNameTag</a>&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a0b29e1a8fb092e66725a8686a9777892"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a0b29e1a8fb092e66725a8686a9777892" class="m-doc-self">ResidueName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;3, false, <a href="structxmol_1_1detail_1_1ResidueNameTag.html" class="m-doc">detail::<wbr />ResidueNameTag</a>&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a59f8944254b4f19db011ba11ba3e5a9a"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a59f8944254b4f19db011ba11ba3e5a9a" class="m-doc-self">MoleculeName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">xmol::<wbr />utils::<wbr />ShortAsciiString</a>&lt;1, false, <a href="structxmol_1_1detail_1_1ChainNameTag.html" class="m-doc">detail::<wbr />ChainNameTag</a>&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="base_8h.html">&lt;xmol/base.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a720fa11e19a72e519e8be3fbc8d0ffae"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a720fa11e19a72e519e8be3fbc8d0ffae" class="m-doc-self">ResidueInsertionCode</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">utils::<wbr />ShortAsciiString</a>&lt;1, false, <a href="structxmol_1_1detail_1_1InsertionCodeTag.html" class="m-doc">detail::<wbr />InsertionCodeTag</a>&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a461ea87d060456726240fe752836bf47"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a461ea87d060456726240fe752836bf47" class="m-doc-self">residueSerial_t</a> = int32_t
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a8980e7f532ebbd9da4001035487ca178"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a8980e7f532ebbd9da4001035487ca178" class="m-doc-self">FrameIndex</a> = int32_t
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="Frame_8h.html">&lt;xmol/Frame.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a532b9134f6db2c5d577879796dac4820"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a532b9134f6db2c5d577879796dac4820" class="m-doc-self">Index</a> = int
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="fwd_8h.html">&lt;xmol/fwd.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="ab3ab8ac62f61df31fc8df90f48eecd5b"><div>
+            <h3>
+              using xmol::<wbr /><a href="#ab3ab8ac62f61df31fc8df90f48eecd5b" class="m-doc-self">AtomIndex</a> = Index
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="fwd_8h.html">&lt;xmol/fwd.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="aa1cd003bb4864e61501c28eb8835e536"><div>
+            <h3>
+              using xmol::<wbr /><a href="#aa1cd003bb4864e61501c28eb8835e536" class="m-doc-self">ResidueIndex</a> = Index
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="fwd_8h.html">&lt;xmol/fwd.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a6814c35f9da961262f17e21d7a4a1e51"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a6814c35f9da961262f17e21d7a4a1e51" class="m-doc-self">MoleculeIndex</a> = Index
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="fwd_8h.html">&lt;xmol/fwd.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a09a7431d9998ab0e8071751134b99cff"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a09a7431d9998ab0e8071751134b99cff" class="m-doc-self">CoordIndex</a> = Index
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="fwd_8h.html">&lt;xmol/fwd.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a081b556a56e9790791464a9c4ef3bbc9"><div>
+            <h3>
+              using xmol::<wbr /><a href="#a081b556a56e9790791464a9c4ef3bbc9" class="m-doc-self">TorsionAngleName</a> = <a href="classxmol_1_1utils_1_1ShortAsciiString.html" class="m-doc">utils::<wbr />ShortAsciiString</a>&lt;4, true, <a href="structxmol_1_1detail_1_1TorsionAngleNameTag.html" class="m-doc">detail::<wbr />TorsionAngleNameTag</a>&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ProteinTorsionAngleFactory_8h.html">&lt;xmol/ProteinTorsionAngleFactory.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="a10dab8a798a90095c23135b554af475c"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">std::string xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a10dab8a798a90095c23135b554af475c" class="m-doc-self">to_string</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; residueId)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a4b744edd6c5143f7cdcd0e3ded51edda"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a4b744edd6c5143f7cdcd0e3ded51edda" class="m-doc-self">operator&lt;</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a7a469690fc95c7fa98e2285d1ced314f"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a7a469690fc95c7fa98e2285d1ced314f" class="m-doc-self">operator&gt;</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a9fece3d6dbbbe748447028ded7931914"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a9fece3d6dbbbe748447028ded7931914" class="m-doc-self">operator==</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="acfb1831430e75e137c78de5bf7fdf405"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#acfb1831430e75e137c78de5bf7fdf405" class="m-doc-self">operator!=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="aad42f0039a7466c8439e0b69ba80910a"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aad42f0039a7466c8439e0b69ba80910a" class="m-doc-self">operator&lt;=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a27e5780e598f5f7d3351824db8ca69aa"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a27e5780e598f5f7d3351824db8ca69aa" class="m-doc-self">operator&gt;=</a>(</span><span class="m-doc-wrap">const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; lhs,
+              const residueSerial_t&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a6d0ca74494f015dd7dfced30a1c606b9"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a6d0ca74494f015dd7dfced30a1c606b9" class="m-doc-self">operator&lt;</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a8dde45483baf7514aef7f4d36b269539"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a8dde45483baf7514aef7f4d36b269539" class="m-doc-self">operator&gt;</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="aae078eafbd5f138ea7e7e1165eb907e0"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aae078eafbd5f138ea7e7e1165eb907e0" class="m-doc-self">operator==</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="aaa1eeb114d6a6f950421b4058e0cc698"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aaa1eeb114d6a6f950421b4058e0cc698" class="m-doc-self">operator!=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="ab5f30e3b75dee107a353b614eb1c4349"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ab5f30e3b75dee107a353b614eb1c4349" class="m-doc-self">operator&lt;=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a113562e373905fecf959bc3b7561aac7"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">bool xmol::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a113562e373905fecf959bc3b7561aac7" class="m-doc-self">operator&gt;=</a>(</span><span class="m-doc-wrap">const residueSerial_t&amp; lhs,
+              const <a href="structxmol_1_1ResidueId.html" class="m-doc">ResidueId</a>&amp; rhs)</span></span>
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="ResidueId_8h.html">&lt;xmol/basics/ResidueId.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>XMOLPP2 C++ API. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.17 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

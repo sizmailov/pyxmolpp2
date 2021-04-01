@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>pyxmolpp2 | xmolpp2 Python API</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <span id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">
+        <a href="../../">xmolpp2</a> <span class="m-breadcrumb">|</span> <a href="index.html" class="m-thin">Python API</a>
+      </span>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li>
+              <a href="install.html">Install</a>
+              <ol>
+                <li><a href="changelog.html">Changelog</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="overview.html">Docs</a>
+              <ol>
+                <li><a href="overview.html">Overview</a></li>
+                <li><a href="examples/index.html">Examples</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="pyxmolpp2.html">API</a>
+              <ol>
+                <li><a href="modules.html">Modules</a></li>
+                <li><a href="classes.html">Classes</a></li>
+              </ol>
+            </li>
+            <li><a href="https://github.com/sizmailov/pyxmolpp2">Github</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="5">
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          pyxmolpp2 <span class="m-thin">module</span>
+        </h1>
+        <p>Pure-python part of pyxmolpp2</p>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#classes">Classes</a></li>
+                <li><a href="#functions">Functions</a></li>
+                <li><a href="#data">Data</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <section id="classes">
+          <h2><a href="#classes">Classes</a></h2>
+          <dl class="m-doc">
+            <dt>class <a href="pyxmolpp2.AmberNetCDF.html" class="m-doc">AmberNetCDF</a></dt>
+            <dd>Amber trajectory file</dd>
+            <dt>class <a href="pyxmolpp2.AngleValue.html" class="m-doc">AngleValue</a></dt>
+            <dd>Angular value</dd>
+            <dt>class <a href="pyxmolpp2.Atom.html" class="m-doc">Atom</a></dt>
+            <dd>Atom reference</dd>
+            <dt>class <a href="pyxmolpp2.AtomPredicate.html" class="m-doc">AtomPredicate</a></dt>
+            <dd>Atom Preidcate</dd>
+            <dt>class <a href="pyxmolpp2.AtomSelection.html" class="m-doc">AtomSelection</a></dt>
+            <dd>Ordered set of atom references</dd>
+            <dt>class <a href="pyxmolpp2.AtomSpan.html" class="m-doc">AtomSpan</a></dt>
+            <dd>Continuous span of atom references</dd>
+            <dt>class <a href="pyxmolpp2.CoordSelection.html" class="m-doc">CoordSelection</a></dt>
+            <dd>Ordered set of atomic coordinate references</dd>
+            <dt>class <a href="pyxmolpp2.CoordSelectionSizeMismatchError.html" class="m-doc">CoordSelectionSizeMismatchError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.CoordSpan.html" class="m-doc">CoordSpan</a></dt>
+            <dd>Continuous span of atomic coordinate references</dd>
+            <dt>class <a href="pyxmolpp2.DeadFrameAccessError.html" class="m-doc">DeadFrameAccessError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.DeadObserverAccessError.html" class="m-doc">DeadObserverAccessError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.Frame.html" class="m-doc">Frame</a></dt>
+            <dd>Molecular frame</dd>
+            <dt>class <a href="pyxmolpp2.GeomError.html" class="m-doc">GeomError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.GromacsXtcFile.html" class="m-doc">GromacsXtcFile</a></dt>
+            <dd>Gromacs binary <cite>.xtc</cite> input file</dd>
+            <dt>class <a href="pyxmolpp2.Molecule.html" class="m-doc">Molecule</a></dt>
+            <dd>Molecule reference</dd>
+            <dt>class <a href="pyxmolpp2.MoleculePredicate.html" class="m-doc">MoleculePredicate</a></dt>
+            <dd>Molecule Predicate</dd>
+            <dt>class <a href="pyxmolpp2.MoleculeSelection.html" class="m-doc">MoleculeSelection</a></dt>
+            <dd>Ordered set of molecule references</dd>
+            <dt>class <a href="pyxmolpp2.MoleculeSpan.html" class="m-doc">MoleculeSpan</a></dt>
+            <dd>Continuous span of molecule references</dd>
+            <dt>class <a href="pyxmolpp2.MultipleFramesSelectionError.html" class="m-doc">MultipleFramesSelectionError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.PdbFile.html" class="m-doc">PdbFile</a></dt>
+            <dd>PDB file</dd>
+            <dt>class <a href="pyxmolpp2.Residue.html" class="m-doc">Residue</a></dt>
+            <dd>Residue reference</dd>
+            <dt>class <a href="pyxmolpp2.ResidueId.html" class="m-doc">ResidueId</a></dt>
+            <dd>Residue id</dd>
+            <dt>class <a href="pyxmolpp2.ResiduePredicate.html" class="m-doc">ResiduePredicate</a></dt>
+            <dd>Residue Predicate</dd>
+            <dt>class <a href="pyxmolpp2.ResidueSelection.html" class="m-doc">ResidueSelection</a></dt>
+            <dd>Ordered set of residue references</dd>
+            <dt>class <a href="pyxmolpp2.ResidueSpan.html" class="m-doc">ResidueSpan</a></dt>
+            <dd>Continuous span of residue references</dd>
+            <dt>class <a href="pyxmolpp2.Rotation.html" class="m-doc">Rotation</a></dt>
+            <dd>Rotational transformation</dd>
+            <dt>class <a href="pyxmolpp2.SpanSplitError.html" class="m-doc">SpanSplitError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.TorsionAngle.html" class="m-doc">TorsionAngle</a></dt>
+            <dd>Torsion angle</dd>
+            <dt>class <a href="pyxmolpp2.TorsionAngleFactory.html" class="m-doc">TorsionAngleFactory</a></dt>
+            <dd>Generates torsion angles for standard residues</dd>
+            <dt>class <a href="pyxmolpp2.Trajectory.html" class="m-doc">Trajectory</a></dt>
+            <dd>Trajectory of frames</dd>
+            <dt>class <a href="pyxmolpp2.TrajectoryDoubleTraverseError.html" class="m-doc">TrajectoryDoubleTraverseError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.TrajectoryInputFile.html" class="m-doc">TrajectoryInputFile</a></dt>
+            <dd>Trajectory input file ABC</dd>
+            <dt>class <a href="pyxmolpp2.Transformation.html" class="m-doc">Transformation</a></dt>
+            <dd>Generic transformation</dd>
+            <dt>class <a href="pyxmolpp2.Translation.html" class="m-doc">Translation</a></dt>
+            <dd>Translational transformation</dd>
+            <dt>class <a href="pyxmolpp2.TrjtoolDatFile.html" class="m-doc">TrjtoolDatFile</a></dt>
+            <dd>Trajtool trajectory file</dd>
+            <dt>class <a href="pyxmolpp2.UniformScale.html" class="m-doc">UniformScale</a></dt>
+            <dd>Uniform scale transformation</dd>
+            <dt>class <a href="pyxmolpp2.UnitCell.html" class="m-doc">UnitCell</a></dt>
+            <dd>Unit cell</dd>
+            <dt>class <a href="pyxmolpp2.XYZ.html" class="m-doc">XYZ</a></dt>
+            <dd>3D Vector</dd>
+            <dt>class <a href="pyxmolpp2.XtcReadError.html" class="m-doc">XtcReadError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.XtcWriteError.html" class="m-doc">XtcWriteError</a></dt>
+            <dd></dd>
+            <dt>class <a href="pyxmolpp2.XtcWriter.html" class="m-doc">XtcWriter</a></dt>
+            <dd>Writes frames in <cite>.xtc</cite> binary format</dd>
+          </dl>
+        </section>
+        <section id="functions">
+          <h2><a href="#functions">Functions</a></h2>
+          <dl class="m-doc">
+            <dt id="Degrees">
+              <span class="m-doc-wrap-bumper">def <a href="#Degrees" class="m-doc-self">Degrees</a>(</span><span class="m-doc-wrap">degrees: float) -&gt; <a href="pyxmolpp2.AngleValue.html" class="m-doc">AngleValue</a></span>
+            </dt>
+            <dd></dd>
+            <dt id="Radians">
+              <span class="m-doc-wrap-bumper">def <a href="#Radians" class="m-doc-self">Radians</a>(</span><span class="m-doc-wrap">radians: float) -&gt; <a href="pyxmolpp2.AngleValue.html" class="m-doc">AngleValue</a></span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_alignment">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_alignment" class="m-doc-self">calc_alignment</a>(</span><span class="m-doc-wrap">ref: numpy.ndarray[numpy.float64[m, 3]],
+              var: numpy.ndarray[numpy.float64[m, 3]]) -&gt; <a href="pyxmolpp2.Transformation.html" class="m-doc">Transformation</a></span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_autocorr_order_2">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_autocorr_order_2" class="m-doc-self">calc_autocorr_order_2</a>(</span><span class="m-doc-wrap">vectors: numpy.ndarray[numpy.float64],
+              limit: int = -1) -&gt; numpy.ndarray[numpy.float64]</span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_autocorr_order_2_PRE">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_autocorr_order_2_PRE" class="m-doc-self">calc_autocorr_order_2_PRE</a>(</span><span class="m-doc-wrap">vectors: numpy.ndarray[numpy.float64],
+              limit: int = -1) -&gt; numpy.ndarray[numpy.float64]</span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_inertia_tensor">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_inertia_tensor" class="m-doc-self">calc_inertia_tensor</a>(</span><span class="m-doc-wrap">coords: numpy.ndarray[numpy.float64[m, 3]]) -&gt; numpy.ndarray[numpy.float64[3, 3]]</span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_rmsd">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_rmsd" class="m-doc-self">calc_rmsd</a>(</span><span class="m-doc-wrap">ref: numpy.ndarray[numpy.float64[m, 3]],
+              var: numpy.ndarray[numpy.float64[m, 3]]) -&gt; float</span>
+            </dt>
+            <dd></dd>
+            <dt id="calc_sasa">
+              <span class="m-doc-wrap-bumper">def <a href="#calc_sasa" class="m-doc-self">calc_sasa</a>(</span><span class="m-doc-wrap">coordinates: numpy.ndarray[numpy.float64],
+              vdw_radii: numpy.ndarray[numpy.float64],
+              solvent_radius: float,
+              indices_of_interest: typing.Optional[numpy.ndarray[numpy.int32]] = None,
+              n_samples: int = 20) -&gt; numpy.ndarray[numpy.float64]</span>
+            </dt>
+            <dd></dd>
+            <dt id="degrees_to_radians">
+              <span class="m-doc-wrap-bumper">def <a href="#degrees_to_radians" class="m-doc-self">degrees_to_radians</a>(</span><span class="m-doc-wrap">degrees: float) -&gt; float</span>
+            </dt>
+            <dd></dd>
+            <dt id="radians_to_degrees">
+              <span class="m-doc-wrap-bumper">def <a href="#radians_to_degrees" class="m-doc-self">radians_to_degrees</a>(</span><span class="m-doc-wrap">radians: float) -&gt; float</span>
+            </dt>
+            <dd></dd>
+          </dl>
+        </section>
+        <section id="data">
+          <h2><a href="#data">Data</a></h2>
+          <dl class="m-doc">
+            <dt id="aId">
+              <a href="#aId" class="m-doc-self">aId</a>
+            </dt>
+            <dd></dd>
+            <dt id="aName">
+              <a href="#aName" class="m-doc-self">aName</a>
+            </dt>
+            <dd></dd>
+            <dt id="mName">
+              <a href="#mName" class="m-doc-self">mName</a>
+            </dt>
+            <dd></dd>
+            <dt id="rId">
+              <a href="#rId" class="m-doc-self">rId</a>
+            </dt>
+            <dd></dd>
+            <dt id="rName">
+              <a href="#rName" class="m-doc-self">rName</a>
+            </dt>
+            <dd></dd>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for modules, classes, functions and other
+            symbols. You can omit any prefix from the symbol path; adding a <code>.</code>
+            suffix lists all members of given symbol.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>xmolpp2 Python API. Created with <a href="https://mcss.mosra.cz/documentation/python/">m.css Python doc generator</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

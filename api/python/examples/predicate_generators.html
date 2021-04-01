@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Examples &raquo; Predicate generators | xmolpp2 Python API</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="../m-dark+documentation.compiled.css" />
+  <link rel="icon" href="../favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <span id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">
+        <a href="../../">xmolpp2</a> <span class="m-breadcrumb">|</span> <a href="../index.html" class="m-thin">Python API</a>
+      </span>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li>
+              <a href="../install.html">Install</a>
+              <ol>
+                <li><a href="../changelog.html">Changelog</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="../overview.html">Docs</a>
+              <ol>
+                <li><a href="../overview.html">Overview</a></li>
+                <li><a href="../examples/index.html">Examples</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="../pyxmolpp2.html">API</a>
+              <ol>
+                <li><a href="../modules.html">Modules</a></li>
+                <li><a href="../classes.html">Classes</a></li>
+              </ol>
+            </li>
+            <li><a href="https://github.com/sizmailov/pyxmolpp2">Github</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="5">
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <span class="m-breadcrumb"><a href="../examples/index.html">Examples</a> &raquo; <wbr/></span>Predicate generators
+        </h1>
+<p>In this example we will see how selections of atoms/residues/molecules can be created using predicates.</p>
+<p>We start from importing required stuff from <a class="m-doc" href="../pyxmolpp2.html">pyxmolpp2</a> and reading the <code class="m-code"><span class="n">frame</span></code></p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">PdbFile</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">pdb_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TEST_DATA_PATH&quot;</span><span class="p">],</span> <span class="s2">&quot;pdb/rcsb/1UBQ.pdb&quot;</span><span class="p">)</span>
+<span class="n">frame</span> <span class="o">=</span> <span class="n">PdbFile</span><span class="p">(</span><span class="n">pdb_filename</span><span class="p">)</span><span class="o">.</span><span class="n">frames</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></pre>
+</div>
+</div>
+<p>Let's print structural info about our frame:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;Molecule </span><span class="si">{</span><span class="n">mol</span><span class="o">.</span><span class="n">name</span><span class="si">:</span><span class="s2">1s</span><span class="si">}</span><span class="s2">: (</span><span class="si">{</span><span class="n">mol</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> residues)</span><span class="se">\n</span><span class="s2">    &quot;</span> <span class="o">+</span>
+    <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">residues</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">molecules</span>
+<span class="p">]))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">Molecule A: (76 residues)
+    MET-1, GLN-2, ILE-3, PHE-4, VAL-5, LYS-6, THR-7, LEU-8, THR-9, GLY-10, LYS-11, THR-12, ILE-13, THR-14, LEU-15, GLU-16, VAL-17, GLU-18, PRO-19, SER-20, ASP-21, THR-22, ILE-23, GLU-24, ASN-25, VAL-26, LYS-27, ALA-28, LYS-29, ILE-30, GLN-31, ASP-32, LYS-33, GLU-34, GLY-35, ILE-36, PRO-37, PRO-38, ASP-39, GLN-40, GLN-41, ARG-42, LEU-43, ILE-44, PHE-45, ALA-46, GLY-47, LYS-48, GLN-49, LEU-50, GLU-51, ASP-52, GLY-53, ARG-54, THR-55, LEU-56, SER-57, ASP-58, TYR-59, ASN-60, ILE-61, GLN-62, LYS-63, GLU-64, SER-65, THR-66, LEU-67, HIS-68, LEU-69, VAL-70, LEU-71, ARG-72, LEU-73, ARG-74, GLY-75, GLY-76
+Molecule A: (58 residues)
+    HOH-77, HOH-78, HOH-79, HOH-80, HOH-81, HOH-82, HOH-83, HOH-84, HOH-85, HOH-86, HOH-87, HOH-88, HOH-89, HOH-90, HOH-91, HOH-92, HOH-93, HOH-94, HOH-95, HOH-96, HOH-97, HOH-98, HOH-99, HOH-100, HOH-101, HOH-102, HOH-103, HOH-104, HOH-105, HOH-106, HOH-107, HOH-108, HOH-109, HOH-110, HOH-111, HOH-112, HOH-113, HOH-114, HOH-115, HOH-116, HOH-117, HOH-118, HOH-119, HOH-120, HOH-121, HOH-122, HOH-123, HOH-124, HOH-125, HOH-126, HOH-127, HOH-128, HOH-129, HOH-130, HOH-131, HOH-132, HOH-133, HOH-134</pre>
+</div>
+</div>
+<aside class="m-note m-dim">
+<h3>Molecules vs Chains</h3>
+<p>Here all water molecules were put on second molecule. The PDB reader expects different molecules
+to be separated by <code>TER</code> records</p>
+</aside>
+<p>Let's filter frame residues with some arbitrary predicates:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="k">def</span> <span class="nf">adhoc_predicate</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">id</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">})</span> <span class="ow">and</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="s2">&quot;PRO&quot;</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;GLY&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">adhoc_predicate</span><span class="p">))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">ResidueSelection&lt;size=6, residues=[A.GLY-10, A.GLY-35, ... , A.GLY-76]&gt;
+ResidueSelection&lt;size=10, residues=[A.MET-1, A.GLN-2, ... , A.GLY-10]&gt;
+ResidueSelection&lt;size=6, residues=[A.MET-1, A.ILE-3, ... , A.LEU-8]&gt;</pre>
+</div>
+</div>
+<p>Using lambda or ad-hoc predicate functions adds a bit of boilerplate, which can be avoided by using predicate generators:
+<a class="m-doc" href="../pyxmolpp2.html#aName">aName</a>, <a class="m-doc" href="../pyxmolpp2.html#aId">aId</a>, <a class="m-doc" href="../pyxmolpp2.html#rId">rId</a>, <a class="m-doc" href="../pyxmolpp2.html#rName">rName</a>, <a class="m-doc" href="../pyxmolpp2.html#mName">mName</a>.
+Predicate generators provide a convenient syntax to construct &amp; combine predicates:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">aName</span><span class="p">,</span> <span class="n">aId</span><span class="p">,</span> <span class="n">rName</span><span class="p">,</span> <span class="n">rId</span><span class="p">,</span> <span class="n">mName</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rName</span> <span class="o">==</span> <span class="s2">&quot;GLY&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rId</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">rId</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">rId</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">rName</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="s2">&quot;PRO&quot;</span><span class="p">)))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">ResidueSelection&lt;size=6, residues=[A.GLY-10, A.GLY-35, ... , A.GLY-76]&gt;
+ResidueSelection&lt;size=10, residues=[A.MET-1, A.GLN-2, ... , A.GLY-10]&gt;
+ResidueSelection&lt;size=6, residues=[A.MET-1, A.ILE-3, ... , A.LEU-8]&gt;</pre>
+</div>
+</div>
+<p>An extra bonus generated <a class="m-doc" href="../pyxmolpp2.ResiduePredicate.html">ResiduePredicate</a> can be naturally applied to atoms as well:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rName</span> <span class="o">==</span> <span class="s2">&quot;GLY&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rId</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="p">(</span><span class="n">rId</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">rId</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">rName</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="s2">&quot;GLY&quot;</span><span class="p">,</span> <span class="s2">&quot;PRO&quot;</span><span class="p">)))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">AtomSelection&lt;size=25, atoms=[A.GLY-10.N, A.GLY-10.CA, ... , A.GLY-76.OXT]&gt;
+AtomSelection&lt;size=78, atoms=[A.MET-1.N, A.MET-1.CA, ... , A.GLY-10.O]&gt;
+AtomSelection&lt;size=47, atoms=[A.MET-1.N, A.MET-1.CA, ... , A.LEU-8.CD2]&gt;</pre>
+</div>
+</div>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for modules, classes, functions and other
+            symbols. You can omit any prefix from the symbol path; adding a <code>.</code>
+            suffix lists all members of given symbol.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../search-v1.js"></script>
+<script> Search.siteRoot = "../"; </script>
+<script src="../searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>xmolpp2 Python API. Created with <a href="https://mcss.mosra.cz/documentation/python/">m.css Python doc generator</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

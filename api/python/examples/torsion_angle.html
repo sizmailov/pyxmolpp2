@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Examples &raquo; Torsion Angles | xmolpp2 Python API</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="../m-dark+documentation.compiled.css" />
+  <link rel="icon" href="../favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <span id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">
+        <a href="../../">xmolpp2</a> <span class="m-breadcrumb">|</span> <a href="../index.html" class="m-thin">Python API</a>
+      </span>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li>
+              <a href="../install.html">Install</a>
+              <ol>
+                <li><a href="../changelog.html">Changelog</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="../overview.html">Docs</a>
+              <ol>
+                <li><a href="../overview.html">Overview</a></li>
+                <li><a href="../examples/index.html">Examples</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="../pyxmolpp2.html">API</a>
+              <ol>
+                <li><a href="../modules.html">Modules</a></li>
+                <li><a href="../classes.html">Classes</a></li>
+              </ol>
+            </li>
+            <li><a href="https://github.com/sizmailov/pyxmolpp2">Github</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="5">
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <span class="m-breadcrumb"><a href="../examples/index.html">Examples</a> &raquo; <wbr/></span>Torsion Angles
+        </h1>
+<p><a class="m-doc" href="../pyxmolpp2.TorsionAngle.html">TorsionAngle</a> represents a tuple of 4 atoms (<code>a-b-c-d</code>) that correspond to dihedral angle.
+In addition it might be able to rotate part of structure around <code>b-c</code> bond (where <code>a</code> is static, <code>d</code> is moving).</p>
+<p>For standard protein residues angles can be constructed using <a class="m-doc" href="../pyxmolpp2.TorsionAngleFactory.html">TorsionAngleFactory</a>:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">TorsionAngleFactory</span>
+<span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">Degrees</span>
+
+<span class="n">residue48</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">molecules</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">48</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">residue48</span><span class="p">)</span>
+
+<span class="n">psi_48</span> <span class="o">=</span> <span class="n">TorsionAngleFactory</span><span class="o">.</span><span class="n">psi</span><span class="p">(</span><span class="n">residue48</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi_48</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi_48</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span><span class="p">)</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">A.LYS-48
+&lt;pyxmolpp2._core.TorsionAngle object at 0x7fee1758f530&gt;
+142.71298452616637</pre>
+</div>
+</div>
+<aside class="m-block m-warning">
+<h3>Check returned values</h3>
+<p><a class="m-doc" href="../pyxmolpp2.TorsionAngleFactory.html">TorsionAngleFactory</a> may return <code>None</code> if such angle does not exist</p>
+</aside>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="c1"># first residue don&#39;t have omega angle</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">TorsionAngleFactory</span><span class="o">.</span><span class="n">omega</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">None</pre>
+</div>
+</div>
+<p>Let's rotate <code>psi_48</code> angle:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="c1"># Residues 49-76 are affected by this rotation</span>
+<span class="n">psi_48</span><span class="o">.</span><span class="n">rotate_to</span><span class="p">(</span><span class="n">Degrees</span><span class="p">(</span><span class="mi">150</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi_48</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span><span class="p">)</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">149.99999999999983</pre>
+</div>
+</div>
+<dl>
+<dt>Torsion angle constructor allow two forms:</dt>
+<dd><ol>
+<li>Read-only torsion angle</li>
+<li>Read-write torsion angle</li>
+</ol>
+</dd>
+</dl>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">TorsionAngle</span><span class="p">,</span> <span class="n">Atom</span>
+
+<span class="n">r1</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Let&#39;s create a read-only phi of residue 2</span>
+<span class="n">phi_2_ro</span> <span class="o">=</span> <span class="n">TorsionAngle</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;CA&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">])</span>
+
+<span class="c1"># Check against factory angle:</span>
+<span class="k">assert</span> <span class="n">phi_2_ro</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span> <span class="o">==</span> <span class="n">TorsionAngleFactory</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span></pre>
+</div>
+</div>
+<p>Attempt to set read-only angle will lead to <a class="m-doc" href="../pyxmolpp2.GeomError.html">GeomError</a>:</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="n">phi_2_ro</span><span class="o">.</span><span class="n">rotate_to</span><span class="p">(</span><span class="n">Degrees</span><span class="p">(</span><span class="o">-</span><span class="mi">130</span><span class="p">))</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console"><span class="g g-AnsiRed">Traceback (most recent call last):</span>
+<span class="g g-AnsiRed">  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;</span>
+<span class="g g-AnsiRed">pyxmolpp2._core.GeomError: TorsionAngle: affected AtomSelection are not set</span></pre>
+</div>
+</div>
+<p>To make <a class="m-doc" href="../pyxmolpp2.TorsionAngle.html">TorsionAngle</a> writeable one need to pass to constructor a selector function
+which returns a selection of affected atoms by our torsion angle</p>
+<div class="m-code-figure">
+<div class="m-py-exec">
+<pre class="m-code"><span class="k">def</span> <span class="nf">affected_phi_atoms</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Atom</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">pyxmolpp2</span> <span class="kn">import</span> <span class="n">rId</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rId</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+
+<span class="n">phi_2_rw</span> <span class="o">=</span> <span class="n">TorsionAngle</span><span class="p">(</span><span class="n">r1</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;CA&quot;</span><span class="p">],</span> <span class="n">r2</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">],</span>
+                        <span class="n">affected_phi_atoms</span><span class="p">)</span>
+
+<span class="n">phi_2_rw</span><span class="o">.</span><span class="n">rotate_to</span><span class="p">(</span><span class="n">Degrees</span><span class="p">(</span><span class="o">-</span><span class="mi">130</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">phi_2_ro</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">phi_2_rw</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">degrees</span><span class="p">)</span></pre>
+</div>
+<div class="m-py-exec">
+<pre class="m-code m-nopad m-console">-130.0000000000001
+-130.0000000000001</pre>
+</div>
+</div>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for modules, classes, functions and other
+            symbols. You can omit any prefix from the symbol path; adding a <code>.</code>
+            suffix lists all members of given symbol.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../search-v1.js"></script>
+<script> Search.siteRoot = "../"; </script>
+<script src="../searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>xmolpp2 Python API. Created with <a href="https://mcss.mosra.cz/documentation/python/">m.css Python doc generator</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>
