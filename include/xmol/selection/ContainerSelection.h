@@ -1119,7 +1119,7 @@ template <typename T> Selection<T> Container<T>::all() {
   if (!s.empty()) {
     ObservableBy<SelectionBase<T>>::add_observer(s);
   }
-  return std::move(s);
+  return s;
 }
 
 template <typename T> Selection<const T> Container<T>::all() const {
@@ -1128,7 +1128,7 @@ template <typename T> Selection<const T> Container<T>::all() const {
   if (!s.empty()) {
     ObservableBy<SelectionBase<const T>>::add_observer(s);
   }
-  return std::move(s);
+  return s;
 }
 
 template <typename T>
