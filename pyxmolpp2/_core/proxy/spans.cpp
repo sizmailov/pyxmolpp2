@@ -103,38 +103,38 @@ void pyxmolpp::v1::populate(pybind11::class_<xmol::proxy::smart::AtomSmartSpan>&
       .def(
           "alignment_to",
           [](Span& span, AtomSmartSelection& rhs, bool weighted) { return span.alignment_to(rhs, weighted); },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def(
           "alignment_to",
           [](Span& span, AtomSmartSpan& rhs, bool weighted) {
             AtomSpan rhs_span(rhs);
             return span.alignment_to(rhs_span, weighted);
           },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def(
           "align_to",
           [](Span& span, AtomSmartSelection& rhs, bool weighted) {
             span.coords().apply(span.alignment_to(rhs, weighted));
           },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def(
           "align_to",
           [](Span& span, AtomSmartSpan& rhs, bool weighted) {
             AtomSpan rhs_span(rhs);
             span.coords().apply(span.alignment_to(rhs_span, weighted));
           },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def(
           "rmsd",
           [](Span& span, AtomSmartSelection& rhs, bool weighted) { return span.rmsd(rhs, weighted); },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def(
           "rmsd",
           [](Span& span, AtomSmartSpan& rhs, bool weighted) {
             AtomSpan rhs_span(rhs);
             return span.rmsd(rhs_span, weighted);
           },
-          py::arg("other"), py::kwonly{}, py::arg("weighted") = false)
+          py::arg("other"), py::kw_only{}, py::arg("weighted") = false)
       .def("mean", &Span::mean, py::arg("weighted")=false, "Mean coordinates")
       .def("inertia_tensor", &Span::inertia_tensor, "Inertia tensor")
       .def("to_pdb", to_pdb_file<Span>, py::arg("path_or_buf"), "Write atoms as `.pdb` file")

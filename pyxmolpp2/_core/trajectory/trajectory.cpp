@@ -99,7 +99,7 @@ void pyxmolpp::v1::populate(py::class_<TrajectoryInputFile, PyTrajectoryInputFil
 }
 
 void pyxmolpp::v1::PyTrajectoryInputFile::read_frame(size_t index, Frame& frame) {
-  py::object pyFrame = py::cast<Frame>(frame, py::return_value_policy::reference);
+  py::object pyFrame = py::cast(frame, py::return_value_policy::reference);
   PYBIND11_OVERLOAD_PURE(void,                /* Return type */
                          TrajectoryInputFile, /* Parent class */
                          read_frame,          /* Name of function in C++ (must match Python name) */
