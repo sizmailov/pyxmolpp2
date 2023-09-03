@@ -1,4 +1,6 @@
 #include "xtc_routines.h"
+#include <cstdio>
+#include <cstdlib>
 
 namespace xmol::io::xdr::xtc {
 

@@ -32,6 +32,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
 endif()
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(PKG_TRIPC REQUIRED IMPORTED_TARGET libtirpc)
 
 add_subdirectory(external/googletest EXCLUDE_FROM_ALL)
 set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
@@ -55,8 +57,12 @@ file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
 target_include_directories(xmolpp2 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 
-target_link_libraries(xmolpp2 PUBLIC NetCDF::NetCDF)
-set_target_properties(xmolpp2 PROPERTIES SUFFIX "-${XMOL_VERSION}.so")
+target_link_libraries(
+        xmolpp2
+    PUBLIC
+        NetCDF::NetCDF
+        PkgConfig::PKG_TRIPC
+)
 
 add_dependencies(xmolpp2 write_version_info)
 
