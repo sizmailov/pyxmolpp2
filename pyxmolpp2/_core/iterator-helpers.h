@@ -5,17 +5,17 @@
 #include "xmol/proxy/spans.h"
 #include <pybind11/cast.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/typing.h>
 
 namespace pyxmolpp::v1::common {
 
+namespace detail {
 namespace py = pybind11;
-
-/// Makes a python iterator from a first and past-the-end C++ InputIterator, casting to smart
-template <py::return_value_policy Policy = py::return_value_policy::reference_internal, typename Iterator,
-          typename Sentinel, typename ValueType = decltype(std::declval<Iterator>()->smart()), typename... Extra>
-py::detail::iterator_state<Iterator, Sentinel, false, Policy> make_smart_iterator(Iterator&& first, Sentinel&& last,
-                                                                                  Extra&&... extra) {
-  typedef py::detail::iterator_state<Iterator, Sentinel, false, Policy> state;
+template <typename Access, py::return_value_policy Policy, typename Iterator, typename Sentinel, typename ValueType,
+          typename... Extra>
+py::typing::Iterator<ValueType> make_iterator_impl(Iterator first, Sentinel last, Extra&&... extra) {
+  using state = py::detail::iterator_state<Access, Policy, Iterator, Sentinel, ValueType, Extra...>;
+  // TODO: state captures only the types of Extra, not the values
 
   if (!py::detail::get_type_info(typeid(state), false)) {
     py::class_<state>(py::handle(), "iterator", pybind11::module_local())
@@ -23,160 +23,68 @@ py::detail::iterator_state<Iterator, Sentinel, false, Policy> make_smart_iterato
         .def(
             "__next__",
             [](state& s) -> ValueType {
-              if (!s.first_or_done)
+              if (!s.first_or_done) {
                 ++s.it;
-              else
+              } else {
                 s.first_or_done = false;
+              }
               if (s.it == s.end) {
                 s.first_or_done = true;
                 throw py::stop_iteration();
               }
-              return *s.it;
+              return Access()(s.it);
+              // NOLINTNEXTLINE(readability-const-return-type) // PR #3263
             },
             std::forward<Extra>(extra)..., Policy);
   }
-  return state{std::forward<Iterator>(first), std::forward<Sentinel>(last), true};
+  return py::cast(state{std::forward<Iterator>(first), std::forward<Sentinel>(last), true});
 }
 
-/// Makes a python iterator from a first and past-the-end C++ InputIterator, casting to XYZ
-template <py::return_value_policy Policy = py::return_value_policy::reference_internal, typename Iterator,
-          typename Sentinel, typename ValueType = xmol::XYZ, typename... Extra>
-py::detail::iterator_state<Iterator, Sentinel, false, Policy> make_coord_value_iterator(Iterator first, Sentinel last,
-                                                                                        Extra&&... extra) {
-  typedef py::detail::iterator_state<Iterator, Sentinel, false, Policy> state;
+template <typename Iterator, typename SFINAE = decltype(*std::declval<Iterator&>())> struct iterator_access {
+  using result_type = decltype(*std::declval<Iterator&>());
+  // NOLINTNEXTLINE(readability-const-return-type)
+  result_type operator()(Iterator& it) const { return *it; }
+};
 
-  if (!py::detail::get_type_info(typeid(state), false)) {
-    py::class_<state>(py::handle(), "iterator", pybind11::module_local())
-        .def("__iter__", [](state& s) -> state& { return s; })
-        .def(
-            "__next__",
-            [](state& s) -> ValueType {
-              if (!s.first_or_done)
-                ++s.it;
-              else
-                s.first_or_done = false;
-              if (s.it == s.end) {
-                s.first_or_done = true;
-                throw py::stop_iteration();
-              }
-              return *s.it;
-            },
-            std::forward<Extra>(extra)..., Policy);
-  }
-  return state{std::forward<Iterator>(first), std::forward<Sentinel>(last), true};
+template <typename Iterator, typename SFINAE = decltype(*std::declval<Iterator&>())> struct smart_iterator_access {
+  using result_type = decltype(std::declval<Iterator&>()->smart());
+  // NOLINTNEXTLINE(readability-const-return-type)
+  result_type operator()(Iterator& it) const { return it->smart(); }
+};
+
+template <typename Iterator, typename SFINAE = decltype(*std::declval<Iterator&>())>
+struct coord_value_iterator_access {
+  using result_type = decltype(static_cast<xmol::XYZ>(*std::declval<Iterator&>()));
+  // NOLINTNEXTLINE(readability-const-return-type)
+  result_type operator()(Iterator& it) const { return static_cast<xmol::XYZ>(*it); }
+};
+
+} // namespace detail
+
+template <pybind11::return_value_policy Policy = pybind11::return_value_policy::reference_internal, typename Iterator,
+          typename Sentinel, typename ValueType = typename detail::iterator_access<Iterator>::result_type,
+          typename... Extra>
+auto make_iterator(Iterator&& first, Sentinel&& last, Extra&&... extra) {
+  return detail::make_iterator_impl<detail::iterator_access<Iterator>, Policy, Iterator, Sentinel, ValueType, Extra...>(
+      std::forward<Iterator>(first), std::forward<Sentinel>(last), std::forward<Extra>(extra)...);
 }
 
-/// Makes a python iterator from a first and past-the-end C++ InputIterator, casting to smart
-template <py::return_value_policy Policy = py::return_value_policy::reference_internal, typename Iterator,
-          typename Sentinel, typename ValueType = decltype(*std::declval<Iterator>()), typename... Extra>
-py::detail::iterator_state<Iterator, Sentinel, false, Policy> make_iterator(Iterator&& first, Sentinel&& last,
-                                                                            Extra&&... extra) {
-  typedef py::detail::iterator_state<Iterator, Sentinel, false, Policy> state;
+template <pybind11::return_value_policy Policy = pybind11::return_value_policy::reference_internal, typename Iterator,
+          typename Sentinel, typename ValueType = typename detail::coord_value_iterator_access<Iterator>::result_type,
+          typename... Extra>
+auto make_coord_value_iterator(Iterator&& first, Sentinel&& last, Extra&&... extra) {
+  return detail::make_iterator_impl<detail::coord_value_iterator_access<Iterator>, Policy, Iterator, Sentinel,
+                                    ValueType, Extra...>(std::forward<Iterator>(first), std::forward<Sentinel>(last),
+                                                         std::forward<Extra>(extra)...);
+}
 
-  if (!py::detail::get_type_info(typeid(state), false)) {
-    py::class_<state>(py::handle(), "iterator", pybind11::module_local())
-        .def("__iter__", [](state& s) -> state& { return s; })
-        .def(
-            "__next__",
-            [](state& s) -> ValueType {
-              if (!s.first_or_done)
-                ++s.it;
-              else
-                s.first_or_done = false;
-              if (s.it == s.end) {
-                s.first_or_done = true;
-                throw py::stop_iteration();
-              }
-              return *s.it;
-            },
-            std::forward<Extra>(extra)..., Policy);
-  }
-  return state{std::forward<Iterator>(first), std::forward<Sentinel>(last), true};
+template <pybind11::return_value_policy Policy = pybind11::return_value_policy::reference_internal, typename Iterator,
+          typename Sentinel, typename ValueType = typename detail::smart_iterator_access<Iterator>::result_type,
+          typename... Extra>
+auto make_smart_iterator(Iterator&& first, Sentinel&& last, Extra&&... extra) {
+  return detail::make_iterator_impl<detail::smart_iterator_access<Iterator>, Policy, Iterator, Sentinel, ValueType,
+                                    Extra...>(std::forward<Iterator>(first), std::forward<Sentinel>(last),
+                                              std::forward<Extra>(extra)...);
 }
 
 } // namespace pyxmolpp::v1::common
-
-namespace pybind11::detail {
-/// Specialization of type_caster, can be made with less repetition
-
-using xmol_coord_selection_iterator_t = decltype(std::declval<xmol::proxy::CoordSelection>().begin());
-using xmol_atom_selection_iterator_t = decltype(std::declval<xmol::proxy::AtomSelection>().begin());
-using xmol_residue_selection_iterator_t = decltype(std::declval<xmol::proxy::ResidueSelection>().begin());
-using xmol_molecule_selection_iterator_t = decltype(std::declval<xmol::proxy::MoleculeSelection>().begin());
-
-
-template <return_value_policy Policy>
-struct type_caster<iterator_state<xmol_coord_selection_iterator_t, xmol_coord_selection_iterator_t, false, Policy>>
-: type_caster_base<iterator_state<xmol_coord_selection_iterator_t, xmol_coord_selection_iterator_t, false, Policy>> {
-using ValueType = xmol::XYZ;
-
-public:
-static constexpr auto name = _("Iterator[") + make_caster<ValueType>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<iterator_state<xmol_atom_selection_iterator_t, xmol_atom_selection_iterator_t, false, Policy>>
-    : type_caster_base<iterator_state<xmol_atom_selection_iterator_t, xmol_atom_selection_iterator_t, false, Policy>> {
-  using ValueType = decltype(std::declval<xmol_atom_selection_iterator_t>()->smart());
-
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<ValueType>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<iterator_state<xmol_residue_selection_iterator_t, xmol_residue_selection_iterator_t, false, Policy>>
-    : type_caster_base<
-          iterator_state<xmol_residue_selection_iterator_t, xmol_residue_selection_iterator_t, false, Policy>> {
-  using ValueType = decltype(std::declval<xmol_residue_selection_iterator_t>()->smart());
-
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<ValueType>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<
-    iterator_state<xmol_molecule_selection_iterator_t, xmol_molecule_selection_iterator_t, false, Policy>>
-    : type_caster_base<
-          iterator_state<xmol_molecule_selection_iterator_t, xmol_molecule_selection_iterator_t, false, Policy>> {
-  using ValueType = decltype(std::declval<xmol_molecule_selection_iterator_t>()->smart());
-
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<ValueType>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<iterator_state<xmol::proxy::CoordSpan::Iterator, xmol::proxy::CoordSpan::Iterator, false, Policy>>
-    : type_caster_base<
-          iterator_state<xmol::proxy::CoordSpan::Iterator, xmol::proxy::CoordSpan::Iterator, false, Policy>> {
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::XYZ>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<
-    iterator_state<xmol::proxy::AtomSpan::Iterator, xmol::proxy::AtomSpan::Iterator, false, Policy>>
-    : type_caster_base<
-          iterator_state<xmol::proxy::AtomSpan::Iterator, xmol::proxy::AtomSpan::Iterator, false, Policy>> {
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::AtomSmartRef>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<
-    iterator_state<xmol::proxy::ResidueSpan::Iterator, xmol::proxy::ResidueSpan::Iterator, false, Policy>>
-    : type_caster_base<
-          iterator_state<xmol::proxy::ResidueSpan::Iterator, xmol::proxy::ResidueSpan::Iterator, false, Policy>> {
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::ResidueSmartRef>::name + _("]");
-};
-
-template <return_value_policy Policy>
-struct type_caster<
-    iterator_state<xmol::proxy::MoleculeSpan::Iterator, xmol::proxy::MoleculeSpan::Iterator, false, Policy>>
-    : type_caster_base<iterator_state<xmol::proxy::MoleculeSpan::Iterator, xmol::proxy::MoleculeSpan::Iterator,
-                                      false, Policy>> {
-public:
-  static constexpr auto name = _("Iterator[") + make_caster<xmol::proxy::smart::MoleculeSmartRef>::name + _("]");
-};
-
-} // namespace pybind11::detail
