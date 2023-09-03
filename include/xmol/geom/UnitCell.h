@@ -1,4 +1,7 @@
 #pragma once
+
+#include <optional>
+
 #include "AngleValue.h"
 #include "XYZ.h"
 
