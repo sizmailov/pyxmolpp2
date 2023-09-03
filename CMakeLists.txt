@@ -7,7 +7,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
+if (NOT DEFINED PYBIND_PYTHON_VERSION)
+    message(FATAL_ERROR, "PYBIND_PYTHON_VERSION is unset. Hint: Add '-DPYBIND_PYTHON_VERSION=...' to cmake command")
+endif()
+
 find_package(NetCDF REQUIRED)
 
 IF(${CMAKE_BUILD_TYPE} MATCHES "Coverage")
@@ -49,8 +52,6 @@ include_directories(SYSTEM external/pybind11/include)
 enable_testing()
 add_subdirectory(tests)
 
-include(cmake/WriteVersionInfo.cmake)
-
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
@@ -63,8 +64,6 @@ target_link_libraries(
         NetCDF::NetCDF
         PkgConfig::PKG_TRIPC
 )
-
-add_dependencies(xmolpp2 write_version_info)
 
 #target_compile_definitions(xmolpp2_static PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
 #target_compile_definitions(xmolpp2 PRIVATE GSL_THROW_ON_CONTRACT_VIOLATION)
