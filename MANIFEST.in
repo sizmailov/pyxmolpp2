@@ -1,12 +1,10 @@
 global-include CMakeLists.txt
 
 recursive-include external *
-include ./ *.py
-include ./pyxmolpp2/*.pyi
-include ./pyxmolpp2/py.typed
-include ./ VERSION
-include ./ *.cmake
-include ./tools/*.py
+include *.py *.pyi
+include *.cpp *.h *.cmake
+include py.typed
+include VERSION
 
 
 graft include
@@ -14,6 +12,7 @@ graft src
 graft tests
 graft _pyxmolpp2
 graft pyxmolpp2
+graft bindings
 graft cmake
 
 global-exclude *.py[cod]
