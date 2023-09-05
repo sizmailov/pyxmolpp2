@@ -125,22 +125,29 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
 
+
+def find_stubs(path: Path):
+    return [str(pyi.relative_to(path)) for pyi in path.rglob("*.pyi")]
+
+
 setup(
-    name='pyxmolpp2',
-    version="2.0.dev2",
-    author='Sergei Izmailov',
-    author_email='sergei.a.izmailov@gmail.com',
-    description='Utils for processing MD',
+    name="pyxmolpp2",
+    version="2.0.2",
+    author="Sergei Izmailov",
+    author_email="sergei.a.izmailov@gmail.com",
+    description="Utils for processing MD",
     long_description=open("README.rst").read(),
-    ext_modules=[CMakeExtension('pyxmolpp2/_core')],
+    ext_modules=[CMakeExtension("pyxmolpp2/_core")],
     packages=find_packages(exclude=["tools"]),
     cmdclass=dict(build_ext=CMakeBuild),
     url="https://github.com/sizmailov/pyxmolpp2",
     zip_safe=False,
     install_requires=[
         "numpy",
+        "pybind11-stubgen~=2.0.2",  # for pybind11_stubgen.typing_ext
     ],
     classifiers=[
-        'License :: OSI Approved :: MIT License',
+        "License :: OSI Approved :: MIT License",
     ],
+    package_data={"pyxmolpp2": ["py.typed", *find_stubs(path=Path("pyxmolpp2"))]},
 )
