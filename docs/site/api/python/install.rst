@@ -18,7 +18,7 @@ E.g. on modern ubuntu you can install requried packages via
 
 .. code:: sh
 
-    sudo apt-get cmake g++ python3 python3-dev libnetcdf-dev
+    sudo apt-get cmake g++ python3 python3-dev libnetcdf-dev libtirpc-dev
 
 .. note-info::
 
