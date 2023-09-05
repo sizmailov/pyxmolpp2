@@ -55,8 +55,9 @@ add_subdirectory(tests)
 file(GLOB_RECURSE XMOL_HEADERS include/**.h)
 file(GLOB_RECURSE XMOL_SOURCES src/**.cpp src/**.h)
 
-add_library(xmolpp2 SHARED ${XMOL_SOURCES} ${XMOL_HEADERS})
+add_library(xmolpp2 STATIC ${XMOL_SOURCES} ${XMOL_HEADERS})
 target_include_directories(xmolpp2 PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+set_target_properties(xmolpp2 PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(
         xmolpp2
