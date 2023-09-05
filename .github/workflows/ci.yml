@@ -61,7 +61,7 @@ jobs:
             -   name: Run C++ tests
                 run: |
                     mkdir -p _build ;
-                    (cd _build && cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE) ;
+                    (cd _build && cmake .. -DCMAKE_BUILD_TYPE=Debug) ;
                     cmake --build _build --target all -- -j 2 ;
                     (cd _build && ctest) ;
             -   name: Run python tests
