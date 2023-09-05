@@ -56,7 +56,7 @@ jobs:
                     python -m pip install pytest numpy tqdm
 
             -   name: Clone test data
-                run: git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git ${TEST_DATA_PATH}
+                run: git clone https://github.com/sizmailov/pyxmolpp_tests_dataset.git ${TEST_DATA_PATH}
 
             -   name: Run python tests
                 run: |
