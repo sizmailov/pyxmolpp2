@@ -1,7 +1,7 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = git@github.com:sizmailov/googletest.git
-	branch = master
+	branch = main
     shallow = true
 [submodule "external/GSL"]
 	path = external/GSL
