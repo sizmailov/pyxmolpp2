@@ -2,6 +2,8 @@ global-include CMakeLists.txt
 
 recursive-include external *
 include ./ *.py
+include ./pyxmolpp2/*.pyi
+include ./pyxmolpp2/py.typed
 include ./ VERSION
 include ./ *.cmake
 include ./tools/*.py
