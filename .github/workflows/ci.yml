@@ -1,0 +1,72 @@
+name: CI
+
+on:
+    workflow_dispatch:
+    pull_request:
+    push:
+        branches:
+            - master
+
+            # TODO: remove
+            - build-2023
+env:
+    TEST_DATA_PATH: tests_dataset
+jobs:
+    tests:
+        name: "🐍 ${{ matrix.python }} • ${{ matrix.runs-on }}"
+        runs-on: "${{ matrix.runs-on }}"
+        strategy:
+            fail-fast: false
+            matrix:
+                runs-on: [ "ubuntu-20.04", "ubuntu-22.04" ]
+                python:
+                    - "3.10"
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            -   name: Checkout submodules
+                run: |
+                    sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+                    git submodule update --init --depth=1
+
+            -   name: Setup Python ${{ matrix.python }}
+                uses: actions/setup-python@v4
+                with:
+                    python-version: ${{ matrix.python }}
+
+            -   name: Update CMake
+                uses: jwlawson/actions-setup-cmake@v1.13
+
+            -   name: Setup annotations on Linux
+                if: runner.os == 'Linux'
+                run: python -m pip install pytest-github-actions-annotate-failures
+
+            -   name: Install sys dependencies
+                run: |
+                    sudo apt-get install -y libnetcdf-dev libtirpc-dev
+
+            -   name: Install pyxmolpp2
+                run: |
+                    python setup.py sdist
+                    python -m pip install dist/*.tar.gz
+
+            -   name: Install test dependencies
+                run: |
+                    python -m pip install pytest numpy tqdm
+
+            -   name: Clone test data
+                run: git clone https://github.com/sizmailov/pyxmopp_tests_dataset.git ${TEST_DATA_PATH}
+
+            -   name: Run C++ tests
+                run: |
+                    mkdir -p _build ;
+                    (cd _build && cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE) ;
+                    cmake --build _build --target all -- -j 2 ;
+                    (cd _build && ctest) ;
+            -   name: Run python tests
+                run: |
+                    (
+                        cd tests/bindings ; 
+                        python -m pytest  ;
+                    )
