@@ -85,4 +85,4 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 #    endif()
 endif()
 
-add_subdirectory(pyxmolpp2)
+add_subdirectory(bindings)
