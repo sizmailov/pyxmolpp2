@@ -1,14 +1,23 @@
 import sys
 import warnings
+from typing import List, Sequence, Union
 
-from typing import Sequence, List, Union
-from pyxmolpp2 import Frame, AtomPredicate, MoleculePredicate, XYZ, CoordSelection, Molecule, Translation, Trajectory
-from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsvCxx, Align as _AlignCxx
+from pyxmolpp2 import (
+    XYZ,
+    AtomPredicate,
+    CoordSelection,
+    Frame,
+    Molecule,
+    MoleculePredicate,
+    Trajectory,
+    Translation,
+)
+from pyxmolpp2._core._pipe import Align as _AlignCxx
+from pyxmolpp2._core._pipe import WriteVectorsToCsv as _WriteVectorsToCsvCxx
 
 
 class TrajectoryProcessor:
-
-    def copy(self) -> 'TrajectoryProcessor':
+    def copy(self) -> "TrajectoryProcessor":
         raise NotImplementedError()
 
     def before_first_iteration(self, frame: Frame):
@@ -20,18 +29,19 @@ class TrajectoryProcessor:
     def __call__(self, frame: Frame) -> Frame:
         raise NotImplementedError()
 
-    def __or__(self, other: 'TrajectoryProcessor'):
+    def __or__(self, other: "TrajectoryProcessor"):
         return TrajectoryProcessorPair(self, other)
 
     def __ror__(self, lhs: Sequence[Frame]):
         if isinstance(lhs, ProcessedTrajectory):
-            return ProcessedTrajectory(trajectory=lhs.trajectory,
-                                       processor=TrajectoryProcessorPair(lhs.processor, self))
+            return ProcessedTrajectory(
+                trajectory=lhs.trajectory,
+                processor=TrajectoryProcessorPair(lhs.processor, self),
+            )
         return ProcessedTrajectory(lhs, self)
 
 
 class StatelessTrajectoryProcessor(TrajectoryProcessor):
-
     def before_first_iteration(self, frame: Frame):
         pass
 
@@ -40,7 +50,6 @@ class StatelessTrajectoryProcessor(TrajectoryProcessor):
 
 
 class TrajectoryProcessorPair(StatelessTrajectoryProcessor):
-
     def __call__(self, frame: Frame) -> Frame:
         frame = self.first(frame)
         frame = self.second(frame)
@@ -51,11 +60,15 @@ class TrajectoryProcessorPair(StatelessTrajectoryProcessor):
         self.second.before_first_iteration(frame)
 
     def after_last_iteration(self, exc_type, exc_value, traceback) -> bool:
-        exc_suppressed = self.second.after_last_iteration(exc_type, exc_value, traceback)
+        exc_suppressed = self.second.after_last_iteration(
+            exc_type, exc_value, traceback
+        )
         if exc_suppressed:
             self.first.after_last_iteration(None, None, None)
         else:
-            exc_suppressed = self.first.after_last_iteration(exc_type, exc_value, traceback)
+            exc_suppressed = self.first.after_last_iteration(
+                exc_type, exc_value, traceback
+            )
         return exc_suppressed
 
     def __init__(self, first: TrajectoryProcessor, second: TrajectoryProcessor):
@@ -64,8 +77,11 @@ class TrajectoryProcessorPair(StatelessTrajectoryProcessor):
 
 
 class ProcessedTrajectory:
-    def __init__(self, trajectory: Union[Trajectory, Trajectory.Slice, "ProcessedTrajectory"],
-                 processor: TrajectoryProcessor):
+    def __init__(
+        self,
+        trajectory: Union[Trajectory, Trajectory.Slice, "ProcessedTrajectory"],
+        processor: TrajectoryProcessor,
+    ):
         self.trajectory = trajectory
         self.processor = processor
 
@@ -108,8 +124,15 @@ class ProcessedTrajectory:
 class _AlignPython(TrajectoryProcessor):
     """Illustrates implementation of Align in pure python"""
 
-    def __init__(self, by: AtomPredicate, reference: Frame = None, move_only: AtomPredicate = None):
-        warnings.warn("pipe._AlignPython serves illustration puposes only, use more performant pipe.Align instead")
+    def __init__(
+        self,
+        by: AtomPredicate,
+        reference: Frame = None,
+        move_only: AtomPredicate = None,
+    ):
+        warnings.warn(
+            "pipe._AlignPython serves illustration puposes only, use more performant pipe.Align instead"
+        )
         self.align_atoms_selector = by
         self.reference = reference
         self.moved_atoms_selector = move_only
@@ -122,7 +145,9 @@ class _AlignPython(TrajectoryProcessor):
     def before_first_iteration(self, frame: Frame):
         self._reference = self.reference or Frame(frame)
         self._frame_coords = frame.atoms.filter(self.align_atoms_selector).coords
-        self._ref_coords = self._reference.atoms.filter(self.align_atoms_selector).coords
+        self._ref_coords = self._reference.atoms.filter(
+            self.align_atoms_selector
+        ).coords
         assert self._frame_coords.size == self._ref_coords.size
         if self.moved_atoms_selector:
             self._moved_coords = frame.atoms.filter(self.moved_atoms_selector).coords
@@ -141,7 +166,11 @@ class _AlignPython(TrajectoryProcessor):
         return frame
 
     def copy(self):
-        return Align(by=self.align_atoms_selector, reference=self.reference, move_only=self.moved_atoms_selector)
+        return Align(
+            by=self.align_atoms_selector,
+            reference=self.reference,
+            move_only=self.moved_atoms_selector,
+        )
 
 
 class Align(_AlignCxx, TrajectoryProcessor):
@@ -149,27 +178,41 @@ class Align(_AlignCxx, TrajectoryProcessor):
 
 
 class ScaleUnitCell(StatelessTrajectoryProcessor):
-
     def __init__(self, summary_volume_filename, column=1, max_rows=None):
         try:
             # Use faster pandas.read_csv() if available
             import pandas as pd
-            self.volume = \
-                pd.read_csv(summary_volume_filename,
-                            sep=r"\s+", header=None, usecols=[column], nrows=max_rows).iloc[:, 0].values
+
+            self.volume = (
+                pd.read_csv(
+                    summary_volume_filename,
+                    sep=r"\s+",
+                    header=None,
+                    usecols=[column],
+                    nrows=max_rows,
+                )
+                .iloc[:, 0]
+                .values
+            )
         except ImportError:
             import numpy as np
-            self.volume = np.genfromtxt(summary_volume_filename, usecols=[column], max_rows=max_rows)
+
+            self.volume = np.genfromtxt(
+                summary_volume_filename, usecols=[column], max_rows=max_rows
+            )
 
     def __call__(self, frame: Frame):
-        assert frame.index < len(self.volume), "Frame index is greater than supplied volume array"
+        assert frame.index < len(
+            self.volume
+        ), "Frame index is greater than supplied volume array"
         frame.cell.scale_to_volume(self.volume[frame.index])
         return frame
 
 
 class AssembleQuaternaryStructure(TrajectoryProcessor):
-
-    def __init__(self, of: MoleculePredicate, by: AtomPredicate, reference: Frame = None):
+    def __init__(
+        self, of: MoleculePredicate, by: AtomPredicate, reference: Frame = None
+    ):
         self.molecules_selector = of
         self.reference = reference
         self.reference_atoms_selector = by
@@ -187,10 +230,16 @@ class AssembleQuaternaryStructure(TrajectoryProcessor):
             mol.atoms.filter(self.reference_atoms_selector).coords.mean()
             for mol in mols
         ]
-        self._ref_first_molecule_coords = mols[0].atoms.filter(self.reference_atoms_selector).coords
-        assert len(self._reference_mean_coords) > 1, "Number of selected molecules must be greater than 1"
+        self._ref_first_molecule_coords = (
+            mols[0].atoms.filter(self.reference_atoms_selector).coords
+        )
+        assert (
+            len(self._reference_mean_coords) > 1
+        ), "Number of selected molecules must be greater than 1"
 
-        self._molecules = [mol for mol in frame.molecules.filter(self.molecules_selector)]
+        self._molecules = [
+            mol for mol in frame.molecules.filter(self.molecules_selector)
+        ]
         self._molecules_coords = [
             mol.atoms.filter(self.reference_atoms_selector).coords
             for mol in self._molecules
@@ -208,7 +257,9 @@ class AssembleQuaternaryStructure(TrajectoryProcessor):
 
     def __call__(self, frame: Frame):
         # first molecule in assembly is aligned by convention
-        alignment = self._ref_first_molecule_coords.alignment_to(self._molecules_coords[0])
+        alignment = self._ref_first_molecule_coords.alignment_to(
+            self._molecules_coords[0]
+        )
         # calculate reference coordinates for current frame
         ref_mean_coords = [alignment.transform(r) for r in self._reference_mean_coords]
 
@@ -223,8 +274,11 @@ class AssembleQuaternaryStructure(TrajectoryProcessor):
         return frame
 
     def copy(self):
-        return AssembleQuaternaryStructure(of=self.molecules_selector, by=self.reference_atoms_selector,
-                                           reference=self.reference)
+        return AssembleQuaternaryStructure(
+            of=self.molecules_selector,
+            by=self.reference_atoms_selector,
+            reference=self.reference,
+        )
 
 
 class Run:
