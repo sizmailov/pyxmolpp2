@@ -2,25 +2,11 @@
 A tool to process MD trajectories
 #################################
 
-.. |travis| image:: https://travis-ci.com/sizmailov/pyxmolpp2.svg?branch=master
-    :alt: master status
-    :target: https://travis-ci.com/sizmailov/pyxmolpp2
-
-
-.. |coverage| image:: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master/graph/badge.svg
-    :alt: master coverage
-    :target: https://codecov.io/gh/sizmailov/pyxmolpp2/branch/master
-
-.. |pypi| image:: https://badge.fury.io/py/pyxmolpp2.svg
+.. |pypi| image:: https://img.shields.io/pypi/v/pybind11-stubgen.svg?logo=PyPI
     :alt: PyPI package
-    :target: https://badge.fury.io/py/pyxmolpp2
+    :target: https://pypi.org/project/pyxmolpp2/
 
-.. |gitter| image:: https://badges.gitter.im/pyxmolpp2/Lobby.svg
-   :alt: Join the chat at https://gitter.im/pyxmolpp2/Lobby
-   :target: https://gitter.im/pyxmolpp2/Lobby
-
-
-|pypi| |gitter| |travis| |coverage|
+|pypi|
 
 -----
 About
