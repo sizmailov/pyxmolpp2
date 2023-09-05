@@ -6,9 +6,6 @@ on:
     push:
         branches:
             - master
-
-            # TODO: remove
-            - build-2023
 env:
     TEST_DATA_PATH: ${{ github.workspace }}/tests_dataset
 jobs:
